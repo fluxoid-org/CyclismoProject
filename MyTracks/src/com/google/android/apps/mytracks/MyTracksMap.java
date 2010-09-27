@@ -1009,6 +1009,7 @@ public class MyTracksMap extends MapActivity
     long lastStoredLocationId =
         providerUtils.getLastLocationId(selectedTrackId);
     int samplingFrequency = -1;
+    Location location = new Location("");
     for (;;) {
       Cursor cursor = null;
       try {
@@ -1036,7 +1037,7 @@ public class MyTracksMap extends MapActivity
                 numTotalPoints / MyTracksConstants.TARGET_DISPLAYED_TRACK_POINTS);
           }
 
-          Location location = providerUtils.createLocation(cursor);
+          providerUtils.fillLocation(cursor, location);
 
           // Include a point if it fits one of the following criteria:
           // - Has the mod for the sampling frequency (includes first point).
@@ -1045,7 +1046,8 @@ public class MyTracksMap extends MapActivity
           if (numPoints % samplingFrequency == 0 ||
               (!isRecordingSelected() && locationId == lastStoredLocationId) ||
               !MyTracksUtils.isValidLocation(location)) {
-            mapOverlay.addLocation(location);
+            // Only allocate a new location if it is going to be kept around.
+            mapOverlay.addLocation(new Location(location));
           }
 
           numPoints++;

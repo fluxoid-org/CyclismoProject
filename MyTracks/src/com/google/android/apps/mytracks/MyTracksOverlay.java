@@ -31,6 +31,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -225,14 +226,15 @@ public class MyTracksOverlay extends Overlay {
     }
 
     // Get the current viewing window:
-    int w = mapView.getLongitudeSpan();
-    int h = mapView.getLatitudeSpan();
+    int w = mapView.getLongitudeSpan() * 2;
+    int h = mapView.getLatitudeSpan() * 2;
     int cx = mapView.getMapCenter().getLongitudeE6();
     int cy = mapView.getMapCenter().getLatitudeE6();
     Rect rect = new Rect(cx - w, cy - h, cx + w, cy + h);
-
     Point pt = new Point();
     GeoPoint geoPoint;
+    
+    
     Location loc;
     Location lastValidLocation = null;
     Path path;
