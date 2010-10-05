@@ -15,6 +15,8 @@
  */
 package com.google.android.apps.mytracks.services;
 
+import static com.google.android.apps.mytracks.MyTracksConstants.RESUME_TRACK_EXTRA_NAME;
+
 import com.google.android.apps.mytracks.MyTracks;
 import com.google.android.apps.mytracks.MyTracksConstants;
 import com.google.android.apps.mytracks.MyTracksSettings;
@@ -36,6 +38,7 @@ import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.location.Location;
@@ -63,6 +66,8 @@ public class TrackRecordingService extends Service implements LocationListener {
   private static final String STATISTICS_ICON_URL =
       "http://maps.google.com/mapfiles/ms/micons/ylw-pushpin.png";
 
+  private static final int MAX_AUTO_RESUME_TRACK_RETRY_ATTEMPTS = 3;
+  
   private NotificationManager notificationManager;
   private LocationManager locationManager;
   private WakeLock wakeLock;
@@ -73,14 +78,12 @@ public class TrackRecordingService extends Service implements LocationListener {
       MyTracksSettings.DEFAULT_MAX_RECORDING_DISTANCE;
   private int minRequiredAccuracy =
       MyTracksSettings.DEFAULT_MIN_REQUIRED_ACCURACY;
+  private int autoResumeTrackTimeout =
+      MyTracksSettings.DEFAULT_AUTO_RESUME_TRACK_TIMEOUT; 
+  
   private long recordingTrackId = -1;
 
   private long currentWaypointId = -1;
-
-  /**
-   * For debugging. Keep track of calls to onCreate().
-   */
-  private boolean onCreateWasCalled = false;
 
   /** The timer posts a runnable to the main thread via this handler. */
   private final Handler handler = new Handler();
@@ -128,11 +131,9 @@ public class TrackRecordingService extends Service implements LocationListener {
   private final TimerTask checkLocationListener = new TimerTask() {
     @Override
     public void run() {
-      if (!onCreateWasCalled) {
-        Log.e(MyTracksConstants.TAG,
-            "TrackRecordingService is running, but onCreate not called.");
-      }
-      if (isRecording) {
+      // It's always safe to assume that if isRecording() is true, it implies
+      // that onCreate() has finished.
+      if (isRecording()) {
         handler.post(new Runnable() {
           public void run() {
             Log.d(MyTracksConstants.TAG,
@@ -141,9 +142,6 @@ public class TrackRecordingService extends Service implements LocationListener {
             registerLocationListener();
           }
         });
-      } else {
-        Log.w(MyTracksConstants.TAG,
-            "Track recording service is paused. That should not be.");
       }
     }
   };
@@ -158,6 +156,11 @@ public class TrackRecordingService extends Service implements LocationListener {
    */
   private boolean isMoving = true;
 
+  /**
+   * The most recent recording track.
+   */
+  private Track recordingTrack;
+  
   /**
    * Is the service currently recording a track?
    */
@@ -388,23 +391,20 @@ public class TrackRecordingService extends Service implements LocationListener {
     Log.d(MyTracksConstants.TAG,
         "Location listener now unregistered w/ TrackRecordingService.");
   }
-
-  private void restoreStats() {
+  
+  private Track getRecordingTrack() {
     if (recordingTrackId < 0) {
-      return;
+      return null;
     }
 
-    Track track = providerUtils.getTrack(recordingTrackId);
-    if (track == null) {
-      return;
-    }
+    return providerUtils.getTrack(recordingTrackId);
+  }
 
+  private void restoreStats(Track track) {
     TripStatistics stats = track.getStatistics();
     statsBuilder = new TripStatisticsBuilder();
     statsBuilder.resumeAt(stats.getStartTime());
-    if (executer != null) {
-      executer.scheduleTask(announcementFrequency * 60000);
-    }
+    setUpAnnouncer();
 
     signalManager.restore();
     splitManager.restore();
@@ -489,7 +489,7 @@ public class TrackRecordingService extends Service implements LocationListener {
       }
 
       // At least one track must be available for appending points:
-      Track recordingTrack = providerUtils.getTrack(recordingTrackId);
+      recordingTrack = getRecordingTrack();
       if (recordingTrack == null) {
         Log.d(MyTracksConstants.TAG,
             "Not recording. No track to append to available.");
@@ -504,8 +504,8 @@ public class TrackRecordingService extends Service implements LocationListener {
 
       // Update the idle time if needed.
       locationListenerPolicy.updateIdleTime(statsBuilder.getIdleTime());
-      if (currentRecordingInterval
-          != locationListenerPolicy.getDesiredPollingInterval()) {
+      if (currentRecordingInterval !=
+          locationListenerPolicy.getDesiredPollingInterval()) {
         registerLocationListener();
       }
 
@@ -638,14 +638,12 @@ public class TrackRecordingService extends Service implements LocationListener {
 
   @Override
   public void onCreate() {
-    Log.d(MyTracksConstants.TAG, "TrackRecordingService.onCreate");
     super.onCreate();
-    onCreateWasCalled = true;
+    Log.d(MyTracksConstants.TAG, "TrackRecordingService.onCreate");
     providerUtils = MyTracksProviderUtils.Factory.get(this);
     notificationManager =
         (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-    locationManager =
-        (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+    locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
     splitManager = new SplitManager(this);
     try {
       signalManager =
@@ -659,8 +657,7 @@ public class TrackRecordingService extends Service implements LocationListener {
           new TaskExecuterManager(-1, new SignalStrengthTask(this), this);
     }
     prefManager = new PreferenceManager(this);
-    onSharedPreferenceChanged(null);
-    restoreStats();
+    prefManager.onSharedPreferenceChanged(null);
     registerLocationListener();
     acquireWakeLock();
     /**
@@ -668,18 +665,37 @@ public class TrackRecordingService extends Service implements LocationListener {
      * registered and spit out additional debugging info to the logs:
      */
     timer.schedule(checkLocationListener, 1000 * 60 * 5, 1000 * 60);
-    isRecording = true;
-    if (mTTSAvailable && (announcementFrequency != -1)) {
+
+    // Try to restore previous recording state in case this service has been
+    // restarted by the system, which can sometimes happen.
+    recordingTrack = getRecordingTrack();
+    if (recordingTrack != null) {
+      restoreStats(recordingTrack);
+      isRecording = true;
+    }
+    showNotification();
+  }
+  
+  /**
+   * Creates an {@link Executer} and schedules {@class SafeStatusAnnouncerTask}.
+   * The announcer requires a TTS service and user should have enabled
+   * the announcements, otherwise this method is no-op.
+   */
+  private void setUpAnnouncer() {
+    if (mTTSAvailable && announcementFrequency != -1) {
       if (executer == null) {
         SafeStatusAnnouncerTask announcer = new SafeStatusAnnouncerTask(this);
         executer = new PeriodicTaskExecuter(announcer, this);
       }
+      executer.scheduleTask(announcementFrequency * 60000);
     }
   }
 
   @Override
   public void onDestroy() {
     Log.d(MyTracksConstants.TAG, "TrackRecordingService.onDestroy");
+    checkLocationListener.cancel();
+    timer.cancel();
     if (wakeLock != null && wakeLock.isHeld()) {
       wakeLock.release();
     }
@@ -710,6 +726,94 @@ public class TrackRecordingService extends Service implements LocationListener {
     Log.d(MyTracksConstants.TAG, "TrackRecordingService.stopService");
     unregisterLocationListener();
     return super.stopService(name);
+  }
+  
+  @Override
+  public void onStart(Intent intent, int startId) {
+    handleStartCommand(intent, startId);
+  }
+
+  @Override
+  public int onStartCommand(Intent intent, int flags, int startId) {
+    handleStartCommand(intent, startId);
+    return START_STICKY;
+  }
+
+  private void handleStartCommand(Intent intent, int startId) {
+    Log.d(MyTracksConstants.TAG,
+        "TrackRecordingService.handleStartCommand: " + startId);
+
+    // Check if called on phone reboot with resume intent.
+    if (intent != null &&
+        intent.getBooleanExtra(RESUME_TRACK_EXTRA_NAME, false)) {
+      Log.d(MyTracksConstants.TAG, "TrackRecordingService: requested resume");
+      
+      // Make sure that the current track exists and is fresh enough.
+      if (recordingTrack == null || !shouldResumeTrack(recordingTrack)) {
+        Log.i(MyTracksConstants.TAG,
+            "TrackRecordingService: Not resuming because the previous track "
+            + "doesn't exist or is too old");
+        stopSelfResult(startId);
+        return;
+      }
+      
+      Log.i(MyTracksConstants.TAG, "TrackRecordingService: resuming");
+    }
+  }
+  
+  private void setAutoResumeTrackRetries(
+      SharedPreferences sharedPreferences, int retryAttempts) {
+    Log.d(MyTracksConstants.TAG,
+        "Updating auto-resume retry attempts to: " + retryAttempts);
+    
+    SharedPreferences.Editor editor = sharedPreferences.edit();
+    editor.putInt(
+        getString(R.string.auto_resume_track_current_retry_key), retryAttempts);
+    editor.commit();
+  }
+  
+  private boolean shouldResumeTrack(Track track) {
+    Log.d(MyTracksConstants.TAG,
+        "maybeResumeTrack: autoResumeTrackTimeout = " + autoResumeTrackTimeout);
+
+    // Check if we haven't exceeded the maximum number of retry attempts.
+    SharedPreferences sharedPreferences =
+        getSharedPreferences(MyTracksSettings.SETTINGS_NAME, 0); 
+    int retries = sharedPreferences.getInt(
+        getString(R.string.auto_resume_track_current_retry_key), 0);
+    Log.d(MyTracksConstants.TAG,
+        "TrackRecordingService: Attempting to auto-resume the track ("
+        + (retries + 1) + "/" + MAX_AUTO_RESUME_TRACK_RETRY_ATTEMPTS + ")");
+    if (retries >= MAX_AUTO_RESUME_TRACK_RETRY_ATTEMPTS) {
+      Log.i(MyTracksConstants.TAG,
+          "TrackRecordingService: Not resuming because exceeded the maximum "
+          + "number of auto-resume retries");
+      return false;
+    }
+
+    // Increase number of retry attempts.
+    setAutoResumeTrackRetries(sharedPreferences, retries + 1);
+
+    // Check for special cases.
+    if (autoResumeTrackTimeout == 0) {
+      // Never resume.  
+      return false;
+    } else if (autoResumeTrackTimeout == -1) {
+      // Always resume.
+      return true;
+    }
+
+    // Check if the last modified time is within the acceptable range.
+    long lastModified =
+        track.getStatistics() != null ? track.getStatistics().getStopTime() : 0;
+    Log.d(MyTracksConstants.TAG,
+        "maybeResumeTrack: lastModified = " + lastModified);
+    return lastModified > 0 && System.currentTimeMillis() - lastModified <=
+        autoResumeTrackTimeout * 60 * 1000;  
+  }
+
+  public boolean isRecording() {
+    return isRecording;
   }
 
   public long insertWaypointMarker(Waypoint waypoint) {
@@ -771,7 +875,7 @@ public class TrackRecordingService extends Service implements LocationListener {
       new ITrackRecordingService.Stub() {
         @Override
         public boolean isRecording() {
-          return isRecording;
+          return TrackRecordingService.this.isRecording();
         }
 
         @Override
@@ -804,14 +908,16 @@ public class TrackRecordingService extends Service implements LocationListener {
           isMoving = true;
           statsBuilder = new TripStatisticsBuilder();
           statsBuilder.resumeAt(startTime);
-          if (announcementFrequency != -1 && executer != null) {
-            executer.scheduleTask(announcementFrequency * 60000);
-          }
+          setUpAnnouncer();
           length = 0;
           showNotification();
           registerLocationListener();
           splitManager.restore();
           signalManager.restore();
+          // Reset the number of auto-resume retries.
+          SharedPreferences sharedPreferences =
+              getSharedPreferences(MyTracksSettings.SETTINGS_NAME, 0); 
+          setAutoResumeTrackRetries(sharedPreferences, 0);
           return trackId;
         }
 
@@ -878,7 +984,7 @@ public class TrackRecordingService extends Service implements LocationListener {
         @Override
         public void sharedPreferenceChanged(String key) {
           Log.d(MyTracksConstants.TAG,
-              "TrackRecordingService.sharedPrefereneChange");
+              "TrackRecordingService.sharedPreferenceChanged: " + key);
           onSharedPreferenceChanged(key);
         }
       };
@@ -912,12 +1018,7 @@ public class TrackRecordingService extends Service implements LocationListener {
           executer = null;
         }
       } else {
-        if (executer == null) {
-          SafeStatusAnnouncerTask announcer =
-              new SafeStatusAnnouncerTask(this);
-          executer = new PeriodicTaskExecuter(announcer, this);
-        }
-        executer.scheduleTask(announcementFrequency * 60000);
+        setUpAnnouncer();
       }
     }
   }
@@ -953,6 +1054,14 @@ public class TrackRecordingService extends Service implements LocationListener {
   public void setLocationListenerPolicy(
       LocationListenerPolicy locationListenerPolicy) {
     this.locationListenerPolicy = locationListenerPolicy;
+  }
+  
+  public int getAutoResumeTrackTimeout() {
+    return autoResumeTrackTimeout;
+  }
+  
+  public void setAutoResumeTrackTimeout(int autoResumeTrackTimeout) {
+    this.autoResumeTrackTimeout = autoResumeTrackTimeout;
   }
 
   public SplitManager getSplitManager() {
