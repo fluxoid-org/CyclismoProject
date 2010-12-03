@@ -44,6 +44,7 @@ public interface TrackPointsColumns extends BaseColumns {
   public static final String TIME = "time";
   public static final String ACCURACY = "accuracy";
   public static final String SPEED = "speed";
+  public static final String SENSOR = "sensor";
 
   /** Columns that go into the backup. */
   public static final String[] BACKUP_COLUMNS =
