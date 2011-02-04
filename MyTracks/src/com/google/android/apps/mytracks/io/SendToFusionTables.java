@@ -34,7 +34,6 @@ import com.google.api.client.googleapis.MethodOverrideIntercepter;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
-import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.InputStreamContent;
 import com.google.api.client.javanet.NetHttpTransport;
@@ -223,7 +222,7 @@ public class SendToFusionTables implements Runnable {
    */
   private boolean createNewTable(Track track) {
     Log.d(MyTracksConstants.TAG, "Creating a new fusion table.");
-    String query = "CREATE TABLE '" + track.getName() +
+    String query = "CREATE TABLE '" + sqlEscape(track.getName()) +
         "' (name:STRING,description:STRING,geometry:LOCATION,marker:STRING)";
     return runUpdate(query);
   }
@@ -247,11 +246,15 @@ public class SendToFusionTables implements Runnable {
         builder.append(',');
       }
       builder.append('\'');
-      builder.append(values[i].replaceAll("'", "''"));
+      builder.append(sqlEscape(values[i]));
       builder.append('\'');
     }
     builder.append(')');
     return builder.toString();
+  }
+  
+  private static String sqlEscape(String value) {
+    return value.replaceAll("'", "''");
   }
 
   /**
@@ -660,32 +663,26 @@ public class SendToFusionTables implements Runnable {
         String sql = "sql=" + URLEncoder.encode(query, "UTF-8");
         isc.inputStream = new ByteArrayInputStream(Strings.toBytesUtf8(sql));
         request.content = isc;
-        Log.d(MyTracksConstants.TAG, "Running update query " + url.toString() + ": " + sql);
-        try {
-          HttpResponse response = request.execute();
-          boolean success = response.isSuccessStatusCode;
-          if (success) {
-            byte[] result = new byte[1024];
-            response.getContent().read(result);
-            String s = Strings.fromBytesUtf8(result);
-            String[] lines = s.split(Strings.LINE_SEPARATOR);
-            if (lines[0].equals("tableid")) {
-              tableId = lines[1];
-              Log.d(MyTracksConstants.TAG, "tableId = " + tableId);
-            } else {
-              Log.w(MyTracksConstants.TAG, "Unrecognized response: " + lines[0]);
-            }
-          } else {
-            Log.d(MyTracksConstants.TAG, "Query failed: " + response.statusMessage + " (" +
-                response.statusCode + ")");
-            throw new GDataWrapper.HttpException(response.statusCode, response.statusMessage);
-          }
-        } catch (HttpResponseException e) {
-          if (e.response.statusCode == 401) {
-            throw new GDataWrapper.AuthenticationException(e);
-          }
-        }
 
+        Log.d(MyTracksConstants.TAG, "Running update query " + url.toString() + ": " + sql);
+        HttpResponse response = request.execute();
+        boolean success = response.isSuccessStatusCode;
+        if (success) {
+          byte[] result = new byte[1024];
+          response.getContent().read(result);
+          String s = Strings.fromBytesUtf8(result);
+          String[] lines = s.split(Strings.LINE_SEPARATOR);
+          if (lines[0].equals("tableid")) {
+            tableId = lines[1];
+            Log.d(MyTracksConstants.TAG, "tableId = " + tableId);
+          } else {
+            Log.w(MyTracksConstants.TAG, "Unrecognized response: " + lines[0]);
+          }
+        } else {
+          Log.d(MyTracksConstants.TAG, "Query failed: " + response.statusMessage + " (" +
+              response.statusCode + ")");
+          throw new GDataWrapper.HttpException(response.statusCode, response.statusMessage);
+        }
       }
     });
     return wrapper.getErrorType() == GDataWrapper.ERROR_NO_ERROR;
