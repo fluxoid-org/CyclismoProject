@@ -16,6 +16,9 @@
 package com.google.android.apps.mytracks;
 
 import com.google.android.apps.mytracks.content.TracksColumns;
+import com.google.android.apps.mytracks.io.file.SaveActivity;
+import com.google.android.apps.mytracks.io.sendtogoogle.SendActivity;
+import com.google.android.apps.mytracks.services.ServiceStateHelper;
 import com.google.android.apps.mytracks.util.StringUtils;
 import com.google.android.apps.mytracks.util.UnitConversions;
 import com.google.android.maps.mytracks.R;
@@ -76,7 +79,7 @@ public class TrackList extends ListActivity
               R.string.tracklist_show_track);
           menu.add(0, Constants.MENU_EDIT, 0,
               R.string.tracklist_edit_track);
-          if (!MyTracks.getInstance().isRecording()
+          if (!ServiceStateHelper.isRecording(TrackList.this, null)
               || trackId != recordingTrackId) {
             menu.add(0, Constants.MENU_SEND_TO_GOOGLE, 0,
                 R.string.tracklist_send_to_google);
@@ -138,32 +141,46 @@ public class TrackList extends ListActivity
 
   @Override
   public boolean onMenuItemSelected(int featureId, MenuItem item) {
-    if (!super.onMenuItemSelected(featureId, item)) {
-      switch (item.getItemId()) {
-        case Constants.MENU_SHOW: {
-          onListItemClick(null, null, 0, trackId);
-          return true;
-        }
-        case Constants.MENU_EDIT: {
-          Intent intent = new Intent(this, TrackDetails.class);
-          intent.putExtra("trackid", trackId);
-          startActivity(intent);
-          return true;
-        }
-        case Constants.MENU_SHARE:
-        case Constants.MENU_WRITE_TO_SD_CARD:
-          return false;
-        default: {
-          Intent result = new Intent();
-          result.putExtra("trackid", trackId);
-          setResult(
-              Constants.getActionFromMenuId(item.getItemId()), result);
-          finish();
-          return true;
-        }
+    switch (item.getItemId()) {
+      case Constants.MENU_SHOW: {
+        onListItemClick(null, null, 0, trackId);
+        return true;
+      }
+      case Constants.MENU_EDIT: {
+        Intent intent = new Intent(this, TrackDetails.class);
+        intent.putExtra("trackid", trackId);
+        startActivity(intent);
+        return true;
+      }
+      case Constants.MENU_SHARE:
+      case Constants.MENU_WRITE_TO_SD_CARD:
+        return false;
+      case Constants.MENU_SEND_TO_GOOGLE:
+        SendActivity.sendToGoogle(this, trackId, false);
+        return true;
+      case Constants.MENU_SHARE_LINK:
+        SendActivity.sendToGoogle(this, trackId, true);
+        return true;
+      case Constants.MENU_SAVE_GPX_FILE:
+      case Constants.MENU_SAVE_KML_FILE:
+      case Constants.MENU_SAVE_CSV_FILE:
+      case Constants.MENU_SAVE_TCX_FILE:
+      case Constants.MENU_SHARE_GPX_FILE:
+      case Constants.MENU_SHARE_KML_FILE:
+      case Constants.MENU_SHARE_CSV_FILE:
+      case Constants.MENU_SHARE_TCX_FILE:
+        SaveActivity.handleExportTrackAction(this, trackId,
+            Constants.getActionFromMenuId(item.getItemId()));
+        return true;
+      default: {
+        Intent result = new Intent();
+        result.putExtra("trackid", trackId);
+        setResult(
+            Constants.getActionFromMenuId(item.getItemId()), result);
+        finish();
+        return true;
       }
     }
-    return false;
   }
 
   @Override
@@ -197,17 +214,18 @@ public class TrackList extends ListActivity
     listView = getListView();
     listView.setOnCreateContextMenuListener(contextMenuListener);
 
+    SharedPreferences preferences =
+        getSharedPreferences(Constants.SETTINGS_NAME, 0);
+
     View deleteAll = findViewById(R.id.tracklist_btn_delete_all);
     View exportAll = findViewById(R.id.tracklist_btn_export_all);
-    boolean notRecording = !MyTracks.getInstance().isRecording();
+    boolean notRecording = !ServiceStateHelper.isRecording(this, preferences);
     deleteAll.setOnClickListener(this);
     deleteAll.setEnabled(notRecording);
     exportAll.setOnClickListener(this);
     exportAll.setEnabled(notRecording);
     findViewById(R.id.tracklist_btn_import_all).setOnClickListener(this);
 
-    SharedPreferences preferences =
-        getSharedPreferences(Constants.SETTINGS_NAME, 0);
     preferences.registerOnSharedPreferenceChangeListener(this);
     metricUnits =
         preferences.getBoolean(getString(R.string.metric_units_key), true);
