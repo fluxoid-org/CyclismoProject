@@ -52,7 +52,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -418,7 +417,10 @@ public class SendActivity extends Activity implements ProgressIndicator {
       doShareListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
-          shareLinkToMap(sentToMyMaps, sentToFusionTables);
+          if (!shareLinkToMap(sentToMyMaps, sentToFusionTables)) {
+            Log.w(TAG, "Failed to share link");
+          }
+
           finishListener.onClick(dialog, which);
         }
       };
@@ -473,7 +475,7 @@ public class SendActivity extends Activity implements ProgressIndicator {
 
   protected String getFusionTablesUrl(long trackId) {
     Track track = providerUtils.getTrack(trackId);
-    return track == null ? "" : SendToFusionTables.getMapVisualizationUrl(track);
+    return SendToFusionTables.getMapVisualizationUrl(track);
   }
 
   /**
@@ -620,20 +622,6 @@ public class SendActivity extends Activity implements ProgressIndicator {
           sendToGoogleDocs();
         } else {
           onSendToGoogleDone();
-        }
-        break;
-      }
-      case Constants.SHARE_LINK: {
-        Track selectedTrack = providerUtils.getTrack(sendTrackId);
-        if (selectedTrack != null) {
-          if (!TextUtils.isEmpty(selectedTrack.getMapId())) {
-            shareLinkToMap(MapsFacade.buildMapUrl(selectedTrack.getMapId()));
-          } else if (!TextUtils.isEmpty(selectedTrack.getTableId())) {
-            shareLinkToMap(getFusionTablesUrl(sendTrackId));
-          } else {
-            shareRequested = true;
-            sendDialog.dismiss();
-          }
         }
         break;
       }

@@ -22,7 +22,6 @@ import com.google.android.maps.mytracks.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Log;
 import android.view.WindowManager.BadTokenException;
@@ -35,7 +34,12 @@ import android.view.WindowManager.BadTokenException;
 public class DialogManager {
 
   public static void showMessageDialog(
-      Context ctx, int message, boolean success, DialogInterface.OnClickListener okListener) {
+      Activity ctx, int message, boolean success, DialogInterface.OnClickListener okListener) {
+    if (ctx.isFinishing()) {
+      Log.w(TAG, "Activity finishing - not showing dialog");
+      return;
+    }
+
     AlertDialog dialog = null;
     AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
     builder.setMessage(message);
@@ -52,6 +56,11 @@ public class DialogManager {
    * dialog instance.
    */
   public static void showDialogSafely(Activity activity, final Dialog dialog) {
+    if (activity.isFinishing()) {
+      Log.w(TAG, "Activity finishing - not showing dialog");
+      return;
+    }
+
     activity.runOnUiThread(new Runnable() {
       public void run() {
         try {
@@ -70,6 +79,11 @@ public class DialogManager {
    * dialog instance.
    */
   public static void dismissDialogSafely(Activity activity, final Dialog dialog) {
+    if (activity.isFinishing()) {
+      Log.w(TAG, "Activity finishing - not dismissing dialog");
+      return;
+    }
+
     activity.runOnUiThread(new Runnable() {
       public void run() {
         try {

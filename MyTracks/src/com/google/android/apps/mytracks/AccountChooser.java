@@ -88,6 +88,7 @@ public class AccountChooser {
         if (selectedAccountIndex >= 0) {
           selectedAccount = accounts[selectedAccountIndex];
         }
+
         handler.handleAccountSelected(selectedAccount);
       }
     });

@@ -242,6 +242,11 @@ public class MapOverlay extends Overlay {
 
     // It's safe to keep projection within a single draw operation.
     final Projection projection = getMapProjection(mapView);
+    if (projection == null) {
+      Log.w(TAG, "No projection, unable to draw");
+      return;
+    }
+
     // Get the current viewing window.
     if (trackDrawingEnabled) {
       Rect viewRect = getMapViewRect(mapView);
