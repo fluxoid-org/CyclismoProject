@@ -53,7 +53,7 @@ public class StatsActivity extends Activity implements TrackDataListener {
    */
   private final Runnable updateResults = new Runnable() {
     public void run() {
-      if (dataHub.isRecordingSelected()) {
+      if (dataHub != null && dataHub.isRecordingSelected()) {
         utils.setTime(R.id.total_time_register,
             System.currentTimeMillis() - startTime);
       }
@@ -265,7 +265,8 @@ public class StatsActivity extends Activity implements TrackDataListener {
 
   @Override
   public void onCurrentLocationChanged(final Location loc) {
-    if (dataHub.isRecordingSelected()) {
+    TrackDataHub localDataHub = dataHub;
+    if (localDataHub != null && localDataHub.isRecordingSelected()) {
       runOnUiThread(new Runnable() {
         @Override
         public void run() {
@@ -301,6 +302,8 @@ public class StatsActivity extends Activity implements TrackDataListener {
 
   @Override
   public void onTrackUpdated(final Track track) {
+    TrackDataHub localDataHub = dataHub;
+    final boolean recordingSelected = localDataHub != null && localDataHub.isRecordingSelected();
     runOnUiThread(new Runnable() {
       @Override
       public void run() {
@@ -310,7 +313,7 @@ public class StatsActivity extends Activity implements TrackDataListener {
         }
 
         startTime = track.getStatistics().getStartTime();
-        if (!dataHub.isRecordingSelected()) {
+        if (!recordingSelected) {
           utils.setTime(R.id.total_time_register,
               track.getStatistics().getTotalTime());
           showUnknownLocation();

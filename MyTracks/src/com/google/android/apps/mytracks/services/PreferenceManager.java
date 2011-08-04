@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Google Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -24,7 +24,7 @@ import android.util.Log;
 
 /**
  * A class that manages reading the shared preferences for the service.
- * 
+ *
  * @author Sandor Dornbush
  */
 public class PreferenceManager implements OnSharedPreferenceChangeListener {
@@ -39,6 +39,7 @@ public class PreferenceManager implements OnSharedPreferenceChangeListener {
   private final String minRecordingIntervalKey;
   private final String minRequiredAccuracyKey;
   private final String recordingTrackKey;
+  private final String selectedTrackKey;
   private final String splitFrequencyKey;
 
   public PreferenceManager(TrackRecordingService service) {
@@ -51,14 +52,14 @@ public class PreferenceManager implements OnSharedPreferenceChangeListener {
       throw new IllegalStateException("Couldn't get shared preferences");
     }
     sharedPreferences.registerOnSharedPreferenceChangeListener(this);
-    
+
     announcementFrequencyKey =
         service.getString(R.string.announcement_frequency_key);
     autoResumeTrackCurrentRetryKey =
         service.getString(R.string.auto_resume_track_current_retry_key);
     autoResumeTrackTimeoutKey =
         service.getString(R.string.auto_resume_track_timeout_key);
-    maxRecordingDistanceKey = 
+    maxRecordingDistanceKey =
         service.getString(R.string.max_recording_distance_key);
     metricUnitsKey =
         service.getString(R.string.metric_units_key);
@@ -70,9 +71,11 @@ public class PreferenceManager implements OnSharedPreferenceChangeListener {
         service.getString(R.string.min_required_accuracy_key);
     recordingTrackKey =
         service.getString(R.string.recording_track_key);
+    selectedTrackKey =
+        service.getString(R.string.selected_track_key);
     splitFrequencyKey =
         service.getString(R.string.split_frequency_key);
-    
+
     // Refresh all properties.
     onSharedPreferenceChanged(sharedPreferences, null);
   }
@@ -84,7 +87,7 @@ public class PreferenceManager implements OnSharedPreferenceChangeListener {
    * @param key the key that changed (may be null to update all preferences)
    */
   @Override
-  public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+  public void onSharedPreferenceChanged(SharedPreferences preferences,
       String key) {
     if (service == null) {
       Log.w(Constants.TAG,
@@ -149,7 +152,7 @@ public class PreferenceManager implements OnSharedPreferenceChangeListener {
     if (key == null || key.equals(recordingTrackKey)) {
       long recordingTrackId = sharedPreferences.getLong(recordingTrackKey, -1);
       // Only read the id if it is valid.
-      // Setting it to -1 should only happen in 
+      // Setting it to -1 should only happen in
       // TrackRecordingService.endCurrentTrack()
       if (recordingTrackId > 0) {
         service.setRecordingTrackId(recordingTrackId);
@@ -164,7 +167,7 @@ public class PreferenceManager implements OnSharedPreferenceChangeListener {
           sharedPreferences.getBoolean(metricUnitsKey, true));
     }
   }
-  
+
   public void setAutoResumeTrackCurrentRetry(int retryAttempts) {
     sharedPreferences
         .edit()
@@ -178,7 +181,14 @@ public class PreferenceManager implements OnSharedPreferenceChangeListener {
         .putLong(recordingTrackKey, id)
         .commit();
   }
-  
+
+  public void setSelectedTrack(long id) {
+    sharedPreferences
+        .edit()
+        .putLong(selectedTrackKey, id)
+        .commit();
+  }
+
   public void shutdown() {
     sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
     service = null;

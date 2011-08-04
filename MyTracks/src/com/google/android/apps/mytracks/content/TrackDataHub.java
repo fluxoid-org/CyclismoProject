@@ -130,6 +130,12 @@ public class TrackDataHub {
     }
 
     @Override
+    public void notifyLocationProviderAvailable(boolean available) {
+      hasFix = available;
+      TrackDataHub.this.notifyFixType();
+    }
+
+    @Override
     public void notifyLocationChanged(Location loc) {
       TrackDataHub.this.notifyLocationChanged(loc,
           getListenersFor(ListenerDataType.LOCATION_UPDATES));
@@ -154,7 +160,7 @@ public class TrackDataHub {
   private Handler listenerHandler;
 
   /** Manager for external listeners (those from activities). */
-  private final TrackDataListeners listeners;
+  private final TrackDataListeners dataListeners;
 
   /** Wrapper for interacting with system data managers. */
   private DataSourcesWrapper dataSources;
@@ -213,7 +219,7 @@ public class TrackDataHub {
   TrackDataHub(Context ctx, TrackDataListeners listeners, SharedPreferences preferences,
       MyTracksProviderUtils providerUtils, int targetNumPoints) {
     this.context = ctx;
-    this.listeners = listeners;
+    this.dataListeners = listeners;
     this.preferences = preferences;
     this.providerUtils = providerUtils;
     this.targetNumPoints = targetNumPoints;
@@ -437,22 +443,23 @@ public class TrackDataHub {
 
   public void registerTrackDataListener(
       TrackDataListener listener, EnumSet<ListenerDataType> dataTypes) {
-    synchronized (listeners) {
-      ListenerRegistration registration = listeners.registerTrackDataListener(listener, dataTypes);
+    synchronized (dataListeners) {
+      ListenerRegistration registration =
+          dataListeners.registerTrackDataListener(listener, dataTypes);
 
       // Don't load any data or start internal listeners if start() hasn't been
       // called. When it is called, we'll do both things.
       if (!isStarted()) return;
 
-      reloadDataForListener(registration);
+      loadNewDataForListener(registration);
 
       dataSourceManager.updateAllListeners(getNeededListenerTypes());
     }
   }
 
   public void unregisterTrackDataListener(TrackDataListener listener) {
-    synchronized (listeners) {
-      listeners.unregisterTrackDataListener(listener);
+    synchronized (dataListeners) {
+      dataListeners.unregisterTrackDataListener(listener);
 
       // Don't load any data or start internal listeners if start() hasn't been
       // called. When it is called, we'll do both things.
@@ -467,30 +474,32 @@ public class TrackDataHub {
    */
   public void reloadDataForListener(TrackDataListener listener) {
     ListenerRegistration registration;
-    synchronized (listeners) {
-      registration = listeners.getRegistration(listener);
-      reloadDataForListener(registration);
+    synchronized (dataListeners) {
+      registration = dataListeners.getRegistration(listener);
+      registration.resetState();
+      loadNewDataForListener(registration);
     }
   }
 
   /**
    * Reloads all track data received so far into the specified listeners.
    *
-   * Assumes it's called from a block that synchronizes on {@link #listeners}.
+   * Assumes it's called from a block that synchronizes on {@link #dataListeners}.
    */
-  private void reloadDataForListener(final ListenerRegistration registration) {
+  private void loadNewDataForListener(final ListenerRegistration registration) {
     if (!isStarted()) {
       Log.w(TAG, "Not started, not reloading");
       return;
     }
     if (registration == null) {
+      Log.w(TAG, "Not reloading for null registration");
       return;
     }
 
     // If a listener happens to be added after this method but before the Runnable below is
     // executed, it will have triggered a separate call to load data only up to the point this
     // listener got to. This is ensured by being synchronized on listeners.
-    final boolean isOnlyListener = (listeners.getNumListeners() == 1);
+    final boolean isOnlyListener = (dataListeners.getNumListeners() == 1);
 
     runInListenerThread(new Runnable() {
       @SuppressWarnings("unchecked")
@@ -575,8 +584,8 @@ public class TrackDataHub {
       Log.w(TAG, "Not started, not reloading");
       return;
     }
-    synchronized (listeners) {
-      if (!listeners.hasListeners()) {
+    synchronized (dataListeners) {
+      if (!dataListeners.hasListeners()) {
         Log.d(TAG, "No listeners, not reloading");
         return;
       }
@@ -649,8 +658,8 @@ public class TrackDataHub {
         for (TrackDataListener listener : displayListeners) {
           // TODO: Do the reloading just once for all interested listeners
           if (listener.onReportSpeedChanged(reportSpeed)) {
-            synchronized (listeners) {
-              reloadDataForListener(listeners.getRegistration(listener));
+            synchronized (dataListeners) {
+              reloadDataForListener(listener);
             }
           }
         }
@@ -669,8 +678,8 @@ public class TrackDataHub {
 
         for (TrackDataListener listener : displayListeners) {
           if (listener.onUnitsChanged(useMetricUnits)) {
-            synchronized (listeners) {
-              reloadDataForListener(listeners.getRegistration(listener));
+            synchronized (dataListeners) {
+              reloadDataForListener(listener);
             }
           }
         }
@@ -737,7 +746,7 @@ public class TrackDataHub {
     if (isGpsLocation) {
       // We consider a good fix to be a recent one with reasonable accuracy.
       hasFix = !isLocationOld(location, now, MAX_LOCATION_AGE_MS);
-      hasGoodFix = (location != null && location.getAccuracy() <= minRequiredAccuracy);
+      hasGoodFix = (location.getAccuracy() <= minRequiredAccuracy);
     } else {
       if (!isLocationOld(lastSeenLocation, now, MAX_LOCATION_AGE_MS)) {
         // This is a network location, but we have a recent/valid GPS location, just ignore this.
@@ -959,7 +968,7 @@ public class TrackDataHub {
 
       Log.i(TAG, "Resampling point set after " + numLoadedPoints + " points.");
       resetState();
-      synchronized (listeners) {
+      synchronized (dataListeners) {
         sampledListeners = getListenersFor(ListenerDataType.POINT_UPDATES);
         sampledOutListeners = getListenersFor(ListenerDataType.SAMPLED_OUT_POINT_UPDATES);
       }
@@ -1044,7 +1053,7 @@ public class TrackDataHub {
       listener.onNewTrackPointsDone();
 
       // Update the listener state
-      ListenerRegistration registration = listeners.getRegistration(listener);
+      ListenerRegistration registration = dataListeners.getRegistration(listener);
       if (registration != null) {
         registration.lastTrackId = currentSelectedTrackId;
         registration.lastPointId = localLastSeenLocationId;
@@ -1057,7 +1066,7 @@ public class TrackDataHub {
   private void notifyNewPoint(Location location,
       long locationId,
       long lastStoredLocationId,
-      int numLoadedPoints,
+      int loadedPoints,
       int pointSamplingFrequency,
       Set<TrackDataListener> sampledListeners,
       Set<TrackDataListener> sampledOutListeners) {
@@ -1076,7 +1085,7 @@ public class TrackDataHub {
     // - Is the last point and we are not recording this track.
     boolean recordingSelected = isRecordingSelected();
     boolean includeInSample =
-        (numLoadedPoints % pointSamplingFrequency == 0 ||
+        (loadedPoints % pointSamplingFrequency == 0 ||
          (!recordingSelected && locationId == lastStoredLocationId));
 
     if (!includeInSample) {
@@ -1104,13 +1113,13 @@ public class TrackDataHub {
   }
 
   private Set<TrackDataListener> getListenersFor(ListenerDataType type) {
-    synchronized (listeners) {
-      return listeners.getListenersFor(type);
+    synchronized (dataListeners) {
+      return dataListeners.getListenersFor(type);
     }
   }
 
   private EnumSet<ListenerDataType> getNeededListenerTypes() {
-    EnumSet<ListenerDataType> neededTypes = listeners.getAllRegisteredTypes();
+    EnumSet<ListenerDataType> neededTypes = dataListeners.getAllRegisteredTypes();
 
     // We always want preference updates.
     neededTypes.add(ListenerDataType.DISPLAY_PREFERENCES);

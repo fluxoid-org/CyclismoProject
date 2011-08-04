@@ -281,23 +281,39 @@ public class TrackRecordingService extends Service {
         "TrackRecordingService.handleStartCommand: " + startId);
 
     // Check if called on phone reboot with resume intent.
-    if (intent != null &&
-        intent.getBooleanExtra(RESUME_TRACK_EXTRA_NAME, false)) {
-      Log.d(TAG, "TrackRecordingService: requested resume");
-
-      // Make sure that the current track exists and is fresh enough.
-      if (recordingTrack == null || !shouldResumeTrack(recordingTrack)) {
-        Log.i(TAG,
-            "TrackRecordingService: Not resuming, because the previous track ("
-            + recordingTrack + ") doesn't exist or is too old");
-        isRecording = false;
-        prefManager.setRecordingTrack(recordingTrackId = -1);
-        stopSelfResult(startId);
-        return;
+    if (intent != null) {
+      if (intent.getBooleanExtra(RESUME_TRACK_EXTRA_NAME, false)) {
+        resumeTrack(startId);
+      } else {
+        // Process actions for controlling the service.
+        String action = intent.getAction();
+        if (getString(R.string.start_new_track_action).equals(action)) {
+          startNewTrack();
+          if (intent.getBooleanExtra(getString(R.string.select_new_track_extra), false)) {
+            prefManager.setSelectedTrack(recordingTrackId);
+          }
+        } else if (getString(R.string.end_current_track_action).equals(action)) {
+          endCurrentTrack();
+        }
       }
-
-      Log.i(TAG, "TrackRecordingService: resuming");
     }
+  }
+
+  private void resumeTrack(int startId) {
+    Log.d(TAG, "TrackRecordingService: requested resume");
+
+    // Make sure that the current track exists and is fresh enough.
+    if (recordingTrack == null || !shouldResumeTrack(recordingTrack)) {
+      Log.i(TAG,
+          "TrackRecordingService: Not resuming, because the previous track ("
+          + recordingTrack + ") doesn't exist or is too old");
+      isRecording = false;
+      prefManager.setRecordingTrack(recordingTrackId = -1);
+      stopSelfResult(startId);
+      return;
+    }
+
+    Log.i(TAG, "TrackRecordingService: resuming");
   }
 
   @Override
@@ -345,7 +361,7 @@ public class TrackRecordingService extends Service {
     super.onDestroy();
   }
 
-  private void setAutoResumeTrackRetries(SharedPreferences sharedPreferences, int retryAttempts) {
+  private void setAutoResumeTrackRetries(int retryAttempts) {
     Log.d(TAG, "Updating auto-resume retry attempts to: " + retryAttempts);
     prefManager.setAutoResumeTrackCurrentRetry(retryAttempts);
   }
@@ -370,7 +386,7 @@ public class TrackRecordingService extends Service {
     }
 
     // Increase number of retry attempts.
-    setAutoResumeTrackRetries(sharedPreferences, retries + 1);
+    setAutoResumeTrackRetries(retries + 1);
 
     // Check for special cases.
     if (autoResumeTrackTimeout == 0) {
@@ -563,8 +579,7 @@ public class TrackRecordingService extends Service {
     }
 
     // Reset the number of auto-resume retries.
-    setAutoResumeTrackRetries(
-        getSharedPreferences(Constants.SETTINGS_NAME, 0), 0);
+    setAutoResumeTrackRetries(0);
     // Persist the current recording track.
     prefManager.setRecordingTrack(recordingTrackId);
 
@@ -679,8 +694,6 @@ public class TrackRecordingService extends Service {
       }
 
       Location lastRecordedLocation = providerUtils.getLastLocation();
-      long lastRecordedLocationId =
-          providerUtils.getLastLocationId(recordingTrackId);
       double distanceToLastRecorded = Double.POSITIVE_INFINITY;
       if (lastRecordedLocation != null) {
         distanceToLastRecorded = location.distanceTo(lastRecordedLocation);
@@ -706,9 +719,7 @@ public class TrackRecordingService extends Service {
             // Need to write the last location. This will happen when
             // lastRecordedLocation.distance(lastLocation) <
             // minRecordingDistance
-            if (!insertLocation(recordingTrack, lastLocation,
-                lastRecordedLocation, lastRecordedLocationId,
-                recordingTrackId)) {
+            if (!insertLocation(lastLocation, lastRecordedLocation, recordingTrackId)) {
               return;
             }
           }
@@ -721,11 +732,9 @@ public class TrackRecordingService extends Service {
         if (lastLocation != null && !isMoving) {
           // Last location was the last stationary location. Need to go back and
           // add it.
-          if (!insertLocation(recordingTrack, lastLocation,
-              lastRecordedLocation, lastRecordedLocationId, recordingTrackId)) {
+          if (!insertLocation(lastLocation, lastRecordedLocation, recordingTrackId)) {
             return;
           }
-          lastRecordedLocationId++;
           isMoving = true;
         }
 
@@ -746,8 +755,7 @@ public class TrackRecordingService extends Service {
           providerUtils.insertTrackPoint(separator, recordingTrackId);
         }
 
-        if (!insertLocation(recordingTrack, location, lastRecordedLocation,
-            lastRecordedLocationId, recordingTrackId)) {
+        if (!insertLocation(location, lastRecordedLocation, recordingTrackId)) {
           return;
         }
       } else {
@@ -774,18 +782,13 @@ public class TrackRecordingService extends Service {
    * Inserts a new location in the track points db and updates the corresponding
    * track in the track db.
    *
-   * @param recordingTrack the track that is currently being recorded
    * @param location the location to be inserted
    * @param lastRecordedLocation the last recorded location before this one (or
    *        null if none)
-   * @param lastRecordedLocationId the id of the last recorded location (or -1
-   *        if none)
    * @param trackId the id of the track
    * @return true if successful. False if SQLite3 threw an exception.
    */
-  private boolean insertLocation(Track recordingTrack, Location location,
-      Location lastRecordedLocation, long lastRecordedLocationId,
-      long trackId) {
+  private boolean insertLocation(Location location, Location lastRecordedLocation, long trackId) {
 
     // Keep track of length along recorded track (needed when a waypoint is
     // inserted):
@@ -987,22 +990,21 @@ public class TrackRecordingService extends Service {
     announcementExecutor.shutdown();
     splitExecutor.shutdown();
     isRecording = false;
-    Track recordingTrack = providerUtils.getTrack(recordingTrackId);
-    if (recordingTrack != null) {
-      TripStatistics stats = recordingTrack.getStatistics();
+    Track recordedTrack = providerUtils.getTrack(recordingTrackId);
+    if (recordedTrack != null) {
+      TripStatistics stats = recordedTrack.getStatistics();
       stats.setStopTime(System.currentTimeMillis());
       stats.setTotalTime(stats.getStopTime() - stats.getStartTime());
       long lastRecordedLocationId =
           providerUtils.getLastLocationId(recordingTrackId);
       ContentValues values = new ContentValues();
-      if (lastRecordedLocationId >= 0
-          && recordingTrack.getStopId() >= 0) {
+      if (lastRecordedLocationId >= 0 && recordedTrack.getStopId() >= 0) {
         values.put(TracksColumns.STOPID, lastRecordedLocationId);
       }
       values.put(TracksColumns.STOPTIME, stats.getStopTime());
       values.put(TracksColumns.TOTALTIME, stats.getTotalTime());
       getContentResolver().update(TracksColumns.CONTENT_URI, values,
-          "_id=" + recordingTrack.getId(), null);
+          "_id=" + recordedTrack.getId(), null);
     }
     showNotification();
     long recordedTrackId = recordingTrackId;
