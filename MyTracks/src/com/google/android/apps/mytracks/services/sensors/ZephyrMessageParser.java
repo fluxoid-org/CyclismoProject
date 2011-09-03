@@ -15,50 +15,71 @@
  */
 package com.google.android.apps.mytracks.services.sensors;
 
-import android.util.Log;
-
-import com.google.android.apps.mytracks.Constants;
 import com.google.android.apps.mytracks.content.Sensor;
+
+import java.util.Arrays;
 
 /**
  * An implementation of a Sensor MessageParser for Zephyr.
  *
  * @author Sandor Dornbush
+ * @author Dominik Ršttsches
  */
 public class ZephyrMessageParser implements MessageParser {
 
   public static final int ZEPHYR_HXM_BYTE_STX = 0;
   public static final int ZEPHYR_HXM_BYTE_CRC = 58;
   public static final int ZEPHYR_HXM_BYTE_ETX = 59;
-	
+  
+  private static final byte[] CADENCE_BUG_FW_ID = {0x1A, 0x00, 0x31, 0x65, 0x50, 0x00, 0x31, 0x62};
+  
+  private StrideReadings strideReadings;
+  
   @Override
   public Sensor.SensorDataSet parseBuffer(byte[] buffer) {
-    StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < buffer.length; i++) {
-      sb.append(String.format("%02X", buffer[i]));
-    }
-    Log.w(Constants.TAG, "Got zephyr data: " + sb);
-    // Heart Rate
-    Sensor.SensorData.Builder heartrate = Sensor.SensorData.newBuilder()
-        .setValue(buffer[12] & 0xFF)
-        .setState(Sensor.SensorState.SENDING);
-    // Changes Nico Laum (Power and Cadence)
-    Sensor.SensorData.Builder power = Sensor.SensorData.newBuilder()
-	    .setValue(buffer[11])
-	    .setState(Sensor.SensorState.SENDING);
-    Sensor.SensorData.Builder cadence = Sensor.SensorData.newBuilder()
-	    .setValue(SensorUtils.unsignedShortToIntLittleEndian(buffer, 56) / 16)
-	    .setState(Sensor.SensorState.SENDING);
-    
-    Sensor.SensorDataSet sds =
+    Sensor.SensorDataSet.Builder sds =
       Sensor.SensorDataSet.newBuilder()
-      .setCreationTime(System.currentTimeMillis())
-      .setPower(power)
-      .setHeartRate(heartrate)
-      .setCadence(cadence)
-      .build();
+      .setCreationTime(System.currentTimeMillis());
+
+    Sensor.SensorData.Builder heartrate = Sensor.SensorData.newBuilder()
+      .setValue(buffer[12] & 0xFF)
+      .setState(Sensor.SensorState.SENDING);
+    sds.setHeartRate(heartrate);
     
-    return sds;
+    Sensor.SensorData.Builder batteryLevel = Sensor.SensorData.newBuilder()
+      .setValue(buffer[11])
+      .setState(Sensor.SensorState.SENDING);
+    sds.setBatteryLevel(batteryLevel);
+    
+    setCadence(sds, buffer);
+    
+    return sds.build();
+  }
+
+  private void setCadence(Sensor.SensorDataSet.Builder sds, byte[] buffer) {
+    // Device Firmware ID, Firmware Version, Hardware ID, Hardware Version
+    // 0x1A00316550003162 produces erroneous values for Cadence and needs
+    // a workaround based on the stride counter.
+    // Firmware values range from field 3 to 10 (inclusive) of the byte buffer.
+    byte[] hardwareFirmwareId = Arrays.copyOfRange(buffer, 3, 11);
+
+    Sensor.SensorData.Builder cadence = Sensor.SensorData.newBuilder();
+
+    if (Arrays.equals(hardwareFirmwareId, CADENCE_BUG_FW_ID)) {
+      if (strideReadings == null) {
+        strideReadings = new StrideReadings();
+      }
+      strideReadings.updateStrideReading(buffer[54] & 0xFF);
+      
+      if (strideReadings.getCadence() != StrideReadings.CADENCE_NOT_AVAILABLE) {
+        cadence.setValue(strideReadings.getCadence()).setState(Sensor.SensorState.SENDING);
+      }
+    } else {
+      cadence
+        .setValue(SensorUtils.unsignedShortToIntLittleEndian(buffer, 56) / 16)
+        .setState(Sensor.SensorState.SENDING);
+    }
+    sds.setCadence(cadence);
   }
 
   @Override
