@@ -283,23 +283,47 @@ public class TrackRecordingService extends Service {
     Log.d(TAG,
         "TrackRecordingService.handleStartCommand: " + startId);
 
+    if (intent == null)
+      return;
+      
     // Check if called on phone reboot with resume intent.
-    if (intent != null) {
-      if (intent.getBooleanExtra(RESUME_TRACK_EXTRA_NAME, false)) {
-        resumeTrack(startId);
-      } else {
-        // Process actions for controlling the service.
-        String action = intent.getAction();
-        if (getString(R.string.start_new_track_action).equals(action)) {
-          startNewTrack();
-          if (intent.getBooleanExtra(getString(R.string.select_new_track_extra), false)) {
-            prefManager.setSelectedTrack(recordingTrackId);
-          }
-        } else if (getString(R.string.end_current_track_action).equals(action)) {
-          endCurrentTrack();
+    if (intent.getBooleanExtra(RESUME_TRACK_EXTRA_NAME, false)) {
+      resumeTrack(startId);
+    } else {
+      // Process actions for controlling the service.
+      processStartStopIntent(intent);
+    }
+  }
+  
+  private void processStartStopIntent(Intent intent) {
+    String action = intent.getAction();
+
+    if (isNewTrackAction(action)) {
+      if (!isTrackInProgress()) {
+        boolean selectNewTrack = intent.getBooleanExtra(getString(R.string.select_new_track_extra), false);
+        
+        startNewTrack();
+        if (selectNewTrack) {
+          prefManager.setSelectedTrack(recordingTrackId);
         }
       }
+    } else if (isEndTrackAction(action)) {
+      if (isTrackInProgress()) {
+        endCurrentTrack();
+      }
     }
+  }
+
+  private boolean isTrackInProgress() {
+    return recordingTrackId != -1 || isRecording;
+  }
+  
+  private boolean isNewTrackAction(String action) {
+    return getString(R.string.start_new_track_action).equals(action);
+  }
+  
+  private boolean isEndTrackAction(String action) {
+    return getString(R.string.end_current_track_action).equals(action);
   }
 
   private void resumeTrack(int startId) {
@@ -549,7 +573,7 @@ public class TrackRecordingService extends Service {
 
   public long startNewTrack() {
     Log.d(TAG, "TrackRecordingService.startNewTrack");
-    if (recordingTrackId != -1 || isRecording) {
+    if (isTrackInProgress()) {
       throw new IllegalStateException("A track is already in progress!");
     }
 
@@ -987,7 +1011,7 @@ public class TrackRecordingService extends Service {
 
   private void endCurrentTrack() {
     Log.d(TAG, "TrackRecordingService.endCurrentTrack");
-    if (recordingTrackId == -1 || !isRecording) {
+    if (!isTrackInProgress()) {
       throw new IllegalStateException("No recording track in progress!");
     }
 
