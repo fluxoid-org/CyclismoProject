@@ -241,12 +241,13 @@ limitations under the License.
               android:label="@string/welcome_title"
               android:exported="false" />
 
+    <activity android:name="com.google.android.apps.mytracks.io.docs.SendDocsActivity"/>
     <activity android:name="com.google.android.apps.mytracks.io.maps.ChooseMapActivity"
-              android:label="@string/maps_list_title"/>
-    <activity android:name="com.google.android.apps.mytracks.io.sendtogoogle.UploadServiceChooserActivity"/>
+                            android:label="@string/maps_list_title"/>
     <activity android:name="com.google.android.apps.mytracks.io.sendtogoogle.AccountChooserActivity"/>
     <activity android:name="com.google.android.apps.mytracks.io.sendtogoogle.SendFusionTablesActivity"/>
     <activity android:name="com.google.android.apps.mytracks.io.sendtogoogle.UploadResultActivity"/>
+    <activity android:name="com.google.android.apps.mytracks.io.sendtogoogle.UploadServiceChooserActivity"/>
 
     <service android:name="com.google.android.apps.mytracks.services.TrackRecordingService"
              android:label="@string/my_tracks_recording_service"
