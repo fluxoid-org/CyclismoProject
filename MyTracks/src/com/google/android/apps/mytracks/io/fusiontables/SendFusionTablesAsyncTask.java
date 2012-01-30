@@ -1,11 +1,12 @@
 // Copyright 2012 Google Inc. All Rights Reserved.
 
-package com.google.android.apps.mytracks.io.sendtogoogle;
+package com.google.android.apps.mytracks.io.fusiontables;
 
 import com.google.android.apps.mytracks.Constants;
 import com.google.android.apps.mytracks.content.MyTracksProviderUtils;
 import com.google.android.apps.mytracks.content.Track;
 import com.google.android.apps.mytracks.content.Waypoint;
+import com.google.android.apps.mytracks.io.sendtogoogle.SendToGoogleUtils;
 import com.google.android.apps.mytracks.stats.DoubleBuffer;
 import com.google.android.apps.mytracks.util.ApiAdapterFactory;
 import com.google.android.apps.mytracks.util.LocationUtils;
@@ -75,8 +76,8 @@ public class SendFusionTablesAsyncTask extends AsyncTask<Void, Integer, Boolean>
   private SendFusionTablesActivity activity;
 
   private final Context context;
-  private final Account account;
   private final long trackId;
+  private final Account account;
   private final MyTracksProviderUtils myTracksProviderUtils;
   private final HttpRequestFactory httpRequestFactory;
 
@@ -101,10 +102,10 @@ public class SendFusionTablesAsyncTask extends AsyncTask<Void, Integer, Boolean>
   int currentSegment;
 
   public SendFusionTablesAsyncTask(
-      SendFusionTablesActivity activity, Account account, long trackId) {
+      SendFusionTablesActivity activity, long trackId, Account account) {
     this.activity = activity;
-    this.account = account;
     this.trackId = trackId;
+    this.account = account;
 
     context = activity.getApplicationContext();
     myTracksProviderUtils = MyTracksProviderUtils.Factory.get(context);
