@@ -16,6 +16,7 @@
 package com.google.android.apps.mytracks.content;
 
 import com.google.android.apps.mytracks.stats.TripStatistics;
+import com.google.android.apps.mytracks.util.LocationUtils;
 
 import android.database.Cursor;
 import android.location.Location;
@@ -219,7 +220,10 @@ public class SearchEngine {
         waypoints.ensureCapacity(waypointsCursor.getCount());
 
         while (waypointsCursor.moveToNext()) {
-          waypoints.add(providerUtils.createWaypoint(waypointsCursor));
+          Waypoint waypoint = providerUtils.createWaypoint(waypointsCursor);
+          if (LocationUtils.isValidLocation(waypoint.getLocation())) {
+            waypoints.add(waypoint);
+          }
         }
       } finally {
         waypointsCursor.close();

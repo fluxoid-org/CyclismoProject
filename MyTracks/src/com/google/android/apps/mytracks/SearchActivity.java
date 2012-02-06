@@ -187,8 +187,8 @@ public class SearchActivity extends ListActivity {
       }
     }
 
-    // TODO: Yellow pushpin for statistics marker.
-    resultMap.put(ICON_FIELD, R.drawable.blue_pushpin);
+    resultMap.put(ICON_FIELD, waypoint.getType() == Waypoint.TYPE_STATISTICS
+        ? R.drawable.ylw_pushpin : R.drawable.blue_pushpin);
     resultMap.put(NAME_FIELD, waypoint.getName());
     resultMap.put(DESCRIPTION_FIELD, waypoint.getDescription());
     resultMap.put(CATEGORY_FIELD, waypoint.getCategory());
