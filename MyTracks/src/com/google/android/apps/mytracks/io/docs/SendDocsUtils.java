@@ -300,8 +300,8 @@ public class SendDocsUtils {
     appendTag(builder, "name", track.getName());
     appendTag(builder, "description", track.getDescription());
     appendTag(builder, "date", StringUtils.formatDateTime(context, stats.getStartTime()));
-    appendTag(builder, "totaltime", StringUtils.formatElapsedTime(stats.getTotalTime()));
-    appendTag(builder, "movingtime", StringUtils.formatElapsedTime(stats.getMovingTime()));
+    appendTag(builder, "totaltime", StringUtils.formatElapsedTimeWithHour(stats.getTotalTime()));
+    appendTag(builder, "movingtime", StringUtils.formatElapsedTimeWithHour(stats.getMovingTime()));
     appendTag(builder, "distance", getDistance(stats.getTotalDistance(), metricUnits));
     appendTag(builder, "distanceunit", distanceUnit);
     appendTag(builder, "averagespeed", getSpeed(stats.getAverageSpeed(), metricUnits));
@@ -349,7 +349,7 @@ public class SendDocsUtils {
    */
   @VisibleForTesting
   static final String getDistance(double distanceInMeter, boolean metricUnits) {
-    double distanceInKilometer = distanceInMeter / 1000.0;
+    double distanceInKilometer = distanceInMeter * UnitConversions.M_TO_KM;
     double distance = metricUnits ? distanceInKilometer
         : distanceInKilometer * UnitConversions.KM_TO_MI;
     return NUMBER_FORMAT.format(distance);
@@ -363,9 +363,9 @@ public class SendDocsUtils {
    */
   @VisibleForTesting
   static final String getSpeed(double speedInMeterPerSecond, boolean metricUnits) {
-    double speedInKilometerPerHour = speedInMeterPerSecond * 3.6;
+    double speedInKilometerPerHour = speedInMeterPerSecond * UnitConversions.MS_TO_KMH;
     double speed = metricUnits ? speedInKilometerPerHour
-        : speedInKilometerPerHour * UnitConversions.KMH_TO_MPH;
+        : speedInKilometerPerHour * UnitConversions.KM_TO_MI;
     return NUMBER_FORMAT.format(speed);
   }
 
