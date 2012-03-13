@@ -24,6 +24,7 @@ import com.google.android.apps.mytracks.io.gdata.maps.MapsGDataConverter;
 import com.google.android.apps.mytracks.io.gdata.maps.MapsMapMetadata;
 import com.google.android.apps.mytracks.io.gdata.maps.XmlMapsGDataParserFactory;
 import com.google.android.common.gdata.AndroidXmlParserFactory;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.wireless.gdata.client.GDataClient;
 import com.google.wireless.gdata.client.HttpException;
 import com.google.wireless.gdata.parser.GDataParser;
@@ -74,19 +75,32 @@ public class ChooseMapAsyncTask extends AsyncTask<Void, Integer, Boolean> {
   private ArrayList<String> mapIds;
   private ArrayList<MapsMapMetadata> mapData;
 
-  public ChooseMapAsyncTask(ChooseMapActivity activity, Account account) {
-    this.activity = activity;
-    this.account = account;
+	public ChooseMapAsyncTask(ChooseMapActivity activity, Account account) {
+		this(activity, account, activity.getApplicationContext(),
+				GDataClientFactory.getGDataClient(activity
+						.getApplicationContext()), new MapsClient(
+						GDataClientFactory.getGDataClient(activity
+								.getApplicationContext()),
+						new XmlMapsGDataParserFactory(
+								new AndroidXmlParserFactory())));
+	}
 
-    context = activity.getApplicationContext();
-    gDataClient = GDataClientFactory.getGDataClient(context);
-    mapsClient = new MapsClient(
-        gDataClient, new XmlMapsGDataParserFactory(new AndroidXmlParserFactory()));
+	/**
+	 * Creates this constructor for test.
+	 */
+	public ChooseMapAsyncTask(ChooseMapActivity activity, Account account,
+			Context context, GDataClient gDataClient, MapsClient mapsClient) {
+		this.activity = activity;
+		this.account = account;
 
-    canRetry = true;
-    completed = false;
-    success = false;
-  }
+		this.context = context;
+		this.gDataClient = gDataClient;
+		this.mapsClient = mapsClient;
+
+		canRetry = true;
+		completed = false;
+		success = false;
+	}
 
   /**
    * Sets the activity associated with this AyncTask.
@@ -139,7 +153,8 @@ public class ChooseMapAsyncTask extends AsyncTask<Void, Integer, Boolean> {
    *
    * @return true if success.
    */
-  private boolean getMaps() {
+  @VisibleForTesting
+  boolean getMaps() {
     // Reset the per request states
     authToken = null;
     mapIds = new ArrayList<String>();
@@ -194,7 +209,8 @@ public class ChooseMapAsyncTask extends AsyncTask<Void, Integer, Boolean> {
    * Retries upload. Invalidates the authToken. If can retry, invokes
    * {@link ChooseMapAsyncTask#getMaps()}. Returns false if cannot retry.
    */
-  private boolean retryUpload() {
+  @VisibleForTesting
+  boolean retryUpload() {
     if (isCancelled()) {
       return false;
     }
@@ -205,5 +221,39 @@ public class ChooseMapAsyncTask extends AsyncTask<Void, Integer, Boolean> {
       return getMaps();
     }
     return false;
+  }
+  
+  /**
+   * Gets the complete status of task.
+   */
+  @VisibleForTesting
+  boolean getCompleted() {
+    return completed;
+  }
+  
+  /**
+   * Sets the complete status of task.
+   * @param completed
+   */
+  @VisibleForTesting
+  void setCompleted(boolean completed) {
+    this.completed = completed;
+  }
+  
+  /**
+   * Sets the status of canRetry.
+   * @param completed status of canRetry
+   */
+  @VisibleForTesting
+  void setCanRetry(boolean canRetry) {
+    this.canRetry = canRetry;
+  }
+  
+  /**
+   * Gets the status of canRetry.
+   */
+  @VisibleForTesting
+  boolean getCanRetry() {
+    return canRetry;
   }
 }
