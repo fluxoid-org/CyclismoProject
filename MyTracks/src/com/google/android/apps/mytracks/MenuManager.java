@@ -32,11 +32,11 @@ import android.view.MenuItem;
  */
 class MenuManager {
 
-  private final MyTracks activity;
+  private final TrackDetailActivity activity;
   private MenuItem recordTrack;
   private MenuItem stopRecording;
   
-  public MenuManager(MyTracks activity) {
+  public MenuManager(TrackDetailActivity activity) {
     this.activity = activity;
   }
 
@@ -47,7 +47,7 @@ class MenuManager {
    * @return true on success, false otherwise
    */
   public boolean onCreateOptionsMenu(Menu menu) {
-    activity.getMenuInflater().inflate(R.menu.main, menu);
+    activity.getMenuInflater().inflate(R.menu.track_detail, menu);
 
     // TODO: Replace search button with search widget if API level >= 11
     return true;
@@ -81,9 +81,7 @@ class MenuManager {
         .setVisible(isMapTab);
     menu.findItem(R.id.menu_satellite_mode)
         .setVisible(isMapTab)
-        .setTitle(isSatelliteMode
-            ? R.string.menu_map_view_map_mode
-            : R.string.menu_map_view_satellite_mode);
+        .setTitle(isSatelliteMode ? R.string.menu_map_mode : R.string.menu_satellite_mode);
   }
 
   /**
@@ -117,11 +115,6 @@ class MenuManager {
       case R.id.menu_stop_recording: {
         activity.stopRecording();
         updateActionItems(false);
-        return true;
-      }
-      case R.id.menu_tracks: {
-	    activity.startActivityForResult(new Intent(activity, TrackList.class),
-	    		Constants.SHOW_TRACK);
         return true;
       }
       case R.id.menu_markers: {

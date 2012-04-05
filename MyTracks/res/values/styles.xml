@@ -17,33 +17,6 @@ limitations under the License.
 <resources>
   <style name="ThemeSelector" parent="android:Theme" />
 
-  <!--  About page label -->
-  <style name="AboutLabel">
-    <item name="android:layout_height">wrap_content</item>
-    <item name="android:layout_width">fill_parent</item>
-    <item name="android:paddingBottom">2dp</item>
-    <item name="android:textSize">20sp</item>
-  </style>
-
-  <!-- About page item -->
-  <style name="AboutItem">
-    <item name="android:layout_height">wrap_content</item>
-    <item name="android:layout_width">fill_parent</item>
-    <item name="android:paddingBottom">2dp</item>
-    <item name="android:paddingLeft">20dp</item>
-    <item name="android:textSize">18sp</item>
-  </style>
-
-  <!--  About page url -->
-  <style name="AboutUrl">
-    <item name="android:autoLink">web</item>
-    <item name="android:layout_height">wrap_content</item>
-    <item name="android:layout_width">fill_parent</item>
-    <item name="android:paddingBottom">2dp</item>
-    <item name="android:paddingLeft">20dp</item>
-    <item name="android:textSize">18sp</item>
-  </style>
-
   <!-- Button -->
   <style name="Button">
     <item name="android:layout_height">fill_parent</item>
@@ -72,49 +45,6 @@ limitations under the License.
     <item name="android:layout_width">0dp</item>
     <item name="android:orientation">horizontal</item>
     <item name="android:visibility">gone</item>
-  </style>
-
-  <!-- Chart settings axis text -->
-  <style name="ChartSettingsAxisText">
-    <item name="android:gravity">bottom</item>
-    <item name="android:layout_height">fill_parent</item>
-    <item name="android:layout_width">wrap_content</item>
-    <item name="android:textSize">20sp</item>
-  </style>
-
-  <!-- Chart settings checkbox -->
-  <style name="ChartSettingsCheckbox">
-    <item name="android:checked">true</item>
-    <item name="android:layout_height">wrap_content</item>
-    <item name="android:layout_width">wrap_content</item>
-  </style>
-
-  <!-- Chart settings radio button -->
-  <style name="ChartSettingsRadioButton">
-    <item name="android:layout_height">wrap_content</item>
-    <item name="android:layout_width">wrap_content</item>
-  </style>
-
-  <!-- Send Google CheckBox -->
-  <style name="SendGoogleCheckBox">
-    <item name="android:checked">true</item>
-    <item name="android:layout_height">fill_parent</item>
-    <item name="android:layout_marginLeft">10dp</item>
-    <item name="android:layout_width">0dp</item>
-    <item name="android:textSize">18sp</item>
-  </style>
-
-  <!-- Send Google ImageView -->
-  <style name="SendGoogleImageView">
-    <item name="android:layout_height">wrap_content</item>
-    <item name="android:layout_width">wrap_content</item>
-  </style>
-
-  <!-- Send Google RadioButton -->
-  <style name="SendGoogleRadioButton">
-    <item name="android:layout_height">wrap_content</item>
-    <item name="android:layout_width">wrap_content</item>
-    <item name="android:textSize">18sp</item>
   </style>
 
   <style name="SensorStateLabel">
@@ -195,7 +125,15 @@ limitations under the License.
     <item name="android:textColor">@color/stat_label_text</item>
   </style>
 
-  <!-- Welcome page TextView -->
+  <!-- The TextView showing the stats in the track list item -->
+  <style name="TrackListItemStatsTextView" parents="@android:style/TextAppearance.DeviceDefault.Small">
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:singleLine">true</item>
+    <item name="android:textColor">@color/green</item>
+  </style>
+
+<!-- Welcome page TextView -->
   <style name="WelcomeTextView">
     <item name="android:layout_height">wrap_content</item>
     <item name="android:layout_width">fill_parent</item>
