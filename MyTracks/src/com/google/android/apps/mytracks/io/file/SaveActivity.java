@@ -20,7 +20,6 @@ import com.google.android.apps.mytracks.content.MyTracksProviderUtils;
 import com.google.android.apps.mytracks.io.file.TrackWriterFactory.TrackFileFormat;
 import com.google.android.apps.mytracks.util.DialogUtils;
 import com.google.android.apps.mytracks.util.FileUtils;
-import com.google.android.apps.mytracks.util.PlayTrackUtils;
 import com.google.android.maps.mytracks.R;
 
 import android.app.Activity;
@@ -48,8 +47,16 @@ public class SaveActivity extends Activity {
   public static final String EXTRA_SHARE_TRACK = "share_track";
   public static final String EXTRA_PLAY_TRACK = "play_track";
 
-  private static final String TAG = SaveActivity.class.getSimpleName();
+  public static final String GOOGLE_EARTH_KML_MIME_TYPE = "application/vnd.google-earth.kml+xml";
+  public static final String GOOGLE_EARTH_PACKAGE = "com.google.earth";
+  public static final String GOOGLE_EARTH_MARKET_URL = "market://details?id="
+      + GOOGLE_EARTH_PACKAGE;
+  private static final String
+      GOOGLE_EARTH_TOUR_FEATURE_ID = "com.google.earth.EXTRA.tour_feature_id";
+  private static final String GOOGLE_EARTH_CLASS = "com.google.earth.EarthActivity";
 
+  private static final String TAG = SaveActivity.class.getSimpleName();
+  
   private static final int DIALOG_PROGRESS_ID = 0;
   private static final int DIALOG_RESULT_ID = 1;
 
@@ -206,11 +213,10 @@ public class SaveActivity extends Activity {
         startActivity(Intent.createChooser(intent, getString(R.string.share_track_picker_title)));
       } else if (playTrack) {
         Intent intent = new Intent()
-            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            .putExtra(PlayTrackUtils.TOUR_FEATURE_ID, KmlTrackWriter.TOUR_FEATURE_ID)
-            .setClassName(PlayTrackUtils.GOOGLE_EARTH_PACKAGE, PlayTrackUtils.GOOGLE_EARTH_CLASS)
-            .setDataAndType(Uri.fromFile(new File(filePath)), PlayTrackUtils.KML_MIME_TYPE);
+            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK)
+            .putExtra(GOOGLE_EARTH_TOUR_FEATURE_ID, KmlTrackWriter.TOUR_FEATURE_ID)
+            .setClassName(GOOGLE_EARTH_PACKAGE, GOOGLE_EARTH_CLASS)
+            .setDataAndType(Uri.fromFile(new File(filePath)), GOOGLE_EARTH_KML_MIME_TYPE);
         startActivity(intent);
       }
     }

@@ -24,6 +24,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.view.MenuItem;
 
 import java.io.IOException;
 
@@ -99,15 +100,54 @@ public interface ApiAdapter {
    * @param bluetoothDevice
    */
   public BluetoothSocket getBluetoothSocket(BluetoothDevice bluetoothDevice) throws IOException;
-  
- /**
-   * Shows the action bar, if the current system supports it.
-   * If it's not supported, the title bar will be kept hidden.
-   *
+
+  /**
+   * Hides the title. If the platform supports the action bar, do nothing.
+   * Ideally, with the action bar, we would like to collapse the navigation tabs
+   * into the action bar. However, collapsing is not supported by the
+   * compatibility library.
+   * <p>
+   * Due to changes in API level 11.
+   * 
+   * @param activity the activity
+   */
+  public void hideTitle(Activity activity);
+
+  /**
+   * Configures the action bar with the Home button as an Up button. If the
+   * platform doesn't support the action bar, do nothing.
+   * <p>
    * Due to changes in API level 11.
    *
-   * @param activity the current activity
+   * @param activity the activity
    */
-  public void showActionBar(Activity activity);
+  public void configureActionBarHomeAsUp(Activity activity);
 
+  /**
+   * Configures the search widget.
+   * 
+   * Due to changes in API level 11.
+   * 
+   * @param activity the activity
+   * @param menuItem the search menu item
+   */
+  public void configureSearchWidget(Activity activity, MenuItem menuItem);
+ 
+  /**
+   * Handles the search menu selection. Returns true if handled.
+   * 
+   * Due to changes in API level 11.
+   * 
+   * @param activity the activity
+   */
+  public boolean handleSearchMenuSelection(Activity activity);
+  
+  /**
+   * Handles the search key press. Returns true if handled.
+   * 
+   * Due to changes in API level 14.
+   * 
+   * @param menu the search menu
+   */
+  public boolean handleSearchKey(MenuItem menu);  
 }

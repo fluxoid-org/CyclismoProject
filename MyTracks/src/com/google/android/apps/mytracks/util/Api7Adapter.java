@@ -30,6 +30,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.Window;
 
 import java.io.IOException;
@@ -103,9 +104,29 @@ public class Api7Adapter implements ApiAdapter {
   }
 
   @Override
-  public void showActionBar(Activity activity) {
-    // Action bar not available, just hide the title and let actions be shown
-    // via the regular menu.
+  public void hideTitle(Activity activity) {
     activity.requestWindowFeature(Window.FEATURE_NO_TITLE);
+  }
+
+  @Override
+  public void configureActionBarHomeAsUp(Activity activity) {
+    // Do nothing
+  }
+
+  @Override
+  public void configureSearchWidget(Activity activity, MenuItem menuItem) {
+    // Do nothing
+  }
+
+  @Override
+  public boolean handleSearchMenuSelection(Activity activity) {
+    activity.onSearchRequested();
+    return true;
+  }
+  
+  @Override
+  public boolean handleSearchKey(MenuItem menuItem) {
+    // Return false and allow the framework to handle the search key.
+    return false;
   }
 }
