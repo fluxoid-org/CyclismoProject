@@ -88,7 +88,7 @@ public class SettingTest extends ActivityInstrumentationTestCase2<TrackListActiv
     EndToEndTestUtils.SOLO.clickOnCheckBox(0);
     instrumentation.waitForIdleSync();
     assertTrue(EndToEndTestUtils.SOLO.waitForText(
-        activityMyTracks.getString(R.string.settings_sharing_map_public), 1, 5000));
+        activityMyTracks.getString(R.string.settings_sharing_allow_access), 1, 5000));
     assertEquals(!newMapsPublic, sharingCheckBoxs.get(0).isChecked());
     EndToEndTestUtils.SOLO.goBack();
 
@@ -254,8 +254,12 @@ public class SettingTest extends ActivityInstrumentationTestCase2<TrackListActiv
     EndToEndTestUtils.SOLO.clickOnText(activityMyTracks
         .getString(R.string.settings_recording_default_activity));
     EndToEndTestUtils.SOLO.enterText(0, DEFAULTACTIVITY);
+    if(!EndToEndTestUtils.isEmulator) {
+      // Close soft keyboard.
+      EndToEndTestUtils.SOLO.goBack();
+    }
     EndToEndTestUtils.SOLO.clickOnText(activityMyTracks.getString(R.string.generic_ok));
-
+    
     EndToEndTestUtils.SOLO.goBack();
     EndToEndTestUtils.SOLO.goBack();
 
