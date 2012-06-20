@@ -36,14 +36,22 @@ limitations under the License.
     <item name="android:layout_gravity">center_vertical</item>
     <item name="android:layout_marginLeft">8dp</item>
     <item name="android:layout_width">0dp</item>
+    <item name="android:maxLines">5</item>
   </style>
   <!-- The style for choose upload service image view -->
   <style name="ChooseUploadServiceImageView">
+    <item name="android:layout_gravity">center</item>
     <item name="android:layout_height">wrap_content</item>
     <item name="android:layout_width">wrap_content</item>
   </style>
-  <!-- The style for the edit category -->
-  <style name="EditCategory" parent="@style/TextMedium">
+  <!-- The style for the editing marker category -->
+  <style name="EditCategoryMarker" parent="@style/TextMedium">
+    <item name="android:layout_width">fill_parent</item>
+    <item name="android:selectAllOnFocus">true</item>
+    <item name="android:singleLine">true</item>
+  </style>
+  <!-- The style for the editing track category -->
+  <style name="EditCategoryTrack" parent="@style/TextMedium.WithIcon">
     <item name="android:layout_width">fill_parent</item>
     <item name="android:selectAllOnFocus">true</item>
     <item name="android:singleLine">true</item>
@@ -62,8 +70,15 @@ limitations under the License.
   <style name="EditLabel.WithPaddingTop">
     <item name="android:paddingTop">16dp</item>
   </style>
-  <!-- The style for the edit name -->
-  <style name="EditName" parent="@style/TextMedium.WithIcon">
+  <!-- The style for editing marker name -->
+  <style name="EditNameMarker" parent="@style/TextMedium.WithIcon">
+    <item name="android:inputType">textAutoCorrect|textCapWords</item>
+    <item name="android:layout_width">fill_parent</item>
+    <item name="android:selectAllOnFocus">true</item>
+    <item name="android:singleLine">true</item>
+  </style>
+  <!-- The style for editing track name -->
+  <style name="EditNameTrack" parent="@style/TextMedium">
     <item name="android:inputType">textAutoCorrect|textCapWords</item>
     <item name="android:layout_width">fill_parent</item>
     <item name="android:selectAllOnFocus">true</item>
@@ -71,6 +86,7 @@ limitations under the License.
   </style>
   <!-- The style for the help answer -->
   <style name="HelpAnswer" parent="@style/TextSmall">
+    <item name="android:autoLink">web</item>
     <item name="android:paddingBottom">8dp</item>
   </style>
   <!-- The style for help question -->

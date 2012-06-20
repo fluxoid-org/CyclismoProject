@@ -420,7 +420,7 @@ public class TrackRecordingService extends Service {
 
     // Check if the last modified time is within the acceptable range.
     long lastModified =
-        track.getStatistics() != null ? track.getStatistics().getStopTime() : 0;
+        track.getTripStatistics() != null ? track.getTripStatistics().getStopTime() : 0;
     Log.d(TAG,
         "shouldResumeTrack: lastModified = " + lastModified
         + ", autoResumeTrackTimeout: " + autoResumeTrackTimeout);
@@ -579,7 +579,7 @@ public class TrackRecordingService extends Service {
     acquireWakeLock();
 
     Track track = new Track();
-    TripStatistics trackStats = track.getStatistics();
+    TripStatistics trackStats = track.getTripStatistics();
     trackStats.setStartTime(startTime);
     track.setStartId(-1);
     Uri trackUri = providerUtils.insertTrack(track);
@@ -620,7 +620,7 @@ public class TrackRecordingService extends Service {
     Log.d(TAG,
         "Restoring stats of track with ID: " + track.getId());
 
-    TripStatistics stats = track.getStatistics();
+    TripStatistics stats = track.getTripStatistics();
     statsBuilder = new TripStatisticsBuilder(stats.getStartTime());
     statsBuilder.setMinRecordingDistance(minRecordingDistance);
 
@@ -628,10 +628,10 @@ public class TrackRecordingService extends Service {
     lastValidLocation = null;
 
     Waypoint waypoint = providerUtils.getFirstWaypoint(recordingTrackId);
-    if (waypoint != null && waypoint.getStatistics() != null) {
+    if (waypoint != null && waypoint.getTripStatistics() != null) {
       currentWaypointId = waypoint.getId();
       waypointStatsBuilder = new TripStatisticsBuilder(
-          waypoint.getStatistics());
+          waypoint.getTripStatistics());
     } else {
       // This should never happen, but we got to do something so life goes on:
       waypointStatsBuilder = new TripStatisticsBuilder(stats.getStartTime());
@@ -1010,7 +1010,7 @@ public class TrackRecordingService extends Service {
       name = getString(R.string.marker_split_name_format, nextMarkerNumber);
     }
     waypoint.setName(name);
-    waypoint.setStatistics(waypointStatsBuilder.getStatistics());
+    waypoint.setTripStatistics(waypointStatsBuilder.getStatistics());
     waypoint.setDescription(descriptionGenerator.generateWaypointDescription(waypoint));
     waypoint.setIcon(getString(R.string.marker_statistics_icon_url));
 
@@ -1031,7 +1031,7 @@ public class TrackRecordingService extends Service {
     isRecording = false;
     Track recordedTrack = providerUtils.getTrack(recordingTrackId);
     if (recordedTrack != null) {
-      TripStatistics stats = recordedTrack.getStatistics();
+      TripStatistics stats = recordedTrack.getTripStatistics();
       stats.setStopTime(System.currentTimeMillis());
       stats.setTotalTime(stats.getStopTime() - stats.getStartTime());
       long lastRecordedLocationId =

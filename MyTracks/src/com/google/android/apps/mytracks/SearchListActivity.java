@@ -33,6 +33,7 @@ import com.google.android.apps.mytracks.util.IntentUtils;
 import com.google.android.apps.mytracks.util.ListItemUtils;
 import com.google.android.apps.mytracks.util.PreferencesUtils;
 import com.google.android.apps.mytracks.util.StringUtils;
+import com.google.android.apps.mytracks.util.TrackIconUtils;
 import com.google.android.apps.mytracks.util.TrackRecordingServiceConnectionUtils;
 import com.google.android.maps.mytracks.R;
 
@@ -419,9 +420,10 @@ public class SearchListActivity extends AbstractMyTracksActivity implements Dele
    */
   private void prepareTrackForDisplay(Track track, Map<String, Object> resultMap) {
     boolean isRecording = track.getId() == recordingTrackId;
-    TripStatistics tripStatitics = track.getStatistics();
+    TripStatistics tripStatitics = track.getTripStatistics();
     resultMap.put(NAME_FIELD, track.getName());
-    resultMap.put(ICON_FIELD, isRecording ? R.drawable.menu_record_track : R.drawable.track);
+    resultMap.put(ICON_FIELD, isRecording 
+        ? R.drawable.menu_record_track : TrackIconUtils.getIconDrawable(track.getIcon()));
     resultMap.put(ICON_CONTENT_DESCRIPTION_FIELD, getString(isRecording ? R.string.icon_recording
         : R.string.icon_track));
     resultMap.put(CATEGORY_FIELD, track.getCategory());

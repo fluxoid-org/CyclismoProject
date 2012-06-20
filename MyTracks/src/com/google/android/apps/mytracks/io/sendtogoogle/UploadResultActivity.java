@@ -46,6 +46,8 @@ public class UploadResultActivity extends FragmentActivity {
   private static final String TAG = UploadResultActivity.class.getSimpleName();
   @VisibleForTesting
   static final int DIALOG_RESULT_ID = 0;
+  @VisibleForTesting
+  protected View view;
 
   private SendRequest sendRequest;
   private String shareUrl;
@@ -86,7 +88,7 @@ public class UploadResultActivity extends FragmentActivity {
     if (id != DIALOG_RESULT_ID) {
       return null;
     }
-    View view = getLayoutInflater().inflate(R.layout.upload_result, null);
+    view = getLayoutInflater().inflate(R.layout.upload_result, null);
 
     LinearLayout mapsResult = (LinearLayout) view.findViewById(R.id.upload_result_maps_result);
     LinearLayout fusionTablesResult = (LinearLayout) view.findViewById(
@@ -172,8 +174,4 @@ public class UploadResultActivity extends FragmentActivity {
     return resultDialog;
   }
 
-  @VisibleForTesting
-  Dialog getDialog() {
-    return resultDialog;
-  }
 }

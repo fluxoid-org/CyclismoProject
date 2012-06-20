@@ -16,7 +16,7 @@ limitations under the License.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   android:installLocation="auto"
-  android:versionCode="43"
+  android:versionCode="44"
   android:versionName="2.0"
   package="com.google.android.maps.mytracks" >
 
@@ -126,6 +126,7 @@ limitations under the License.
   <application
     android:backupAgent="com.google.android.apps.mytracks.io.backup.MyTracksBackupAgent"
     android:icon="@drawable/my_tracks_icon"
+    android:hardwareAccelerated="true"
     android:label="@string/my_tracks_app_name"
     android:name="com.google.android.apps.mytracks.MyTracksApplication"
     android:theme="@style/ThemeSelector" >
@@ -204,6 +205,7 @@ limitations under the License.
       android:name="com.google.android.apps.mytracks.io.maps.ChooseMapActivity" />
     <activity android:name="com.google.android.apps.mytracks.io.maps.SendMapsActivity" />
     <activity android:name="com.google.android.apps.mytracks.io.sendtogoogle.AccountChooserActivity" />
+    <activity android:name="com.google.android.apps.mytracks.io.sendtogoogle.ConfirmSharingActivity" />
     <activity android:name="com.google.android.apps.mytracks.io.sendtogoogle.UploadResultActivity" />
     <activity android:name="com.google.android.apps.mytracks.settings.BackupSettingsActivity" />
     <activity android:name="com.google.android.apps.mytracks.settings.ChartSettingsActivity" />

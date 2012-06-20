@@ -35,6 +35,7 @@ import com.google.android.apps.mytracks.util.IntentUtils;
 import com.google.android.apps.mytracks.util.ListItemUtils;
 import com.google.android.apps.mytracks.util.PreferencesUtils;
 import com.google.android.apps.mytracks.util.StringUtils;
+import com.google.android.apps.mytracks.util.TrackIconUtils;
 import com.google.android.apps.mytracks.util.TrackRecordingServiceConnectionUtils;
 import com.google.android.maps.mytracks.R;
 
@@ -78,11 +79,12 @@ public class TrackListActivity extends FragmentActivity implements DeleteOneTrac
   private static final String[] PROJECTION = new String[] {
       TracksColumns._ID,
       TracksColumns.NAME,
+      TracksColumns.DESCRIPTION,
       TracksColumns.CATEGORY,
-      TracksColumns.TOTALTIME,
-      TracksColumns.TOTALDISTANCE,
       TracksColumns.STARTTIME,
-      TracksColumns.DESCRIPTION };
+      TracksColumns.TOTALDISTANCE,
+      TracksColumns.TOTALTIME,
+      TracksColumns.ICON};
 
   // Callback when the trackRecordingServiceConnection binding changes.
   private final Runnable bindChangedCallback = new Runnable() {
@@ -211,23 +213,25 @@ public class TrackListActivity extends FragmentActivity implements DeleteOneTrac
       public void bindView(View view, Context context, Cursor cursor) {
         int idIndex = cursor.getColumnIndex(TracksColumns._ID);
         int nameIndex = cursor.getColumnIndex(TracksColumns.NAME);
-        int categoryIndex = cursor.getColumnIndex(TracksColumns.CATEGORY);
-        int timeIndex = cursor.getColumnIndexOrThrow(TracksColumns.TOTALTIME);
-        int distanceIndex = cursor.getColumnIndexOrThrow(TracksColumns.TOTALDISTANCE);
-        int startIndex = cursor.getColumnIndexOrThrow(TracksColumns.STARTTIME);
         int descriptionIndex = cursor.getColumnIndex(TracksColumns.DESCRIPTION);
-
+        int categoryIndex = cursor.getColumnIndex(TracksColumns.CATEGORY);
+        int startTimeIndex = cursor.getColumnIndexOrThrow(TracksColumns.STARTTIME);
+        int totalDistanceIndex = cursor.getColumnIndexOrThrow(TracksColumns.TOTALDISTANCE);
+        int totalTimeIndex = cursor.getColumnIndexOrThrow(TracksColumns.TOTALTIME);
+        int iconIndex = cursor.getColumnIndex(TracksColumns.ICON);
+        
         boolean isRecording = cursor.getLong(idIndex) == recordingTrackId;
         String name = cursor.getString(nameIndex);
-        int iconId = isRecording ? R.drawable.menu_record_track : R.drawable.track;
+        int iconId = isRecording ? R.drawable.menu_record_track
+            : TrackIconUtils.getIconDrawable(cursor.getString(iconIndex));
         String iconContentDescription = getString(isRecording ? R.string.icon_recording
             : R.string.icon_track);
         String category = cursor.getString(categoryIndex);
         String totalTime = isRecording 
-            ? null : StringUtils.formatElapsedTime(cursor.getLong(timeIndex));
+            ? null : StringUtils.formatElapsedTime(cursor.getLong(totalTimeIndex));
         String totalDistance = isRecording ? null : StringUtils.formatDistance(
-            TrackListActivity.this, cursor.getDouble(distanceIndex), metricUnits);
-        long startTime = cursor.getLong(startIndex);
+            TrackListActivity.this, cursor.getDouble(totalDistanceIndex), metricUnits);
+        long startTime = cursor.getLong(startTimeIndex);
         String description = cursor.getString(descriptionIndex);
         ListItemUtils.setListItem(TrackListActivity.this,
             view,
