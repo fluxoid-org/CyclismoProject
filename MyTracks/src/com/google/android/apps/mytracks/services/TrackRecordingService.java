@@ -92,7 +92,7 @@ public class TrackRecordingService extends Service {
   // The following variables are set in onCreate:
   private Context context;
   private MyTracksProviderUtils myTracksProviderUtils;
-  private LocationManager locationManager;
+  private MyTracksLocationManager myTracksLocationManager;
   private PeriodicTaskExecutor announcementExecutor;
   private PeriodicTaskExecutor splitExecutor;
   private ExecutorService executorService;
@@ -238,7 +238,8 @@ public class TrackRecordingService extends Service {
 
       @Override
     public void onLocationChanged(final Location location) {
-      if (executorService.isShutdown() || executorService.isTerminated()) {
+      if (!myTracksLocationManager.isAllowed() || executorService.isShutdown()
+          || executorService.isTerminated()) {
         return;
       }
       executorService.submit(new Runnable() {
@@ -276,7 +277,7 @@ public class TrackRecordingService extends Service {
     super.onCreate();
     context = this;
     myTracksProviderUtils = MyTracksProviderUtils.Factory.get(this);
-    locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+    myTracksLocationManager = new MyTracksLocationManager(this);
     announcementExecutor = new PeriodicTaskExecutor(this, new AnnouncementPeriodicTaskFactory());
     splitExecutor = new PeriodicTaskExecutor(this, new SplitPeriodicTaskFactory());
     executorService = Executors.newSingleThreadExecutor();
@@ -371,7 +372,8 @@ public class TrackRecordingService extends Service {
 
     // Make sure we have no indirect references to this service.
     myTracksProviderUtils = null;
-    locationManager = null;
+    myTracksLocationManager.close();
+    myTracksLocationManager = null;
     binder.detachFromService();
     binder = null;
 
@@ -884,13 +886,13 @@ public class TrackRecordingService extends Service {
    * Registers the location listener.
    */
   private void registerLocationListener() {
-    if (locationManager == null) {
+    if (myTracksLocationManager == null) {
       Log.e(TAG, "locationManager is null.");
       return;
     }
     try {
       long interval = locationListenerPolicy.getDesiredPollingInterval();
-      locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, interval,
+      myTracksLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, interval,
           locationListenerPolicy.getMinDistance(), locationListener);
       currentRecordingInterval = interval;
     } catch (RuntimeException e) {
@@ -902,11 +904,11 @@ public class TrackRecordingService extends Service {
    * Unregisters the location manager.
    */
   private void unregisterLocationListener() {
-    if (locationManager == null) {
+    if (myTracksLocationManager == null) {
       Log.e(TAG, "locationManager is null.");
       return;
     }
-    locationManager.removeUpdates(locationListener);
+    myTracksLocationManager.removeUpdates(locationListener);
   }
 
   /**

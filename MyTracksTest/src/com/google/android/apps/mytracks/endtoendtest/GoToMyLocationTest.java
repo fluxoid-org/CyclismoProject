@@ -16,6 +16,7 @@
 package com.google.android.apps.mytracks.endtoendtest;
 
 import com.google.android.apps.mytracks.TrackListActivity;
+import com.google.android.apps.mytracks.util.GoogleLocationUtils;
 import com.google.android.maps.mytracks.R;
 
 import android.app.Activity;
@@ -54,8 +55,11 @@ public class GoToMyLocationTest extends ActivityInstrumentationTestCase2<TrackLi
   public void testGotoMyLocation() {
     findAndClickMyLocation(activityMyTracks);
     if (EndToEndTestUtils.isEmulator) {
+      String setting = activityMyTracks.getString(
+          GoogleLocationUtils.isAvailable(activityMyTracks) ? R.string.gps_google_location_settings
+              : R.string.gps_location_access);
       EndToEndTestUtils.SOLO.waitForText(
-          activityMyTracks.getString(R.string.my_location_no_location), 1,
+          activityMyTracks.getString(R.string.my_location_no_gps, setting), 1,
           EndToEndTestUtils.SHORT_WAIT_TIME);
     } else {
       // TODO How to verify the location is shown on the map.

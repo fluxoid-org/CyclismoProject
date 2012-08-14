@@ -19,6 +19,8 @@ package com.google.android.apps.mytracks.content;
 import static com.google.android.apps.mytracks.Constants.MAX_LOCATION_AGE_MS;
 
 import com.google.android.apps.mytracks.Constants;
+import com.google.android.apps.mytracks.services.MyTracksLocationManager;
+import com.google.android.apps.mytracks.util.GoogleLocationUtils;
 import com.google.android.maps.mytracks.R;
 
 import android.content.ContentResolver;
@@ -48,16 +50,24 @@ public class DataSource {
 
   private final Context context;
   private final ContentResolver contentResolver;
-  private final LocationManager locationManager;
+  private final MyTracksLocationManager myTracksLocationManager;
   private final SensorManager sensorManager;
   private final SharedPreferences sharedPreferences;
   
   public DataSource(Context context) {
     this.context = context;
     contentResolver = context.getContentResolver();
-    locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+    myTracksLocationManager = new MyTracksLocationManager(context);
     sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
     sharedPreferences = context.getSharedPreferences(Constants.SETTINGS_NAME, Context.MODE_PRIVATE);
+  }
+
+  public void close() {
+    myTracksLocationManager.close();
+  }
+
+  public boolean isAllowed() {
+    return myTracksLocationManager.isAllowed();
   }
 
   /**
@@ -86,17 +96,17 @@ public class DataSource {
    */
   public void registerLocationListener(LocationListener listener) {
     // Check if the GPS provider exists
-    if (locationManager.getProvider(LocationManager.GPS_PROVIDER) == null) {
+    if (myTracksLocationManager.getProvider(LocationManager.GPS_PROVIDER) == null) {
       listener.onProviderDisabled(LocationManager.GPS_PROVIDER);
       unregisterLocationListener(listener);
       return;
     }
 
     // Listen for GPS location
-    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, listener);
+    myTracksLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, listener);
 
     // Update the listener with the current provider state
-    if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+    if (myTracksLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
       listener.onProviderEnabled(LocationManager.GPS_PROVIDER);
     } else {
       listener.onProviderDisabled(LocationManager.GPS_PROVIDER);
@@ -104,7 +114,7 @@ public class DataSource {
 
     // Listen for network location
     try {
-      locationManager.requestLocationUpdates(
+      myTracksLocationManager.requestLocationUpdates(
           LocationManager.NETWORK_PROVIDER, NETWORK_PROVIDER_MIN_TIME, 0, listener);
     } catch (RuntimeException e) {
       // Network location is optional, so just log the exception
@@ -118,20 +128,27 @@ public class DataSource {
    * @param listener the listener
    */
   public void unregisterLocationListener(LocationListener listener) {
-    locationManager.removeUpdates(listener);
+    myTracksLocationManager.removeUpdates(listener);
   }
 
   /**
    * Gets the last known location.
    */
   public Location getLastKnownLocation() {
-    Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+    Location location = myTracksLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
     if (!isLocationRecent(location)) {
       // Try network location
-      location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-      int id = isLocationRecent(location) 
-          ? R.string.my_location_approximate_location : R.string.my_location_no_location;
-      Toast.makeText(context, id, Toast.LENGTH_LONG).show();
+      location = myTracksLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+      String toast;
+      if (isLocationRecent(location)) {
+        toast = context.getString(R.string.my_location_approximate_location);
+      } else {
+        String setting = context.getString(
+            GoogleLocationUtils.isAvailable(context) ? R.string.gps_google_location_settings
+                : R.string.gps_location_access);
+        toast = context.getString(R.string.my_location_no_gps, setting);
+      }
+      Toast.makeText(context, toast, Toast.LENGTH_LONG).show();
     }
     return location;
   }

@@ -163,6 +163,7 @@ public class TrackDataHub implements DataSourceListener {
 
     handlerThread = null;
     handler = null;
+    dataSource.close();
     dataSource = null;
     dataSourceManager = null;
   }

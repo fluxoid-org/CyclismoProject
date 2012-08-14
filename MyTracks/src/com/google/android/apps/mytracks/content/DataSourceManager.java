@@ -107,6 +107,9 @@ public class DataSourceManager {
 
     @Override
     public void onLocationChanged(Location location) {
+      if (!dataSource.isAllowed()) {
+        return;
+      }
       dataSourceListener.notifyLocationChanged(location);
     }
 
@@ -120,7 +123,7 @@ public class DataSourceManager {
 
     @Override
     public void onProviderEnabled(String provider) {
-      if (!LocationManager.GPS_PROVIDER.equals(provider)) {
+      if (!dataSource.isAllowed() || !LocationManager.GPS_PROVIDER.equals(provider)) {
         return;
       }
       dataSourceListener.notifyLocationProviderEnabled(true);
@@ -128,7 +131,7 @@ public class DataSourceManager {
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-      if (!LocationManager.GPS_PROVIDER.equals(provider)) {
+      if (!dataSource.isAllowed() || !LocationManager.GPS_PROVIDER.equals(provider)) {
         return;
       }
       dataSourceListener.notifyLocationProviderAvailable(status == LocationProvider.AVAILABLE);
