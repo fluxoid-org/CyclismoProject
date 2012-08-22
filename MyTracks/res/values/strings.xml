@@ -1073,6 +1073,12 @@ limitations under the License.
       Character limit: ~21 (1 line)">
     Markers
   </string>
+  <string name="menu_pause_track"
+    translation_description="In the menu, to pause a track.
+
+      Character limit: ~21 (1 line)">
+    Pause track
+  </string>
   <string name="menu_play"
     translation_description="In the menu, to play a track.
 
@@ -2032,13 +2038,6 @@ limitations under the License.
       Character limit: ~23 (1 line)">
     Preferred rate
   </string>
-  <string name="settings_stats_time_title"
-    translation_description="In the 'Stats' settings, the option to change the time measurement,
-      either total time or moving time.
-
-      Character limit: ~23 (1 line)">
-    Time measurement
-  </string>
   <string name="settings_stats_units_imperial"
     translation_description="In the 'Stats' settings, the option to use imperial units, with
       examples.">
@@ -2226,6 +2225,10 @@ limitations under the License.
   <string name="track_detail_stats_tab"
     translation_description="In the track detail page, the title of the tab showing the stats.">
     Stats
+  </string>
+  <string name="track_detail_title_paused"
+    translation_description="In the track detail page, the title when paused.">
+    Paused
   </string>
   <string name="track_detail_title_recording"
     translation_description="In the track detail page, the title when recording.">

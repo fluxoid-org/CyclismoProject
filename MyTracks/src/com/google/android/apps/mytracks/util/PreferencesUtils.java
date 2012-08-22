@@ -68,6 +68,7 @@ public class PreferencesUtils {
 
   public static final boolean PICK_EXISTING_MAP_DEFAULT = false;
   public static final long RECORDING_TRACK_ID_DEFAULT = -1L;
+  public static final boolean RECORDING_TRACK_PAUSED_DEFAULT = true;
   public static final boolean REPORT_SPEED_DEFAULT = true;
   public static final long SELECTED_TRACK_ID_DEFAULT = -1L;
   public static final boolean SEND_TO_DOCS_DEFAULT = true;
@@ -79,7 +80,7 @@ public class PreferencesUtils {
   public static final boolean STATS_SHOW_COORDINATE_DEFAULT = false;
   public static final boolean STATS_SHOW_ELEVATION_DEFAULT = false;
   public static final boolean STATS_SHOW_GRADE_DEFAULT = false;
-  public static final boolean STATS_USE_TOTAL_TIME_DEFAULT = true;
+  public static final boolean STATS_SHOW_MOVING_TIME_DEFAULT = false;
 
   public static final int TRACK_COLOR_MODE_MEDIUM_DEFAULT = 15;
   public static final int TRACK_COLOR_MODE_PERCENTAGE_DEFAULT = 25;

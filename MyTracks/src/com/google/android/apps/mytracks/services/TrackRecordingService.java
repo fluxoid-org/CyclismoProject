@@ -82,6 +82,9 @@ import java.util.concurrent.Executors;
 public class TrackRecordingService extends Service {
 
   private static final String TAG = TrackRecordingService.class.getSimpleName();
+  public static final int PAUSE_LATITUDE = 100;
+  private static final int RESUME_LATITUDE = 200;
+
   // One second in milliseconds
   private static final long ONE_SECOND = 1000;
   // One minute in milliseconds
@@ -98,31 +101,21 @@ public class TrackRecordingService extends Service {
   private ExecutorService executorService;
   private SharedPreferences sharedPreferences;
   private long recordingTrackId;
+  private boolean recordingTrackPaused;
   private LocationListenerPolicy locationListenerPolicy;
   private int minRecordingDistance;
   private int maxRecordingDistance;
   private int minRequiredAccuracy;
   private int autoResumeTrackTimeout;
   private long currentRecordingInterval;
-  private Track recordingTrack;
 
   // The following variables are set when recording:
-
-  /*
-   * Track length. Calculated from the recorded points to overlay waypoints
-   * precisely on the elevation chart.
-   */
-  private double length;
-
-  // Used for length calculation
-  private Location lastLengthLocation;
-
   private TripStatisticsBuilder trackTripStatisticsBuilder;
   private TripStatisticsBuilder markerTripStatisticsBuilder;
   private WakeLock wakeLock;
-  private Location lastLocation;
-  private boolean isMoving;
   private SensorManager sensorManager;
+  private Location lastLocation;
+  private boolean currentSegmentHasLocation;
 
   // Timer to periodically invoke checkLocationListener
   private final Timer timer = new Timer();
@@ -141,36 +134,42 @@ public class TrackRecordingService extends Service {
           @Override
         public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
           if (key == null
-              || PreferencesUtils.getKey(context, R.string.recording_track_id_key).equals(key)) {
-            long id = PreferencesUtils.getLong(context, R.string.recording_track_id_key);
+              || key.equals(PreferencesUtils.getKey(context, R.string.recording_track_id_key))) {
+            long trackId = PreferencesUtils.getLong(context, R.string.recording_track_id_key);
             /*
-             * Only the TrackRecordingService can stop a recording and set the
-             * recordingTrackId to -1L.
+             * Only through the TrackRecordingService can one stop a recording
+             * and set the recordingTrackId to -1L.
              */
-            if (id != PreferencesUtils.RECORDING_TRACK_ID_DEFAULT) {
-              recordingTrackId = id;
+            if (trackId != PreferencesUtils.RECORDING_TRACK_ID_DEFAULT) {
+              recordingTrackId = trackId;
             }
           }
+          if (key == null || key.equals(
+              PreferencesUtils.getKey(context, R.string.recording_track_paused_key))) {
+            recordingTrackPaused = PreferencesUtils.getBoolean(context,
+                R.string.recording_track_paused_key,
+                PreferencesUtils.RECORDING_TRACK_PAUSED_DEFAULT);
+          }
           if (key == null
-              || PreferencesUtils.getKey(context, R.string.metric_units_key).equals(key)) {
+              || key.equals(PreferencesUtils.getKey(context, R.string.metric_units_key))) {
             boolean metricUnits = PreferencesUtils.getBoolean(
                 context, R.string.metric_units_key, PreferencesUtils.METRIC_UNITS_DEFAULT);
             announcementExecutor.setMetricUnits(metricUnits);
             splitExecutor.setMetricUnits(metricUnits);
           }
-          if (key == null || PreferencesUtils.getKey(context, R.string.announcement_frequency_key)
-              .equals(key)) {
+          if (key == null || key.equals(
+              PreferencesUtils.getKey(context, R.string.announcement_frequency_key))) {
             announcementExecutor.setTaskFrequency(PreferencesUtils.getInt(
                 context, R.string.announcement_frequency_key,
                 PreferencesUtils.ANNOUNCEMENT_FREQUENCY_DEFAULT));
           }
           if (key == null
-              || PreferencesUtils.getKey(context, R.string.split_frequency_key).equals(key)) {
+              || key.equals(PreferencesUtils.getKey(context, R.string.split_frequency_key))) {
             splitExecutor.setTaskFrequency(PreferencesUtils.getInt(
                 context, R.string.split_frequency_key, PreferencesUtils.SPLIT_FREQUENCY_DEFAULT));
           }
-          if (key == null || PreferencesUtils.getKey(context, R.string.min_recording_interval_key)
-              .equals(key)) {
+          if (key == null || key.equals(
+              PreferencesUtils.getKey(context, R.string.min_recording_interval_key))) {
             int minRecordingInterval = PreferencesUtils.getInt(context,
                 R.string.min_recording_interval_key,
                 PreferencesUtils.MIN_RECORDING_INTERVAL_DEFAULT);
@@ -190,29 +189,25 @@ public class TrackRecordingService extends Service {
                     minRecordingInterval * ONE_SECOND);
             }
           }
-          if (key == null || PreferencesUtils.getKey(context, R.string.min_recording_distance_key)
-              .equals(key)) {
+          if (key == null || key.equals(
+              PreferencesUtils.getKey(context, R.string.min_recording_distance_key))) {
             minRecordingDistance = PreferencesUtils.getInt(context,
                 R.string.min_recording_distance_key,
                 PreferencesUtils.MIN_RECORDING_DISTANCE_DEFAULT);
-            if (trackTripStatisticsBuilder != null && markerTripStatisticsBuilder != null) {
-              trackTripStatisticsBuilder.setMinRecordingDistance(minRecordingDistance);
-              markerTripStatisticsBuilder.setMinRecordingDistance(minRecordingDistance);
-            }
           }
-          if (key == null || PreferencesUtils.getKey(context, R.string.max_recording_distance_key)
-              .equals(key)) {
+          if (key == null || key.equals(
+              PreferencesUtils.getKey(context, R.string.max_recording_distance_key))) {
             maxRecordingDistance = PreferencesUtils.getInt(context,
                 R.string.max_recording_distance_key,
                 PreferencesUtils.MAX_RECORDING_DISTANCE_DEFAULT);
           }
           if (key == null
-              || PreferencesUtils.getKey(context, R.string.min_required_accuracy_key).equals(key)) {
+              || key.equals(PreferencesUtils.getKey(context, R.string.min_required_accuracy_key))) {
             minRequiredAccuracy = PreferencesUtils.getInt(context,
                 R.string.min_required_accuracy_key, PreferencesUtils.MIN_REQUIRED_ACCURACY_DEFAULT);
           }
-          if (key == null || PreferencesUtils.getKey(
-              context, R.string.auto_resume_track_timeout_key).equals(key)) {
+          if (key == null || key.equals(
+              PreferencesUtils.getKey(context, R.string.auto_resume_track_timeout_key))) {
             autoResumeTrackTimeout = PreferencesUtils.getInt(context,
                 R.string.auto_resume_track_timeout_key,
                 PreferencesUtils.AUTO_RESUME_TRACK_TIMEOUT_DEFAULT);
@@ -238,7 +233,8 @@ public class TrackRecordingService extends Service {
 
       @Override
     public void onLocationChanged(final Location location) {
-      if (!myTracksLocationManager.isAllowed() || executorService.isShutdown()
+      if (myTracksLocationManager == null || executorService == null
+          || !myTracksLocationManager.isAllowed() || executorService.isShutdown()
           || executorService.isTerminated()) {
         return;
       }
@@ -254,10 +250,9 @@ public class TrackRecordingService extends Service {
   private TimerTask checkLocationListener = new TimerTask() {
       @Override
     public void run() {
-      if (isRecording()) {
+      if (isRecording() && !isPaused()) {
         handler.post(new Runnable() {
           public void run() {
-            unregisterLocationListener();
             registerLocationListener();
           }
         });
@@ -290,23 +285,19 @@ public class TrackRecordingService extends Service {
     // Require announcementExecutor and splitExecutor to be created.
     sharedPreferenceChangeListener.onSharedPreferenceChanged(sharedPreferences, null);
 
-    // Require locationManager and all preferences set.
-    registerLocationListener();
-
     timer.schedule(checkLocationListener, 5 * ONE_MINUTE, ONE_MINUTE);
 
     /*
      * Try to restart the previous recording track in case the service has been
      * restarted by the system, which can sometimes happen.
      */
-    recordingTrack = myTracksProviderUtils.getTrack(recordingTrackId);
-    if (recordingTrack != null) {
-      restartTrack(recordingTrack);
+    Track track = myTracksProviderUtils.getTrack(recordingTrackId);
+    if (track != null) {
+      restartTrack(track);
     } else {
-      if (recordingTrackId != PreferencesUtils.RECORDING_TRACK_ID_DEFAULT) {
-        Log.w(TAG, "recordingTrackId not -1L, but recordingTrack is null. " + recordingTrackId);
-        recordingTrackId = PreferencesUtils.RECORDING_TRACK_ID_DEFAULT;
-        PreferencesUtils.setLong(this, R.string.recording_track_id_key, recordingTrackId);
+      if (isRecording()) {
+        Log.w(TAG, "track is null, but recordingTrackId not -1L. " + recordingTrackId);
+        updateRecordingState(PreferencesUtils.RECORDING_TRACK_ID_DEFAULT, true);
       }
       showNotification();
     }
@@ -396,6 +387,13 @@ public class TrackRecordingService extends Service {
   }
 
   /**
+   * Returns true if the current recording is paused.
+   */
+  public boolean isPaused() {
+    return recordingTrackPaused;
+  }
+
+  /**
    * Gets the trip statistics.
    */
   public TripStatistics getTripStatistics() {
@@ -412,11 +410,11 @@ public class TrackRecordingService extends Service {
    * @return the waypoint id
    */
   public long insertWaypoint(WaypointCreationRequest waypointCreationRequest) {
-    if (!isRecording()) {
-      throw new IllegalStateException("Cannot insert marker when not recording!");
+    if (!isRecording() || isPaused()) {
+      return -1L;
     }
-    boolean isStatistics = waypointCreationRequest.getType() == WaypointType.STATISTICS;
 
+    boolean isStatistics = waypointCreationRequest.getType() == WaypointType.STATISTICS;
     String name;
     if (waypointCreationRequest.getName() != null) {
       name = waypointCreationRequest.getName();
@@ -435,7 +433,7 @@ public class TrackRecordingService extends Service {
     String description;
     if (isStatistics) {
       long now = System.currentTimeMillis();
-      markerTripStatisticsBuilder.pauseAt(now);
+      markerTripStatisticsBuilder.updateTime(now);
       tripStatistics = markerTripStatisticsBuilder.getTripStatistics();
       markerTripStatisticsBuilder = new TripStatisticsBuilder(now);
       description = new DescriptionGeneratorImpl(this).generateWaypointDescription(tripStatistics);
@@ -452,24 +450,27 @@ public class TrackRecordingService extends Service {
     String icon = getString(
         isStatistics ? R.string.marker_statistics_icon_url : R.string.marker_waypoint_icon_url);
     int type = isStatistics ? Waypoint.TYPE_STATISTICS : Waypoint.TYPE_WAYPOINT;
-
     long duration;
-    Location location = myTracksProviderUtils.getLastTrackLocation(recordingTrackId);
-    if (location != null && trackTripStatisticsBuilder != null
-        && trackTripStatisticsBuilder.getTripStatistics() != null) {
-      duration = location.getTime() - trackTripStatisticsBuilder.getTripStatistics().getStartTime();
+    double length;
+    Location lastTrackLocation = myTracksProviderUtils.getLastTrackLocation(recordingTrackId);
+    if (currentSegmentHasLocation && LocationUtils.isValidLocation(lastTrackLocation)
+        && trackTripStatisticsBuilder != null) {
+      TripStatistics stats = trackTripStatisticsBuilder.getTripStatistics();
+      length = stats.getTotalDistance();
+      duration = stats.getTotalTime();
     } else {
       if (!waypointCreationRequest.isTrackStatistics()) {
         return -1L;
       }
       // For track statistics, make it an impossible location
-      location = new Location("");
-      location.setLatitude(100);
-      location.setLongitude(180);
+      lastTrackLocation = new Location("");
+      lastTrackLocation.setLatitude(100);
+      lastTrackLocation.setLongitude(180);
+      length = 0;
       duration = 0;
     }
     Waypoint waypoint = new Waypoint(name, description, category, icon, recordingTrackId, type,
-        length, duration, -1L, -1L, location, tripStatistics);
+        length, duration, -1L, -1L, lastTrackLocation, tripStatistics);
     Uri uri = myTracksProviderUtils.insertWaypoint(waypoint);
     return Long.parseLong(uri.getLastPathSegment());
   }
@@ -501,9 +502,9 @@ public class TrackRecordingService extends Service {
   private void handleStartCommand(Intent intent, int startId) {
     // Check if the service is called to resume track (from phone reboot)
     if (intent != null && intent.getBooleanExtra(RESUME_TRACK_EXTRA_NAME, false)) {
-      if (!shouldResumeTrack(recordingTrack)) {
+      if (!shouldResumeTrack()) {
         Log.i(TAG, "Stop resume track.");
-        stopRecording();
+        updateRecordingState(PreferencesUtils.RECORDING_TRACK_ID_DEFAULT, true);
         stopSelfResult(startId);
         return;
       }
@@ -512,10 +513,10 @@ public class TrackRecordingService extends Service {
 
   /**
    * Returns true if should resume.
-   * 
-   * @param track the track
    */
-  private boolean shouldResumeTrack(Track track) {
+  private boolean shouldResumeTrack() {
+    Track track = myTracksProviderUtils.getTrack(recordingTrackId);
+
     if (track == null) {
       Log.d(TAG, "Not resuming. Track is null.");
       return false;
@@ -556,33 +557,29 @@ public class TrackRecordingService extends Service {
       return -1L;
     }
     long now = System.currentTimeMillis();
-    length = 0;
-    lastLengthLocation = null;
     trackTripStatisticsBuilder = new TripStatisticsBuilder(now);
-    trackTripStatisticsBuilder.setMinRecordingDistance(minRecordingDistance);
     markerTripStatisticsBuilder = new TripStatisticsBuilder(now);
-    markerTripStatisticsBuilder.setMinRecordingDistance(minRecordingDistance);
 
+    // Insert a track
     Track track = new Track();
-    track.setStartId(-1L);
-    TripStatistics tripStatistics = track.getTripStatistics();
-    tripStatistics.setStartTime(now);
     Uri uri = myTracksProviderUtils.insertTrack(track);
+    long trackId = Long.parseLong(uri.getLastPathSegment());
 
-    recordingTrackId = Long.parseLong(uri.getLastPathSegment());
-    track.setId(recordingTrackId);
-    track.setName(TrackNameUtils.getTrackName(this, recordingTrackId, now, null));
-    track.setCategory(PreferencesUtils.getString(
-        this, R.string.default_activity_key, PreferencesUtils.DEFAULT_ACTIVITY_DEFAULT));
-    myTracksProviderUtils.updateTrack(track);
-
-    insertWaypoint(WaypointCreationRequest.DEFAULT_START_TRACK);
-    PreferencesUtils.setLong(this, R.string.recording_track_id_key, recordingTrackId);
+    // Update shared preferences
+    updateRecordingState(trackId, false);
     PreferencesUtils.setInt(this, R.string.auto_resume_track_current_retry_key, 0);
 
-    registerLocationListener();
-    startRecording();
-    return recordingTrackId;
+    // Update database
+    track.setId(trackId);
+    track.setName(TrackNameUtils.getTrackName(this, trackId, now, null));
+    track.setCategory(PreferencesUtils.getString(
+        this, R.string.default_activity_key, PreferencesUtils.DEFAULT_ACTIVITY_DEFAULT));
+    track.setTripStatistics(trackTripStatisticsBuilder.getTripStatistics());
+    myTracksProviderUtils.updateTrack(track);
+    insertWaypoint(WaypointCreationRequest.DEFAULT_START_TRACK);
+
+    startRecording(true);
+    return trackId;
   }
 
   /**
@@ -593,11 +590,8 @@ public class TrackRecordingService extends Service {
   private void restartTrack(Track track) {
     Log.d(TAG, "Restarting track: " + track.getId());
 
-    length = 0;
-    lastLengthLocation = null;
     TripStatistics tripStatistics = track.getTripStatistics();
     trackTripStatisticsBuilder = new TripStatisticsBuilder(tripStatistics.getStartTime());
-    trackTripStatisticsBuilder.setMinRecordingDistance(minRecordingDistance);
 
     long markerStartTime;
     Waypoint waypoint = myTracksProviderUtils.getLastStatisticsWaypoint(recordingTrackId);
@@ -607,10 +601,10 @@ public class TrackRecordingService extends Service {
       markerStartTime = tripStatistics.getStartTime();
     }
     markerTripStatisticsBuilder = new TripStatisticsBuilder(markerStartTime);
-    markerTripStatisticsBuilder.setMinRecordingDistance(minRecordingDistance);
 
     Cursor cursor = null;
     try {
+      // TODO: how to handle very long track.
       cursor = myTracksProviderUtils.getLocationsCursor(
           recordingTrackId, -1, Constants.MAX_LOADED_TRACK_POINTS, true);
       if (cursor == null) {
@@ -619,20 +613,12 @@ public class TrackRecordingService extends Service {
         if (cursor.moveToLast()) {
           do {
             Location location = myTracksProviderUtils.createLocation(cursor);
-            if (LocationUtils.isValidLocation(location)) {
-              trackTripStatisticsBuilder.addLocation(location, location.getTime());
-              if (location.getTime() > markerStartTime) {
-                markerTripStatisticsBuilder.addLocation(location, location.getTime());
-              }
-              if (lastLengthLocation != null) {
-                length += location.distanceTo(lastLengthLocation);
-              }
-              lastLengthLocation = location;
+            trackTripStatisticsBuilder.addLocation(location, minRecordingDistance);
+            if (location.getTime() > markerStartTime) {
+              markerTripStatisticsBuilder.addLocation(location, minRecordingDistance);
             }
           } while (cursor.moveToPrevious());
         }
-        trackTripStatisticsBuilder.pauseAt(tripStatistics.getStopTime());
-        trackTripStatisticsBuilder.resumeAt(System.currentTimeMillis());
       }
     } catch (RuntimeException e) {
       Log.e(TAG, "RuntimeException", e);
@@ -641,21 +627,58 @@ public class TrackRecordingService extends Service {
         cursor.close();
       }
     }
-    startRecording();
+    startRecording(true);
   }
 
   /**
-   * Common code for starting a recording, new track or restart track.
+   * Resumes current track.
    */
-  private void startRecording() {
+  private void resumeCurrentTrack() {
+    if (!isRecording() || !isPaused()) {
+      Log.d(TAG, "Ignore resumeCurrentTrack. Not recording or not paused.");
+      return;
+    }
+
+    // Update shared preferences
+    recordingTrackPaused = false;
+    PreferencesUtils.setBoolean(this, R.string.recording_track_paused_key, false);
+
+    // Update database
+    Track track = myTracksProviderUtils.getTrack(recordingTrackId);
+    if (track != null) {
+      Location resume = new Location(LocationManager.GPS_PROVIDER);
+      resume.setLongitude(0);
+      resume.setLatitude(RESUME_LATITUDE);
+      resume.setTime(System.currentTimeMillis());
+      insertLocation(track, resume, null);
+    }
+
+    startRecording(false);
+  }
+
+  /**
+   * Common code for starting a new track, resuming a track, or restarting after
+   * phone reboot.
+   * 
+   * @param trackStarted true if track is started, false if track is resumed
+   */
+  private void startRecording(boolean trackStarted) {
     acquireWakeLock();
 
-    lastLocation = null;
-    isMoving = true;
+    // Update instance variables
     sensorManager = SensorManagerFactory.getSystemSensorManager(this);
+    lastLocation = null;
+    currentSegmentHasLocation = false;
 
+    // Register notifications
+    registerLocationListener();
+
+    // Send notifications
     showNotification();
-    sendTrackBroadcast(R.string.track_started_broadcast_action, recordingTrackId);
+    sendTrackBroadcast(trackStarted ? R.string.track_started_broadcast_action
+        : R.string.track_resumed_broadcast_action, recordingTrackId);
+
+    // Restore periodic tasks
     announcementExecutor.restore();
     splitExecutor.restore();
   }
@@ -668,49 +691,94 @@ public class TrackRecordingService extends Service {
       Log.d(TAG, "Ignore endCurrentTrack. Not recording.");
       return;
     }
-    announcementExecutor.shutdown();
-    splitExecutor.shutdown();
-    Track track = myTracksProviderUtils.getTrack(recordingTrackId);
-    if (track != null) {
-      long lastLocationId = myTracksProviderUtils.getLastTrackLocationId(recordingTrackId);
-      if (lastLocationId >= 0 && track.getStopId() >= 0) {
-        track.setStopId(lastLocationId);
-      }
-      updateTripStatisticsToTime(track.getTripStatistics(), System.currentTimeMillis());
-      myTracksProviderUtils.updateTrack(track);
-    }
-    // Need to remember the trackId before calling stopRecording
+
+    // Need to remember the recordingTrackId before setting it to -1L
     long trackId = recordingTrackId;
-    stopRecording();
 
-    if (sensorManager != null) {
-      SensorManagerFactory.releaseSystemSensorManager();
-      sensorManager = null;
+    // Update shared preferences
+    updateRecordingState(PreferencesUtils.RECORDING_TRACK_ID_DEFAULT, true);
+
+    // Update database
+    Track track = myTracksProviderUtils.getTrack(trackId);
+    if (track != null) {
+      insertLocation(track, lastLocation, myTracksProviderUtils.getLastTrackLocation(trackId));
+      updateRecordingTrack(track, myTracksProviderUtils.getLastTrackLocationId(trackId), false);
     }
 
-    releaseWakeLock();
-    showNotification();
-    sendTrackBroadcast(R.string.track_stopped_broadcast_action, trackId);
+    endRecording(true, trackId);
     stopSelf();
   }
 
   /**
-   * Common code for stopping a recording.
+   * Pauses the current track.
    */
-  private void stopRecording() {
-    recordingTrackId = PreferencesUtils.RECORDING_TRACK_ID_DEFAULT;
-    PreferencesUtils.setLong(this, R.string.recording_track_id_key, recordingTrackId);
+  private void pauseCurrentTrack() {
+    if (!isRecording() || isPaused()) {
+      Log.d(TAG, "Ignore pauseCurrentTrack. Not recording or paused.");
+      return;
+    }
+
+    // Update shared preferences
+    recordingTrackPaused = true;
+    PreferencesUtils.setBoolean(this, R.string.recording_track_paused_key, true);
+
+    // Update database
+    Track track = myTracksProviderUtils.getTrack(recordingTrackId);
+    if (track != null) {
+      insertLocation(
+          track, lastLocation, myTracksProviderUtils.getLastTrackLocation(track.getId()));
+
+      Location pause = new Location(LocationManager.GPS_PROVIDER);
+      pause.setLongitude(0);
+      pause.setLatitude(PAUSE_LATITUDE);
+      pause.setTime(System.currentTimeMillis());
+      insertLocation(track, pause, null);
+    }
+
+    endRecording(false, recordingTrackId);
   }
 
   /**
-   * Updates a {@link TripStatistics} to a time.
+   * Common code for ending a track or pausing a track.
    * 
-   * @param tripStatistics the trip statistics
-   * @param time the time
+   * @param trackStopped true if track is stopped, false if track is paused
+   * @param trackId the track id
    */
-  private void updateTripStatisticsToTime(TripStatistics tripStatistics, long time) {
-    tripStatistics.setStopTime(time);
-    tripStatistics.setTotalTime(time - tripStatistics.getStartTime());
+  private void endRecording(boolean trackStopped, long trackId) {
+
+    // Shutdown periodic tasks
+    announcementExecutor.shutdown();
+    splitExecutor.shutdown();
+
+    // Update instance variables
+    if (sensorManager != null) {
+      SensorManagerFactory.releaseSystemSensorManager();
+      sensorManager = null;
+    }
+    lastLocation = null;
+
+    // Unregister notifications
+    unregisterLocationListener();
+
+    // Send notifications
+    showNotification();
+    sendTrackBroadcast(trackStopped ? R.string.track_stopped_broadcast_action
+        : R.string.track_paused_broadcast_action, trackId);
+
+    releaseWakeLock();
+  }
+
+  /**
+   * Updates the recording states.
+   * 
+   * @param trackId the recording track id
+   * @param paused true if the recording is paused
+   */
+  private void updateRecordingState(long trackId, boolean paused) {
+    recordingTrackId = trackId;
+    PreferencesUtils.setLong(this, R.string.recording_track_id_key, trackId);
+    recordingTrackPaused = paused;
+    PreferencesUtils.setBoolean(this, R.string.recording_track_paused_key, recordingTrackPaused);
   }
 
   /**
@@ -720,13 +788,19 @@ public class TrackRecordingService extends Service {
    */
   private void onLocationChangedAsync(Location location) {
     try {
-      if (location == null) {
-        Log.w(TAG, "Ignore onLocationChangedAsync. location is null.");
+      if (!isRecording() || isPaused()) {
+        Log.w(TAG, "Ignore onLocationChangedAsync. Not recording or paused.");
         return;
       }
 
-      if (!isRecording()) {
-        Log.w(TAG, "Ignore onLocationChangedAsync. Not recording.");
+      Track track = myTracksProviderUtils.getTrack(recordingTrackId);
+      if (track == null) {
+        Log.w(TAG, "Ignore onLocationChangedAsync. No track.");
+        return;
+      }
+
+      if (!LocationUtils.isValidLocation(location)) {
+        Log.w(TAG, "Ignore onLocationChangedAsync. location is invalid.");
         return;
       }
 
@@ -735,74 +809,59 @@ public class TrackRecordingService extends Service {
         return;
       }
 
-      recordingTrack = myTracksProviderUtils.getTrack(recordingTrackId);
-      if (recordingTrack == null) {
-        Log.d(TAG, "Ignore onLocationChangedAsync. recodingTrack is null.");
-        return;
-      }
-
-      locationListenerPolicy.updateIdleTime(trackTripStatisticsBuilder.getIdleTime());
-
-      if (LocationUtils.isValidLocation(location)) {
-        long now = System.currentTimeMillis();
-        trackTripStatisticsBuilder.addLocation(location, now);
-        markerTripStatisticsBuilder.addLocation(location, now);
-      }
-
+      Location lastTrackLocation = myTracksProviderUtils.getLastTrackLocation(track.getId());
+      long idleTime = currentSegmentHasLocation && LocationUtils.isValidLocation(lastTrackLocation) ?
+          location.getTime() - lastTrackLocation.getTime()
+          : 0L;
+      locationListenerPolicy.updateIdleTime(idleTime);
       if (currentRecordingInterval != locationListenerPolicy.getDesiredPollingInterval()) {
         registerLocationListener();
       }
 
-      Location lastRecordedLocation = myTracksProviderUtils.getLastLocation();
-      double distanceToLastRecordedLocation = lastRecordedLocation != null ? location.distanceTo(
-          lastRecordedLocation)
-          : Double.POSITIVE_INFINITY;
-      double distanceToLastLocation = lastLocation != null ? location.distanceTo(lastLocation)
-          : Double.POSITIVE_INFINITY;
-      boolean hasSensorData = sensorManager != null && sensorManager.isEnabled()
-          && sensorManager.getSensorDataSet() != null && sensorManager.isSensorDataSetValid();
-
-      // If stationary for two locations, make sure the first one is recorded
-      if (distanceToLastLocation == 0 && !hasSensorData) {
-        if (isMoving) {
-          isMoving = false;
-          if (lastLocation != null && !lastLocation.equals(lastRecordedLocation)) {
-            if (!insertLocation(lastLocation, lastRecordedLocation, recordingTrackId)) {
-              return;
-            }
-          }
-        }
-        lastLocation = location;
-      } else if (distanceToLastRecordedLocation >= minRecordingDistance || hasSensorData) {
-        if (!isMoving) {
-          isMoving = true;
-          // Make sure the lastLocation is added.
-          if (lastLocation != null && !lastLocation.equals(lastRecordedLocation)) {
-            if (!insertLocation(lastLocation, lastRecordedLocation, recordingTrackId)) {
-              return;
-            }
-          }
-        }
-
-        boolean startNewSegment = LocationUtils.isValidLocation(lastRecordedLocation)
-            && distanceToLastRecordedLocation > maxRecordingDistance
-            && recordingTrack.getStartId() >= 0;
-        if (startNewSegment) {
-          Log.d(TAG, "Inserting a separator track point.");
-          Location separator = new Location(LocationManager.GPS_PROVIDER);
-          separator.setLongitude(0);
-          separator.setLatitude(100);
-          separator.setTime(lastRecordedLocation.getTime());
-          myTracksProviderUtils.insertTrackPoint(separator, recordingTrackId);
-        }
-
-        if (!insertLocation(location, lastRecordedLocation, recordingTrackId)) {
-          return;
-        }
-        lastLocation = location;
-      } else {
-        Log.d(TAG, "Ignore location. distanceToLastRecordedLocation < minRecordingDistance.");
+      SensorDataSet sensorDataSet = getSensorDataSet();
+      if (sensorDataSet != null) {
+        location = new MyTracksLocation(location, sensorDataSet);
       }
+
+      // Always insert the first segment location
+      if (!currentSegmentHasLocation) {
+        insertLocation(track, location, lastTrackLocation);
+        currentSegmentHasLocation = true;
+        lastLocation = location;
+        return;
+      }
+
+      if (!LocationUtils.isValidLocation(lastTrackLocation)) {
+        /*
+         * Should not happen. The current segment should have a location. Just
+         * insert the current location.
+         */
+        insertLocation(track, location, lastTrackLocation);
+        lastLocation = location;
+        return;
+      }
+
+      double distanceToLastTrackLocation = location.distanceTo(lastTrackLocation);
+      if (distanceToLastTrackLocation < minRecordingDistance && sensorDataSet == null) {
+        // skip
+      } else if (distanceToLastTrackLocation > maxRecordingDistance) {
+        insertLocation(track, lastLocation, lastTrackLocation);
+        Location pause = new Location(LocationManager.GPS_PROVIDER);
+        pause.setLongitude(0);
+        pause.setLatitude(PAUSE_LATITUDE);
+        pause.setTime(lastLocation.getTime());
+        insertLocation(track, pause, null);
+
+        insertLocation(track, location, lastTrackLocation);
+      } else {
+        /*
+         * (distanceToLastTrackLocation >= minRecordingDistance ||
+         * hasSensorData) && distanceToLastTrackLocation <= maxRecordingDistance
+         */
+        insertLocation(track, lastLocation, lastTrackLocation);
+        insertLocation(track, location, lastTrackLocation);
+      }
+      lastLocation = location;
     } catch (Error e) {
       Log.e(TAG, "Error in onLocationChangedAsync", e);
       throw e;
@@ -812,62 +871,20 @@ public class TrackRecordingService extends Service {
     }
   }
 
-  /**
-   * Inserts a new location in the track points db and updates the corresponding
-   * track in the track db.
-   * 
-   * @param location the location to be inserted
-   * @param lastRecordedLocation the last recorded location before this one (or
-   *          null if none)
-   * @param trackId the id of the track
-   * @return true if successful. False if SQLite3 threw an exception.
-   */
-  private boolean insertLocation(Location location, Location lastRecordedLocation, long trackId) {
-
-    // Keep track of length along recorded track
-    if (LocationUtils.isValidLocation(location)) {
-      if (lastLengthLocation != null) {
-        length += location.distanceTo(lastLengthLocation);
-      }
-      lastLengthLocation = location;
+  private void insertLocation(Track track, Location location, Location lastRecordedLocation) {
+    if (location == null) {
+      return;
+    }
+    if (location.equals(lastRecordedLocation)) {
+      return;
     }
 
     try {
-      Location locationToInsert = location;
-      if (sensorManager != null && sensorManager.isEnabled()) {
-        SensorDataSet sensorDataSet = sensorManager.getSensorDataSet();
-        if (sensorDataSet != null && sensorManager.isSensorDataSetValid()) {
-          locationToInsert = new MyTracksLocation(location, sensorDataSet);
-        }
-      }
-      Uri uri = myTracksProviderUtils.insertTrackPoint(locationToInsert, trackId);
-      int pointId = Integer.parseInt(uri.getLastPathSegment());
-
-      // Update the current track
-      if (lastRecordedLocation != null && lastRecordedLocation.getLatitude() <= 90) {
-        if (recordingTrack.getStartId() < 0) {
-          recordingTrack.setStartId(pointId);
-        }
-        recordingTrack.setStopId(pointId);
-        recordingTrack.setNumberOfPoints(recordingTrack.getNumberOfPoints() + 1);
-
-        long now = System.currentTimeMillis();
-        TripStatistics tripStatistics = trackTripStatisticsBuilder.getTripStatistics();
-        updateTripStatisticsToTime(tripStatistics, now);
-        recordingTrack.setTripStatistics(tripStatistics);
-
-        myTracksProviderUtils.updateTrack(recordingTrack);
-
-        // Update the first waypoint
-        Waypoint waypoint = myTracksProviderUtils.getFirstWaypoint(recordingTrackId);
-        if (waypoint != null) {
-          TripStatistics stats = trackTripStatisticsBuilder.getTripStatistics();
-          waypoint.setLength(length);
-          waypoint.setDuration(now - stats.getStartTime());
-          waypoint.setTripStatistics(stats);
-          myTracksProviderUtils.updateWaypoint(waypoint);
-        }
-      }
+      Uri uri = myTracksProviderUtils.insertTrackPoint(location, track.getId());
+      long trackPointId = Long.parseLong(uri.getLastPathSegment());
+      trackTripStatisticsBuilder.addLocation(location, minRecordingDistance);
+      markerTripStatisticsBuilder.addLocation(location, minRecordingDistance);
+      updateRecordingTrack(track, trackPointId, LocationUtils.isValidLocation(location));
     } catch (SQLiteException e) {
       /*
        * Insert failed, most likely because of SqlLite error code 5
@@ -875,17 +892,42 @@ public class TrackRecordingService extends Service {
        * listener gets invoked twice at about the same time).
        */
       Log.w(TAG, "SQLiteException", e);
-      return false;
     }
     announcementExecutor.update();
     splitExecutor.update();
-    return true;
+  }
+
+  private void updateRecordingTrack(
+      Track track, long trackPointId, boolean isTrackPointNewAndValid) {
+    if (trackPointId >= 0) {
+      if (track.getStartId() < 0) {
+        track.setStartId(trackPointId);
+      }
+      track.setStopId(trackPointId);
+    }
+    if (isTrackPointNewAndValid) {
+      track.setNumberOfPoints(track.getNumberOfPoints() + 1);
+    }
+
+    trackTripStatisticsBuilder.updateTime(System.currentTimeMillis());
+    track.setTripStatistics(trackTripStatisticsBuilder.getTripStatistics());
+    myTracksProviderUtils.updateTrack(track);
+  }
+
+  private SensorDataSet getSensorDataSet() {
+    if (sensorManager == null || !sensorManager.isEnabled()
+        || !sensorManager.isSensorDataSetValid()) {
+      return null;
+    }
+    return sensorManager.getSensorDataSet();
   }
 
   /**
    * Registers the location listener.
    */
   private void registerLocationListener() {
+    unregisterLocationListener();
+
     if (myTracksLocationManager == null) {
       Log.e(TAG, "locationManager is null.");
       return;
@@ -953,7 +995,7 @@ public class TrackRecordingService extends Service {
    * Shows the notification.
    */
   private void showNotification() {
-    if (isRecording()) {
+    if (isRecording() && !isPaused()) {
       Intent intent = IntentUtils.newIntent(this, TrackDetailActivity.class)
           .putExtra(TrackDetailActivity.EXTRA_TRACK_ID, recordingTrackId);
       TaskStackBuilder taskStackBuilder = TaskStackBuilder.from(this);
@@ -1036,6 +1078,14 @@ public class TrackRecordingService extends Service {
     }
 
     @Override
+    public boolean isPaused() {
+      if (!canAccess()) {
+        return false;
+      }
+      return trackRecordingService.isPaused();
+    }
+
+    @Override
     public long getRecordingTrackId() {
       if (!canAccess()) {
         return -1L;
@@ -1057,6 +1107,22 @@ public class TrackRecordingService extends Service {
         return -1L;
       }
       return trackRecordingService.insertWaypoint(waypointCreationRequest);
+    }
+
+    @Override
+    public void pauseCurrentTrack() {
+      if (!canAccess()) {
+        return;
+      }
+      trackRecordingService.pauseCurrentTrack();
+    }
+
+    @Override
+    public void resumeCurrentTrack() {
+      if (!canAccess()) {
+        return;
+      }
+      trackRecordingService.resumeCurrentTrack();
     }
 
     @Override
