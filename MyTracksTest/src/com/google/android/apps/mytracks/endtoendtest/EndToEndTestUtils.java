@@ -53,7 +53,7 @@ public class EndToEndTestUtils {
   
   private static final String ANDROID_LOCAL_IP = "10.0.2.2";
   // usually 5554.
-  public static int emulatorPort = 5558;
+  public static int emulatorPort = 5554;
 
   private static final int ORIENTATION_PORTRAIT = 1;
   private static final int ORIENTATION_LANDSCAPE = 0;
@@ -597,7 +597,7 @@ public class EndToEndTestUtils {
     } else {
       // Non-ICS phone.
       SOLO.sendKey(KeyEvent.KEYCODE_MENU);
-      if (SOLO.searchText(menuName)) {
+      if (SOLO.getText(menuName) != null) {
         findResult = true;
       } else if (SOLO.searchText(MENU_MORE)) {
         SOLO.clickOnText(MENU_MORE);
@@ -607,7 +607,7 @@ public class EndToEndTestUtils {
     }
 
     if (findResult && click) {
-      SOLO.clickOnText(menuName);
+      SOLO.clickOnView(SOLO.getText(menuName));
       instrumentation.waitForIdleSync();
     } else {
       // Quit more menu list if opened.
