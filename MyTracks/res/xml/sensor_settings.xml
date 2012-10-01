@@ -20,7 +20,6 @@ limitations under the License.
   <ListPreference
     android:defaultValue="@string/sensor_type_value_none"
     android:key="@string/sensor_type_key"
-    android:summary="@string/settings_sensor_type_summary"
     android:title="@string/settings_sensor_type" />
   <PreferenceCategory
     android:key="@string/settings_sensor_bluetooth_key"
@@ -33,7 +32,6 @@ limitations under the License.
     <ListPreference
       android:defaultValue=""
       android:key="@string/bluetooth_sensor_key"
-      android:summary="@string/settings_sensor_bluetooth_sensor_summary"
       android:title="@string/settings_sensor_bluetooth_sensor" />
   </PreferenceCategory>
   <PreferenceCategory
@@ -50,7 +48,7 @@ limitations under the License.
     <Preference
       android:key="@string/settings_sensor_ant_reset_bike_cadence_sensor_key"
       android:persistent="false"
-      android:title="@string/settings_sensor_ant_reset_bike_candence_sensor" />
+      android:title="@string/settings_sensor_ant_reset_bike_cadence_sensor" />
     <Preference
       android:key="@string/settings_sensor_ant_reset_combined_bike_sensor_key"
       android:persistent="false"
