@@ -18,25 +18,35 @@ limitations under the License.
   android:layout_height="match_parent"
   android:layout_width="match_parent"
   android:orientation="vertical" >
+
+
   <ListView
-    android:id="@+id/track_list"
+    android:id="@+id/course_list"
     android:layout_height="0dp"
     android:layout_weight="1.0"
     android:layout_width="match_parent" />
+
   <TextView
-    android:id="@+id/track_list_empty_view"
+    android:id="@+id/course_list_empty_view"
     android:layout_height="0dp"
     android:layout_weight="1.0"
     android:layout_width="match_parent"
-    android:text="@string/track_list_empty_message"
+    android:text="@string/course_list_empty_message"
     android:visibility="gone"
-    style="@style/ListEmptyTextView" >
+    style="@style/CourseListEmptyTextView" >
   </TextView>
+
   <LinearLayout
     android:id="@+id/gpx_upload_container"
-    style="@style/TrackControllerContainer" >
-
+    style="@style/TrackControllerContainer" 
+    android:background="@color/black"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:paddingBottom="8dp"
+    android:paddingTop="8dp" >
     <include layout="@layout/course_upload_buttons" />
 
   </LinearLayout>
 </LinearLayout>
+

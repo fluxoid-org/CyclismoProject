@@ -16,9 +16,12 @@
 
 package com.google.android.apps.mytracks.fragments;
 
+import com.google.android.apps.mytracks.DummyOverlay;
 import com.google.android.apps.mytracks.MapOverlay;
 import com.google.android.apps.mytracks.MarkerDetailActivity;
+import com.google.android.apps.mytracks.StaticOverlay;
 import com.google.android.apps.mytracks.TrackDetailActivity;
+import com.google.android.apps.mytracks.content.MyTracksCourseProviderUtils;
 import com.google.android.apps.mytracks.content.MyTracksProviderUtils;
 import com.google.android.apps.mytracks.content.MyTracksProviderUtils.Factory;
 import com.google.android.apps.mytracks.content.Track;
@@ -51,6 +54,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -69,10 +73,14 @@ import java.util.EnumSet;
 /**
  * A fragment to display map to the user.
  * 
+ * FIXME: added lots or redrawCourseOverlay()'s : remove some (if poss)
+ * 
  * @author Leif Hendrik Wilden
  * @author Rodrigo Damazio
  */
 public class MyTracksMapFragment extends SupportMapFragment implements TrackDataListener {
+  
+  private static final String TAG = "MyTracksMapFragment";
 
   public static final String MAP_FRAGMENT_TAG = "mapFragment";
 
@@ -90,7 +98,11 @@ public class MyTracksMapFragment extends SupportMapFragment implements TrackData
 
   private static final int MAP_VIEW_PADDING = 32;
 
+  private static final long COURSE_OVERLAY_REDRAW_REFRESH_PERIOD_MS = 1000;
+
   private TrackDataHub trackDataHub;
+  
+  private TrackDataHub courseDataHub;
 
   // Current location
   private Location currentLocation;
@@ -109,6 +121,9 @@ public class MyTracksMapFragment extends SupportMapFragment implements TrackData
 
   // Current track
   private Track currentTrack;
+  private Track currentCourse;
+  
+  private boolean courseMode = false;
 
   // Current paths
   private ArrayList<Polyline> paths = new ArrayList<Polyline>();
@@ -117,16 +132,197 @@ public class MyTracksMapFragment extends SupportMapFragment implements TrackData
   // UI elements
   private GoogleMap googleMap;
   private MapOverlay mapOverlay;
+  private DummyOverlay courseDummyOverlay;
+  private StaticOverlay courseOverlay;
   private View mapView;
   private ImageButton myLocationImageButton;
   private TextView messageTextView;
 
+  private boolean mUseCourseProvider;
+  private long courseTrackId;
+  
+//  private boolean loadCompleted = false;
+
+  
+  private TrackDataListener courseTrackDataListener = new TrackDataListener() {
+    
+    @SuppressWarnings("hiding")
+    //private boolean reloadPaths = true;
+    
+    @Override
+    public void onLocationStateChanged(final LocationState state) {
+      //ignore
+      return;
+    }
+
+    @Override
+    public void onLocationChanged(final Location location) {
+      //ignore
+    }
+
+    @Override
+    public void onHeadingChanged(double heading) {
+      // We don't care.
+    }
+
+    @Override
+    public void onSelectedTrackChanged(final Track track) {
+      if (isResumed()) {
+        if (courseMode) {
+          Log.d(TAG,"in courseTrackDataListener : onSelectedTrackChanged");
+          currentCourse = track;
+//        boolean hasTrack = track != null;
+//        if (hasTrack) {
+          //courseOverlay.setShowEndMarker(true);
+          if(courseOverlay == null) {
+            showTrack(track);
+          }
+        }
+          //redrawCourseOverlay();
+          //currentTrack = track;
+          //showTrack();
+//          synchronized (this) {
+//            /*
+//             * Synchronize to prevent race condition in changing markerTrackId and
+//             * markerId variables.
+//             */
+//            if (track.getId() == markerTrackId) {
+//              // Show the marker
+//              showMarker(markerId);
+//
+//              markerTrackId = -1L;
+//              markerId = -1L;
+//            } else {
+//              // Show the track
+//              showTrack();
+//            }
+//          }
+//        }
+      }
+    }
+
+    @Override
+    public void onTrackUpdated(Track track) {
+      // We don't care.
+    }
+
+    @Override
+    public void clearTrackPoints() {
+      if (isResumed()) {
+        //courseDummyOverlay.clearPoints();
+        //reloadPaths = true;
+      }
+    }
+
+    @Override
+    public void onSampledInTrackPoint(final Location location) {
+      if (isResumed()) {
+        courseDummyOverlay.addLocation(location);
+      }
+    }
+
+    @Override
+    public void onSampledOutTrackPoint(Location location) {
+      // We don't care.
+    }
+
+    @Override
+    public void onSegmentSplit(Location location) {
+      if (isResumed()) {
+        courseDummyOverlay.addSegmentSplit();
+      }
+    }
+
+    @Override
+    public void onNewTrackPointsDone() {
+      // we have our data
+      courseDataHub.unregisterTrackDataListener(this);
+      if (isResumed()) {
+        getActivity().runOnUiThread(new Runnable() {
+
+          public void run() {
+            if (isResumed() && googleMap != null) {
+              courseDummyOverlay.update(null, null, true);
+            
+              if (courseOverlay == null && courseMode) {
+                courseOverlay = new StaticOverlay(MyTracksMapFragment.this.getActivity(),
+                    courseDummyOverlay.getLocations());
+                Log.d(TAG,"new courseOverlay");
+              }
+              
+              //reloadPaths = false;
+            }
+          }
+        });
+      }
+    }
+
+    @Override
+    public void clearWaypoints() {
+      if (isResumed()) {
+        //courseDummyOverlay.clearWaypoints();
+      }
+    }
+
+    @Override
+    public void onNewWaypoint(Waypoint waypoint) {
+      if (isResumed() && waypoint != null && LocationUtils.isValidLocation(waypoint.getLocation())) {
+        courseDummyOverlay.addWaypoint(waypoint);
+      }
+    }
+
+    @Override
+    public void onNewWaypointsDone() {
+      if (isResumed()) {
+        getActivity().runOnUiThread(new Runnable() {
+          public void run() {
+            if (isResumed() && googleMap != null) {
+              courseDummyOverlay.update(null, null, true);
+            }
+          }
+        });
+      }
+    }
+
+    @Override
+    public boolean onMetricUnitsChanged(boolean metric) {
+      // We don't care.
+      return false;
+    }
+
+    @Override
+    public boolean onReportSpeedChanged(boolean reportSpeed) {
+      // We don't care.
+      return false;
+    }
+
+    @Override
+    public boolean onMinRecordingDistanceChanged(int minRecordingDistance) {
+      // We don't care.
+      return false;
+    }
+  };
+
+  private long redrawCourseOverlayTimestamp;
+
   @Override
   public void onCreate(Bundle bundle) {
     super.onCreate(bundle);
+    //courseTrackId = bundle.getLong(TrackDetailActivity.EXTRA_COURSE_TRACK_ID);
     setHasOptionsMenu(true);
     ApiAdapterFactory.getApiAdapter().invalidMenu(getActivity());
+    courseTrackId = -1l;
+    if (getActivity() instanceof TrackDetailActivity) {
+      mUseCourseProvider = ((TrackDetailActivity) getActivity()).isUsingCourseProivder();
+      courseTrackId = ((TrackDetailActivity) getActivity()).getCourseTrackId();
+      
+    }
+    courseMode = ((TrackDetailActivity) getActivity()).isCourseMode();
     mapOverlay = new MapOverlay(getActivity());
+    courseDummyOverlay = new DummyOverlay(getActivity());
+    
+    Log.d(TAG,"courseMode : " + courseMode);
+    Log.d(TAG,"courseTrackId in bundle : " + courseTrackId);
   }
 
   @Override
@@ -206,7 +402,19 @@ public class MyTracksMapFragment extends SupportMapFragment implements TrackData
               && !isLocationVisible(currentLocation)) {
             keepCurrentLocationVisible = false;
             zoomToCurrentLocation = false;
-          }
+          } else if (isResumed()) {
+            // is this the only way to ensure it is drawn?
+            //FIXME: too performance intensive
+            //if (System.nanoTime() - redrawCourseOverlayTimestamp < TimeUnit.MILLISECONDS.toNanos(COURSE_OVERLAY_REDRAW_REFRESH_PERIOD_MS)) {
+             // return;
+            //}
+            
+            //redrawCourseOverlayTimestamp = System.nanoTime();
+            
+            redrawCourseOverlay();
+            
+          
+          } 
         }
       });
       googleMap.moveCamera(
@@ -234,6 +442,7 @@ public class MyTracksMapFragment extends SupportMapFragment implements TrackData
   public void onResume() {
     super.onResume();
     resumeTrackDataHub();
+    resumeCourseDataHub();
   }
 
   @Override
@@ -253,6 +462,7 @@ public class MyTracksMapFragment extends SupportMapFragment implements TrackData
   public void onPause() {
     super.onPause();
     pauseTrackDataHub();
+    pauseCourseDataHub();
   }
 
   /**
@@ -413,7 +623,7 @@ public class MyTracksMapFragment extends SupportMapFragment implements TrackData
   }
 
   @Override
-  public void onLocationChanged(final Location location) {
+  public synchronized void onLocationChanged(final Location location) {
     if (isResumed()) {
       if (isSelectedTrackRecording() && currentLocation == null && location != null) {
         zoomToCurrentLocation = true;
@@ -429,12 +639,14 @@ public class MyTracksMapFragment extends SupportMapFragment implements TrackData
   }
 
   @Override
-  public void onSelectedTrackChanged(final Track track) {
+  public synchronized void onSelectedTrackChanged(final Track track) {
     if (isResumed()) {
       currentTrack = track;
       boolean hasTrack = track != null;
       if (hasTrack) {
+        if (!courseMode) {
         mapOverlay.setShowEndMarker(!isSelectedTrackRecording());
+        }
         synchronized (this) {
           /*
            * Synchronize to prevent race condition in changing markerTrackId and
@@ -454,6 +666,18 @@ public class MyTracksMapFragment extends SupportMapFragment implements TrackData
       }
     }
   }
+  
+  private void reloadCourse() {
+    if (currentCourse != null && currentCourse.getId() != -1L) {
+      courseDataHub.loadTrack(currentCourse.getId());
+    }
+  }
+  
+  private void reloadTrack() {
+    if (currentTrack != null && !this.isSelectedTrackRecording()) {
+      trackDataHub.loadTrack(currentTrack.getId());
+    }
+  }
 
   @Override
   public void onTrackUpdated(Track track) {
@@ -461,40 +685,56 @@ public class MyTracksMapFragment extends SupportMapFragment implements TrackData
   }
 
   @Override
-  public void clearTrackPoints() {
+  public synchronized void clearTrackPoints() {
+    //FIXED: (left around in case)
+    // otherwise temperamental showing of previously recored track 
+    // (will sometimes show map and sometimes will clear).
+    // Correlated with number of trackDetailInstances open?
+    // && this.isSelectedTrackRecording()
     if (isResumed()) {
       mapOverlay.clearPoints();
       reloadPaths = true;
+      redrawCourseOverlay();
     }
   }
 
   @Override
-  public void onSampledInTrackPoint(final Location location) {
+  public synchronized void onSampledInTrackPoint(final Location location) {
     if (isResumed()) {
+//      if (!this.isSelectedTrackRecording() && loadCompleted) {
+//        return;
+//      }
       mapOverlay.addLocation(location);
+      redrawCourseOverlay();
     }
   }
 
   @Override
-  public void onSampledOutTrackPoint(Location location) {
+  public synchronized void onSampledOutTrackPoint(Location location) {
     // We don't care.
   }
 
   @Override
-  public void onSegmentSplit(Location location) {
+  public synchronized void onSegmentSplit(Location location) {
     if (isResumed()) {
+//      if (!this.isSelectedTrackRecording() && loadCompleted) {
+//        return;
+//      }
       mapOverlay.addSegmentSplit();
     }
   }
-
+  
   @Override
-  public void onNewTrackPointsDone() {
+  public synchronized void onNewTrackPointsDone() {
     if (isResumed()) {
       getActivity().runOnUiThread(new Runnable() {
+
         public void run() {
           if (isResumed() && googleMap != null) {
             mapOverlay.update(googleMap, paths, reloadPaths);
             reloadPaths = false;
+//            loadCompleted = true;
+            redrawCourseOverlay();
           }
         }
       });
@@ -502,26 +742,29 @@ public class MyTracksMapFragment extends SupportMapFragment implements TrackData
   }
 
   @Override
-  public void clearWaypoints() {
+  public synchronized void clearWaypoints() {
     if (isResumed()) {
       mapOverlay.clearWaypoints();
+      redrawCourseOverlay();
     }
+
   }
 
   @Override
-  public void onNewWaypoint(Waypoint waypoint) {
+  public synchronized void onNewWaypoint(Waypoint waypoint) {
     if (isResumed() && waypoint != null && LocationUtils.isValidLocation(waypoint.getLocation())) {
       mapOverlay.addWaypoint(waypoint);
     }
   }
 
   @Override
-  public void onNewWaypointsDone() {
+  public synchronized void onNewWaypointsDone() {
     if (isResumed()) {
       getActivity().runOnUiThread(new Runnable() {
         public void run() {
           if (isResumed() && googleMap != null) {
             mapOverlay.update(googleMap, paths, true);
+            redrawCourseOverlay();
           }
         }
       });
@@ -545,6 +788,24 @@ public class MyTracksMapFragment extends SupportMapFragment implements TrackData
     // We don't care.
     return false;
   }
+  
+  private synchronized void redrawCourseOverlay() {
+    if (courseOverlay != null && googleMap != null && courseMode) {
+        
+      Log.d(TAG,"redrawing courseOverlay");
+      
+      getActivity().runOnUiThread(new Runnable() {
+        @Override
+      public void run() {
+      try {
+      courseOverlay.update(googleMap);
+      } catch (IllegalStateException e) {
+        Log.d(TAG,"Illegal state exception whilst updating map polyline");
+      }
+    }
+      });
+    }
+  }
 
   /**
    * Resumes the trackDataHub. Needs to be synchronized because the trackDataHub
@@ -553,6 +814,29 @@ public class MyTracksMapFragment extends SupportMapFragment implements TrackData
   private synchronized void resumeTrackDataHub() {
     trackDataHub = ((TrackDetailActivity) getActivity()).getTrackDataHub();
     trackDataHub.registerTrackDataListener(this, EnumSet.of(TrackDataType.SELECTED_TRACK,
+        TrackDataType.WAYPOINTS_TABLE, TrackDataType.SAMPLED_IN_TRACK_POINTS_TABLE,
+        TrackDataType.LOCATION));
+  }
+
+  /**
+   * Pauses the trackDataHub. Needs to be synchronized because the trackDataHub
+   * can be accessed by multiple threads.
+   */
+  private synchronized void pauseCourseDataHub() {
+    //FIXME: needs new listener
+    if (courseDataHub != null) {
+      courseDataHub.unregisterTrackDataListener(courseTrackDataListener);
+    }
+    courseDataHub = null;
+  }
+  
+  /**
+   * Resumes the trackDataHub. Needs to be synchronized because the trackDataHub
+   * can be accessed by multiple threads.
+   */
+  private synchronized void resumeCourseDataHub() {
+    courseDataHub = ((TrackDetailActivity) getActivity()).getCourseDataHub();
+    courseDataHub.registerTrackDataListener(courseTrackDataListener, EnumSet.of(TrackDataType.SELECTED_TRACK,
         TrackDataType.WAYPOINTS_TABLE, TrackDataType.SAMPLED_IN_TRACK_POINTS_TABLE,
         TrackDataType.LOCATION));
   }
@@ -584,6 +868,9 @@ public class MyTracksMapFragment extends SupportMapFragment implements TrackData
     if (trackDataHub != null) {
       trackDataHub.forceUpdateLocation();
     }
+    if (courseDataHub != null) {
+      courseDataHub.forceUpdateLocation();
+    }
   }
 
   /**
@@ -602,6 +889,7 @@ public class MyTracksMapFragment extends SupportMapFragment implements TrackData
           LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
           googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM_LEVEL));
           zoomToCurrentLocation = false;
+          redrawCourseOverlay();
         }
       };
     });
@@ -611,9 +899,16 @@ public class MyTracksMapFragment extends SupportMapFragment implements TrackData
    * Sets the camera over a track.
    */
   private void showTrack() {
+    showTrack(currentTrack);
+  }
+  
+  private void showTrack(final Track track) {
     getActivity().runOnUiThread(new Runnable() {
         @Override
       public void run() {
+          
+        @SuppressWarnings("hiding")
+        Track currentTrack = track;
         if (!isResumed() || googleMap == null || currentTrack == null
             || currentTrack.getNumberOfPoints() < 2) {
           return;
@@ -648,6 +943,7 @@ public class MyTracksMapFragment extends SupportMapFragment implements TrackData
               bounds, mapView.getWidth(), mapView.getHeight(), MAP_VIEW_PADDING);
           googleMap.moveCamera(cameraUpdate);
         }
+        redrawCourseOverlay();
       }
     });
   }
@@ -664,7 +960,7 @@ public class MyTracksMapFragment extends SupportMapFragment implements TrackData
         if (!isResumed() || googleMap == null) {
           return;
         }
-        MyTracksProviderUtils MyTracksProviderUtils = Factory.get(getActivity());
+        MyTracksProviderUtils MyTracksProviderUtils = getProvider();
         Waypoint waypoint = MyTracksProviderUtils.getWaypoint(id);
         if (waypoint != null && waypoint.getLocation() != null) {
           Location location = waypoint.getLocation();
@@ -674,7 +970,9 @@ public class MyTracksMapFragment extends SupportMapFragment implements TrackData
           CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM_LEVEL);
           googleMap.moveCamera(cameraUpdate);
         }
+        redrawCourseOverlay();
       }
+
     });
   }
 
@@ -682,13 +980,20 @@ public class MyTracksMapFragment extends SupportMapFragment implements TrackData
    * Gets the default LatLng.
    */
   private LatLng getDefaultLatLng() {
-    MyTracksProviderUtils myTracksProviderUtils = MyTracksProviderUtils.Factory.get(getActivity());
+    MyTracksProviderUtils myTracksProviderUtils = getProvider();
     Location location = myTracksProviderUtils.getLastValidTrackPoint();
     if (location != null) {
       return new LatLng(location.getLatitude(), location.getLongitude());
     } else {
       return new LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE);
     }
+  }
+  
+  private MyTracksProviderUtils getProvider() {
+    if (mUseCourseProvider) {
+      return new MyTracksCourseProviderUtils(this.getActivity().getContentResolver());
+    }
+    return Factory.get(getActivity());
   }
 
   /**

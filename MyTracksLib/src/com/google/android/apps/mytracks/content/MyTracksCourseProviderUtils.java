@@ -47,7 +47,7 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
    * The authority (the first part of the URI) for the My Tracks content
    * provider.
    */
-  public static final String AUTHORITY = "com.google.android.maps.mytracks";
+  public static final String AUTHORITY = "com.google.android.maps.mytracks.courses";
   
   /**
    * The authority (the first part of the URI) for the My Tracks content
@@ -1063,8 +1063,16 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
      * 
      * @param context the context
      */
-    protected MyTracksProviderUtils newForContext(Context context) {
+    public MyTracksProviderUtils newForContext(Context context) {
       return new MyTracksCourseProviderUtils(context.getContentResolver());
     }
+  }
+
+  @Override
+  public boolean shouldSetPreference(int keyId) {
+    //TODO: add preferences associated with this provider course_id etc
+    // in the current use case this doesn't matter.
+    return false;
+    
   }
 }

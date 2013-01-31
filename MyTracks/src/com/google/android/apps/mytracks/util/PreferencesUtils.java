@@ -89,6 +89,8 @@ public class PreferencesUtils {
   public static final int TRACK_COLOR_MODE_MEDIUM_DEFAULT = 15;
   public static final int TRACK_COLOR_MODE_PERCENTAGE_DEFAULT = 25;
   public static final int TRACK_COLOR_MODE_SLOW_DEFAULT = 9;
+  
+  public static final String COURSE_MODE_DEFAULT = "SIMULATION";
 
   public static final String TRACK_NAME_DEFAULT = "LOCATION";
 
@@ -220,5 +222,16 @@ public class PreferencesUtils {
     Editor editor = sharedPreferences.edit();
     editor.putString(getKey(context, keyId), value);
     ApiAdapterFactory.getApiAdapter().applyPreferenceChanges(editor);
+  }
+  
+  /**
+   * Convert a settings selection to its string representation
+   * @author will
+   *
+   */
+  public static interface SettingsSelectionSummarizer {
+    
+    String summarize(Object value);
+    
   }
 }

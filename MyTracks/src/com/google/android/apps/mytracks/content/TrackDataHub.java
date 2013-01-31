@@ -24,6 +24,7 @@ import static com.google.android.apps.mytracks.Constants.TARGET_DISPLAYED_TRACK_
 import com.google.android.apps.mytracks.Constants;
 import com.google.android.apps.mytracks.content.MyTracksProviderUtils.LocationIterator;
 import com.google.android.apps.mytracks.content.TrackDataListener.LocationState;
+import com.google.android.apps.mytracks.util.ExceptionUtils;
 import com.google.android.apps.mytracks.util.LocationUtils;
 import com.google.android.apps.mytracks.util.PreferencesUtils;
 import com.google.android.maps.mytracks.R;
@@ -97,6 +98,15 @@ public class TrackDataHub implements DataSourceListener {
   public synchronized static TrackDataHub newInstance(Context context) {
     return new TrackDataHub(context, new TrackDataManager(), MyTracksProviderUtils.Factory.get(
         context), TARGET_DISPLAYED_TRACK_POINTS);
+  }
+  
+  public synchronized static TrackDataHub newInstance(Context context, boolean useCourseProvider) {
+    if (useCourseProvider) {
+    return new TrackDataHub(context, new TrackDataManager(), new MyTracksCourseProviderUtils(context.getContentResolver())
+        , TARGET_DISPLAYED_TRACK_POINTS);
+    } else {
+      return newInstance(context);
+    }
   }
 
   /**
@@ -175,8 +185,14 @@ public class TrackDataHub implements DataSourceListener {
           Log.i(TAG, "Not reloading track " + trackId);
           return;
         }
-        selectedTrackId = trackId;
+        setSelectedTrackId(trackId);
+        Log.d(TAG,"setting track_id_key: " + trackId);
+        
+        // if main provider - should we set preferences through provider
+        // so individual providers can filter?
+        if (myTracksProviderUtils.shouldSetPreference(R.string.selected_track_id_key)) {
         PreferencesUtils.setLong(context, R.string.selected_track_id_key, selectedTrackId);
+        }
         loadDataForAll();
       }
     });
@@ -301,7 +317,7 @@ public class TrackDataHub implements DataSourceListener {
             || key.equals(PreferencesUtils.getKey(context, R.string.selected_track_id_key))) {
           long trackId = PreferencesUtils.getLong(context, R.string.selected_track_id_key);
           boolean hasChanged = trackId != selectedTrackId;
-          selectedTrackId = trackId;
+          setSelectedTrackId(trackId);
           if (key != null) {
             if (hasChanged) {
               loadDataForAll();
@@ -617,6 +633,7 @@ public class TrackDataHub implements DataSourceListener {
 
     long lastTrackPointId = myTracksProviderUtils.getLastTrackPointId(selectedTrackId);
     int samplingFrequency = -1;
+    Log.d(TAG,"selectedTrackID: " + selectedTrackId);
     LocationIterator iterator = myTracksProviderUtils.getTrackPointLocationIterator(selectedTrackId,
         localLastSeenLocationId + 1, false, MyTracksProviderUtils.DEFAULT_LOCATION_FACTORY);
     boolean includeNextPoint = false;
@@ -817,6 +834,20 @@ public class TrackDataHub implements DataSourceListener {
     handler.post(runnable);
   }
   
+  /**
+   * @param selectedTrackId the selectedTrackId to set
+   */
+  protected void setSelectedTrackId(long selectedTrackId) {
+    if (selectedTrackId == -1) {
+      try {
+       throw new Exception();
+      }catch (Exception e) {
+        Log.e(TAG,ExceptionUtils.getStackTraceAsString(e));
+      }
+    }
+    this.selectedTrackId = selectedTrackId;
+  }
+
   /**
    * Gets the value selectedTrackId.
    * 

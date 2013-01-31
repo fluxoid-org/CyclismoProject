@@ -121,17 +121,17 @@ public class MyTracksCourseProvider extends ContentProvider {
 
   public MyTracksCourseProvider() {
     uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-    uriMatcher.addURI(MyTracksProviderUtils.AUTHORITY, MyTracksCourseProviderUtils.TABLE_PREFIX + CourseTrackPointsColumns.TABLE_NAME,
+    uriMatcher.addURI(MyTracksCourseProviderUtils.AUTHORITY, MyTracksCourseProviderUtils.TABLE_PREFIX + CourseTrackPointsColumns.TABLE_NAME,
         UrlType.TRACKPOINTS.ordinal());
-    uriMatcher.addURI(MyTracksProviderUtils.AUTHORITY, MyTracksCourseProviderUtils.TABLE_PREFIX + CourseTrackPointsColumns.TABLE_NAME + "/#",
+    uriMatcher.addURI(MyTracksCourseProviderUtils.AUTHORITY, MyTracksCourseProviderUtils.TABLE_PREFIX + CourseTrackPointsColumns.TABLE_NAME + "/#",
         UrlType.TRACKPOINTS_ID.ordinal());
     uriMatcher.addURI(
-        MyTracksProviderUtils.AUTHORITY, MyTracksCourseProviderUtils.TABLE_PREFIX + CourseTracksColumns.TABLE_NAME, UrlType.TRACKS.ordinal());
-    uriMatcher.addURI(MyTracksProviderUtils.AUTHORITY, CourseTracksColumns.TABLE_NAME + "/#",
+        MyTracksCourseProviderUtils.AUTHORITY, MyTracksCourseProviderUtils.TABLE_PREFIX + CourseTracksColumns.TABLE_NAME, UrlType.TRACKS.ordinal());
+    uriMatcher.addURI(MyTracksCourseProviderUtils.AUTHORITY, CourseTracksColumns.TABLE_NAME + "/#",
         UrlType.TRACKS_ID.ordinal());
     uriMatcher.addURI(
-        MyTracksProviderUtils.AUTHORITY, MyTracksCourseProviderUtils.TABLE_PREFIX + CourseWaypointsColumns.TABLE_NAME, UrlType.WAYPOINTS.ordinal());
-    uriMatcher.addURI(MyTracksProviderUtils.AUTHORITY, CourseWaypointsColumns.TABLE_NAME + "/#",
+        MyTracksCourseProviderUtils.AUTHORITY, MyTracksCourseProviderUtils.TABLE_PREFIX + CourseWaypointsColumns.TABLE_NAME, UrlType.WAYPOINTS.ordinal());
+    uriMatcher.addURI(MyTracksCourseProviderUtils.AUTHORITY, CourseWaypointsColumns.TABLE_NAME + "/#",
         UrlType.WAYPOINTS_ID.ordinal());
   }
 

@@ -98,4 +98,5 @@ Google은 이용자에 대한 위치정보의 이용∙제공사실을 위치정
   <string name="track_action_resume">com.google.android.apps.mytracks.RESUME_CURRENT_TRACK</string>
   <string name="track_action_start">com.google.android.apps.mytracks.START_NEW_TRACK</string>
   <string name="value_unknown">-</string>
+  <string name="settings_courses_mode_simulation_value">SIMULATION</string>
 </resources>

@@ -37,6 +37,7 @@ import com.google.common.annotations.VisibleForTesting;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +46,9 @@ import android.widget.ZoomControls;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * A fragment to display track chart to the user.
@@ -53,16 +57,26 @@ import java.util.EnumSet;
  * @author Rodrigo Damazio
  */
 public class ChartFragment extends Fragment implements TrackDataListener {
+  
+  public static final String TAG = "ChartFragment";
 
   public static final String CHART_FRAGMENT_TAG = "chartFragment";
 
   private final ArrayList<double[]> pendingPoints = new ArrayList<double[]>();
+  private final ArrayList<double[]> pendingOverlayPoints = new ArrayList<double[]>();
 
   private TrackDataHub trackDataHub;
+  
+  private Track currentTrack;
+  
+  private Lock classLock = new ReentrantLock();
+  
+  private Condition startCondition = classLock.newCondition();
 
   // Stats gathered from the received data
   private TripStatisticsUpdater tripStatisticsUpdater;
-  private long startTime;
+  private TripStatisticsUpdater tripStatisticsUpdaterOverlay;
+  private long startTime = -1L;
 
   private boolean metricUnits = PreferencesUtils.METRIC_UNITS_DEFAULT;
   private boolean reportSpeed = PreferencesUtils.REPORT_SPEED_DEFAULT;
@@ -71,10 +85,14 @@ public class ChartFragment extends Fragment implements TrackDataListener {
   // Modes of operation
   private boolean chartByDistance = true;
   private boolean[] chartShow = new boolean[] { true, true, true, true, true, true };
+  
+  long currentCourseId = -1L;
 
   // UI elements
   private ChartView chartView;
   private ZoomControls zoomControls;
+  
+  private boolean courseMode;
 
   /**
    * A runnable that will enable/disable zoom controls and orange pointer as
@@ -93,6 +111,194 @@ public class ChartFragment extends Fragment implements TrackDataListener {
       chartView.invalidate();
     }
   };
+
+  private TrackDataHub courseDataHub;
+  
+private TrackDataListener courseTrackDataListener = new TrackDataListener() {
+  
+
+  @Override
+  public void onLocationStateChanged(LocationState state) {
+    // We don't care.
+  }
+
+  @Override
+  public void onLocationChanged(Location loc) {
+    // We don't care.
+  }
+
+  @Override
+  public void onHeadingChanged(double heading) {
+    // We don't care.
+  }
+
+  @Override
+  public void onSelectedTrackChanged(Track track) {
+    // We don't care.
+  }
+
+  @Override
+  public void onTrackUpdated(Track track) {
+    if (isResumed()) {
+      Log.d(TAG,"course updated");
+   }
+  }
+
+  @Override
+  public synchronized void clearTrackPoints() {
+    if (isResumed()) {
+//      Log.d(TAG,"track points cleared");
+      
+      try {
+
+      while(startTime == -1l) {
+        try {
+          classLock.lock();
+          startCondition.await();  
+        } finally {
+          classLock.unlock();
+        }
+      }
+      
+      } catch (InterruptedException e) {
+        // use start time as is
+      }
+      
+      tripStatisticsUpdaterOverlay = startTime != -1L ? new TripStatisticsUpdater(startTime) : null;
+//      pendingPoints.clear();
+//      chartView.reset();
+//      getActivity().runOnUiThread(new Runnable() {
+//          @Override
+//        public void run() {
+//          if (isResumed()) {
+//            chartView.resetScroll();
+//          }
+//        }
+//      });
+    }
+  }
+
+  @Override
+  public synchronized void onSampledInTrackPoint(Location location) {
+    if (isResumed()) {
+      Log.d(TAG,"adding course point");
+      double[] data = new double[ChartView.NUM_SERIES + 1];
+      fillDataPoint(location, data, tripStatisticsUpdaterOverlay);
+      pendingOverlayPoints.add(data);
+    }
+  }
+
+  @Override
+  public void onSampledOutTrackPoint(Location location) {
+    //if (isResumed()) {
+     // fillDataPoint(location, null);
+    //}
+  }
+
+  @Override
+  public void onSegmentSplit(Location location) {
+    if (isResumed()) {
+      fillDataPoint(location, null,tripStatisticsUpdaterOverlay);
+    }
+  }
+
+  @Override
+  public synchronized void onNewTrackPointsDone() {
+    if (isResumed()) {
+      Log.d(TAG,"course points done");
+      chartView.addOverlay(pendingOverlayPoints);
+      pendingOverlayPoints.clear();
+      getActivity().runOnUiThread(updateChart);
+    }
+  }
+
+  @Override
+  public void clearWaypoints() {
+//    if (isResumed()) {
+//      chartView.clearWaypoints();
+//    }
+  }
+
+  @Override
+  public void onNewWaypoint(Waypoint waypoint) {
+//    if (isResumed() && waypoint != null && LocationUtils.isValidLocation(waypoint.getLocation())) {
+//      chartView.addWaypoint(waypoint);
+//    }
+  }
+
+  @Override
+  public void onNewWaypointsDone() {
+//    if (isResumed()) {
+//      getActivity().runOnUiThread(updateChart);
+//    }
+  }
+
+  @Override
+  public boolean onMetricUnitsChanged(boolean metric) {
+    return false;
+//    if (isResumed()) {
+//      if (metricUnits == metric) {
+//        return false;
+//      }
+//      metricUnits = metric;
+//      chartView.setMetricUnits(metricUnits);
+//      getActivity().runOnUiThread(new Runnable() {
+//          @Override
+//        public void run() {
+//          if (isResumed()) {
+//            chartView.requestLayout();
+//          }
+//        }
+//      });
+//      return true;
+//    }
+//    return false;
+  }
+
+  @Override
+  public boolean onReportSpeedChanged(boolean speed) {
+    return false;
+//    if (isResumed()) {
+//      if (reportSpeed == speed) {
+//        return false;
+//      }
+//      reportSpeed = speed;
+//      chartView.setReportSpeed(reportSpeed);
+//      boolean chartShowSpeed = PreferencesUtils.getBoolean(
+//          getActivity(), R.string.chart_show_speed_key, PreferencesUtils.CHART_SHOW_SPEED_DEFAULT);
+//      setSeriesEnabled(ChartView.SPEED_SERIES, chartShowSpeed && reportSpeed);
+//      setSeriesEnabled(ChartView.PACE_SERIES, chartShowSpeed && !reportSpeed);
+//      getActivity().runOnUiThread(new Runnable() {
+//          @Override
+//        public void run() {
+//          if (isResumed()) {
+//            chartView.requestLayout();
+//          }
+//        }
+//      });
+//      return true;
+//    }
+//    return false;
+  }
+
+  @Override
+  public boolean onMinRecordingDistanceChanged(int value) {
+    return false;
+//    if (isResumed()) {
+//      if (minRecordingDistance == value) {
+//        return false;
+//      }
+//      minRecordingDistance = value;
+//      return true;
+//    }
+//    return false;
+//  }
+//    
+  }
+  };
+
+
+ 
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -137,15 +343,36 @@ public class ChartFragment extends Fragment implements TrackDataListener {
   @Override
   public void onResume() {
     super.onResume();
+    courseMode = ((TrackDetailActivity) getActivity()).isCourseMode();
     resumeTrackDataHub();
+    resumeCourseDataHub();
+    //no longer needed
+    //HACK: sometimes trackdata points aren't generated
+    // this ensures they are
+    //if (trackDataHub != null && currentTrack != null) {
+     // trackDataHub.loadTrack(currentTrack.getId());
+     // trackDataHub.reloadDataForListener(this);
+    //}
+//    if (courseDataHub != null && currentTrack != null) {
+//      courseDataHub.loadTrack(currentTrack.getId());
+//      courseDataHub.reloadDataForListener(this);
+//    }
     checkChartSettings();
     getActivity().runOnUiThread(updateChart);
+    
+    // show elevation for whole course if in course mode
+    if (courseMode) {
+      chartView.setOverlayChartValueSeriesEnabled(ChartView.ELEVATION_SERIES, true);
+    } else {
+      chartView.setOverlayChartValueSeriesEnabled(ChartView.ELEVATION_SERIES, false);
+    }
   }
 
   @Override
   public void onPause() {
     super.onPause();
     pauseTrackDataHub();
+    pauseCourseDataHub();
   }
 
   @Override
@@ -178,17 +405,26 @@ public class ChartFragment extends Fragment implements TrackDataListener {
   @Override
   public void onTrackUpdated(Track track) {
     if (isResumed()) {
+      Log.d(TAG,"track updated");
+      currentTrack = track;
       if (track == null || track.getTripStatistics() == null) {
         startTime = -1L;
         return;
       }
       startTime = track.getTripStatistics().getStartTime();
+      try {
+        classLock.lock();
+        startCondition.signalAll();
+      } finally {
+        classLock.unlock();
+      }
     }
   }
 
   @Override
-  public void clearTrackPoints() {
+  public synchronized void clearTrackPoints() {
     if (isResumed()) {
+      Log.d(TAG,"track points cleared");
       tripStatisticsUpdater = startTime != -1L ? new TripStatisticsUpdater(startTime) : null;
       pendingPoints.clear();
       chartView.reset();
@@ -204,10 +440,11 @@ public class ChartFragment extends Fragment implements TrackDataListener {
   }
 
   @Override
-  public void onSampledInTrackPoint(Location location) {
+  public synchronized void onSampledInTrackPoint(Location location) {
     if (isResumed()) {
+      Log.d(TAG,"adding point");
       double[] data = new double[ChartView.NUM_SERIES + 1];
-      fillDataPoint(location, data);
+      fillDataPoint(location, data,tripStatisticsUpdater);
       pendingPoints.add(data);
     }
   }
@@ -215,20 +452,21 @@ public class ChartFragment extends Fragment implements TrackDataListener {
   @Override
   public void onSampledOutTrackPoint(Location location) {
     if (isResumed()) {
-      fillDataPoint(location, null);
+      fillDataPoint(location, null,tripStatisticsUpdater);
     }
   }
 
   @Override
   public void onSegmentSplit(Location location) {
     if (isResumed()) {
-      fillDataPoint(location, null);
+      fillDataPoint(location, null,tripStatisticsUpdater);
     }
   }
 
   @Override
-  public void onNewTrackPointsDone() {
+  public synchronized void onNewTrackPointsDone() {
     if (isResumed()) {
+      Log.d(TAG,"track points done");
       chartView.addDataPoints(pendingPoints);
       pendingPoints.clear();
       getActivity().runOnUiThread(updateChart);
@@ -324,6 +562,7 @@ public class ChartFragment extends Fragment implements TrackDataListener {
       chartByDistance = !chartByDistance;
       chartView.setChartByDistance(chartByDistance);
       reloadTrackDataHub();
+      reloadCourseDataHub();
       needUpdate = true;
     }
     if (setSeriesEnabled(ChartView.ELEVATION_SERIES, PreferencesUtils.getBoolean(getActivity(),
@@ -410,6 +649,47 @@ public class ChartFragment extends Fragment implements TrackDataListener {
       trackDataHub.reloadDataForListener(this);
     }
   }
+  
+  /**
+   * Reloads the courseDataHub. Needs to be synchronized because trackDataHub can
+   * be accessed by multiple threads.
+   */
+  private synchronized void reloadCourseDataHub() {
+    if (courseDataHub != null) {
+      courseDataHub.loadTrack(currentCourseId);
+      courseDataHub.reloadDataForListener(courseTrackDataListener);
+    }
+
+  }
+  
+  /**
+   * Pauses the trackDataHub. Needs to be synchronized because the trackDataHub
+   * can be accessed by multiple threads.
+   */
+  private synchronized void pauseCourseDataHub() {
+    //FIXME: needs new listener
+    if (courseDataHub != null) {
+      courseDataHub.unregisterTrackDataListener(courseTrackDataListener);
+    }
+    courseDataHub = null;
+  }
+  
+  /**
+   * Resumes the trackDataHub. Needs to be synchronized because the trackDataHub
+   * can be accessed by multiple threads.
+   */
+  private synchronized void resumeCourseDataHub() {
+    if (courseMode) {
+    currentCourseId = ((TrackDetailActivity) getActivity()).getCourseTrackId();
+    courseDataHub = ((TrackDetailActivity) getActivity()).getCourseDataHub();
+    courseDataHub.registerTrackDataListener(courseTrackDataListener, EnumSet.of(TrackDataType.SELECTED_TRACK,
+        TrackDataType.WAYPOINTS_TABLE, TrackDataType.SAMPLED_IN_TRACK_POINTS_TABLE,
+        TrackDataType.LOCATION));
+    reloadCourseDataHub();
+    }
+    
+  }
+
 
   /**
    * To zoom in.
@@ -443,7 +723,7 @@ public class ChartFragment extends Fragment implements TrackDataListener {
    * @param data the data point to fill in, can be null
    */
   @VisibleForTesting
-  void fillDataPoint(Location location, double data[]) {
+  void fillDataPoint(Location location, double data[], TripStatisticsUpdater tripStatisticsUpdaterIn) {
     double timeOrDistance = Double.NaN;
     double elevation = Double.NaN;
     double speed = Double.NaN;
@@ -452,9 +732,9 @@ public class ChartFragment extends Fragment implements TrackDataListener {
     double cadence = Double.NaN;
     double power = Double.NaN;
 
-    if (tripStatisticsUpdater != null) {
-      tripStatisticsUpdater.addLocation(location, minRecordingDistance);
-      TripStatistics tripStatistics = tripStatisticsUpdater.getTripStatistics();
+    if (tripStatisticsUpdaterIn != null) {
+      tripStatisticsUpdaterIn.addLocation(location, minRecordingDistance);
+      TripStatistics tripStatistics = tripStatisticsUpdaterIn.getTripStatistics();
       if (chartByDistance) {
         double distance = tripStatistics.getTotalDistance() * UnitConversions.M_TO_KM;
         if (!metricUnits) {
@@ -465,12 +745,12 @@ public class ChartFragment extends Fragment implements TrackDataListener {
         timeOrDistance = tripStatistics.getTotalTime();
       }
 
-      elevation = tripStatisticsUpdater.getSmoothedElevation();
+      elevation = tripStatisticsUpdaterIn.getSmoothedElevation();
       if (!metricUnits) {
         elevation *= UnitConversions.M_TO_FT;
       }
 
-      speed = tripStatisticsUpdater.getSmoothedSpeed() * UnitConversions.MS_TO_KMH;
+      speed = tripStatisticsUpdaterIn.getSmoothedSpeed() * UnitConversions.MS_TO_KMH;
       if (!metricUnits) {
         speed *= UnitConversions.KM_TO_MI;
       }

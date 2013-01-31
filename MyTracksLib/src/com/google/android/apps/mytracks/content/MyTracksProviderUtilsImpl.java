@@ -1035,4 +1035,9 @@ public class MyTracksProviderUtilsImpl implements MyTracksProviderUtils {
   void setDefaultCursorBatchSize(int defaultCursorBatchSize) {
     this.defaultCursorBatchSize = defaultCursorBatchSize;
   }
+
+  @Override
+  public boolean shouldSetPreference(int keyId) {
+    return true;
+  }
 }

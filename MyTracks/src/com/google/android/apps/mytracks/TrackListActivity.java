@@ -29,7 +29,6 @@ import com.google.android.apps.mytracks.fragments.EulaDialogFragment;
 import com.google.android.apps.mytracks.fragments.WelcomeDialogFragment;
 import com.google.android.apps.mytracks.io.file.SaveActivity;
 import com.google.android.apps.mytracks.io.file.TrackWriterFactory.TrackFileFormat;
-import com.google.android.apps.mytracks.services.ITrackRecordingService;
 import com.google.android.apps.mytracks.services.TrackRecordingServiceConnection;
 import com.google.android.apps.mytracks.settings.SettingsActivity;
 import com.google.android.apps.mytracks.util.AnalyticsUtils;
@@ -46,6 +45,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.maps.mytracks.R;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -94,6 +94,8 @@ public class TrackListActivity extends FragmentActivity implements DeleteOneTrac
   private static final String[] PROJECTION = new String[] { TracksColumns._ID, TracksColumns.NAME,
       TracksColumns.DESCRIPTION, TracksColumns.CATEGORY, TracksColumns.STARTTIME,
       TracksColumns.TOTALDISTANCE, TracksColumns.TOTALTIME, TracksColumns.ICON };
+  
+  protected static final int COURSE_SETUP_RESPONSE_CODE = 0;
 
   // Callback when the trackRecordingServiceConnection binding changes.
   private final Runnable bindChangedCallback = new Runnable() {
@@ -114,25 +116,28 @@ public class TrackListActivity extends FragmentActivity implements DeleteOneTrac
       if (!startNewRecording) {
         return;
       }
+      
 
-      ITrackRecordingService service = trackRecordingServiceConnection.getServiceIfBound();
-      if (service == null) {
-        Log.d(TAG, "service not available to start a new recording");
-        return;
-      }
-      try {
-        long trackId = service.startNewTrack();
-        startNewRecording = false;
-        Intent intent = IntentUtils.newIntent(TrackListActivity.this, TrackDetailActivity.class)
-            .putExtra(TrackDetailActivity.EXTRA_TRACK_ID, trackId);
-        startActivity(intent);
-        Toast.makeText(
-            TrackListActivity.this, R.string.track_list_record_success, Toast.LENGTH_SHORT).show();
-      } catch (Exception e) {
-        Toast.makeText(TrackListActivity.this, R.string.track_list_record_error, Toast.LENGTH_LONG)
-            .show();
-        Log.e(TAG, "Unable to start a new recording.", e);
-      }
+//      ITrackRecordingService service = trackRecordingServiceConnection.getServiceIfBound();
+//      if (service == null) {
+//        Log.d(TAG, "service not available to start a new recording");
+//        return;
+//      }
+      
+//  TODO: hack this back in if setting is not set to turbo trainer mode?
+//      try {
+//        long trackId = service.startNewTrack();
+//        startNewRecording = false;
+//        Intent intent = IntentUtils.newIntent(TrackListActivity.this, TrackDetailActivity.class)
+//            .putExtra(TrackDetailActivity.EXTRA_TRACK_ID, trackId);
+//        startActivity(intent);
+//        Toast.makeText(
+//            TrackListActivity.this, R.string.track_list_record_success, Toast.LENGTH_SHORT).show();
+//      } catch (Exception e) {
+//        Toast.makeText(TrackListActivity.this, R.string.track_list_record_error, Toast.LENGTH_LONG)
+//            .show();
+//        Log.e(TAG, "Unable to start a new recording.", e);
+//      }
     }
   };
 
@@ -192,10 +197,11 @@ public class TrackListActivity extends FragmentActivity implements DeleteOneTrac
       if (recordingTrackId == PreferencesUtils.RECORDING_TRACK_ID_DEFAULT) {
         // Not recording -> Recording
         AnalyticsUtils.sendPageViews(TrackListActivity.this, "/action/record_track");
-        startGps = false;
-        handleStartGps();
-        updateMenuItems(true);
-        startRecording();
+        //startGps = false;
+        //handleStartGps();
+        //updateMenuItems(true);
+        //startRecording();
+        startCourseSelector();
       } else {
         if (recordingTrackPaused) {
           // Paused -> Resume
@@ -217,10 +223,7 @@ public class TrackListActivity extends FragmentActivity implements DeleteOneTrac
   private final OnClickListener stopListener = new OnClickListener() {
       @Override
     public void onClick(View v) {
-      AnalyticsUtils.sendPageViews(TrackListActivity.this, "/action/stop_recording");
-      updateMenuItems(false);
-      TrackRecordingServiceConnectionUtils.stopRecording(
-          TrackListActivity.this, trackRecordingServiceConnection, true);
+        TrackListActivity.this.stopRecording();
     }
   };
 
@@ -351,6 +354,9 @@ public class TrackListActivity extends FragmentActivity implements DeleteOneTrac
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent intent = IntentUtils.newIntent(TrackListActivity.this, TrackDetailActivity.class)
             .putExtra(TrackDetailActivity.EXTRA_TRACK_ID, id);
+        intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP); 
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); 
         startActivity(intent);
       }
     });
@@ -407,6 +413,13 @@ public class TrackListActivity extends FragmentActivity implements DeleteOneTrac
       startGps = savedInstanceState.getBoolean(START_GPS_KEY);
     }
     showStartupDialogs();
+  }
+
+  protected void stopRecording() {
+    AnalyticsUtils.sendPageViews(TrackListActivity.this, "/action/stop_recording");
+    updateMenuItems(false);
+    TrackRecordingServiceConnectionUtils.stopRecording(
+        TrackListActivity.this, trackRecordingServiceConnection, true);
   }
 
   @Override
@@ -476,7 +489,15 @@ public class TrackListActivity extends FragmentActivity implements DeleteOneTrac
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     if (requestCode == GOOGLE_PLAY_SERVICES_REQUEST_CODE) {
       checkGooglePlayServices();
-    } else {
+    } else if (requestCode == TrackListActivity.COURSE_SETUP_RESPONSE_CODE){
+      if (resultCode == Activity.RESULT_CANCELED) {
+        stopRecording();
+      } else {
+        startRecording(true);
+      }
+      super.onActivityResult(requestCode, resultCode, data);
+    }
+      else {
       super.onActivityResult(requestCode, resultCode, data);
     }
   }
@@ -678,6 +699,24 @@ public class TrackListActivity extends FragmentActivity implements DeleteOneTrac
      */
     bindChangedCallback.run();
   }
+  
+  private void startRecording(boolean firstRun) {
+     if (firstRun) {
+       startGps = false;
+       handleStartGps();
+       updateMenuItems(true);
+     }
+     startRecording();
+  }
+  
+  private void startCourseSelector() {
+    Intent intent = IntentUtils.newIntent(TrackListActivity.this, CourseSetupActivity.class);
+    TrackListActivity.this.startActivityForResult(intent, TrackListActivity.COURSE_SETUP_RESPONSE_CODE);
+    
+    Log.d(TAG," started CourseSetupActivity");
+  }
+  
+  
 
   /**
    * Starts the {@link SaveActivity} to save all tracks.
@@ -719,6 +758,8 @@ public class TrackListActivity extends FragmentActivity implements DeleteOneTrac
         return false;
     }
   }
+  
+
 
   /**
    * Handles starting gps.

@@ -31,6 +31,16 @@ import java.util.List;
  * @author Rodrigo Damazio
  */
 public interface MyTracksProviderUtils {
+  
+  /**
+   * Given a keyId of a preference, this method will return true if the
+   * provider believes it should be set. Auxiliary providers are likely
+   * to return false for keys associated with the primary provider.
+   * 
+   * @param keyid for preference
+   * @return
+   */
+  public boolean shouldSetPreference(int keyId);
 
   /**
    * The authority (the first part of the URI) for the My Tracks content

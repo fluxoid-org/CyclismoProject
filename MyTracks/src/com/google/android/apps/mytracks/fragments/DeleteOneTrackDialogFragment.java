@@ -16,7 +16,9 @@
 
 package com.google.android.apps.mytracks.fragments;
 
+import com.google.android.apps.mytracks.CourseListActivity;
 import com.google.android.apps.mytracks.TrackListActivity;
+import com.google.android.apps.mytracks.content.MyTracksCourseProviderUtils;
 import com.google.android.apps.mytracks.content.MyTracksProviderUtils;
 import com.google.android.apps.mytracks.services.TrackRecordingServiceConnection;
 import com.google.android.apps.mytracks.util.DialogUtils;
@@ -43,6 +45,7 @@ public class DeleteOneTrackDialogFragment extends DialogFragment {
 
   public static final String DELETE_ONE_TRACK_DIALOG_TAG = "deleteOneTrackDialog";
   private static final String KEY_TRACK_ID = "trackId";
+  private static final String KEY_USE_COURSE_PROVIDER = "useCourseProvider";
 
   /**
    * Interface for caller of this dialog fragment.
@@ -80,25 +83,55 @@ public class DeleteOneTrackDialogFragment extends DialogFragment {
     activity = getActivity();
     return DialogUtils.createConfirmationDialog(activity,
         R.string.track_detail_delete_confirm_message, new DialogInterface.OnClickListener() {
+            private boolean mUseCourseProvider = false;
+
             @Override
           public void onClick(DialogInterface dialog, int which) {
             final long trackId = getArguments().getLong(KEY_TRACK_ID);
+            this.mUseCourseProvider  = getArguments().getBoolean(KEY_USE_COURSE_PROVIDER);
             final Context context = activity;
             if (trackId == PreferencesUtils.getLong(context, R.string.recording_track_id_key)) {
+              if (!mUseCourseProvider) {
               TrackRecordingServiceConnectionUtils.stopRecording(
                   context, caller.getTrackRecordingServiceConnection(), false);
+              }
             }
             new Thread(new Runnable() {
               @Override
               public void run() {
-                MyTracksProviderUtils.Factory.get(context).deleteTrack(trackId);
+                getProviderUtils(context).deleteTrack(trackId);
+              }
+
+              private MyTracksProviderUtils getProviderUtils(final Context c) {
+                if (mUseCourseProvider) {
+                  return new MyTracksCourseProviderUtils(c.getContentResolver());
+                }
+                return MyTracksProviderUtils.Factory.get(c);
               }
             }).start();
-            Intent intent = IntentUtils.newIntent(context, TrackListActivity.class);
+            Intent intent = null;
+            if (mUseCourseProvider) {
+              intent = IntentUtils.newIntent(context, CourseListActivity.class);
+            } else {
+              intent = IntentUtils.newIntent(context, TrackListActivity.class);
+            }
+            
             startActivity(intent);
             // Close the activity since its content can change after delete
             activity.finish();
+
           }
         });
+  }
+
+  public static DialogFragment newInstance(long trackId, boolean useCourseProvider) {
+    Bundle bundle = new Bundle();
+    bundle.putLong(KEY_TRACK_ID, trackId);
+    if (useCourseProvider) {
+      bundle.putBoolean(DeleteOneTrackDialogFragment.KEY_USE_COURSE_PROVIDER, true);
+    }
+    DeleteOneTrackDialogFragment deleteOneTrackDialogFragment = new DeleteOneTrackDialogFragment();
+    deleteOneTrackDialogFragment.setArguments(bundle);
+    return deleteOneTrackDialogFragment;
   }
 }

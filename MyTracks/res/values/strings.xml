@@ -3069,4 +3069,50 @@ limitations under the License.
     <!-- Turbo trainer courses -->
   <string name="import_gpx">Import GPX</string>
     <string name="cancel">Cancel</string>
+    <string name="course_file_chooser_title">Import GPX</string>
+    <string name="generic_go">Go</string>
+      <string name="course_list_empty_message"
+    translation_description="The message when the course list is empty.">
+    Database empty. Import a GPX file to begin.
+  </string>
+    <string name="course_select_title"
+    translation_description="The title of the course select screen. 
+    Shown after you press the red button.">
+   Course Setup
+  </string>
+    <string name="settings_courses_mode_simulation"
+    translation_description="In the 'Courses' settings, for the 'Mode' dropdown, the option
+      to simulate a track.
+      Character limit: ~20 (1 line)">
+    Simulation
+  </string>
+      <string name="settings_courses_mode_title"
+    translation_description="In the 'Courses' settings, for the title of the mode select
+    drop down options
+      Character limit: ~20 (1 line)">
+    Mode
+  </string>
+        <string name="settings_courses_route_title"
+    translation_description="In the 'Courses' settings, for the title of the route select
+    option
+      Character limit: ~20 (1 line)">
+    Select Route
+  </string>
+          <string name="settings_courses_route_section_title"
+    translation_description="In the 'Courses' settings, thes ection title for the route configuration options
+      Character limit: ~20 (1 line)">
+    Route Configuration
+  </string>
+          <string name="settings_courses_route_summary"
+    translation_description="In the 'Courses' settings, the sumamry for the route select option
+      Character limit: ~20 (1 line)">
+    Choose a GPX route to simulate
+  </string>
+            <string name="settings_courses_mode_summary"
+    translation_description="In the 'Courses' settings, the sumamry for the mode select option
+      Character limit: ~20 (1 line)">
+    Select a mode
+  </string>
+  <string name="course_not_selected">None Selected</string>
+        
 </resources>

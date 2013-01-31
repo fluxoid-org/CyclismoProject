@@ -73,11 +73,53 @@ public class MapOverlay {
   private final List<CachedLocation> locations;
   private final BlockingQueue<CachedLocation> pendingLocations;
   private final List<Waypoint> waypoints;
+  
+  
+
+  /**
+   * @return the pendingLocations
+   */
+  protected BlockingQueue<CachedLocation> getPendingLocations() {
+    return pendingLocations;
+  }
+
+  /**
+   * @return the locations
+   */
+  public List<CachedLocation> getLocations() {
+    return locations;
+  }
+  
+
+  /**
+   * @return the waypoints
+   */
+  public List<Waypoint> getWaypoints() {
+    return waypoints;
+  }
+
+
 
   private String trackColorMode = PreferencesUtils.TRACK_COLOR_MODE_DEFAULT;
 
   private boolean showEndMarker = true;
   private TrackPath trackPath;
+
+  
+  
+  /**
+   * @return the context
+   */
+  public Context getContext() {
+    return context;
+  }
+
+  /**
+   * @return the trackPath
+   */
+  public TrackPath getTrackPath() {
+    return trackPath;
+  }
 
   /**
    * A pre-processed {@link Location} to speed up drawing.
@@ -213,6 +255,8 @@ public class MapOverlay {
   public void update(GoogleMap googleMap, ArrayList<Polyline> paths, boolean reload) {
     synchronized (locations) {
       // Merge pendingLocations with locations
+      @SuppressWarnings("hiding")
+      TrackPath trackPath = getTrackPath();
       int newLocations = pendingLocations.drainTo(locations);
       boolean needReload = reload || trackPath.updateState();
       if (needReload) {
@@ -235,7 +279,7 @@ public class MapOverlay {
    * 
    * @param googleMap the google map
    */
-  private void updateStartAndEndMarkers(GoogleMap googleMap) {
+  protected void updateStartAndEndMarkers(GoogleMap googleMap) {
     // Add the end marker
     if (showEndMarker) {
       for (int i = locations.size() - 1; i >= 0; i--) {
@@ -268,7 +312,7 @@ public class MapOverlay {
    * 
    * @param googleMap the google map.
    */
-  private void updateWaypoints(GoogleMap googleMap) {
+  protected void updateWaypoints(GoogleMap googleMap) {
     synchronized (waypoints) {
       for (Waypoint waypoint : waypoints) {
         Location location = waypoint.getLocation();

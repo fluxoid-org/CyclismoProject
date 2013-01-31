@@ -256,4 +256,10 @@ limitations under the License.
     <item>@string/waypoint_type_water_fountain</item>
     <item>@string/waypoint_type_waypoint</item>
   </string-array>
+    <string-array name="course_mode_select_options">
+    <item>@string/settings_courses_mode_simulation</item>
+  </string-array>
+    <string-array name="course_mode_select_values">
+    <item>@string/settings_courses_mode_simulation_value</item>
+  </string-array>
 </resources>

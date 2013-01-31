@@ -35,6 +35,13 @@ public class SingleColorTrackPath implements TrackPath {
 
   final int color;
   
+  /**
+   * @return the color
+   */
+  public int getColor() {
+    return color;
+  }
+
   public SingleColorTrackPath(Context context) {
     color = context.getResources().getColor(R.color.fast_path);
   }
@@ -67,12 +74,12 @@ public class SingleColorTrackPath implements TrackPath {
       }
       LatLng latLng = cachedLocation.getLatLng();
       if (newSegment) {
-        TrackPathUtils.addPath(googleMap, paths, lastSegmentPoints, color, useLastPolyline);
+        TrackPathUtils.addPath(googleMap, paths, lastSegmentPoints, getColor(), useLastPolyline);
         useLastPolyline = false;
         newSegment = false;
       }
       lastSegmentPoints.add(latLng);
     }
-    TrackPathUtils.addPath(googleMap, paths, lastSegmentPoints, color, useLastPolyline);
+    TrackPathUtils.addPath(googleMap, paths, lastSegmentPoints, getColor(), useLastPolyline);
   }
 }

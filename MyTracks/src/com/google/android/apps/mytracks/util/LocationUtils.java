@@ -159,4 +159,6 @@ public class LocationUtils {
     return location != null && Math.abs(location.getLatitude()) <= 90
         && Math.abs(location.getLongitude()) <= 180;
   }
+  
+
 }

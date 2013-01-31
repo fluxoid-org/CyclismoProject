@@ -16,6 +16,7 @@
 
 package com.google.android.apps.mytracks;
 
+import com.google.android.apps.mytracks.content.MyTracksCourseProviderUtils;
 import com.google.android.apps.mytracks.content.MyTracksProviderUtils;
 import com.google.android.apps.mytracks.content.Track;
 import com.google.android.apps.mytracks.content.TrackDataHub;
@@ -71,14 +72,18 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
 
   public static final String EXTRA_TRACK_ID = "track_id";
   public static final String EXTRA_MARKER_ID = "marker_id";
+  public static final String EXTRA_USE_COURSE_PROVIDER = "use_course_provider";
+  public static final String EXTRA_COURSE_TRACK_ID = "course_track_id";
 
   private static final String TAG = TrackDetailActivity.class.getSimpleName();
   private static final String CURRENT_TAB_TAG_KEY = "current_tab_tag_key";
+
 
   // The following are set in onCreate
   private SharedPreferences sharedPreferences;
   private TrackRecordingServiceConnection trackRecordingServiceConnection;
   private TrackDataHub trackDataHub;
+  private TrackDataHub courseDataHub;
   private TabHost tabHost;
   private TabManager tabManager;
   private TrackController trackController;
@@ -86,6 +91,16 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
   // From intent
   private long trackId;
   private long markerId;
+  private boolean useCourseProivder = false;
+  private long courseTrackId;
+
+  /**
+   * @return the useCourseProivder
+   */
+  public boolean isUsingCourseProivder() {
+    return useCourseProivder;
+  }
+
 
   // Preferences
   private long recordingTrackId = PreferencesUtils.RECORDING_TRACK_ID_DEFAULT;
@@ -174,28 +189,53 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
           TrackDetailActivity.this, trackRecordingServiceConnection, true);
     }
   };
+  
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+//    ActivityManager manager = (ActivityManager) this.getSystemService( ACTIVITY_SERVICE );
+//    List<RunningTaskInfo> tasks =  manager.getRunningTasks(Integer.MAX_VALUE);
+//
+//    for (RunningTaskInfo taskInfo : tasks) {
+//        Log.d(TAG,"taskInfo.baseActivity.getClassName() : " + taskInfo.baseActivity.getClassName());
+//        Log.d(TAG,"taskInfo.description : " + taskInfo.description);
+// 
+//        if(taskInfo.baseActivity.getClassName().equals("com.google.android.apps.mytracks.TrackListActivity") && (taskInfo.numActivities > 1)){
+//            finish();
+//        }
+//    }
+    
+ 
+    
     super.onCreate(savedInstanceState);
     handleIntent(getIntent());
-
+    
     sharedPreferences = getSharedPreferences(Constants.SETTINGS_NAME, Context.MODE_PRIVATE);
 
     trackRecordingServiceConnection = new TrackRecordingServiceConnection(
         this, bindChangedCallback);
-    trackDataHub = TrackDataHub.newInstance(this);
+    if (this.useCourseProivder) {
+      trackDataHub = TrackDataHub.newInstance(this,true);
+    } else {
+      trackDataHub = TrackDataHub.newInstance(this);
+    }
+    
+    courseDataHub = TrackDataHub.newInstance(this,true);
+    
+    Bundle extras = new Bundle();
+    
+    extras.putLong(TrackDetailActivity.EXTRA_COURSE_TRACK_ID, getCourseTrackId());
 
     tabHost = (TabHost) findViewById(android.R.id.tabhost);
     tabHost.setup();
     tabManager = new TabManager(this, tabHost, R.id.realtabcontent);
     TabSpec mapTabSpec = tabHost.newTabSpec(MyTracksMapFragment.MAP_FRAGMENT_TAG).setIndicator(
         getString(R.string.track_detail_map_tab), getResources().getDrawable(R.drawable.tab_map));
-    tabManager.addTab(mapTabSpec, MyTracksMapFragment.class, null);
+    tabManager.addTab(mapTabSpec, MyTracksMapFragment.class, extras);
     TabSpec chartTabSpec = tabHost.newTabSpec(ChartFragment.CHART_FRAGMENT_TAG).setIndicator(
         getString(R.string.track_detail_chart_tab),
         getResources().getDrawable(R.drawable.tab_chart));
-    tabManager.addTab(chartTabSpec, ChartFragment.class, null);
+    tabManager.addTab(chartTabSpec, ChartFragment.class, extras);
     TabSpec statsTabSpec = tabHost.newTabSpec(StatsFragment.STATS_FRAGMENT_TAG).setIndicator(
         getString(R.string.track_detail_stats_tab),
         getResources().getDrawable(R.drawable.tab_stats));
@@ -208,6 +248,10 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
     showMarker();
   }
 
+  public long getCourseTrackId() {
+    return this.courseTrackId;
+  }
+
   @Override
   protected void onStart() {
     super.onStart();
@@ -217,13 +261,16 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
 
     TrackRecordingServiceConnectionUtils.startConnection(this, trackRecordingServiceConnection);
     trackDataHub.start();
+    courseDataHub.start();
     AnalyticsUtils.sendPageViews(this, "/page/track_detail");
   }
 
   @Override
   protected void onResume() {
     super.onResume();
+    Log.d(TAG,"trackId : " + trackId);
     trackDataHub.loadTrack(trackId);
+    courseDataHub.loadTrack(courseTrackId);
     
     // Update UI
     boolean isRecording = trackId == recordingTrackId;
@@ -243,7 +290,17 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
     sharedPreferences.unregisterOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
     trackRecordingServiceConnection.unbind();
     trackDataHub.stop();
+    courseDataHub.stop();
     AnalyticsUtils.dispatch();
+  }
+  
+  /**
+   * Course turbo trainer mode?
+   * @return
+   */
+  public boolean isCourseMode() {
+    //if (!useCourseProivder && getCourseTrackId() != -1L) return true;
+    return false;
   }
 
   @Override
@@ -369,11 +426,12 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
         return true;
       case R.id.track_detail_edit:
         intent = IntentUtils.newIntent(this, TrackEditActivity.class)
-            .putExtra(TrackEditActivity.EXTRA_TRACK_ID, trackId);
+            .putExtra(TrackEditActivity.EXTRA_TRACK_ID, trackId)
+            .putExtra(TrackEditActivity.EXTRA_USE_COURSE_PROVIDER,useCourseProivder);
         startActivity(intent);
         return true;
       case R.id.track_detail_delete:
-        DeleteOneTrackDialogFragment.newInstance(trackId).show(
+        DeleteOneTrackDialogFragment.newInstance(trackId,useCourseProivder).show(
             getSupportFragmentManager(), DeleteOneTrackDialogFragment.DELETE_ONE_TRACK_DIALOG_TAG);
         return true;
       case R.id.track_detail_sensor_state:
@@ -416,6 +474,10 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
   public TrackDataHub getTrackDataHub() {
     return trackDataHub;
   }
+  
+  public TrackDataHub getCourseDataHub() {
+    return courseDataHub;
+  }
 
   /**
    * Handles the data in the intent.
@@ -423,8 +485,10 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
   private void handleIntent(Intent intent) {
     trackId = intent.getLongExtra(EXTRA_TRACK_ID, -1L);
     markerId = intent.getLongExtra(EXTRA_MARKER_ID, -1L);
+    useCourseProivder = intent.getBooleanExtra(EXTRA_USE_COURSE_PROVIDER, false);
+    courseTrackId = intent.getLongExtra(EXTRA_COURSE_TRACK_ID, -1L);
     if (markerId != -1L) {
-      Waypoint waypoint = MyTracksProviderUtils.Factory.get(this).getWaypoint(markerId);
+      Waypoint waypoint = getProviderUtils().getWaypoint(markerId);
       if (waypoint == null) {
         exit();
         return;
@@ -437,6 +501,14 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
     }
   }
 
+  private MyTracksProviderUtils getProviderUtils() {
+    if (this.useCourseProivder) {
+      return new MyTracksCourseProviderUtils(this.getContentResolver());
+    } else {
+      return MyTracksProviderUtils.Factory.get(this);
+    }
+  }
+
   /**
    * Exists and returns to {@link TrackListActivity}.
    */
@@ -444,6 +516,18 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
     Intent newIntent = IntentUtils.newIntent(this, TrackListActivity.class);
     startActivity(newIntent);
     finish();
+  }
+  
+  @Override
+  public void finish() {
+    super.finish();
+    Log.d(TAG, "finish");
+  }
+  
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    Log.d(TAG, "destroy");
   }
 
   /**
@@ -453,6 +537,7 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
     if (markerId != -1L) {
       MyTracksMapFragment mapFragmet = (MyTracksMapFragment) getSupportFragmentManager()
           .findFragmentByTag(MyTracksMapFragment.MAP_FRAGMENT_TAG);
+
       if (mapFragmet != null) {
         tabHost.setCurrentTabByTag(MyTracksMapFragment.MAP_FRAGMENT_TAG);
         mapFragmet.showMarker(trackId, markerId);
@@ -461,6 +546,7 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
       }
     }
   }
+  
 
   /**
    * Updates the menu items.
@@ -494,7 +580,7 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
     if (isRecording) {
       title = getString(isPaused ? R.string.generic_paused : R.string.generic_recording);
     } else {
-      Track track = MyTracksProviderUtils.Factory.get(this).getTrack(trackId);
+      Track track = getProviderUtils().getTrack(trackId);
       title = track != null ? track.getName() : getString(R.string.my_tracks_app_name);
     }
     setTitle(title);

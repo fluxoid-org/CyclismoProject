@@ -21,6 +21,7 @@ import com.google.android.apps.mytracks.util.ApiAdapterFactory;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.MenuItem;
 
 /**
@@ -29,6 +30,8 @@ import android.view.MenuItem;
  * @author Jimmy Shih
  */
 public abstract class AbstractMyTracksActivity extends FragmentActivity {
+  
+  public static String TAG = "AbstractMyTracksActivity";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +65,7 @@ public abstract class AbstractMyTracksActivity extends FragmentActivity {
    * Callback when the home menu item is selected.
    */
   protected void onHomeSelected() {
+    Log.d(TAG,"home selected: finishing");
     finish();
   }
 

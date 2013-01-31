@@ -16,10 +16,12 @@
 
 package com.google.android.apps.mytracks.fragments;
 
+import com.google.android.apps.mytracks.content.MyTracksCourseProviderUtils;
 import com.google.android.apps.mytracks.content.MyTracksProviderUtils;
 import com.google.android.apps.mytracks.util.DialogUtils;
 import com.google.android.maps.mytracks.R;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -31,12 +33,24 @@ import android.support.v4.app.FragmentActivity;
  * 
  * @author Jimmy Shih
  */
+@SuppressLint("ValidFragment")
 public class DeleteAllTrackDialogFragment extends DialogFragment {
 
   public static final String DELETE_ALL_TRACK_DIALOG_TAG = "deleteAllTrackDialog";
 
   private FragmentActivity activity;
+
+  private MyTracksCourseProviderUtils myTracksCourseProviderUtils;
   
+  public DeleteAllTrackDialogFragment() {
+    super();
+  }
+  
+  public DeleteAllTrackDialogFragment(MyTracksCourseProviderUtils myTracksCourseProviderUtils) {
+    super();
+    this.myTracksCourseProviderUtils = myTracksCourseProviderUtils;
+  }
+
   @Override
   public Dialog onCreateDialog(Bundle savedInstanceState) {
     activity = getActivity();
@@ -47,7 +61,11 @@ public class DeleteAllTrackDialogFragment extends DialogFragment {
             new Thread(new Runnable() {
               @Override
               public void run() {
-                MyTracksProviderUtils.Factory.get(activity).deleteAllTracks();
+                if (myTracksCourseProviderUtils != null) {
+                  myTracksCourseProviderUtils.deleteAllTracks();
+                } else {
+                  MyTracksProviderUtils.Factory.get(activity).deleteAllTracks();
+                }
               }
             }).start();
           }

@@ -16,6 +16,7 @@
 
 package com.google.android.apps.mytracks;
 
+import com.google.android.apps.mytracks.content.MyTracksCourseProviderUtils;
 import com.google.android.apps.mytracks.content.MyTracksProviderUtils;
 import com.google.android.apps.mytracks.content.Track;
 import com.google.android.apps.mytracks.util.TrackIconUtils;
@@ -42,36 +43,50 @@ public class TrackEditActivity extends AbstractMyTracksActivity {
 
   public static final String EXTRA_TRACK_ID = "track_id";
   public static final String EXTRA_NEW_TRACK = "new_track";
+  public static final String EXTRA_USE_COURSE_PROVIDER = "use_course_provider";
 
   private static final String TAG = TrackEditActivity.class.getSimpleName();
 
   private Long trackId;
   private MyTracksProviderUtils myTracksProviderUtils;
   private Track track;
+  private boolean useCourseProvider = false;
 
   private EditText name;
   private TextView activityTypeLabel;
   private AutoCompleteTextView activityType;
   private EditText description;
+  
+  
 
+  private MyTracksProviderUtils getProviderUtils() {
+    if (this.useCourseProvider) {
+      return new MyTracksCourseProviderUtils(this.getContentResolver());
+    } else {
+      return MyTracksProviderUtils.Factory.get(this);
+    }
+  }
+  
   @Override
   protected void onCreate(Bundle bundle) {
     super.onCreate(bundle);
 
     trackId = getIntent().getLongExtra(EXTRA_TRACK_ID, -1L);
+    useCourseProvider = getIntent().getBooleanExtra(EXTRA_USE_COURSE_PROVIDER, false);
     if (trackId == -1L) {
       Log.e(TAG, "invalid trackId");
       finish();
       return;
     }
 
-    myTracksProviderUtils = MyTracksProviderUtils.Factory.get(this);
+    myTracksProviderUtils = getProviderUtils();
     track = myTracksProviderUtils.getTrack(trackId);
     if (track == null) {
       Log.e(TAG, "No track for " + trackId);
       finish();
       return;
     }
+    
 
     name = (EditText) findViewById(R.id.track_edit_name);
     name.setText(track.getName());
