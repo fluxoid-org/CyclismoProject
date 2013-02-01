@@ -139,7 +139,7 @@ limitations under the License.
     android:hardwareAccelerated="true"
     android:icon="@drawable/my_tracks_icon"
     android:label="@string/my_tracks_app_name"
-    android:name="org.cowboycoders.cyclisimo.CyclisimoApplication"
+    android:name="org.cowboycoders.cyclisimo.MyTracksApplication"
     android:theme="@style/ThemeSelector" >
     <!-- For data backup -->
     <meta-data
@@ -242,7 +242,7 @@ limitations under the License.
       </intent-filter>
     </activity>
     <activity
-    android:name="com.ipcom.ipaulpro.afilechooser.FileChooserActivity"
+    android:name="com.ipaulpro.afilechooser.FileChooserActivity"
     android:exported="true"
     android:icon="@drawable/ic_chooser"
     android:label="@string/choose_file"
@@ -278,8 +278,8 @@ limitations under the License.
         <action android:name="android.intent.action.BOOT_COMPLETED" />
       </intent-filter>
     </receiver>
-    <receiver android:name="org.cowboycoders.cyclisimo.widgets.TrackWidgetProvider">
-        <intent-filter>
+    <receiver android:name="org.cowboycoders.cyclisimo.widgets.TrackWidgetProvider" >
+      <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
         <action android:name="org.cowboycoders.cyclisimo.TRACK_PAUSED" />
         <action android:name="org.cowboycoders.cyclisimo.TRACK_RESUMED" />
@@ -309,4 +309,6 @@ limitations under the License.
     <provider
       android:authorities="org.cowboycoders.cyclisimo.search"
       android:exported="false"
-      android:name="org.cowboycoders.corg.cowboycoders.cyclisimo.content.SearchEngineProviderst>
+      android:name="org.cowboycoders.cyclisimo.content.SearchEngineProvider" />
+  </application>
+</manifest>
