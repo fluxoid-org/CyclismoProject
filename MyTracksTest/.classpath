@@ -9,6 +9,6 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/com.google.android.apps.mytracks.TrackListActivity"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Cyclisimo"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
