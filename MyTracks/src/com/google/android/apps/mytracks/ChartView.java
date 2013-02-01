@@ -52,6 +52,8 @@ import java.util.Arrays;
  * @author Leif Hendrik Wilden
  */
 public class ChartView extends View {
+  
+  public static final String TAG = ChartView.class.getSimpleName();
 
   public static final float MEDIUM_TEXT_SIZE = 18f;
   public static final float SMALL_TEXT_SIZE = 12f;
@@ -298,7 +300,10 @@ public class ChartView extends View {
         double[] dataPoint = dataPoints.get(i);
         xExtremityMonitor.update(dataPoint[0]);
         for (int j = 0; j < series.length; j++) {
-          if (!Double.isNaN(dataPoint[j])) {
+          //if (j == CADENCE_SERIES) {
+            //Log.d(TAG,"cadence addDataPoints before nan" + dataPoint[j + 1]);
+         //} // waas Checking datapoint[j] : did I introduce this?!
+          if (!Double.isNaN(dataPoint[j+1])) {
             series[j].update(dataPoint[j + 1]);
           }
         }
@@ -796,7 +801,7 @@ public class ChartView extends View {
     ChartValueSeries [] seriesLocal = Arrays.copyOf(series, series.length);
     for (int i = 0 ; i < seriesLocal.length ; i++) {
       if (seriesOverlay[i].isEnabled()) {
-        seriesLocal[i] = seriesOverlay[i];
+        //seriesLocal[i] = seriesOverlay[i];
       }
     }
     return seriesLocal;

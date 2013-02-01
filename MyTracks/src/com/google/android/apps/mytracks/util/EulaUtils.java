@@ -35,7 +35,8 @@ public class EulaUtils {
   private EulaUtils() {}
 
   public static boolean getAcceptEula(Context context) {
-    return getValue(context, ACCEPT_EULA_PREFERENCE_KEY, false);
+    return true;
+    //return getValue(context, ACCEPT_EULA_PREFERENCE_KEY, false);
   }
 
   public static void setAcceptEula(Context context) {
@@ -43,7 +44,8 @@ public class EulaUtils {
   }
 
   public static boolean getShowWelcome(Context context) {
-    return getValue(context, SHOW_WELCOME_PREFERENCE_KEY, true);
+      return false;
+    //return getValue(context, SHOW_WELCOME_PREFERENCE_KEY, true);
   }
 
   public static void setShowWelcome(Context context) {

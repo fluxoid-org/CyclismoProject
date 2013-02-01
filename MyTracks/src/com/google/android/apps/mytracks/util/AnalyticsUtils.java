@@ -40,17 +40,17 @@ public class AnalyticsUtils {
    * @param page the page
    */
   public static void sendPageViews(Context context, String page) {
-    if (tracker == null) {
-      tracker = GoogleAnalyticsTracker.getInstance();
-      tracker.startNewSession(UA, context);
-      tracker.setProductVersion(PRODUCT_NAME, SystemUtils.getMyTracksVersion(context));
-    }
-    tracker.trackPageView(page);
+//    if (tracker == null) {
+//      tracker = GoogleAnalyticsTracker.getInstance();
+//      tracker.startNewSession(UA, context);
+//      tracker.setProductVersion(PRODUCT_NAME, SystemUtils.getMyTracksVersion(context));
+//    }
+//    tracker.trackPageView(page);
   }
 
   public static void dispatch() {
-    if (tracker != null) {
-      tracker.dispatch();
-    }
+//    if (tracker != null) {
+//      tracker.dispatch();
+//    }
   }
 }

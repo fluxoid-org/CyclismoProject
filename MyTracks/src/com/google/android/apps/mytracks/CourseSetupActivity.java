@@ -70,6 +70,7 @@ public class CourseSetupActivity extends Activity {
   protected Long trackId;
   protected String modeString;
   private Button goButton;
+  private boolean mIsBound;
   
   private ServiceConnection mConnection = new ServiceConnection() {
 
@@ -78,6 +79,8 @@ public class CourseSetupActivity extends Activity {
       s.start(getTrackId(),CourseSetupActivity.this);
       Toast.makeText(CourseSetupActivity.this, "Connected to turbo service",
           Toast.LENGTH_SHORT).show();
+      // no longer needed
+      doUnbindService();
     }
 
     public void onServiceDisconnected(ComponentName className) {
@@ -85,11 +88,21 @@ public class CourseSetupActivity extends Activity {
           Toast.LENGTH_SHORT).show();
     }
   };
+
   
   void doBindService() {
     bindService(new Intent(this, TurboService.class), mConnection,
         Context.BIND_AUTO_CREATE);
+    mIsBound = true;
   }
+  
+  void doUnbindService() {
+    if (mIsBound) {
+        // Detach our existing connection.
+        unbindService(mConnection);
+        mIsBound = false;
+    }
+}
   
   private void startServiceInBackround() {
     Intent intent = new Intent(this, TurboService.class);

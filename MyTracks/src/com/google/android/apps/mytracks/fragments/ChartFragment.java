@@ -590,6 +590,7 @@ private TrackDataListener courseTrackDataListener = new TrackDataListener() {
         R.string.chart_show_heart_rate_key, PreferencesUtils.CHART_SHOW_HEART_RATE_DEFAULT))) {
       needUpdate = true;
     }
+    
     if (needUpdate) {
       chartView.postInvalidate();
     }
@@ -768,6 +769,7 @@ private TrackDataListener courseTrackDataListener = new TrackDataListener() {
           && sensorDataSet.getCadence().getState() == Sensor.SensorState.SENDING
           && sensorDataSet.getCadence().hasValue()) {
         cadence = sensorDataSet.getCadence().getValue();
+        Log.d(TAG,"cadence: " + cadence);
       }
       if (sensorDataSet.hasPower()
           && sensorDataSet.getPower().getState() == Sensor.SensorState.SENDING

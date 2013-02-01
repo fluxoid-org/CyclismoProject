@@ -2134,3 +2134,83 @@
 15-Jan-2013 00:54:32 - NOTE : Found 0 classes to mock
 15-Jan-2013 00:54:32 - NOTE : Found 0 mocked classes to save
 15-Jan-2013 00:54:32 - NOTE : Finished Processing Mocks
+31-Jan-2013 18:43:13 - NOTE : Start Processing Annotations
+31-Jan-2013 18:43:13 - NOTE : Processing [public void testCreateTrackPoint() , public void testUploadWaypoints_nullCursor() , public void testUploadAllTrackPoints_uploadLastMarkerFailed() , public void testUploadAllTrackPoints_prepareAndUploadPointsFailed() , protected void setUp() throws java.lang.Exception, protected void setUp() throws java.lang.Exception, protected void setUp() throws java.lang.Exception, public void testCreateWaypoint() , public void testStartRecording() , private void setupChooseMapActivityMock() , public void testUploadAllTrackPoints_success() , public void testUploadAllTrackPoints_uploadFirstMarkerFailed() , public void testCreateTrack() , public void testCreateWaypoint() , public void testCreateTrack() , public void testCreateTrackPoint() , protected void setUp() throws java.lang.Exception, public void testStopRecording() , public void testUploadWaypoints() throws org.xmlpull.v1.XmlPullParserException, protected void setUp() throws java.lang.Exception, public void testUploadWaypoints_onePoint() ]
+31-Jan-2013 18:43:13 - NOTE : Adding Class to Mocking List: android.database.Cursor
+31-Jan-2013 18:43:13 - NOTE : Adding Class to Mocking List: android.database.Cursor
+31-Jan-2013 18:43:13 - NOTE : Adding Class to Mocking List: android.database.Cursor
+31-Jan-2013 18:43:13 - NOTE : Adding Class to Mocking List: android.database.Cursor
+31-Jan-2013 18:43:13 - NOTE : Adding Class to Mocking List: com.google.android.apps.mytracks.io.maps.SendMapsActivity
+31-Jan-2013 18:43:13 - NOTE : Adding Class to Mocking List: com.google.android.apps.mytracks.content.MyTracksProviderUtils
+31-Jan-2013 18:43:13 - NOTE : Adding Class to Mocking List: com.google.android.apps.mytracks.content.MyTracksProviderUtils
+31-Jan-2013 18:43:13 - NOTE : Adding Class to Mocking List: com.google.android.apps.mytracks.content.DataSource
+31-Jan-2013 18:43:13 - NOTE : Adding Class to Mocking List: com.google.android.apps.mytracks.content.TrackDataListener
+31-Jan-2013 18:43:13 - NOTE : Adding Class to Mocking List: java.io.File
+31-Jan-2013 18:43:13 - NOTE : Adding Class to Mocking List: android.database.Cursor
+31-Jan-2013 18:43:13 - NOTE : Adding Class to Mocking List: com.google.android.apps.mytracks.services.ITrackRecordingService
+31-Jan-2013 18:43:13 - NOTE : Adding Class to Mocking List: com.google.android.apps.mytracks.io.maps.ChooseMapActivity
+31-Jan-2013 18:43:13 - NOTE : Adding Class to Mocking List: android.database.Cursor
+31-Jan-2013 18:43:13 - NOTE : Adding Class to Mocking List: android.database.Cursor
+31-Jan-2013 18:43:13 - NOTE : Adding Class to Mocking List: android.database.Cursor
+31-Jan-2013 18:43:13 - NOTE : Adding Class to Mocking List: android.database.Cursor
+31-Jan-2013 18:43:13 - NOTE : Adding Class to Mocking List: android.database.Cursor
+31-Jan-2013 18:43:13 - NOTE : Adding Class to Mocking List: android.database.Cursor
+31-Jan-2013 18:43:13 - NOTE : Adding Class to Mocking List: com.google.android.apps.mytracks.content.MyTracksProviderUtils
+31-Jan-2013 18:43:13 - NOTE : Adding Class to Mocking List: com.google.android.apps.mytracks.services.ITrackRecordingService
+31-Jan-2013 18:43:13 - NOTE : Adding Class to Mocking List: android.database.Cursor
+31-Jan-2013 18:43:13 - NOTE : Adding Class to Mocking List: com.google.android.apps.mytracks.services.tasks.AnnouncementPeriodicTask
+31-Jan-2013 18:43:13 - NOTE : Adding Class to Mocking List: com.google.android.apps.mytracks.util.StringUtils
+31-Jan-2013 18:43:13 - NOTE : Adding Class to Mocking List: android.database.Cursor
+31-Jan-2013 18:43:13 - NOTE : Found 25 classes to mock
+31-Jan-2013 18:43:13 - NOTE : Mocking interface android.database.Cursor
+31-Jan-2013 18:43:13 - NOTE : Mocking interface android.database.Cursor
+31-Jan-2013 18:43:13 - NOTE : Mocking interface android.database.Cursor
+31-Jan-2013 18:43:13 - NOTE : Mocking interface android.database.Cursor
+31-Jan-2013 18:43:13 - NOTE : Mocking class com.google.android.apps.mytracks.io.maps.SendMapsActivity
+31-Jan-2013 18:43:13 - NOTE : Mocking interface com.google.android.apps.mytracks.content.MyTracksProviderUtils
+31-Jan-2013 18:43:13 - NOTE : Mocking interface com.google.android.apps.mytracks.content.MyTracksProviderUtils
+31-Jan-2013 18:43:13 - NOTE : Mocking class com.google.android.apps.mytracks.content.DataSource
+31-Jan-2013 18:43:13 - NOTE : Mocking interface com.google.android.apps.mytracks.content.TrackDataListener
+31-Jan-2013 18:43:13 - NOTE : Mocking class java.io.File
+31-Jan-2013 18:43:13 - NOTE : Mocking interface android.database.Cursor
+31-Jan-2013 18:43:13 - NOTE : Mocking interface com.google.android.apps.mytracks.services.ITrackRecordingService
+31-Jan-2013 18:43:13 - NOTE : Mocking class com.google.android.apps.mytracks.io.maps.ChooseMapActivity
+31-Jan-2013 18:43:13 - NOTE : Mocking interface android.database.Cursor
+31-Jan-2013 18:43:13 - NOTE : Mocking interface android.database.Cursor
+31-Jan-2013 18:43:13 - NOTE : Mocking interface android.database.Cursor
+31-Jan-2013 18:43:13 - NOTE : Mocking interface android.database.Cursor
+31-Jan-2013 18:43:13 - NOTE : Mocking interface android.database.Cursor
+31-Jan-2013 18:43:13 - NOTE : Mocking interface android.database.Cursor
+31-Jan-2013 18:43:13 - NOTE : Mocking interface com.google.android.apps.mytracks.content.MyTracksProviderUtils
+31-Jan-2013 18:43:13 - NOTE : Mocking interface com.google.android.apps.mytracks.services.ITrackRecordingService
+31-Jan-2013 18:43:13 - NOTE : Mocking interface android.database.Cursor
+31-Jan-2013 18:43:13 - NOTE : Mocking class com.google.android.apps.mytracks.services.tasks.AnnouncementPeriodicTask
+31-Jan-2013 18:43:13 - NOTE : Mocking class com.google.android.apps.mytracks.util.StringUtils
+31-Jan-2013 18:43:13 - NOTE : Mocking interface android.database.Cursor
+31-Jan-2013 18:43:13 - NOTE : Found 10 mocked classes to save
+31-Jan-2013 18:43:13 - NOTE : Saving genmocks.java.io.FileDelegateSubclass
+31-Jan-2013 18:43:13 - NOTE : Saving via Eclipse genmocks.java.io.FileDelegateSubclass
+31-Jan-2013 18:43:13 - NOTE : Saving genmocks.com.google.android.apps.mytracks.content.DataSourceDelegateInterface
+31-Jan-2013 18:43:13 - NOTE : Saving via Eclipse genmocks.com.google.android.apps.mytracks.content.DataSourceDelegateInterface
+31-Jan-2013 18:43:13 - NOTE : Saving genmocks.com.google.android.apps.mytracks.io.maps.SendMapsActivityDelegateSubclass
+31-Jan-2013 18:43:13 - NOTE : Saving via Eclipse genmocks.com.google.android.apps.mytracks.io.maps.SendMapsActivityDelegateSubclass
+31-Jan-2013 18:43:13 - NOTE : Saving genmocks.com.google.android.apps.mytracks.services.tasks.AnnouncementPeriodicTaskDelegateSubclass
+31-Jan-2013 18:43:13 - NOTE : Saving via Eclipse genmocks.com.google.android.apps.mytracks.services.tasks.AnnouncementPeriodicTaskDelegateSubclass
+31-Jan-2013 18:43:13 - NOTE : Saving genmocks.com.google.android.apps.mytracks.io.maps.ChooseMapActivityDelegateInterface
+31-Jan-2013 18:43:13 - NOTE : Saving via Eclipse genmocks.com.google.android.apps.mytracks.io.maps.ChooseMapActivityDelegateInterface
+31-Jan-2013 18:43:13 - NOTE : Saving genmocks.com.google.android.apps.mytracks.io.maps.ChooseMapActivityDelegateSubclass
+31-Jan-2013 18:43:13 - NOTE : Saving via Eclipse genmocks.com.google.android.apps.mytracks.io.maps.ChooseMapActivityDelegateSubclass
+31-Jan-2013 18:43:13 - NOTE : Saving genmocks.java.io.FileDelegateInterface
+31-Jan-2013 18:43:13 - NOTE : Saving via Eclipse genmocks.java.io.FileDelegateInterface
+31-Jan-2013 18:43:13 - NOTE : Saving genmocks.com.google.android.apps.mytracks.content.DataSourceDelegateSubclass
+31-Jan-2013 18:43:13 - NOTE : Saving via Eclipse genmocks.com.google.android.apps.mytracks.content.DataSourceDelegateSubclass
+31-Jan-2013 18:43:13 - NOTE : Saving genmocks.com.google.android.apps.mytracks.services.tasks.AnnouncementPeriodicTaskDelegateInterface
+31-Jan-2013 18:43:13 - NOTE : Saving via Eclipse genmocks.com.google.android.apps.mytracks.services.tasks.AnnouncementPeriodicTaskDelegateInterface
+31-Jan-2013 18:43:13 - NOTE : Saving genmocks.com.google.android.apps.mytracks.io.maps.SendMapsActivityDelegateInterface
+31-Jan-2013 18:43:13 - NOTE : Saving via Eclipse genmocks.com.google.android.apps.mytracks.io.maps.SendMapsActivityDelegateInterface
+31-Jan-2013 18:43:13 - NOTE : Finished Processing Mocks
+31-Jan-2013 18:43:13 - NOTE : Start Processing Annotations
+31-Jan-2013 18:43:13 - NOTE : Processing []
+31-Jan-2013 18:43:13 - NOTE : Found 0 classes to mock
+31-Jan-2013 18:43:13 - NOTE : Found 0 mocked classes to save
+31-Jan-2013 18:43:13 - NOTE : Finished Processing Mocks

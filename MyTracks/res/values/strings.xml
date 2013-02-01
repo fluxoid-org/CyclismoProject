@@ -3114,5 +3114,8 @@ limitations under the License.
     Select a mode
   </string>
   <string name="course_not_selected">None Selected</string>
-        
+  
+  <string name="turbo_mode_service_running_notification_title">Turbo trainer</string>
+  <string name="turbo_mode_service_running_notification_text">Turbo trainer service connection established</string>
+      
 </resources>

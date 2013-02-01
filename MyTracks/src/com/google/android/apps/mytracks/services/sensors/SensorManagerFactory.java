@@ -16,11 +16,6 @@
 
 package com.google.android.apps.mytracks.services.sensors;
 
-import com.google.android.apps.mytracks.services.sensors.ant.AntSensorManager;
-import com.google.android.apps.mytracks.util.AnalyticsUtils;
-import com.google.android.apps.mytracks.util.PreferencesUtils;
-import com.google.android.maps.mytracks.R;
-
 import android.content.Context;
 
 /**
@@ -93,25 +88,26 @@ public class SensorManagerFactory {
    * @param context the context
    */
   private static SensorManager getSensorManager(Context context, boolean sendPageViews) {
-    String sensorType = PreferencesUtils.getString(
-        context, R.string.sensor_type_key, PreferencesUtils.SENSOR_TYPE_DEFAULT);
-
-    if (sensorType.equals(context.getString(R.string.sensor_type_value_ant))) {
-      if (sendPageViews) {
-        AnalyticsUtils.sendPageViews(context, "/sensor/ant");
-      }
-      return new AntSensorManager(context);
-    } else if (sensorType.equals(context.getString(R.string.sensor_type_value_zephyr))) {
-      if (sendPageViews) {
-        AnalyticsUtils.sendPageViews(context, "/sensor/zephyr");
-      }
-      return new ZephyrSensorManager(context);
-    } else if (sensorType.equals(context.getString(R.string.sensor_type_value_polar))) {
-      if (sendPageViews) {
-        AnalyticsUtils.sendPageViews(context, "/sensor/polar");
-      }
-      return new PolarSensorManager(context);
-    }
-    return null;
+//    String sensorType = PreferencesUtils.getString(
+//        context, R.string.sensor_type_key, PreferencesUtils.SENSOR_TYPE_DEFAULT);
+//
+//    if (sensorType.equals(context.getString(R.string.sensor_type_value_ant))) {
+//      if (sendPageViews) {
+//        AnalyticsUtils.sendPageViews(context, "/sensor/ant");
+//      }
+//      //return new AntSensorManager(context);
+//    } else if (sensorType.equals(context.getString(R.string.sensor_type_value_zephyr))) {
+//      if (sendPageViews) {
+//        AnalyticsUtils.sendPageViews(context, "/sensor/zephyr");
+//      }
+//      return new ZephyrSensorManager(context);
+//    } else if (sensorType.equals(context.getString(R.string.sensor_type_value_polar))) {
+//      if (sendPageViews) {
+//        AnalyticsUtils.sendPageViews(context, "/sensor/polar");
+//      }
+//      return new PolarSensorManager(context);
+//    }
+//    return null;
+    return new TurboSensorManager(context);
   }
 }

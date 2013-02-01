@@ -1,7 +1,12 @@
 package com.google.android.apps.mytracks.turbo;
 
+import com.google.android.maps.mytracks.R;
+
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
@@ -50,11 +55,11 @@ public class AntHubService extends Service {
   }
   
   private final LocalBinder mBinder = new LocalBinder();
+  private int startServiceCount;
   
-
   @Override
-  public IBinder onBind(Intent intent)
-  {
+  public synchronized IBinder onBind(Intent intent)
+  {   
       Log.i(TAG, "First Client bound.");
       return mBinder;
   }
@@ -67,12 +72,13 @@ public class AntHubService extends Service {
   }
 
   @Override
-  public boolean onUnbind(Intent intent)
-  {
+  public synchronized boolean onUnbind(Intent intent)
+  {   
       Log.i(TAG, "All clients unbound.");
       // TODO Auto-generated method stub
       super.onUnbind(intent);
-      return true;
+      doFinish();
+      return false;
   }
 
   @Override
@@ -82,7 +88,9 @@ public class AntHubService extends Service {
       super.onCreate();
       this.transceiver = new AndroidAntTransceiver(this);
       this.node = new Node(transceiver);
+      registerRecordingReceiver();
   }
+  
 
   
 
@@ -90,23 +98,61 @@ public class AntHubService extends Service {
    * @see android.app.Service#onStartCommand(android.content.Intent, int, int)
    */
   @Override
-  public int onStartCommand(Intent intent, int flags, int startId) {
-    handleCommand(intent);
+  public synchronized int onStartCommand(Intent intent, int flags, int startId) {
+    this.startServiceCount ++;
+    //throw new UnsupportedOperationException("use bind instead");
+    // don't support sticky mode yet
+    // would need broadcast receiver to shut down?
+    //handleCommand(intent);
     return START_STICKY;
+    //return super.onStartCommand(intent, flags, startId);
   }
 
   private void handleCommand(Intent intent) {
     // TODO Auto-generated method stub
   }
-
+  
   @Override
   public void onDestroy()
   {
       this.node.stop();
+      unregisterRecordingReceiver();
       super.onDestroy();
       Log.i(TAG, "Service destroyed.");
   }
 
+  private final BroadcastReceiver receiver = new BroadcastReceiver() {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+       String action = intent.getAction();
+       if(action.equals(ANT_KILL_ACTION)){
+         --startServiceCount;
+         doFinish();
+         // each startService() should be paired with sending and intent when finished
+       }
+    }
+  };
 
+
+  private static String ANT_KILL_ACTION;
+
+  public void registerRecordingReceiver() {
+    ANT_KILL_ACTION = AntHubService.this.getString(R.string.anthub_action_shutdown);
+    IntentFilter filter = new IntentFilter();
+    filter.addAction(ANT_KILL_ACTION);
+
+    registerReceiver(receiver, filter);
+  }
+
+  protected void doFinish() {
+    if (startServiceCount <= 0) {
+      this.stopSelf();
+    }
+    
+  }
+
+  public void unregisterRecordingReceiver() {
+    unregisterReceiver(receiver);
+  }
 
 }
