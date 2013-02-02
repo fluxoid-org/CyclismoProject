@@ -15,7 +15,7 @@
  */
 package org.cowboycoders.cyclisimo.endtoendtest;
 
-import com.google.android.maps.mytracks.R;
+import org.cowboycoders.cyclisimo.R;
 
 import android.app.Activity;
 import android.app.Instrumentation;

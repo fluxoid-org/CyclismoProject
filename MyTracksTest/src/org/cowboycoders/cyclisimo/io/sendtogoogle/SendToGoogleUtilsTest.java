@@ -20,8 +20,8 @@ package org.cowboycoders.cyclisimo.io.sendtogoogle;
  * 
  * @author Youtao Liu
  */
-import com.google.android.apps.mytracks.content.MyTracksLocation;
-import com.google.android.apps.mytracks.content.Track;
+import org.cowboycoders.cyclisimo.content.MyTracksLocation;
+import org.cowboycoders.cyclisimo.content.Track;
 
 import android.location.Location;
 

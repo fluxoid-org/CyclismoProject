@@ -15,9 +15,9 @@
  */
 package org.cowboycoders.cyclisimo.io.file;
 
-import com.google.android.apps.mytracks.content.DescriptionGenerator;
-import com.google.android.apps.mytracks.content.Track;
-import com.google.android.apps.mytracks.stats.TripStatistics;
+import org.cowboycoders.cyclisimo.content.DescriptionGenerator;
+import org.cowboycoders.cyclisimo.content.Track;
+import org.cowboycoders.cyclisimo.stats.TripStatistics;
 
 import android.location.Location;
 

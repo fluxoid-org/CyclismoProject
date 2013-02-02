@@ -15,8 +15,8 @@
  */
 package org.cowboycoders.cyclisimo.io.file;
 
-import com.google.android.apps.mytracks.content.MyTracksLocation;
-import com.google.android.apps.mytracks.content.Sensor;
+import org.cowboycoders.cyclisimo.content.MyTracksLocation;
+import org.cowboycoders.cyclisimo.content.Sensor;
 
 import java.util.List;
 

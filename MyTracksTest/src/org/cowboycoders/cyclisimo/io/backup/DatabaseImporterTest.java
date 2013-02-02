@@ -15,7 +15,7 @@
  */
 package org.cowboycoders.cyclisimo.io.backup;
 
-import com.google.android.apps.mytracks.content.ContentTypeIds;
+import org.cowboycoders.cyclisimo.content.ContentTypeIds;
 
 import android.content.ContentValues;
 import android.net.Uri;

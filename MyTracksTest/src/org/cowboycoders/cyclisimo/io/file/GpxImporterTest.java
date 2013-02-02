@@ -18,10 +18,10 @@ package org.cowboycoders.cyclisimo.io.file;
 import static com.google.android.testing.mocking.AndroidMock.eq;
 import static com.google.android.testing.mocking.AndroidMock.expect;
 
-import com.google.android.apps.mytracks.content.MyTracksProviderUtils;
-import com.google.android.apps.mytracks.content.MyTracksProviderUtils.Factory;
-import com.google.android.apps.mytracks.content.Track;
-import com.google.android.apps.mytracks.content.TracksColumns;
+import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils;
+import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils.Factory;
+import org.cowboycoders.cyclisimo.content.Track;
+import org.cowboycoders.cyclisimo.content.TracksColumns;
 import com.google.android.testing.mocking.AndroidMock;
 import com.google.android.testing.mocking.UsesMocks;
 

@@ -15,8 +15,8 @@
  */
 package org.cowboycoders.cyclisimo.services;
 
-import com.google.android.apps.mytracks.services.ITrackRecordingService;
-import com.google.android.maps.mytracks.R;
+import org.cowboycoders.cyclisimo.services.ITrackRecordingService;
+import org.cowboycoders.cyclisimo.R;
 import com.google.android.testing.mocking.UsesMocks;
 
 import android.content.Context;

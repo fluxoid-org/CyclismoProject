@@ -15,8 +15,8 @@
  */
 package org.cowboycoders.cyclisimo.endtoendtest;
 
-import com.google.android.apps.mytracks.content.MyTracksProviderUtils;
-import com.google.android.apps.mytracks.content.MyTracksProviderUtils.LocationIterator;
+import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils;
+import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils.LocationIterator;
 
 import android.app.Instrumentation;
 import android.location.Location;

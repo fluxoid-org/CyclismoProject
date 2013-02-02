@@ -13,12 +13,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.android.apps.mytracks.samples.api;
+package org.cowboycoders.cyclisimo.samples.api;
 
-import com.google.android.apps.mytracks.content.MyTracksProviderUtils;
-import com.google.android.apps.mytracks.content.Track;
-import com.google.android.apps.mytracks.content.Waypoint;
-import com.google.android.apps.mytracks.services.ITrackRecordingService;
+import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils;
+import org.cowboycoders.cyclisimo.content.Track;
+import org.cowboycoders.cyclisimo.content.Waypoint;
+import org.cowboycoders.cyclisimo.services.ITrackRecordingService;
 
 import android.app.Activity;
 import android.content.ComponentName;

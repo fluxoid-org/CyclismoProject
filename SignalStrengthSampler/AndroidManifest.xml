@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="com.google.android.apps.mytracks.signalstrength"
+      package="org.cowboycoders.cyclisimo.signalstrength"
       android:versionCode="1"
       android:versionName="1.0">
   <application android:icon="@drawable/icon"
@@ -32,8 +32,8 @@ limitations under the License.
     <!-- Receiver to know when recording starts/stops and act on the service accordingly -->
     <receiver android:name=".RecordingStateReceiver">
       <intent-filter>
-        <action android:name="com.google.android.apps.mytracks.TRACK_STARTED" />
-        <action android:name="com.google.android.apps.mytracks.TRACK_STOPPED" />
+        <action android:name="org.cowboycoders.cyclisimo.TRACK_STARTED" />
+        <action android:name="org.cowboycoders.cyclisimo.TRACK_STOPPED" />
       </intent-filter>
     </receiver>
 
@@ -48,8 +48,8 @@ limitations under the License.
   <uses-permission android:name="android.permission.READ_PHONE_STATE" />
   <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-  <uses-permission android:name="com.google.android.apps.mytracks.TRACK_NOTIFICATIONS" />
-  <uses-permission android:name="com.google.android.apps.mytracks.WRITE_TRACK_DATA" />
+  <uses-permission android:name="org.cowboycoders.cyclisimo.TRACK_NOTIFICATIONS" />
+  <uses-permission android:name="org.cowboycoders.cyclisimo.WRITE_TRACK_DATA" />
   <uses-feature android:name="android.hardware.telephony" android:required="true"/>
   <uses-feature android:name="android.hardware.telephony.gsm" android:required="false"/>
   <uses-sdk android:minSdkVersion="7" />

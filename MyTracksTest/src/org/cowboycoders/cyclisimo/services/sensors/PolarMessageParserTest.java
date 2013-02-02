@@ -1,6 +1,6 @@
 package org.cowboycoders.cyclisimo.services.sensors;
 
-import com.google.android.apps.mytracks.content.Sensor;
+import org.cowboycoders.cyclisimo.content.Sensor;
 
 import org.cowboycoders.cyclisimo.services.sensors.PolarMessageParser;
 import org.cowboycoders.cyclisimo.util.ApiAdapterFactory;

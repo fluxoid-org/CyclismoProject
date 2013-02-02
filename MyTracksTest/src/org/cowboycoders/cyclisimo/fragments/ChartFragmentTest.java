@@ -16,9 +16,9 @@
 
 package org.cowboycoders.cyclisimo.fragments;
 
-import com.google.android.apps.mytracks.content.MyTracksLocation;
-import com.google.android.apps.mytracks.content.Sensor;
-import com.google.android.apps.mytracks.content.Sensor.SensorDataSet;
+import org.cowboycoders.cyclisimo.content.MyTracksLocation;
+import org.cowboycoders.cyclisimo.content.Sensor;
+import org.cowboycoders.cyclisimo.content.Sensor.SensorDataSet;
 
 import android.location.Location;
 import android.test.AndroidTestCase;

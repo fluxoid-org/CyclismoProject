@@ -20,15 +20,15 @@ import static com.google.android.testing.mocking.AndroidMock.eq;
 import static com.google.android.testing.mocking.AndroidMock.expect;
 import static com.google.android.testing.mocking.AndroidMock.isA;
 
-import com.google.android.apps.mytracks.content.MyTracksProviderUtils;
-import com.google.android.apps.mytracks.content.Track;
-import com.google.android.apps.mytracks.content.TrackPointsColumns;
-import com.google.android.apps.mytracks.content.TracksColumns;
-import com.google.android.apps.mytracks.content.Waypoint;
-import com.google.android.apps.mytracks.content.WaypointsColumns;
-import com.google.android.apps.mytracks.content.MyTracksProviderUtils.LocationFactory;
-import com.google.android.apps.mytracks.content.MyTracksProviderUtils.LocationIterator;
-import com.google.android.maps.mytracks.R;
+import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils;
+import org.cowboycoders.cyclisimo.content.Track;
+import org.cowboycoders.cyclisimo.content.TrackPointsColumns;
+import org.cowboycoders.cyclisimo.content.TracksColumns;
+import org.cowboycoders.cyclisimo.content.Waypoint;
+import org.cowboycoders.cyclisimo.content.WaypointsColumns;
+import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils.LocationFactory;
+import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils.LocationIterator;
+import org.cowboycoders.cyclisimo.R;
 import com.google.android.testing.mocking.AndroidMock;
 import com.google.android.testing.mocking.UsesMocks;
 

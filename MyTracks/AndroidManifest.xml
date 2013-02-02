@@ -17,7 +17,7 @@ limitations under the License.
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   android:installLocation="auto"
   android:versionCode="63"
-  android:versionName="2.0.3"
+  android:versionName="0.0.1"
   package="org.cowboycoders.cyclisimo" >
   <uses-permission android:name="android.permission.GET_TASKS" />
   <!-- Permission to initialize services -->
@@ -137,7 +137,7 @@ limitations under the License.
   <application
     android:backupAgent="org.cowboycoders.cyclisimo.io.backup.MyTracksBackupAgent"
     android:hardwareAccelerated="true"
-    android:icon="@drawable/my_tracks_icon"
+    android:icon="@drawable/track_bike"
     android:label="@string/my_tracks_app_name"
     android:name="org.cowboycoders.cyclisimo.MyTracksApplication"
     android:theme="@style/ThemeSelector" >

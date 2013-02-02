@@ -15,9 +15,9 @@
  */
 package org.cowboycoders.cyclisimo.io.maps;
 
-import com.google.android.apps.mytracks.content.MyTracksProviderUtils;
-import com.google.android.apps.mytracks.content.Track;
-import com.google.android.apps.mytracks.content.Waypoint;
+import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils;
+import org.cowboycoders.cyclisimo.content.Track;
+import org.cowboycoders.cyclisimo.content.Waypoint;
 import com.google.android.testing.mocking.AndroidMock;
 import com.google.android.testing.mocking.UsesMocks;
 

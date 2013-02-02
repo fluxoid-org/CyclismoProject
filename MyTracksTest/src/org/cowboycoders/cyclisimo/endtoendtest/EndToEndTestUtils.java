@@ -15,7 +15,7 @@
  */
 package org.cowboycoders.cyclisimo.endtoendtest;
 
-import com.google.android.maps.mytracks.R;
+import org.cowboycoders.cyclisimo.R;
 import com.jayway.android.robotium.solo.Solo;
 
 import android.app.Activity;

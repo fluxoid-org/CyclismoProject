@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.android.apps.mytracks.signalstrength;
+package org.cowboycoders.cyclisimo.signalstrength;
 
 /**
  * Interface for the service that reads signal strength.

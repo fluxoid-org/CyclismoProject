@@ -1,6 +1,6 @@
 package org.cowboycoders.cyclisimo.services.sensors;
 
-import com.google.android.maps.mytracks.R;
+import org.cowboycoders.cyclisimo.R;
 
 import android.content.Context;
 import android.content.SharedPreferences;

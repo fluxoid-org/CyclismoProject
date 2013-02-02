@@ -15,7 +15,7 @@
  */
 package org.cowboycoders.cyclisimo;
 
-import com.google.android.maps.mytracks.R;
+import org.cowboycoders.cyclisimo.R;
 
 import android.test.AndroidTestCase;
 

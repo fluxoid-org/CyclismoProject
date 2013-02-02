@@ -15,8 +15,8 @@
  */
 package org.cowboycoders.cyclisimo.util;
 
-import com.google.android.apps.mytracks.content.Track;
-import com.google.android.apps.mytracks.stats.TripStatistics;
+import org.cowboycoders.cyclisimo.content.Track;
+import org.cowboycoders.cyclisimo.stats.TripStatistics;
 
 import java.util.Vector;
 

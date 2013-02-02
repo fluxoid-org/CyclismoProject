@@ -17,13 +17,13 @@ package org.cowboycoders.cyclisimo.services;
 
 import static org.cowboycoders.cyclisimo.Constants.RESUME_TRACK_EXTRA_NAME;
 
-import com.google.android.apps.mytracks.content.MyTracksProviderUtils;
-import com.google.android.apps.mytracks.content.Track;
-import com.google.android.apps.mytracks.content.Waypoint;
-import com.google.android.apps.mytracks.content.WaypointCreationRequest;
-import com.google.android.apps.mytracks.services.ITrackRecordingService;
-import com.google.android.apps.mytracks.stats.TripStatistics;
-import com.google.android.maps.mytracks.R;
+import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils;
+import org.cowboycoders.cyclisimo.content.Track;
+import org.cowboycoders.cyclisimo.content.Waypoint;
+import org.cowboycoders.cyclisimo.content.WaypointCreationRequest;
+import org.cowboycoders.cyclisimo.services.ITrackRecordingService;
+import org.cowboycoders.cyclisimo.stats.TripStatistics;
+import org.cowboycoders.cyclisimo.R;
 
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;

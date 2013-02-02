@@ -1,5 +1,5 @@
 /** Automatically generated file. DO NOT MODIFY */
-package com.google.android.maps.mytracks.test;
+package org.cowboycoders.cyclisimo.test;
 
 public final class BuildConfig {
     public final static boolean DEBUG = true;

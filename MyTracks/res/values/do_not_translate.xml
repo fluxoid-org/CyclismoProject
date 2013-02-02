@@ -78,7 +78,7 @@ Google은 이용자에 대한 위치정보의 이용∙제공사실을 위치정
   <string name="my_tracks_recording_service_name">My Tracks Recording Service</string>
   <string name="my_tracks_support_url">groups.google.com/a/googleproductforums.com/forum/#!categories/maps/mytracks</string>
   <string name="my_tracks_web_url">www.google.com/mobile/mytracks</string>
-  <string name="permission_notification_value">com.google.android.apps.mytracks.MYTRACKS_NOTIFICATIONS</string>
+  <string name="permission_notification_value">org.cowboycoders.cyclisimo.MYTRACKS_NOTIFICATIONS</string>
   <string name="send_google_docs_url">docs.google.com</string>
   <string name="send_google_fusion_tables_url">google.com/fusiontables</string>
   <string name="send_google_maps_url">maps.google.com</string>
@@ -93,17 +93,17 @@ Google은 이용자에 대한 위치정보의 이용∙제공사실을 위치정
   <string name="settings_recording_track_name_date_local_value">DATE_LOCAL</string>
   <string name="settings_recording_track_name_location_value">LOCATION</string>
   <string name="settings_recording_track_name_number_value">NUMBER</string>
-  <string name="track_action_end">com.google.android.apps.mytracks.END_CURRENT_TRACK</string>
-  <string name="track_action_pause">com.google.android.apps.mytracks.PAUSE_CURRENT_TRACK</string>
-  <string name="track_action_resume">com.google.android.apps.mytracks.RESUME_CURRENT_TRACK</string>
-  <string name="track_action_start">com.google.android.apps.mytracks.START_NEW_TRACK</string>
+  <string name="track_action_end">org.cowboycoders.cyclisimo.END_CURRENT_TRACK</string>
+  <string name="track_action_pause">org.cowboycoders.cyclisimo.PAUSE_CURRENT_TRACK</string>
+  <string name="track_action_resume">org.cowboycoders.cyclisimo.RESUME_CURRENT_TRACK</string>
+  <string name="track_action_start">org.cowboycoders.cyclisimo.START_NEW_TRACK</string>
   <string name="value_unknown">-</string>
   <string name="settings_courses_mode_simulation_value">SIMULATION</string>
-  <string name="anthub_action_shutdown">com.google.android.apps.mytracks.SHUTDOWN_ANT</string>
-  <string name="sensor_data_cadence">com.google.android.apps.mytracks.SENSOR_DATA_CADENCE</string>
-  <string name="sensor_data_power">com.google.android.apps.mytracks.SENSOR_DATA_POWER</string>
-  <string name="sensor_data_speed_kmh">com.google.android.apps.mytracks.SENSOR_DATA_SPEED_KMH</string>
-  <string name="sensor_data_heart_rate">com.google.android.apps.mytracks.SENSOR_DATA_HEART_RATE</string>
-  <string name="sensor_data_double_value">com.google.android.apps.mytracks.SENSOR_DATA_DOUBLE_VALUE</string>
+  <string name="anthub_action_shutdown">org.cowboycoders.cyclisimo.SHUTDOWN_ANT</string>
+  <string name="sensor_data_cadence">org.cowboycoders.cyclisimo.SENSOR_DATA_CADENCE</string>
+  <string name="sensor_data_power">org.cowboycoders.cyclisimo.SENSOR_DATA_POWER</string>
+  <string name="sensor_data_speed_kmh">org.cowboycoders.cyclisimo.SENSOR_DATA_SPEED_KMH</string>
+  <string name="sensor_data_heart_rate">org.cowboycoders.cyclisimo.SENSOR_DATA_HEART_RATE</string>
+  <string name="sensor_data_double_value">org.cowboycoders.cyclisimo.SENSOR_DATA_DOUBLE_VALUE</string>
   
 </resources>

@@ -4,10 +4,10 @@ package org.cowboycoders.cyclisimo.io.file;
 
 import static org.easymock.EasyMock.expect;
 
-import com.google.android.apps.mytracks.content.MyTracksProviderUtils;
-import com.google.android.apps.mytracks.content.MyTracksProviderUtils.Factory;
-import com.google.android.apps.mytracks.content.Track;
-import com.google.android.apps.mytracks.content.Waypoint;
+import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils;
+import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils.Factory;
+import org.cowboycoders.cyclisimo.content.Track;
+import org.cowboycoders.cyclisimo.content.Waypoint;
 
 import android.content.Context;
 import android.location.Location;

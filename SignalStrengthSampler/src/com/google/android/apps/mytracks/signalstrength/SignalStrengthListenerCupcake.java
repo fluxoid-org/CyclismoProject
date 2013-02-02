@@ -13,9 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.android.apps.mytracks.signalstrength;
+package org.cowboycoders.cyclisimo.signalstrength;
 
-import static com.google.android.apps.mytracks.signalstrength.SignalStrengthConstants.TAG;
+import static org.cowboycoders.cyclisimo.signalstrength.SignalStrengthConstants.TAG;
 
 import android.content.ContentResolver;
 import android.content.Context;

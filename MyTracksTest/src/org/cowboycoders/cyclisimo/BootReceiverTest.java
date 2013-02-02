@@ -34,7 +34,7 @@ import org.cowboycoders.cyclisimo.services.TrackRecordingService;
  * @author Youtao Liu
  */
 public class BootReceiverTest extends AndroidTestCase {
-  private static final String SERVICE_NAME = "com.google.android.apps.mytracks.services.TrackRecordingService";
+  private static final String SERVICE_NAME = "org.cowboycoders.cyclisimo.services.TrackRecordingService";
 
   /**
    * Tests the behavior when receive notification which is the phone boot.

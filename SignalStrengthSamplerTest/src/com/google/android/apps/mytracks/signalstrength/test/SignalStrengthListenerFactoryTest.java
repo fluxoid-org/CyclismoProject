@@ -13,13 +13,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.android.apps.mytracks.signalstrength.test;
+package org.cowboycoders.cyclisimo.signalstrength.test;
 
-import com.google.android.apps.mytracks.signalstrength.SignalStrengthListener;
-import com.google.android.apps.mytracks.signalstrength.SignalStrengthListener.SignalStrengthCallback;
-import com.google.android.apps.mytracks.signalstrength.SignalStrengthListenerCupcake;
-import com.google.android.apps.mytracks.signalstrength.SignalStrengthListenerEclair;
-import com.google.android.apps.mytracks.signalstrength.SignalStrengthListenerFactory;
+import org.cowboycoders.cyclisimo.signalstrength.SignalStrengthListener;
+import org.cowboycoders.cyclisimo.signalstrength.SignalStrengthListener.SignalStrengthCallback;
+import org.cowboycoders.cyclisimo.signalstrength.SignalStrengthListenerCupcake;
+import org.cowboycoders.cyclisimo.signalstrength.SignalStrengthListenerEclair;
+import org.cowboycoders.cyclisimo.signalstrength.SignalStrengthListenerFactory;
 import com.google.android.testing.mocking.AndroidMock;
 
 import android.test.AndroidTestCase;

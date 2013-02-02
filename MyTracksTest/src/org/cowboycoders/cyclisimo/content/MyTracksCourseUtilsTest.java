@@ -15,19 +15,19 @@
  */
 package org.cowboycoders.cyclisimo.content;
 
-import com.google.android.apps.mytracks.content.CourseTrackPointsColumns;
-import com.google.android.apps.mytracks.content.CourseTracksColumns;
-import com.google.android.apps.mytracks.content.CourseWaypointsColumns;
-import com.google.android.apps.mytracks.content.DescriptionGenerator;
-import com.google.android.apps.mytracks.content.MyTracksCourseProviderUtils;
-import com.google.android.apps.mytracks.content.MyTracksProviderUtils;
-import com.google.android.apps.mytracks.content.MyTracksProviderUtilsImpl;
-import com.google.android.apps.mytracks.content.Track;
-import com.google.android.apps.mytracks.content.Waypoint;
-import com.google.android.apps.mytracks.content.MyTracksProviderUtils.Factory;
-import com.google.android.apps.mytracks.content.MyTracksProviderUtils.LocationFactory;
-import com.google.android.apps.mytracks.content.MyTracksProviderUtils.LocationIterator;
-import com.google.android.apps.mytracks.stats.TripStatistics;
+import org.cowboycoders.cyclisimo.content.CourseTrackPointsColumns;
+import org.cowboycoders.cyclisimo.content.CourseTracksColumns;
+import org.cowboycoders.cyclisimo.content.CourseWaypointsColumns;
+import org.cowboycoders.cyclisimo.content.DescriptionGenerator;
+import org.cowboycoders.cyclisimo.content.MyTracksCourseProviderUtils;
+import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils;
+import org.cowboycoders.cyclisimo.content.MyTracksProviderUtilsImpl;
+import org.cowboycoders.cyclisimo.content.Track;
+import org.cowboycoders.cyclisimo.content.Waypoint;
+import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils.Factory;
+import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils.LocationFactory;
+import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils.LocationIterator;
+import org.cowboycoders.cyclisimo.stats.TripStatistics;
 import com.google.android.testing.mocking.AndroidMock;
 import com.google.android.testing.mocking.UsesMocks;
 

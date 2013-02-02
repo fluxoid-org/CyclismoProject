@@ -13,15 +13,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.android.apps.mytracks.signalstrength;
+package org.cowboycoders.cyclisimo.signalstrength;
 
-import static com.google.android.apps.mytracks.signalstrength.SignalStrengthConstants.START_SAMPLING;
-import static com.google.android.apps.mytracks.signalstrength.SignalStrengthConstants.STOP_SAMPLING;
-import static com.google.android.apps.mytracks.signalstrength.SignalStrengthConstants.TAG;
+import static org.cowboycoders.cyclisimo.signalstrength.SignalStrengthConstants.START_SAMPLING;
+import static org.cowboycoders.cyclisimo.signalstrength.SignalStrengthConstants.STOP_SAMPLING;
+import static org.cowboycoders.cyclisimo.signalstrength.SignalStrengthConstants.TAG;
 
-import com.google.android.apps.mytracks.content.WaypointCreationRequest;
-import com.google.android.apps.mytracks.services.ITrackRecordingService;
-import com.google.android.apps.mytracks.signalstrength.SignalStrengthListener.SignalStrengthCallback;
+import org.cowboycoders.cyclisimo.content.WaypointCreationRequest;
+import org.cowboycoders.cyclisimo.services.ITrackRecordingService;
+import org.cowboycoders.cyclisimo.signalstrength.SignalStrengthListener.SignalStrengthCallback;
 
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;

@@ -17,17 +17,17 @@ limitations under the License.
 <resources>
   <!-- Do not translate -->
   <!-- Permissions, need to be in sync with the permissions in AndroidManifest.xml -->
-  <string name="broadcast_notifications_permission">com.google.android.apps.mytracks.TRACK_NOTIFICATIONS</string>
-  <string name="read_track_data_permission">com.google.android.apps.mytracks.READ_TRACK_DATA</string>
-  <string name="write_track_data_permission">com.google.android.apps.mytracks.WRITE_TRACK_DATA</string>
+  <string name="broadcast_notifications_permission">org.cowboycoders.cyclisimo.TRACK_NOTIFICATIONS</string>
+  <string name="read_track_data_permission">org.cowboycoders.cyclisimo.READ_TRACK_DATA</string>
+  <string name="write_track_data_permission">org.cowboycoders.cyclisimo.WRITE_TRACK_DATA</string>
   <!-- Broadcast -->
-  <string name="track_id_broadcast_extra">com.google.android.apps.mytracks.TRACK_ID</string>
-  <string name="track_paused_broadcast_action">com.google.android.apps.mytracks.TRACK_PAUSED</string>
-  <string name="track_resumed_broadcast_action">com.google.android.apps.mytracks.TRACK_RESUMED</string>
-  <string name="track_started_broadcast_action">com.google.android.apps.mytracks.TRACK_STARTED</string>
-  <string name="track_stopped_broadcast_action">com.google.android.apps.mytracks.TRACK_STOPPED</string>
-  <string name="track_update_broadcast_action">com.google.android.apps.mytracks.TRACK_UPDATE</string>
+  <string name="track_id_broadcast_extra">org.cowboycoders.cyclisimo.TRACK_ID</string>
+  <string name="track_paused_broadcast_action">org.cowboycoders.cyclisimo.TRACK_PAUSED</string>
+  <string name="track_resumed_broadcast_action">org.cowboycoders.cyclisimo.TRACK_RESUMED</string>
+  <string name="track_started_broadcast_action">org.cowboycoders.cyclisimo.TRACK_STARTED</string>
+  <string name="track_stopped_broadcast_action">org.cowboycoders.cyclisimo.TRACK_STOPPED</string>
+  <string name="track_update_broadcast_action">org.cowboycoders.cyclisimo.TRACK_UPDATE</string>
   <!-- My Tracks service -->
-  <string name="mytracks_service_class">com.google.android.apps.mytracks.services.TrackRecordingService</string>
-  <string name="mytracks_service_package">com.google.android.maps.mytracks</string>
+  <string name="mytracks_service_class">org.cowboycoders.cyclisimo.services.TrackRecordingService</string>
+  <string name="mytracks_service_package">org.cowboycoders.cyclisimo</string>
 </resources>

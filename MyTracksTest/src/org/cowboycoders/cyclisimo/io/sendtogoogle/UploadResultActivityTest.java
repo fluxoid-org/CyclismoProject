@@ -16,7 +16,7 @@
 
 package org.cowboycoders.cyclisimo.io.sendtogoogle;
 
-import com.google.android.maps.mytracks.R;
+import org.cowboycoders.cyclisimo.R;
 
 import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;

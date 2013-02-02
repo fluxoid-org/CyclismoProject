@@ -20,7 +20,7 @@ import static com.google.android.testing.mocking.AndroidMock.eq;
 import static com.google.android.testing.mocking.AndroidMock.expect;
 import static com.google.android.testing.mocking.AndroidMock.same;
 
-import com.google.android.apps.mytracks.stats.TripStatistics;
+import org.cowboycoders.cyclisimo.stats.TripStatistics;
 import com.google.android.testing.mocking.AndroidMock;
 import com.google.android.testing.mocking.UsesMocks;
 

@@ -13,10 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.android.apps.mytracks.signalstrength.test;
+package org.cowboycoders.cyclisimo.signalstrength.test;
 
-import com.google.android.apps.mytracks.signalstrength.R;
-import com.google.android.apps.mytracks.signalstrength.RecordingStateReceiver;
+import org.cowboycoders.cyclisimo.signalstrength.R;
+import org.cowboycoders.cyclisimo.signalstrength.RecordingStateReceiver;
 
 import android.content.Context;
 import android.content.Intent;

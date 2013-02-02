@@ -32,7 +32,7 @@ public interface CourseTracksColumns extends BaseColumns {
    * Tracks provider uri.
    */
   public static final Uri CONTENT_URI = Uri.parse(
-      "content://com.google.android.maps.mytracks.courses/course_tracks");
+      "content://org.cowboycoders.cyclisimo.courses/course_tracks");
 
   /**
    * Track content type.

@@ -3,7 +3,7 @@
  */
 package org.cowboycoders.cyclisimo.stats;
 
-import com.google.android.apps.mytracks.stats.ExtremityMonitor;
+import org.cowboycoders.cyclisimo.stats.ExtremityMonitor;
 
 import junit.framework.TestCase;
 import java.util.Random;

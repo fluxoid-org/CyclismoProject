@@ -50,7 +50,7 @@ public final class Sensor {
       this.value = value;
     }
     
-    // @@protoc_insertion_point(enum_scope:com.google.android.apps.mytracks.content.SensorState)
+    // @@protoc_insertion_point(enum_scope:org.cowboycoders.cyclisimo.content.SensorState)
   }
   
   public static final class SensorData extends
@@ -70,7 +70,7 @@ public final class Sensor {
       return defaultInstance;
     }
     
-    // required .com.google.android.apps.mytracks.content.SensorState state = 1 [default = NONE];
+    // required .org.cowboycoders.cyclisimo.content.SensorState state = 1 [default = NONE];
     public static final int STATE_FIELD_NUMBER = 1;
     private boolean hasState;
     private org.cowboycoders.cyclisimo.content.Sensor.SensorState state_;
@@ -200,7 +200,7 @@ public final class Sensor {
           org.cowboycoders.cyclisimo.content.Sensor.SensorData, Builder> {
       private org.cowboycoders.cyclisimo.content.Sensor.SensorData result;
       
-      // Construct using com.google.android.apps.mytracks.content.Sensor.SensorData.newBuilder()
+      // Construct using org.cowboycoders.cyclisimo.content.Sensor.SensorData.newBuilder()
       private Builder() {}
       
       private static Builder create() {
@@ -302,7 +302,7 @@ public final class Sensor {
       }
       
       
-      // required .com.google.android.apps.mytracks.content.SensorState state = 1 [default = NONE];
+      // required .org.cowboycoders.cyclisimo.content.SensorState state = 1 [default = NONE];
       public boolean hasState() {
         return result.hasState();
       }
@@ -341,7 +341,7 @@ public final class Sensor {
         return this;
       }
       
-      // @@protoc_insertion_point(builder_scope:com.google.android.apps.mytracks.content.SensorData)
+      // @@protoc_insertion_point(builder_scope:org.cowboycoders.cyclisimo.content.SensorData)
     }
     
     static {
@@ -350,7 +350,7 @@ public final class Sensor {
       defaultInstance.initFields();
     }
     
-    // @@protoc_insertion_point(class_scope:com.google.android.apps.mytracks.content.SensorData)
+    // @@protoc_insertion_point(class_scope:org.cowboycoders.cyclisimo.content.SensorData)
   }
   
   public static final class SensorDataSet extends
@@ -377,28 +377,28 @@ public final class Sensor {
     public boolean hasCreationTime() { return hasCreationTime; }
     public long getCreationTime() { return creationTime_; }
     
-    // optional .com.google.android.apps.mytracks.content.SensorData heart_rate = 2;
+    // optional .org.cowboycoders.cyclisimo.content.SensorData heart_rate = 2;
     public static final int HEART_RATE_FIELD_NUMBER = 2;
     private boolean hasHeartRate;
     private org.cowboycoders.cyclisimo.content.Sensor.SensorData heartRate_;
     public boolean hasHeartRate() { return hasHeartRate; }
     public org.cowboycoders.cyclisimo.content.Sensor.SensorData getHeartRate() { return heartRate_; }
     
-    // optional .com.google.android.apps.mytracks.content.SensorData cadence = 3;
+    // optional .org.cowboycoders.cyclisimo.content.SensorData cadence = 3;
     public static final int CADENCE_FIELD_NUMBER = 3;
     private boolean hasCadence;
     private org.cowboycoders.cyclisimo.content.Sensor.SensorData cadence_;
     public boolean hasCadence() { return hasCadence; }
     public org.cowboycoders.cyclisimo.content.Sensor.SensorData getCadence() { return cadence_; }
     
-    // optional .com.google.android.apps.mytracks.content.SensorData power = 4;
+    // optional .org.cowboycoders.cyclisimo.content.SensorData power = 4;
     public static final int POWER_FIELD_NUMBER = 4;
     private boolean hasPower;
     private org.cowboycoders.cyclisimo.content.Sensor.SensorData power_;
     public boolean hasPower() { return hasPower; }
     public org.cowboycoders.cyclisimo.content.Sensor.SensorData getPower() { return power_; }
     
-    // optional .com.google.android.apps.mytracks.content.SensorData battery_level = 5;
+    // optional .org.cowboycoders.cyclisimo.content.SensorData battery_level = 5;
     public static final int BATTERY_LEVEL_FIELD_NUMBER = 5;
     private boolean hasBatteryLevel;
     private org.cowboycoders.cyclisimo.content.Sensor.SensorData batteryLevel_;
@@ -556,7 +556,7 @@ public final class Sensor {
           org.cowboycoders.cyclisimo.content.Sensor.SensorDataSet, Builder> {
       private org.cowboycoders.cyclisimo.content.Sensor.SensorDataSet result;
       
-      // Construct using com.google.android.apps.mytracks.content.Sensor.SensorDataSet.newBuilder()
+      // Construct using org.cowboycoders.cyclisimo.content.Sensor.SensorDataSet.newBuilder()
       private Builder() {}
       
       private static Builder create() {
@@ -713,7 +713,7 @@ public final class Sensor {
         return this;
       }
       
-      // optional .com.google.android.apps.mytracks.content.SensorData heart_rate = 2;
+      // optional .org.cowboycoders.cyclisimo.content.SensorData heart_rate = 2;
       public boolean hasHeartRate() {
         return result.hasHeartRate();
       }
@@ -750,7 +750,7 @@ public final class Sensor {
         return this;
       }
       
-      // optional .com.google.android.apps.mytracks.content.SensorData cadence = 3;
+      // optional .org.cowboycoders.cyclisimo.content.SensorData cadence = 3;
       public boolean hasCadence() {
         return result.hasCadence();
       }
@@ -787,7 +787,7 @@ public final class Sensor {
         return this;
       }
       
-      // optional .com.google.android.apps.mytracks.content.SensorData power = 4;
+      // optional .org.cowboycoders.cyclisimo.content.SensorData power = 4;
       public boolean hasPower() {
         return result.hasPower();
       }
@@ -824,7 +824,7 @@ public final class Sensor {
         return this;
       }
       
-      // optional .com.google.android.apps.mytracks.content.SensorData battery_level = 5;
+      // optional .org.cowboycoders.cyclisimo.content.SensorData battery_level = 5;
       public boolean hasBatteryLevel() {
         return result.hasBatteryLevel();
       }
@@ -861,7 +861,7 @@ public final class Sensor {
         return this;
       }
       
-      // @@protoc_insertion_point(builder_scope:com.google.android.apps.mytracks.content.SensorDataSet)
+      // @@protoc_insertion_point(builder_scope:org.cowboycoders.cyclisimo.content.SensorDataSet)
     }
     
     static {
@@ -870,7 +870,7 @@ public final class Sensor {
       defaultInstance.initFields();
     }
     
-    // @@protoc_insertion_point(class_scope:com.google.android.apps.mytracks.content.SensorDataSet)
+    // @@protoc_insertion_point(class_scope:org.cowboycoders.cyclisimo.content.SensorDataSet)
   }
   
   

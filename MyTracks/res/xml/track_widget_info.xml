@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-  android:configure="com.google.android.apps.mytracks.widgets.TrackWidgetConfigActivity"
+  android:configure="org.cowboycoders.cyclisimo.widgets.TrackWidgetConfigActivity"
   android:initialLayout="@layout/track_widget_4x2"
   android:minHeight="110dp"
   android:minResizeHeight="40dp"

@@ -46,7 +46,7 @@ public interface MyTracksProviderUtils {
    * The authority (the first part of the URI) for the My Tracks content
    * provider.
    */
-  public static final String AUTHORITY = "com.google.android.maps.mytracks";
+  public static final String AUTHORITY = "org.cowboycoders.cyclisimo";
 
   /**
    * Creates a {@link Track} from a cursor.

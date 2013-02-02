@@ -14,9 +14,9 @@
  * the License.
  */
 
-package com.google.android.apps.mytracks.signalstrength;
+package org.cowboycoders.cyclisimo.signalstrength;
 
-import static com.google.android.apps.mytracks.signalstrength.SignalStrengthConstants.*;
+import static org.cowboycoders.cyclisimo.signalstrength.SignalStrengthConstants.*;
 
 import android.content.Context;
 import android.telephony.PhoneStateListener;

@@ -16,9 +16,9 @@
 package org.cowboycoders.cyclisimo.content;
 
 
-import com.google.android.apps.mytracks.content.TrackPointsColumns;
-import com.google.android.apps.mytracks.content.TracksColumns;
-import com.google.android.apps.mytracks.content.WaypointsColumns;
+import org.cowboycoders.cyclisimo.content.TrackPointsColumns;
+import org.cowboycoders.cyclisimo.content.TracksColumns;
+import org.cowboycoders.cyclisimo.content.WaypointsColumns;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;

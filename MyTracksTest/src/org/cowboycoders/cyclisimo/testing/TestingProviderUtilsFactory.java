@@ -2,8 +2,8 @@
 
 package org.cowboycoders.cyclisimo.testing;
 
-import com.google.android.apps.mytracks.content.MyTracksProviderUtils;
-import com.google.android.apps.mytracks.content.MyTracksProviderUtils.Factory;
+import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils;
+import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils.Factory;
 
 import android.content.Context;
 

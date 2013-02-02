@@ -15,8 +15,8 @@
  */
 package org.cowboycoders.cyclisimo.io.docs;
 
-import com.google.android.apps.mytracks.content.Track;
-import com.google.android.apps.mytracks.stats.TripStatistics;
+import org.cowboycoders.cyclisimo.content.Track;
+import org.cowboycoders.cyclisimo.stats.TripStatistics;
 import com.google.wireless.gdata.data.Entry;
 
 import android.test.AndroidTestCase;

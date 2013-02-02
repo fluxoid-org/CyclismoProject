@@ -48,7 +48,7 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
    * The authority (the first part of the URI) for the My Tracks content
    * provider.
    */
-  public static final String AUTHORITY = "com.google.android.maps.mytracks.courses";
+  public static final String AUTHORITY = "org.cowboycoders.cyclisimo.courses";
   
   /**
    * The authority (the first part of the URI) for the My Tracks content

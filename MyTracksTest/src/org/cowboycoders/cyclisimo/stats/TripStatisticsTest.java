@@ -15,7 +15,7 @@
  */
 package org.cowboycoders.cyclisimo.stats;
 
-import com.google.android.apps.mytracks.stats.TripStatistics;
+import org.cowboycoders.cyclisimo.stats.TripStatistics;
 
 import junit.framework.TestCase;
 

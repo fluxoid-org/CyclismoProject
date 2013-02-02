@@ -16,10 +16,10 @@
 
 package org.cowboycoders.cyclisimo.content;
 
-import com.google.android.apps.mytracks.content.Track;
-import com.google.android.apps.mytracks.content.Waypoint;
-import com.google.android.apps.mytracks.stats.TripStatistics;
-import com.google.android.maps.mytracks.R;
+import org.cowboycoders.cyclisimo.content.Track;
+import org.cowboycoders.cyclisimo.content.Waypoint;
+import org.cowboycoders.cyclisimo.stats.TripStatistics;
+import org.cowboycoders.cyclisimo.R;
 
 import android.test.AndroidTestCase;
 import android.util.Pair;

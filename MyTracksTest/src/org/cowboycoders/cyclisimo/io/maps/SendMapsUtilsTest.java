@@ -15,7 +15,7 @@
  */
 package org.cowboycoders.cyclisimo.io.maps;
 
-import com.google.android.apps.mytracks.content.Track;
+import org.cowboycoders.cyclisimo.content.Track;
 
 import android.location.Location;
 

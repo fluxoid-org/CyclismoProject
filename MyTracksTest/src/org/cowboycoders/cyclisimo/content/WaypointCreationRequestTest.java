@@ -15,8 +15,8 @@
  */
 package org.cowboycoders.cyclisimo.content;
 
-import com.google.android.apps.mytracks.content.WaypointCreationRequest;
-import com.google.android.apps.mytracks.content.WaypointCreationRequest.WaypointType;
+import org.cowboycoders.cyclisimo.content.WaypointCreationRequest;
+import org.cowboycoders.cyclisimo.content.WaypointCreationRequest.WaypointType;
 
 import android.os.Parcel;
 import android.test.AndroidTestCase;

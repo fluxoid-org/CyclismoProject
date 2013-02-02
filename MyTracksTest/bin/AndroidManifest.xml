@@ -15,17 +15,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.google.android.maps.mytracks.test"
+  package="org.cowboycoders.cyclisimo.test"
   android:versionCode="1"
   android:versionName="1.0" >
 
   <instrumentation
     android:name="android.test.InstrumentationTestRunner"
-    android:targetPackage="com.google.android.maps.mytracks" />
+    android:targetPackage="org.cowboycoders.cyclisimo" />
   
   <instrumentation
-    android:name="com.google.android.apps.mytracks.endtoendtest.EndToEndTestRunner"
-    android:targetPackage="com.google.android.maps.mytracks" />
+    android:name="org.cowboycoders.cyclisimo.endtoendtest.EndToEndTestRunner"
+    android:targetPackage="org.cowboycoders.cyclisimo" />
 
   <uses-sdk
     android:minSdkVersion="8"
