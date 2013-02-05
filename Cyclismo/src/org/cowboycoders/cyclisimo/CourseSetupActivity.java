@@ -1,8 +1,5 @@
 package org.cowboycoders.cyclisimo;
 
-import org.cowboycoders.cyclisimo.services.ITrackRecordingService;
-import org.cowboycoders.cyclisimo.R;
-
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -19,9 +16,11 @@ import android.widget.Toast;
 
 import org.cowboycoders.cyclisimo.fragments.CourseSetupFragment;
 import org.cowboycoders.cyclisimo.fragments.CourseSetupFragment.CourseSetupObserver;
+import org.cowboycoders.cyclisimo.services.ITrackRecordingService;
 import org.cowboycoders.cyclisimo.services.TrackRecordingServiceConnection;
 import org.cowboycoders.cyclisimo.turbo.TurboService;
 import org.cowboycoders.cyclisimo.util.IntentUtils;
+import org.cowboycoders.cyclisimo.util.TrackRecordingServiceConnectionUtils;
 
 
 public class CourseSetupActivity extends Activity {
@@ -136,6 +135,8 @@ public class CourseSetupActivity extends Activity {
             .putExtra(TrackDetailActivity.EXTRA_TRACK_ID, id)
             .putExtra(TrackDetailActivity.EXTRA_USE_COURSE_PROVIDER, false)
             .putExtra(TrackDetailActivity.EXTRA_COURSE_TRACK_ID, trackId);
+        // start paused
+        TrackRecordingServiceConnectionUtils.pauseTrack(trackRecordingServiceConnection);
         startActivity(intent);
         Toast.makeText(
             CourseSetupActivity.this, R.string.track_list_record_success, Toast.LENGTH_SHORT).show();

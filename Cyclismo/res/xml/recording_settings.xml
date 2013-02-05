@@ -38,7 +38,7 @@ limitations under the License.
     android:key="@string/min_recording_interval_key"
     android:title="@string/settings_recording_min_recording_interval_title" />
   <org.cowboycoders.cyclisimo.IntegerListPreference
-    android:defaultValue="5"
+    android:defaultValue="0"
     android:key="@string/min_recording_distance_key"
     android:title="@string/settings_recording_min_recording_distance_title" />
   <org.cowboycoders.cyclisimo.IntegerListPreference

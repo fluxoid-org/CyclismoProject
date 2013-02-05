@@ -85,6 +85,7 @@ public class TurboService extends Service {
       intent.putExtra(getString(R.string.sensor_data_double_value),speed);
       sendBroadcast(intent);
       lastRecordedSpeed = speed;
+      Log.v(TAG, "new speed: "+ speed);
     }
 
     @Override
@@ -133,10 +134,10 @@ public class TurboService extends Service {
   private WakeLock wakeLock;
 
   private CourseTracker courseTracker;
+
+  private long recordingTrackId;
   
   public void doFinish() {
-    long recordingTrackId = PreferencesUtils.getLong(
-        this, R.string.recording_track_id_key);
     //if (recordingTrackId != PreferencesUtils.RECORDING_TRACK_ID_DEFAULT) {
       Intent intent = IntentUtils.newIntent(getBaseContext(), TrackEditActivity.class)
           .putExtra(TrackEditActivity.EXTRA_TRACK_ID, recordingTrackId)
@@ -171,8 +172,11 @@ public class TurboService extends Service {
       return;
     }
     running = true;
-    
+        
     wakeLock.acquire();
+    
+    recordingTrackId = PreferencesUtils.getLong(
+        this, R.string.recording_track_id_key);
     
     List<LatLongAlt> latLongAlts;
         
@@ -237,6 +241,11 @@ public class TurboService extends Service {
           try {
             turboTrainer.start();
             turboTrainer.registerDataListener(dataListener);
+            //if (TrackRecordingServiceConnectionUtils.isRecordingServiceRunning(TurboService.this)) {
+              //TrackRecordingServiceConnectionUtils.resumeTrack(trackRecordingServiceConnection);
+            //}
+            Intent intent = new Intent().setAction(TurboService.this.getString(R.string.anthub_action_shutdown));
+            sendBroadcast(intent);
             updateLocation(courseTracker.getNearestLocation(0.0));
           } catch (InterruptedException e1) {
             throw new TurboCommunicationException(e1);
@@ -289,6 +298,8 @@ public class TurboService extends Service {
            android.location.Criteria.ACCURACY_FINE);
       
       locationManager.setTestProviderEnabled(MOCK_LOCATION_PROVIDER, true);
+      locationManager.setTestProviderStatus(MOCK_LOCATION_PROVIDER,
+          LocationProvider.AVAILABLE, null, System.currentTimeMillis());
       } catch (SecurityException e) {
         //TODO : ADD NOTIFICATION
         this.doFinish();
@@ -320,6 +331,8 @@ public class TurboService extends Service {
    if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
      try {
      float locSpeed = (float) (lastRecordedSpeed / UnitConversions.MS_TO_KMH);
+     final long timestamp = System.currentTimeMillis();
+     Log.v(TAG,"location timestamp: "+ timestamp);
      Location loc = new Location(MOCK_LOCATION_PROVIDER);
      Log.d(TAG,"alt: " + pos.getAltitude());
      Log.d(TAG,"lat: " + pos.getLatitude());
@@ -327,11 +340,9 @@ public class TurboService extends Service {
      loc.setLatitude(pos.getLatitude());
      loc.setLongitude(pos.getLongitude());
      loc.setAltitude(pos.getAltitude());
-     loc.setTime(System.currentTimeMillis());
+     loc.setTime(timestamp);
      loc.setSpeed(locSpeed);
      loc.setAccuracy(GPS_ACCURACY);
-     locationManager.setTestProviderStatus(MOCK_LOCATION_PROVIDER,
-         LocationProvider.AVAILABLE, null, System.currentTimeMillis());
      locationManager.setTestProviderLocation(MOCK_LOCATION_PROVIDER, loc);
      Log.e(TAG,"updated location");
      } catch (SecurityException e) {
@@ -394,6 +405,7 @@ public class TurboService extends Service {
     Intent intent = new Intent().setAction(this.getString(R.string.anthub_action_shutdown));
     sendBroadcast(intent);
     wakeLock.release();
+    //trackRecordingServiceConnection.unbind();
     return shutDownSuccess;
     
   }
@@ -418,6 +430,7 @@ public class TurboService extends Service {
     super.onCreate();
     trackRecordingServiceConnection = new TrackRecordingServiceConnection(
         this, bindChangedCallback);
+    //trackRecordingServiceConnection.startAndBind();
     PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
     this.wakeLock = pm.newWakeLock(
            PowerManager.SCREEN_DIM_WAKE_LOCK, TurboService.WAKE_LOCK);

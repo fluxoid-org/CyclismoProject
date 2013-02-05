@@ -126,6 +126,8 @@ public abstract class Constants {
 
   public static final String SETTINGS_NAME = "SettingsActivity";
 
+  public static final double RECORDING_DISTANCE_ACCURACY = 0.0000001;
+
   /**
    * This is an abstract utility class.
    */

@@ -18,17 +18,6 @@ package org.cowboycoders.cyclisimo.services;
 
 import static org.cowboycoders.cyclisimo.Constants.RESUME_TRACK_EXTRA_NAME;
 
-import org.cowboycoders.cyclisimo.content.MyTracksLocation;
-import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils;
-import org.cowboycoders.cyclisimo.content.Sensor;
-import org.cowboycoders.cyclisimo.content.Sensor.SensorDataSet;
-import org.cowboycoders.cyclisimo.content.Track;
-import org.cowboycoders.cyclisimo.content.Waypoint;
-import org.cowboycoders.cyclisimo.content.WaypointCreationRequest;
-import org.cowboycoders.cyclisimo.content.WaypointCreationRequest.WaypointType;
-import org.cowboycoders.cyclisimo.services.ITrackRecordingService;
-import org.cowboycoders.cyclisimo.stats.TripStatistics;
-import org.cowboycoders.cyclisimo.R;
 import com.google.common.annotations.VisibleForTesting;
 
 import android.app.Notification;
@@ -61,14 +50,24 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.cowboycoders.cyclisimo.Constants;
+import org.cowboycoders.cyclisimo.R;
 import org.cowboycoders.cyclisimo.TrackDetailActivity;
 import org.cowboycoders.cyclisimo.content.DescriptionGeneratorImpl;
+import org.cowboycoders.cyclisimo.content.MyTracksLocation;
 import org.cowboycoders.cyclisimo.content.MyTracksProvider;
+import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils;
+import org.cowboycoders.cyclisimo.content.Sensor;
+import org.cowboycoders.cyclisimo.content.Sensor.SensorDataSet;
+import org.cowboycoders.cyclisimo.content.Track;
+import org.cowboycoders.cyclisimo.content.Waypoint;
+import org.cowboycoders.cyclisimo.content.WaypointCreationRequest;
+import org.cowboycoders.cyclisimo.content.WaypointCreationRequest.WaypointType;
 import org.cowboycoders.cyclisimo.services.sensors.SensorManager;
 import org.cowboycoders.cyclisimo.services.sensors.SensorManagerFactory;
 import org.cowboycoders.cyclisimo.services.tasks.AnnouncementPeriodicTaskFactory;
 import org.cowboycoders.cyclisimo.services.tasks.PeriodicTaskExecutor;
 import org.cowboycoders.cyclisimo.services.tasks.SplitPeriodicTaskFactory;
+import org.cowboycoders.cyclisimo.stats.TripStatistics;
 import org.cowboycoders.cyclisimo.stats.TripStatisticsUpdater;
 import org.cowboycoders.cyclisimo.util.IntentUtils;
 import org.cowboycoders.cyclisimo.util.LocationUtils;
@@ -853,9 +852,9 @@ public class TrackRecordingService extends Service {
       }
 
       double distanceToLastTrackLocation = location.distanceTo(lastValidTrackPoint);
-      if (distanceToLastTrackLocation < minRecordingDistance && sensorDataSet == null) {
+      if (distanceToLastTrackLocation < minRecordingDistance + Constants.RECORDING_DISTANCE_ACCURACY && sensorDataSet == null) {
         Log.d(TAG, "Not recording location due to min recording distance.");
-      } else if (distanceToLastTrackLocation > maxRecordingDistance) {
+      } else if (distanceToLastTrackLocation > maxRecordingDistance - Constants.RECORDING_DISTANCE_ACCURACY) {
         insertLocation(track, lastLocation, lastValidTrackPoint);
         Location pause = new Location(LocationManager.GPS_PROVIDER);
         pause.setLongitude(0);

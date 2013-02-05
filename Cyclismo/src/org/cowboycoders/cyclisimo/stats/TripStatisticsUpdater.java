@@ -18,7 +18,6 @@ package org.cowboycoders.cyclisimo.stats;
 
 import static org.cowboycoders.cyclisimo.Constants.TAG;
 
-import org.cowboycoders.cyclisimo.stats.TripStatistics;
 import com.google.common.annotations.VisibleForTesting;
 
 import android.location.Location;
@@ -124,8 +123,8 @@ public class TripStatisticsUpdater {
       return;
     }
     double movingDistance = lastMovingLocation.distanceTo(location);
-    if (movingDistance < minRecordingDistance
-        && location.getSpeed() < Constants.MAX_NO_MOVEMENT_SPEED) {
+    if (movingDistance < minRecordingDistance - Constants.RECORDING_DISTANCE_ACCURACY 
+        && location.getSpeed() < Constants.MAX_NO_MOVEMENT_SPEED) { //TODO: Make this into a preference
       updateTime(location.getTime());
       lastLocation = location;
       return;
@@ -157,6 +156,11 @@ public class TripStatisticsUpdater {
 
   public double getSmoothedSpeed() {
     return speedBuffer.getAverage();
+  }
+  
+  public double getSpeed() {
+    if (lastLocation == null) return 0.;
+    return lastLocation.getSpeed();
   }
 
   /**
@@ -242,7 +246,7 @@ public class TripStatisticsUpdater {
      * There are a lot of noisy speed readings. Do the cheapest checks first,
      * most expensive last.
      */
-    if (speed == 0) {
+    if (speed < 0) {
       return false;
     }
 
