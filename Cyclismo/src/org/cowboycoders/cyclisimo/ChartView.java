@@ -16,9 +16,6 @@
 
 package org.cowboycoders.cyclisimo;
 
-import org.cowboycoders.cyclisimo.content.Waypoint;
-import org.cowboycoders.cyclisimo.stats.ExtremityMonitor;
-import org.cowboycoders.cyclisimo.R;
 import com.google.common.annotations.VisibleForTesting;
 
 import android.content.Context;
@@ -32,6 +29,7 @@ import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -42,6 +40,8 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.cowboycoders.cyclisimo.content.Waypoint;
+import org.cowboycoders.cyclisimo.stats.ExtremityMonitor;
 import org.cowboycoders.cyclisimo.util.IntentUtils;
 import org.cowboycoders.cyclisimo.util.StringUtils;
 import org.cowboycoders.cyclisimo.util.UnitConversions;
@@ -316,6 +316,7 @@ public class ChartView extends View {
   
   public void addOverlay(ArrayList<double[]> dataPoints) {
     synchronized (chartDataOverlay) {
+      Log.v(TAG, "adding overlay");
       chartDataOverlay.clear();
       chartDataOverlay.addAll(dataPoints);
       xExtremityMonitorOverlay.reset();
@@ -323,7 +324,7 @@ public class ChartView extends View {
         double[] dataPoint = dataPoints.get(i);
         xExtremityMonitorOverlay.update(dataPoint[0]);
         for (int j = 0; j < seriesOverlay.length; j++) {
-          if (!Double.isNaN(dataPoint[j])) {
+          if (!Double.isNaN(dataPoint[j + 1])) {
             seriesOverlay[j].update(dataPoint[j + 1]);
           }
         }
@@ -802,7 +803,7 @@ public class ChartView extends View {
     ChartValueSeries [] seriesLocal = Arrays.copyOf(series, series.length);
     for (int i = 0 ; i < seriesLocal.length ; i++) {
       if (seriesOverlay[i].isEnabled()) {
-        //seriesLocal[i] = seriesOverlay[i];
+        seriesLocal[i] = seriesOverlay[i];
       }
     }
     return seriesLocal;
@@ -859,8 +860,9 @@ public class ChartView extends View {
         break;
       }
     }
+    double currentXValue = xExtremityMonitor.hasData() ? xExtremityMonitor.getMax() : 0.0;
     if (index != -1 && chartData.size() > 0) {
-      int dx = getX(maxX) - pointer.getIntrinsicWidth() / 2;
+      int dx = getX(currentXValue) - pointer.getIntrinsicWidth() / 2;
       int dy = getY(series[index], chartData.get(chartData.size() - 1)[index + 1])
           - pointer.getIntrinsicHeight();
       canvas.translate(dx, dy);

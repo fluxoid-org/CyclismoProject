@@ -16,13 +16,6 @@
 
 package org.cowboycoders.cyclisimo;
 
-import org.cowboycoders.cyclisimo.content.MyTracksCourseProviderUtils;
-import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils;
-import org.cowboycoders.cyclisimo.content.Track;
-import org.cowboycoders.cyclisimo.content.Waypoint;
-import org.cowboycoders.cyclisimo.content.WaypointCreationRequest;
-import org.cowboycoders.cyclisimo.R;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -42,17 +35,22 @@ import android.widget.TabHost.TabSpec;
 
 import java.util.List;
 
+import org.cowboycoders.cyclisimo.content.MyTracksCourseProviderUtils;
+import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils;
+import org.cowboycoders.cyclisimo.content.Track;
 import org.cowboycoders.cyclisimo.content.TrackDataHub;
+import org.cowboycoders.cyclisimo.content.Waypoint;
+import org.cowboycoders.cyclisimo.content.WaypointCreationRequest;
 import org.cowboycoders.cyclisimo.fragments.ChartFragment;
 import org.cowboycoders.cyclisimo.fragments.ChooseActivityDialogFragment;
 import org.cowboycoders.cyclisimo.fragments.ChooseUploadServiceDialogFragment;
 import org.cowboycoders.cyclisimo.fragments.ConfirmPlayDialogFragment;
 import org.cowboycoders.cyclisimo.fragments.DeleteOneTrackDialogFragment;
+import org.cowboycoders.cyclisimo.fragments.DeleteOneTrackDialogFragment.DeleteOneTrackCaller;
 import org.cowboycoders.cyclisimo.fragments.FrequencyDialogFragment;
 import org.cowboycoders.cyclisimo.fragments.InstallEarthDialogFragment;
 import org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment;
 import org.cowboycoders.cyclisimo.fragments.StatsFragment;
-import org.cowboycoders.cyclisimo.fragments.DeleteOneTrackDialogFragment.DeleteOneTrackCaller;
 import org.cowboycoders.cyclisimo.io.file.SaveActivity;
 import org.cowboycoders.cyclisimo.io.file.TrackWriterFactory.TrackFileFormat;
 import org.cowboycoders.cyclisimo.io.sendtogoogle.SendRequest;
@@ -300,7 +298,7 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
    * @return
    */
   public boolean isCourseMode() {
-    //if (!useCourseProivder && getCourseTrackId() != -1L) return true;
+    if (!useCourseProivder && getCourseTrackId() != -1L) return true;
     return false;
   }
 

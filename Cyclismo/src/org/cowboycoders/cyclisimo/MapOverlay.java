@@ -16,15 +16,11 @@
 
 package org.cowboycoders.cyclisimo;
 
-import static org.cowboycoders.cyclisimo.Constants.TAG;
-
-import org.cowboycoders.cyclisimo.content.Waypoint;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
-import org.cowboycoders.cyclisimo.R;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -37,6 +33,7 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+import org.cowboycoders.cyclisimo.content.Waypoint;
 import org.cowboycoders.cyclisimo.maps.TrackPath;
 import org.cowboycoders.cyclisimo.maps.TrackPathFactory;
 import org.cowboycoders.cyclisimo.util.LocationUtils;
@@ -49,6 +46,8 @@ import org.cowboycoders.cyclisimo.util.UnitConversions;
  * @author Leif Hendrik Wilden
  */
 public class MapOverlay {
+  
+  public static final String TAG = MapOverlay.class.getSimpleName(); 
 
   public static final float WAYPOINT_X_ANCHOR = 13f / 48f;
 
@@ -105,6 +104,8 @@ public class MapOverlay {
 
   private boolean showEndMarker = true;
   private TrackPath trackPath;
+
+  private StaticOverlay underlay;
 
   
   
@@ -263,6 +264,9 @@ public class MapOverlay {
       if (needReload) {
         googleMap.clear();
         paths.clear();
+        if (underlay != null) {
+          updateUnderlay(googleMap);
+        }
         trackPath.updatePath(googleMap, paths, 0, locations);
         updateStartAndEndMarkers(googleMap);
         updateWaypoints(googleMap);
@@ -275,6 +279,15 @@ public class MapOverlay {
     }
   }
 
+  
+  private void updateUnderlay(GoogleMap googleMap) {
+    Log.d(TAG,"updating underlay");
+    try {
+      underlay.update(googleMap);
+      } catch (IllegalStateException e) {
+        Log.d(TAG,"Illegal state exception whilst updating underlay polyline");
+      }
+  }
   /**
    * Updates the start and end markers.
    * 
@@ -327,5 +340,13 @@ public class MapOverlay {
         googleMap.addMarker(markerOptions);
       }
     }
+  }
+
+  public void addUnderlay(StaticOverlay underlay) {
+    if (underlay !=null) {
+      Log.d(TAG, "adding underlay");
+    }
+    this.underlay = underlay;
+    
   }
 }

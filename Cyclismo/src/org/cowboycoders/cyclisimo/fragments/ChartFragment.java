@@ -16,13 +16,6 @@
 
 package org.cowboycoders.cyclisimo.fragments;
 
-import org.cowboycoders.cyclisimo.content.MyTracksLocation;
-import org.cowboycoders.cyclisimo.content.Sensor;
-import org.cowboycoders.cyclisimo.content.Sensor.SensorDataSet;
-import org.cowboycoders.cyclisimo.content.Track;
-import org.cowboycoders.cyclisimo.content.Waypoint;
-import org.cowboycoders.cyclisimo.stats.TripStatistics;
-import org.cowboycoders.cyclisimo.R;
 import com.google.common.annotations.VisibleForTesting;
 
 import android.location.Location;
@@ -42,10 +35,17 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.cowboycoders.cyclisimo.ChartView;
+import org.cowboycoders.cyclisimo.R;
 import org.cowboycoders.cyclisimo.TrackDetailActivity;
+import org.cowboycoders.cyclisimo.content.MyTracksLocation;
+import org.cowboycoders.cyclisimo.content.Sensor;
+import org.cowboycoders.cyclisimo.content.Sensor.SensorDataSet;
+import org.cowboycoders.cyclisimo.content.Track;
 import org.cowboycoders.cyclisimo.content.TrackDataHub;
 import org.cowboycoders.cyclisimo.content.TrackDataListener;
 import org.cowboycoders.cyclisimo.content.TrackDataType;
+import org.cowboycoders.cyclisimo.content.Waypoint;
+import org.cowboycoders.cyclisimo.stats.TripStatistics;
 import org.cowboycoders.cyclisimo.stats.TripStatisticsUpdater;
 import org.cowboycoders.cyclisimo.util.LocationUtils;
 import org.cowboycoders.cyclisimo.util.PreferencesUtils;
@@ -60,7 +60,7 @@ import org.cowboycoders.cyclisimo.util.UnitConversions;
 public class ChartFragment extends Fragment implements TrackDataListener {
   
   public static final String TAG = "ChartFragment";
-
+  
   public static final String CHART_FRAGMENT_TAG = "chartFragment";
 
   private final ArrayList<double[]> pendingPoints = new ArrayList<double[]>();
@@ -93,7 +93,7 @@ public class ChartFragment extends Fragment implements TrackDataListener {
   private ChartView chartView;
   private ZoomControls zoomControls;
   
-  private boolean courseMode;
+  private boolean overlayCourseData = false;
 
   /**
    * A runnable that will enable/disable zoom controls and orange pointer as
@@ -114,9 +114,15 @@ public class ChartFragment extends Fragment implements TrackDataListener {
   };
 
   private TrackDataHub courseDataHub;
+
   
+// would need to zoom in to relevant section to use 
+// (as is stretches scale too much and zoom limit prevents from seeing new data)
+// also x-axis should be restricted to distance
 private TrackDataListener courseTrackDataListener = new TrackDataListener() {
   
+  private Track currentCourse;
+  private boolean overlayAdded = false;
 
   @Override
   public void onLocationStateChanged(LocationState state) {
@@ -142,6 +148,7 @@ private TrackDataListener courseTrackDataListener = new TrackDataListener() {
   public void onTrackUpdated(Track track) {
     if (isResumed()) {
       Log.d(TAG,"course updated");
+      currentCourse = track;
    }
   }
 
@@ -207,9 +214,12 @@ private TrackDataListener courseTrackDataListener = new TrackDataListener() {
   public synchronized void onNewTrackPointsDone() {
     if (isResumed()) {
       Log.d(TAG,"course points done");
-      chartView.addOverlay(pendingOverlayPoints);
+      if (overlayCourseData && currentCourse != null && currentCourse.getId() == currentCourseId && !overlayAdded ) {
+        chartView.addOverlay(pendingOverlayPoints);
+        getActivity().runOnUiThread(updateChart);
+        overlayAdded = true;
+      }
       pendingOverlayPoints.clear();
-      getActivity().runOnUiThread(updateChart);
     }
   }
 
@@ -344,7 +354,13 @@ private TrackDataListener courseTrackDataListener = new TrackDataListener() {
   @Override
   public void onResume() {
     super.onResume();
-    courseMode = ((TrackDetailActivity) getActivity()).isCourseMode();
+    if (((TrackDetailActivity) getActivity()).isCourseMode()) {
+      // disabled as useless (as is), see not above courseTrackDataListener.
+      // Left in as could be used to show marker on distance only chart
+      // with a virtual rider added as addition pointer
+      overlayCourseData = false;
+      
+    }
     resumeTrackDataHub();
     resumeCourseDataHub();
     //no longer needed
@@ -362,7 +378,7 @@ private TrackDataListener courseTrackDataListener = new TrackDataListener() {
     getActivity().runOnUiThread(updateChart);
     
     // show elevation for whole course if in course mode
-    if (courseMode) {
+    if (overlayCourseData) {
       chartView.setOverlayChartValueSeriesEnabled(ChartView.ELEVATION_SERIES, true);
     } else {
       chartView.setOverlayChartValueSeriesEnabled(ChartView.ELEVATION_SERIES, false);
@@ -681,10 +697,11 @@ private TrackDataListener courseTrackDataListener = new TrackDataListener() {
    * can be accessed by multiple threads.
    */
   private synchronized void resumeCourseDataHub() {
-    if (courseMode) {
+    if (overlayCourseData) {
     currentCourseId = ((TrackDetailActivity) getActivity()).getCourseTrackId();
     courseDataHub = ((TrackDetailActivity) getActivity()).getCourseDataHub();
-    courseDataHub.registerTrackDataListener(courseTrackDataListener, EnumSet.of(TrackDataType.SELECTED_TRACK,
+    courseDataHub.registerTrackDataListener(courseTrackDataListener, EnumSet.of(TrackDataType.TRACKS_TABLE,
+        TrackDataType.SELECTED_TRACK,
         TrackDataType.WAYPOINTS_TABLE, TrackDataType.SAMPLED_IN_TRACK_POINTS_TABLE,
         TrackDataType.LOCATION));
     reloadCourseDataHub();

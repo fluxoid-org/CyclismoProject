@@ -156,6 +156,9 @@ containing a value of this type.
          */
         public static final int cadence_border=0x7f0b000d;
         public static final int cadence_fill=0x7f0b000e;
+        /**  course underlay, blue-ish 
+         */
+        public static final int course_underlay=0x7f0b0015;
         /**  elevation chart colors, green and transparent green 
          */
         public static final int elevation_border=0x7f0b0005;

@@ -32,6 +32,7 @@ import org.cowboycoders.cyclisimo.util.PreferencesUtils;
 import org.cowboycoders.cyclisimo.util.TrackRecordingServiceConnectionUtils;
 import org.cowboycoders.cyclisimo.util.UnitConversions;
 import org.cowboycoders.location.LatLongAlt;
+import org.cowboycoders.turbotrainers.CourseTracker;
 import org.cowboycoders.turbotrainers.TurboCommunicationException;
 import org.cowboycoders.turbotrainers.TurboTrainerDataListener;
 import org.cowboycoders.turbotrainers.TurboTrainerInterface;
@@ -53,15 +54,15 @@ public class TurboService extends Service {
   
   private static int GPS_ACCURACY = 5; //m
   
-  private List<LatLongAlt> latLongAlts;
+  //private List<LatLongAlt> latLongAlts;
 
   private boolean running = false;
 
-  private double distanceBetweenPoints;
+  //private double distanceBetweenPoints;
   
-  private double lastSubmittedDistance = 0;
+  //private double lastSubmittedDistance = 0;
   
-  private int currentLatLongIndex = 1;
+  //private int currentLatLongIndex = 1;
   
   private static String WAKE_LOCK = TurboService.class.getSimpleName();
   
@@ -77,9 +78,9 @@ public class TurboService extends Service {
   private TurboTrainerInterface turboTrainer;
   
   TurboTrainerDataListener dataListener = new TurboTrainerDataListener() {
-
+    
     @Override
-    public void onSpeedChange(double speed) {
+    public synchronized void onSpeedChange(double speed) { // synchronized to keep speed in alignment with distance
       Intent intent = new Intent(getString(R.string.sensor_data_speed_kmh));
       intent.putExtra(getString(R.string.sensor_data_double_value),speed);
       sendBroadcast(intent);
@@ -102,26 +103,18 @@ public class TurboService extends Service {
     }
 
     @Override
-    public void onDistanceChange(double distance) {
+    public synchronized void onDistanceChange(double distance) { 
+      // synchronized to keep speed in alignment with distance : may need changing if threads are queueing and order becomes
+      // unpredictable
       Log.d(TAG,"distance:" + distance);
-      if (distance - lastSubmittedDistance >= distanceBetweenPoints) {
-        LatLongAlt currentLocation = latLongAlts.get(currentLatLongIndex);
-        updateLocation(currentLocation);
-        lastSubmittedDistance = distance;
-        if (currentLatLongIndex >= latLongAlts.size() -2 ) {
-          // allow cool down
-          turboTrainer.setSlope(0);
-          doFinish();
-        }
-        double gradient = org.cowboycoders.location.LocationUtils
-            .getLocalisedGradient(latLongAlts.get(currentLatLongIndex), latLongAlts.get(currentLatLongIndex + 1));
-        turboTrainer.setSlope(gradient);
-        Log.d(TAG,"New Gradient: " + gradient);
-        distanceBetweenPoints = org.cowboycoders.location.LocationUtils.distance(latLongAlts.get(currentLatLongIndex), latLongAlts.get(currentLatLongIndex +1));
-        Log.d(TAG,"distance between points: " + distanceBetweenPoints);
-        currentLatLongIndex++;
+      LatLongAlt currentLocation = courseTracker.getNearestLocation(distance);
+      updateLocation(currentLocation);
+      double gradient = courseTracker.getCurrentGradient(); // returns 0.0 if finished for warm down
+      turboTrainer.setSlope(gradient);
+      Log.d(TAG,"New Gradient: " + gradient);
+      if (courseTracker.hasFinished()) {
+        doFinish();
       }
-      
     }
 
     @Override
@@ -134,8 +127,12 @@ public class TurboService extends Service {
     }
     
   };
+  
+
 
   private WakeLock wakeLock;
+
+  private CourseTracker courseTracker;
   
   public void doFinish() {
     long recordingTrackId = PreferencesUtils.getLong(
@@ -176,7 +173,8 @@ public class TurboService extends Service {
     running = true;
     
     wakeLock.acquire();
-
+    
+    List<LatLongAlt> latLongAlts;
         
         context.getClass();
         CourseLoader cl = new CourseLoader(context,trackId);
@@ -192,12 +190,10 @@ public class TurboService extends Service {
         
         latLongAlts = org.cowboycoders.location.LocationUtils.interpolatePoints(latLongAlts, TARGET_TRACKPOINT_DISTANCE_METRES);
         
-        this.distanceBetweenPoints = org.cowboycoders.location.LocationUtils.distance(latLongAlts.get(0), latLongAlts.get(1));
+        this.courseTracker = new CourseTracker(latLongAlts);
             
         Log.d(TAG,"latlong length: " + latLongAlts.size());
-        
-        Log.d(TAG,"distance between points: " + distanceBetweenPoints);
-        
+                
         enableMockLocations();
         
         // start in background as otherwise it is destroyed in onDestory() before we can disconnect
@@ -241,7 +237,7 @@ public class TurboService extends Service {
           try {
             turboTrainer.start();
             turboTrainer.registerDataListener(dataListener);
-            updateLocation(latLongAlts.get(0));
+            updateLocation(courseTracker.getNearestLocation(0.0));
           } catch (InterruptedException e1) {
             throw new TurboCommunicationException(e1);
           } catch (TimeoutException e1) {
@@ -257,7 +253,7 @@ public class TurboService extends Service {
     }
 
     public void onServiceDisconnected(ComponentName className) {
-      Toast.makeText(TurboService.this, "Connected to AntHub service",
+      Toast.makeText(TurboService.this, "Disconnected from AntHub service",
           Toast.LENGTH_SHORT).show();
   }
   

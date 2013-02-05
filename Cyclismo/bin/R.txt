@@ -34,6 +34,7 @@ int attr zOrderOnTop 0x7f01000d
 int color black 0x7f0b0000
 int color cadence_border 0x7f0b000d
 int color cadence_fill 0x7f0b000e
+int color course_underlay 0x7f0b0015
 int color elevation_border 0x7f0b0005
 int color elevation_fill 0x7f0b0006
 int color fast_path 0x7f0b0014

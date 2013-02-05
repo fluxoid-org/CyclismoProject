@@ -91,7 +91,7 @@ limitations under the License.
     android:protectionLevel="signature" />
   <uses-permission android:name="org.cowboycoders.cyclisimo.permission.MAPS_RECEIVE" />
   <uses-sdk
-    android:minSdkVersion="14"
+    android:minSdkVersion="8"
     android:targetSdkVersion="16" />
   <!-- Required features -->
   <uses-feature
