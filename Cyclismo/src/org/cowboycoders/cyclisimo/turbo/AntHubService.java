@@ -45,6 +45,13 @@ public class AntHubService extends Service {
   public Node getNode() {
     return node;
   }
+  
+  /**
+   * @return the node
+   */
+  public AndroidAntTransceiver getTransceiver() {
+    return transceiver;
+  }
 
   private static final String TAG = "AntHub  - Service.";
   

@@ -3117,5 +3117,13 @@ limitations under the License.
   
   <string name="turbo_mode_service_running_notification_title">Turbo trainer</string>
   <string name="turbo_mode_service_running_notification_text">Turbo trainer service connection established</string>
+  
+    <string name="track_detail_delete_after_turbo_exception"
+    translation_description=" After an exception has been thrown by TurboService,
+    	the confirmation message informing the user that
+      the track and its markers will be permanently deleted from the device.">
+    An Error has occured communicating with your Turbo Trainer. Would you like to delete
+    this recording?
+  </string>
       
 </resources>

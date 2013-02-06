@@ -1,6 +1,7 @@
 package org.cowboycoders.cyclisimo.turbo;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -16,6 +17,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -25,6 +27,10 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.cowboycoders.ant.Node;
+import org.cowboycoders.ant.interfaces.AndroidAntTransceiver;
+import org.cowboycoders.ant.interfaces.AntRadioPoweredOffException;
+import org.cowboycoders.ant.interfaces.AntRadioServiceNotInstalledException;
+import org.cowboycoders.ant.interfaces.ServiceAlreadyClaimedException;
 import org.cowboycoders.cyclisimo.R;
 import org.cowboycoders.cyclisimo.TrackEditActivity;
 import org.cowboycoders.cyclisimo.services.TrackRecordingServiceConnection;
@@ -34,6 +40,7 @@ import org.cowboycoders.cyclisimo.util.TrackRecordingServiceConnectionUtils;
 import org.cowboycoders.cyclisimo.util.UnitConversions;
 import org.cowboycoders.location.LatLongAlt;
 import org.cowboycoders.turbotrainers.CourseTracker;
+import org.cowboycoders.turbotrainers.TooFewAntChannelsAvailableException;
 import org.cowboycoders.turbotrainers.TurboCommunicationException;
 import org.cowboycoders.turbotrainers.TurboTrainerDataListener;
 import org.cowboycoders.turbotrainers.TurboTrainerInterface;
@@ -44,6 +51,11 @@ public class TurboService extends Service {
   private static final int RESULT_ERROR = 0;
 
   private Binder turboBinder = new TurboBinder();
+  
+  //relocate to R
+  public static final int NOTIFCATION_ID_STARTUP = 0;
+  
+  public static final int NOTIFCATION_ID_SHUTDOWN = 1;
 
   public static String TAG = "TurboService";
 
@@ -58,6 +70,8 @@ public class TurboService extends Service {
   // private List<LatLongAlt> latLongAlts;
 
   private boolean running = false;
+  
+  private AndroidAntTransceiver transceiver;
 
   // private double distanceBetweenPoints;
 
@@ -208,8 +222,7 @@ public class TurboService extends Service {
     return START_STICKY;
   }
 
-  public synchronized void start(final long trackId, final Context context)
-      throws TurboCommunicationException {
+  public synchronized void start(final long trackId, final Context context) {
     if (running) {
       return;
     }
@@ -219,18 +232,16 @@ public class TurboService extends Service {
 
     recordingTrackId = PreferencesUtils.getLong(this, R.string.recording_track_id_key);
 
-    List<LatLongAlt> latLongAlts;
+    List<LatLongAlt> latLongAlts = null;
 
     context.getClass();
     CourseLoader cl = new CourseLoader(context, trackId);
     try {
       latLongAlts = cl.getLatLongAlts();
     } catch (InterruptedException e) {
-      running = false;
       String error = "interrupted whilst loading course";
       Log.e(TAG, error);
-      this.stopSelfResult(TurboService.RESULT_ERROR);
-      throw new TurboCommunicationException(error);
+      handleException(e, "Error loading course",true,NOTIFCATION_ID_STARTUP);
     }
 
     latLongAlts = org.cowboycoders.location.LocationUtils.interpolatePoints(latLongAlts,
@@ -253,31 +264,62 @@ public class TurboService extends Service {
     Intent notificationIntent = new Intent(this, TurboService.class);
     PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
-    Notification noti = new Notification.Builder(this)
+    Notification noti = new NotificationCompat.Builder(this)
         .setContentTitle(getString(R.string.turbo_mode_service_running_notification_title))
         .setContentText(getString(R.string.turbo_mode_service_running_notification_text))
         .setSmallIcon(R.drawable.track_bike).setContentIntent(pendingIntent).setOngoing(true)
-        .getNotification(); // build api 16 only ;/
+        .build(); // build api 16 only ;/
 
     startForeground(ONGOING_NOTIFICATION, noti);
-
+    
     // currentLatLongIndex = latLongAlts.size() -3; puts in near end so we can
     // test ending
 
   }
+  
+  private static interface ErrorProneCall {
+    void call() throws Exception;
+  }
+  
+  private static void retryErrorProneCall(ErrorProneCall errorProneCall, int maxRetries) throws Exception {
+    int retries = 0;
+    while (true) {
+      try {
+        errorProneCall.call();
+        break;
+      } catch (Exception e) {
+        if (++retries >= maxRetries) {
+          throw e;
+        }
+      }
+    }
+  }
+  
+  private ErrorProneCall startTurbo= new ErrorProneCall() {
+
+    @Override
+    public void call() throws TurboCommunicationException, InterruptedException, TimeoutException {
+      turboTrainer.start();
+      turboTrainer.registerDataListener(dataListener);
+    }
+    
+  };
 
   private ServiceConnection mConnection = new ServiceConnection() {
 
     public void onServiceConnected(ComponentName className, IBinder binder) {
       AntHubService s = ((AntHubService.LocalBinder) binder).getService();
       antNode = s.getNode();
+      transceiver = s.getTransceiver();
       TurboService.this.turboTrainer = new BushidoHeadunit(antNode);
 
       new Thread() {
         public void run() {
           try {
-            turboTrainer.start();
-            turboTrainer.registerDataListener(dataListener);
+            // slight hack to get around timeout errors on my tablet 
+            retryErrorProneCall(startTurbo,10);
+            //turboTrainer.start();
+            //turboTrainer.registerDataListener(dataListener);
             // if
             // (TrackRecordingServiceConnectionUtils.isRecordingServiceRunning(TurboService.this))
             // {
@@ -288,10 +330,8 @@ public class TurboService extends Service {
                 .getString(R.string.turbo_service_action_course_start));
             sendBroadcast(intent);
             updateLocation(courseTracker.getNearestLocation(0.0));
-          } catch (InterruptedException e1) {
-            throw new TurboCommunicationException(e1);
-          } catch (TimeoutException e1) {
-            throw new TurboCommunicationException(e1);
+          } catch (Exception e) {
+            handleException(e, "Error initiliasing turbo trainer",true,NOTIFCATION_ID_STARTUP);
           }
         }
       }.start();
@@ -308,6 +348,9 @@ public class TurboService extends Service {
 
   private TrackRecordingServiceConnection trackRecordingServiceConnection;
 
+  private boolean networkProviderEnabled;
+
+
   void doBindService() {
     bindService(new Intent(this, AntHubService.class), mConnection, Context.BIND_AUTO_CREATE);
     mIsBound = true;
@@ -317,42 +360,55 @@ public class TurboService extends Service {
     Intent intent = new Intent(this, AntHubService.class);
     this.startService(intent);
   }
-
-  private void enableMockLocations() {
+  
+  private boolean enableLocationProvider(String provider) {
     LocationManager locationManager = (LocationManager) getApplicationContext().getSystemService(
         Context.LOCATION_SERVICE);
-    if (locationManager.isProviderEnabled(MOCK_LOCATION_PROVIDER)) {
+    if (locationManager.isProviderEnabled(provider)) {
       try {
-        locationManager.addTestProvider(MOCK_LOCATION_PROVIDER, "requiresNetwork" == "",
+        locationManager.addTestProvider(provider, "requiresNetwork" == "",
             "requiresSatellite" == "", "requiresCell" == "", "hasMonetaryCost" == "",
             "supportsAltitude" == "", "supportsSpeed" == "", "supportsBearing" == "",
             android.location.Criteria.POWER_LOW, android.location.Criteria.ACCURACY_FINE);
 
-        locationManager.setTestProviderEnabled(MOCK_LOCATION_PROVIDER, true);
-        locationManager.setTestProviderStatus(MOCK_LOCATION_PROVIDER, LocationProvider.AVAILABLE,
+        locationManager.setTestProviderEnabled(provider, true);
+        locationManager.setTestProviderStatus(provider, LocationProvider.AVAILABLE,
             null, System.currentTimeMillis());
       } catch (SecurityException e) {
-        // TODO : ADD NOTIFICATION
-        this.doFinish();
-        Log.e(TAG, e.toString());
+        handleException(e, "Error enabling location provider",true,NOTIFCATION_ID_STARTUP);
+        return false;
       }
+    } else {
+      return false;
     }
+    
+    return true;
+  }
+
+  private void enableMockLocations() {
+    enableLocationProvider(MOCK_LOCATION_PROVIDER);
+    // enable any alternatives otherwise : could provide a last known location
+    networkProviderEnabled = enableLocationProvider(LocationManager.NETWORK_PROVIDER);
   }
 
   private void disableMockLocations() {
+    disableLocationProvider(MOCK_LOCATION_PROVIDER);
+    if (networkProviderEnabled) disableLocationProvider(LocationManager.NETWORK_PROVIDER);
+  }
+  
+  private void disableLocationProvider(String provider) {
     LocationManager locationManager = (LocationManager) getApplicationContext().getSystemService(
         Context.LOCATION_SERVICE);
-    if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+    if (locationManager.isProviderEnabled(provider)) {
       try {
         // is this the same as the below? probably
-        locationManager.setTestProviderEnabled(MOCK_LOCATION_PROVIDER, false);
-        locationManager.clearTestProviderEnabled(MOCK_LOCATION_PROVIDER);
-        locationManager.clearTestProviderLocation(MOCK_LOCATION_PROVIDER);
-        locationManager.clearTestProviderStatus(MOCK_LOCATION_PROVIDER);
-        locationManager.removeTestProvider(MOCK_LOCATION_PROVIDER);
+        locationManager.setTestProviderEnabled(provider, false);
+        locationManager.clearTestProviderEnabled(provider);
+        locationManager.clearTestProviderLocation(provider);
+        locationManager.clearTestProviderStatus(provider);
+        locationManager.removeTestProvider(provider);
       } catch (SecurityException e) {
-        // TODO : ADD NOTIFICATION
-        Log.e(TAG, e.toString());
+        // ignore 
       }
     }
   }
@@ -378,9 +434,7 @@ public class TurboService extends Service {
         locationManager.setTestProviderLocation(MOCK_LOCATION_PROVIDER, loc);
         Log.e(TAG, "updated location");
       } catch (SecurityException e) {
-        // TDO: ADD NOTIFICATION HERE
-        this.doFinish();
-        Log.e(TAG, e.toString());
+        handleException(e,"Error updating location",true,NOTIFCATION_ID_STARTUP);
       }
 
       return;
@@ -414,12 +468,9 @@ public class TurboService extends Service {
       try {
         turboTrainer.unregisterDataListener(dataListener);
         turboTrainer.stop();
-      } catch (InterruptedException e) {
-        Log.e(TAG, "Interrupted stopping turbo trainer link");
+      } catch (Exception e) {
+        handleException(e,"Error shutting down turbo",false,NOTIFCATION_ID_SHUTDOWN);
         shutDownSuccess = false;
-      } catch (TimeoutException e) {
-        shutDownSuccess = false;
-        Log.e(TAG, "Timeout stopping turbo trainer");
       }
 
       String shutdownMessage;
@@ -506,6 +557,77 @@ public class TurboService extends Service {
   public void unregisterRecordingReceiver() {
     unregisterReceiver(receiver);
   }
+  
+  // probably should show an activity with detail?
+  // toDO: move strings to R
+  private void handleException(Exception e , String title, boolean finish, int id) {
+    title = title == null ? "An Error occured communicating with your turbotrainer" : title;
+    NotificationCompat.Builder mBuilder =
+        new NotificationCompat.Builder(this)
+        .setSmallIcon(R.drawable.track_bike)
+        .setContentTitle(title);
+    Notification notification = null;
+    
+    Log.e(TAG, "Exception thrown in "+ TurboService.class.getSimpleName() + ": ", e);
+    String exceptionMessage = e.getMessage() == null ? "" : e.getMessage();
+    if (e instanceof ServiceAlreadyClaimedException) {
+      if (transceiver != null) {
+        transceiver.requestForceClaimInterface(getString(R.string.app_name));
+      }
+      mBuilder.setContentText("Someone has already claimed the interface : attempting to force claim");
+      notification = mBuilder.build();
+      
+    } else if (e instanceof AntRadioServiceNotInstalledException) {
+      
+      mBuilder.setContentText("AntRadioSerivce not installed. Please install.");
+      notification = mBuilder.build();
+      
+    } else if (e instanceof TooFewAntChannelsAvailableException) {
+      mBuilder.setContentText("Too few ant channels available");
+      notification = mBuilder.build();
+      
+    }else if (e instanceof AntRadioPoweredOffException) {
+      mBuilder.setContentText("Ant radio is powered off");
+      notification = mBuilder.build();
+      
+    } else if (e instanceof Exception) {
+      StringBuilder message = new StringBuilder();
+      Throwable cause = e.getCause();
+      message.append("Exception: " + e.getMessage());
+      if (exceptionMessage != "") {
+        message.append("\n" + "Message : " + exceptionMessage );
+      }
+      if (cause != null) {
+        message.append("\nCaused by: ");
+        message.append(cause.toString());
+        if (cause.getMessage() != null) {
+          message.append(" : " + cause.getMessage());
+        }
+        while ((cause = cause.getCause()) != null) {
+          message.append(", ");
+          message.append(cause.toString());
+          if (cause.getMessage() != null) {
+            message.append(" : " + cause.getMessage());
+          }
+        }
+      }
+      mBuilder.setContentText(message);
+      notification = mBuilder.build(); 
+    }
+    
+    NotificationManager mNotificationManager =
+        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+    
+    mNotificationManager.notify(id, notification);
+    
+    if(finish) {
+      Intent intent = new Intent().setAction(this.getString(R.string.turbo_service_action_exception_thrown));
+      sendBroadcast(intent);
+      doFinish();
+    }
+ 
+  }
+  
 
   // if
   // (context.getString(R.string.track_paused_broadcast_action).equals(action)

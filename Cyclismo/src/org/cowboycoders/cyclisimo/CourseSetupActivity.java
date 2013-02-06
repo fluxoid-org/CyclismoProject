@@ -80,6 +80,7 @@ public class CourseSetupActivity extends Activity {
           Toast.LENGTH_SHORT).show();
       // no longer needed
       doUnbindService();
+      startRecording();
     }
 
     public void onServiceDisconnected(ComponentName className) {
@@ -182,8 +183,6 @@ public class CourseSetupActivity extends Activity {
         public void onClick(View v) {
           startServiceInBackround();
           doBindService();
-          startRecording();
-          
         }
         
       });

@@ -16,10 +16,6 @@
 
 package org.cowboycoders.cyclisimo.fragments;
 
-import org.cowboycoders.cyclisimo.content.MyTracksCourseProviderUtils;
-import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils;
-import org.cowboycoders.cyclisimo.R;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -30,7 +26,10 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 
 import org.cowboycoders.cyclisimo.CourseListActivity;
+import org.cowboycoders.cyclisimo.R;
 import org.cowboycoders.cyclisimo.TrackListActivity;
+import org.cowboycoders.cyclisimo.content.MyTracksCourseProviderUtils;
+import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils;
 import org.cowboycoders.cyclisimo.services.TrackRecordingServiceConnection;
 import org.cowboycoders.cyclisimo.util.DialogUtils;
 import org.cowboycoders.cyclisimo.util.IntentUtils;
@@ -47,6 +46,7 @@ public class DeleteOneTrackDialogFragment extends DialogFragment {
   public static final String DELETE_ONE_TRACK_DIALOG_TAG = "deleteOneTrackDialog";
   private static final String KEY_TRACK_ID = "trackId";
   private static final String KEY_USE_COURSE_PROVIDER = "useCourseProvider";
+  private int messageId = R.string.track_detail_delete_confirm_message;
 
   /**
    * Interface for caller of this dialog fragment.
@@ -83,7 +83,7 @@ public class DeleteOneTrackDialogFragment extends DialogFragment {
   public Dialog onCreateDialog(Bundle savedInstanceState) {
     activity = getActivity();
     return DialogUtils.createConfirmationDialog(activity,
-        R.string.track_detail_delete_confirm_message, new DialogInterface.OnClickListener() {
+        messageId, new DialogInterface.OnClickListener() {
             private boolean mUseCourseProvider = false;
 
             @Override
@@ -134,5 +134,11 @@ public class DeleteOneTrackDialogFragment extends DialogFragment {
     DeleteOneTrackDialogFragment deleteOneTrackDialogFragment = new DeleteOneTrackDialogFragment();
     deleteOneTrackDialogFragment.setArguments(bundle);
     return deleteOneTrackDialogFragment;
+  }
+  
+  public static DialogFragment newInstance(long trackId, boolean useCourseProvider, int messageId) {
+    DeleteOneTrackDialogFragment rtn  = (DeleteOneTrackDialogFragment) newInstance(trackId,useCourseProvider);
+    rtn.messageId = messageId;
+    return rtn;
   }
 }

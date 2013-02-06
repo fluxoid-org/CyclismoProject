@@ -665,9 +665,16 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
           courseLoaded = true;
         }
         resume();
+      } 
+      else if (action.equals(TURBO_SERVICE_EXCEPTION_THROWN_ACTION)) {
+        Log.v(TAG, "recieved turbo service exception");
+        DeleteOneTrackDialogFragment.newInstance(trackId, useCourseProivder,R.string.track_detail_delete_after_turbo_exception).show(
+            getSupportFragmentManager(), DeleteOneTrackDialogFragment.DELETE_ONE_TRACK_DIALOG_TAG);
       }
     }
   };
+  
+  private static String TURBO_SERVICE_EXCEPTION_THROWN_ACTION;
 
   private static String TURBO_SERVICE_COURSE_STARTED_ACTION;
 
@@ -675,8 +682,11 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
     if (isCourseMode()) {
       TURBO_SERVICE_COURSE_STARTED_ACTION = this
           .getString(R.string.turbo_service_action_course_start);
+      TURBO_SERVICE_EXCEPTION_THROWN_ACTION = this
+          .getString(R.string.turbo_service_action_exception_thrown);
       IntentFilter filter = new IntentFilter();
       filter.addAction(TURBO_SERVICE_COURSE_STARTED_ACTION);
+      filter.addAction(TURBO_SERVICE_EXCEPTION_THROWN_ACTION);
       registerReceiver(turboServiceReceiver, filter);
     }
   }
