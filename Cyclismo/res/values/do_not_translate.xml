@@ -105,5 +105,6 @@ Google은 이용자에 대한 위치정보의 이용∙제공사실을 위치정
   <string name="sensor_data_speed_kmh">org.cowboycoders.cyclisimo.SENSOR_DATA_SPEED_KMH</string>
   <string name="sensor_data_heart_rate">org.cowboycoders.cyclisimo.SENSOR_DATA_HEART_RATE</string>
   <string name="sensor_data_double_value">org.cowboycoders.cyclisimo.SENSOR_DATA_DOUBLE_VALUE</string>
+   <string name="turbo_service_action_course_start">org.cowboycoders.cyclisimo.TURBO_SERVICE_COURSE_START</string>
   
 </resources>

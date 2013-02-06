@@ -16,14 +16,17 @@
 
 package org.cowboycoders.cyclisimo;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.os.RemoteException;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -54,6 +57,7 @@ import org.cowboycoders.cyclisimo.fragments.StatsFragment;
 import org.cowboycoders.cyclisimo.io.file.SaveActivity;
 import org.cowboycoders.cyclisimo.io.file.TrackWriterFactory.TrackFileFormat;
 import org.cowboycoders.cyclisimo.io.sendtogoogle.SendRequest;
+import org.cowboycoders.cyclisimo.services.ITrackRecordingService;
 import org.cowboycoders.cyclisimo.services.TrackRecordingServiceConnection;
 import org.cowboycoders.cyclisimo.settings.SettingsActivity;
 import org.cowboycoders.cyclisimo.util.AnalyticsUtils;
@@ -77,7 +81,6 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
   private static final String TAG = TrackDetailActivity.class.getSimpleName();
   private static final String CURRENT_TAB_TAG_KEY = "current_tab_tag_key";
 
-
   // The following are set in onCreate
   private SharedPreferences sharedPreferences;
   private TrackRecordingServiceConnection trackRecordingServiceConnection;
@@ -92,6 +95,7 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
   private long markerId;
   private boolean useCourseProivder = false;
   private long courseTrackId;
+  private boolean courseLoaded = false;
 
   /**
    * @return the useCourseProivder
@@ -99,7 +103,6 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
   public boolean isUsingCourseProivder() {
     return useCourseProivder;
   }
-
 
   // Preferences
   private long recordingTrackId = PreferencesUtils.RECORDING_TRACK_ID_DEFAULT;
@@ -114,15 +117,31 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
   private MenuItem splitFrequencyMenuItem;
 
   private final Runnable bindChangedCallback = new Runnable() {
-      @Override
+    @Override
     public void run() {
       // After binding changes (is available), update the total time in
       // trackController.
       runOnUiThread(new Runnable() {
-          @Override
+        @Override
         public void run() {
+          ITrackRecordingService service = trackRecordingServiceConnection.getServiceIfBound();
+          try {
+            if (service != null) {
+              recordingTrackPaused = service.isPaused();
+            }
+          } catch (RemoteException e) {
+            //leave unchanged
+          } 
+//          synchronized (bindChangedCallback) {
+//            if (isCourseMode() && courseLoaded == true && isPaused) {
+//              //recordingTrackPaused = true;
+//              resume();
+//              return;
+//            }
+//          }
           trackController.update(trackId == recordingTrackId, recordingTrackPaused);
         }
+       
       });
     }
   };
@@ -131,98 +150,118 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
    * Note that sharedPreferenceChangeListener cannot be an anonymous inner
    * class. Anonymous inner class will get garbage collected.
    */
-  private final OnSharedPreferenceChangeListener
-      sharedPreferenceChangeListener = new OnSharedPreferenceChangeListener() {
+  private final OnSharedPreferenceChangeListener sharedPreferenceChangeListener = new OnSharedPreferenceChangeListener() {
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
+      // Note that key can be null
+      if (key == null
+          || key.equals(PreferencesUtils.getKey(TrackDetailActivity.this,
+              R.string.recording_track_id_key))) {
+        recordingTrackId = PreferencesUtils.getLong(TrackDetailActivity.this,
+            R.string.recording_track_id_key);
+      }
+      if (key == null
+          || key.equals(PreferencesUtils.getKey(TrackDetailActivity.this,
+              R.string.recording_track_paused_key))) {
+        recordingTrackPaused = PreferencesUtils.getBoolean(TrackDetailActivity.this,
+            R.string.recording_track_paused_key, PreferencesUtils.RECORDING_TRACK_PAUSED_DEFAULT);
+      }
+      if (key != null) {
+        runOnUiThread(new Runnable() {
           @Override
-        public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
-          // Note that key can be null
-          if (key == null || key.equals(
-              PreferencesUtils.getKey(TrackDetailActivity.this, R.string.recording_track_id_key))) {
-            recordingTrackId = PreferencesUtils.getLong(
-                TrackDetailActivity.this, R.string.recording_track_id_key);
+          public void run() {
+            boolean isRecording = trackId == recordingTrackId;
+            updateMenuItems(isRecording, recordingTrackPaused);
+            trackController.update(isRecording, recordingTrackPaused);
           }
-          if (key == null || key.equals(PreferencesUtils.getKey(
-              TrackDetailActivity.this, R.string.recording_track_paused_key))) {
-            recordingTrackPaused = PreferencesUtils.getBoolean(TrackDetailActivity.this,
-                R.string.recording_track_paused_key,
-                PreferencesUtils.RECORDING_TRACK_PAUSED_DEFAULT);
-          }
-          if (key != null) {
-            runOnUiThread(new Runnable() {
-                @Override
-              public void run() {
-                boolean isRecording = trackId == recordingTrackId;
-                updateMenuItems(isRecording, recordingTrackPaused);
-                trackController.update(isRecording, recordingTrackPaused);
-              }
-            });
-          }
-        }
-      };
+        });
+      }
+    }
+  };
 
   private final OnClickListener recordListener = new OnClickListener() {
-      @Override
+    @Override
     public void onClick(View v) {
       if (recordingTrackPaused) {
         // Paused -> Resume
+        resume();
+      } else {
+        // Recording -> Paused
+        pause();
+      }
+    }
+  };
+
+  private void resume() {
+    recordingTrackPaused = false;
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
         AnalyticsUtils.sendPageViews(TrackDetailActivity.this, "/action/resume_track");
         updateMenuItems(true, false);
         TrackRecordingServiceConnectionUtils.resumeTrack(trackRecordingServiceConnection);
         trackController.update(true, false);
-      } else {
-        // Recording -> Paused
+      }
+    });
+  }
+
+  private void pause() {
+    recordingTrackPaused = true;
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
         AnalyticsUtils.sendPageViews(TrackDetailActivity.this, "/action/pause_track");
         updateMenuItems(true, true);
         TrackRecordingServiceConnectionUtils.pauseTrack(trackRecordingServiceConnection);
         trackController.update(true, true);
       }
-    }
-  };
+    });
+
+  }
 
   private final OnClickListener stopListener = new OnClickListener() {
-      @Override
+    @Override
     public void onClick(View v) {
       AnalyticsUtils.sendPageViews(TrackDetailActivity.this, "/action/stop_recording");
       updateMenuItems(false, true);
-      TrackRecordingServiceConnectionUtils.stopRecording(
-          TrackDetailActivity.this, trackRecordingServiceConnection, true);
+      TrackRecordingServiceConnectionUtils.stopRecording(TrackDetailActivity.this,
+          trackRecordingServiceConnection, true);
     }
   };
-  
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-//    ActivityManager manager = (ActivityManager) this.getSystemService( ACTIVITY_SERVICE );
-//    List<RunningTaskInfo> tasks =  manager.getRunningTasks(Integer.MAX_VALUE);
-//
-//    for (RunningTaskInfo taskInfo : tasks) {
-//        Log.d(TAG,"taskInfo.baseActivity.getClassName() : " + taskInfo.baseActivity.getClassName());
-//        Log.d(TAG,"taskInfo.description : " + taskInfo.description);
-// 
-//        if(taskInfo.baseActivity.getClassName().equals("org.cowboycoders.cyclisimo.TrackListActivity") && (taskInfo.numActivities > 1)){
-//            finish();
-//        }
-//    }
-    
- 
-    
+    // ActivityManager manager = (ActivityManager) this.getSystemService(
+    // ACTIVITY_SERVICE );
+    // List<RunningTaskInfo> tasks = manager.getRunningTasks(Integer.MAX_VALUE);
+    //
+    // for (RunningTaskInfo taskInfo : tasks) {
+    // Log.d(TAG,"taskInfo.baseActivity.getClassName() : " +
+    // taskInfo.baseActivity.getClassName());
+    // Log.d(TAG,"taskInfo.description : " + taskInfo.description);
+    //
+    // if(taskInfo.baseActivity.getClassName().equals("org.cowboycoders.cyclisimo.TrackListActivity")
+    // && (taskInfo.numActivities > 1)){
+    // finish();
+    // }
+    // }
+
     super.onCreate(savedInstanceState);
     handleIntent(getIntent());
-    
+
     sharedPreferences = getSharedPreferences(Constants.SETTINGS_NAME, Context.MODE_PRIVATE);
 
-    trackRecordingServiceConnection = new TrackRecordingServiceConnection(
-        this, bindChangedCallback);
+    trackRecordingServiceConnection = new TrackRecordingServiceConnection(this, bindChangedCallback);
     if (this.useCourseProivder) {
-      trackDataHub = TrackDataHub.newInstance(this,true);
+      trackDataHub = TrackDataHub.newInstance(this, true);
     } else {
       trackDataHub = TrackDataHub.newInstance(this);
     }
-    
-    courseDataHub = TrackDataHub.newInstance(this,true);
-    
+
+    courseDataHub = TrackDataHub.newInstance(this, true);
+
     Bundle extras = new Bundle();
-    
+
     extras.putLong(TrackDetailActivity.EXTRA_COURSE_TRACK_ID, getCourseTrackId());
 
     tabHost = (TabHost) findViewById(android.R.id.tabhost);
@@ -242,8 +281,8 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
     if (savedInstanceState != null) {
       tabHost.setCurrentTabByTag(savedInstanceState.getString(CURRENT_TAB_TAG_KEY));
     }
-    trackController = new TrackController(
-        this, trackRecordingServiceConnection, false, recordListener, stopListener);
+    trackController = new TrackController(this, trackRecordingServiceConnection, false,
+        recordListener, stopListener);
     showMarker();
   }
 
@@ -267,19 +306,22 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
   @Override
   protected void onResume() {
     super.onResume();
-    Log.d(TAG,"trackId : " + trackId);
+    registerTurboServiceReceiver();
+    Log.d(TAG, "trackId : " + trackId);
     trackDataHub.loadTrack(trackId);
     courseDataHub.loadTrack(courseTrackId);
-    
+
     // Update UI
     boolean isRecording = trackId == recordingTrackId;
     updateMenuItems(isRecording, recordingTrackPaused);
     trackController.update(isRecording, recordingTrackPaused);
+    //pause();
   }
 
   @Override
   protected void onPause() {
     super.onPause();
+    unregisterTurboServiceReceiver();
     trackController.stop();
   }
 
@@ -292,13 +334,15 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
     courseDataHub.stop();
     AnalyticsUtils.dispatch();
   }
-  
+
   /**
    * Course turbo trainer mode?
+   * 
    * @return
    */
   public boolean isCourseMode() {
-    if (!useCourseProivder && getCourseTrackId() != -1L) return true;
+    if (!useCourseProivder && getCourseTrackId() != -1L)
+      return true;
     return false;
   }
 
@@ -336,14 +380,14 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.track_detail, menu);
     String fileTypes[] = getResources().getStringArray(R.array.file_types);
-    menu.findItem(R.id.track_detail_save_gpx)
-        .setTitle(getString(R.string.menu_save_format, fileTypes[0]));
-    menu.findItem(R.id.track_detail_save_kml)
-        .setTitle(getString(R.string.menu_save_format, fileTypes[1]));
-    menu.findItem(R.id.track_detail_save_csv)
-        .setTitle(getString(R.string.menu_save_format, fileTypes[2]));
-    menu.findItem(R.id.track_detail_save_tcx)
-        .setTitle(getString(R.string.menu_save_format, fileTypes[3]));
+    menu.findItem(R.id.track_detail_save_gpx).setTitle(
+        getString(R.string.menu_save_format, fileTypes[0]));
+    menu.findItem(R.id.track_detail_save_kml).setTitle(
+        getString(R.string.menu_save_format, fileTypes[1]));
+    menu.findItem(R.id.track_detail_save_csv).setTitle(
+        getString(R.string.menu_save_format, fileTypes[2]));
+    menu.findItem(R.id.track_detail_save_tcx).setTitle(
+        getString(R.string.menu_save_format, fileTypes[3]));
 
     insertMarkerMenuItem = menu.findItem(R.id.track_detail_insert_marker);
     playMenuItem = menu.findItem(R.id.track_detail_play);
@@ -359,9 +403,8 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
 
   @Override
   public boolean onPrepareOptionsMenu(Menu menu) {
-    boolean showSensorState = !PreferencesUtils.SENSOR_TYPE_DEFAULT.equals(
-        PreferencesUtils.getString(
-            this, R.string.sensor_type_key, PreferencesUtils.SENSOR_TYPE_DEFAULT));
+    boolean showSensorState = !PreferencesUtils.SENSOR_TYPE_DEFAULT.equals(PreferencesUtils
+        .getString(this, R.string.sensor_type_key, PreferencesUtils.SENSOR_TYPE_DEFAULT));
     menu.findItem(R.id.track_detail_sensor_state).setVisible(showSensorState);
     return super.onPrepareOptionsMenu(menu);
   }
@@ -372,38 +415,38 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
     switch (item.getItemId()) {
       case R.id.track_detail_insert_marker:
         AnalyticsUtils.sendPageViews(this, "/action/insert_marker");
-        intent = IntentUtils.newIntent(this, MarkerEditActivity.class)
-            .putExtra(MarkerEditActivity.EXTRA_TRACK_ID, trackId);
+        intent = IntentUtils.newIntent(this, MarkerEditActivity.class).putExtra(
+            MarkerEditActivity.EXTRA_TRACK_ID, trackId);
         startActivity(intent);
         return true;
       case R.id.track_detail_play:
         if (isEarthInstalled()) {
-          ConfirmPlayDialogFragment.newInstance(trackId)
-              .show(getSupportFragmentManager(), ConfirmPlayDialogFragment.CONFIRM_PLAY_DIALOG_TAG);
+          ConfirmPlayDialogFragment.newInstance(trackId).show(getSupportFragmentManager(),
+              ConfirmPlayDialogFragment.CONFIRM_PLAY_DIALOG_TAG);
         } else {
-          new InstallEarthDialogFragment().show(
-              getSupportFragmentManager(), InstallEarthDialogFragment.INSTALL_EARTH_DIALOG_TAG);
+          new InstallEarthDialogFragment().show(getSupportFragmentManager(),
+              InstallEarthDialogFragment.INSTALL_EARTH_DIALOG_TAG);
         }
         return true;
       case R.id.track_detail_share:
         AnalyticsUtils.sendPageViews(this, "/action/share");
-        ChooseActivityDialogFragment.newInstance(trackId, null).show(
-            getSupportFragmentManager(), ChooseActivityDialogFragment.CHOOSE_ACTIVITY_DIALOG_TAG);
+        ChooseActivityDialogFragment.newInstance(trackId, null).show(getSupportFragmentManager(),
+            ChooseActivityDialogFragment.CHOOSE_ACTIVITY_DIALOG_TAG);
         return true;
       case R.id.track_detail_markers:
-        intent = IntentUtils.newIntent(this, MarkerListActivity.class)
-            .putExtra(MarkerListActivity.EXTRA_TRACK_ID, trackId);
+        intent = IntentUtils.newIntent(this, MarkerListActivity.class).putExtra(
+            MarkerListActivity.EXTRA_TRACK_ID, trackId);
         startActivity(intent);
         return true;
       case R.id.track_detail_voice_frequency:
         FrequencyDialogFragment.newInstance(R.string.voice_frequency_key,
-            PreferencesUtils.VOICE_FREQUENCY_DEFAULT, R.string.menu_voice_frequency)
-            .show(getSupportFragmentManager(), FrequencyDialogFragment.FREQUENCY_DIALOG_TAG);
+            PreferencesUtils.VOICE_FREQUENCY_DEFAULT, R.string.menu_voice_frequency).show(
+            getSupportFragmentManager(), FrequencyDialogFragment.FREQUENCY_DIALOG_TAG);
         return true;
       case R.id.track_detail_split_frequency:
         FrequencyDialogFragment.newInstance(R.string.split_frequency_key,
-            PreferencesUtils.SPLIT_FREQUENCY_DEFAULT, R.string.menu_split_frequency)
-            .show(getSupportFragmentManager(), FrequencyDialogFragment.FREQUENCY_DIALOG_TAG);
+            PreferencesUtils.SPLIT_FREQUENCY_DEFAULT, R.string.menu_split_frequency).show(
+            getSupportFragmentManager(), FrequencyDialogFragment.FREQUENCY_DIALOG_TAG);
         return true;
       case R.id.track_detail_send_google:
         AnalyticsUtils.sendPageViews(this, "/action/send_google");
@@ -426,11 +469,11 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
       case R.id.track_detail_edit:
         intent = IntentUtils.newIntent(this, TrackEditActivity.class)
             .putExtra(TrackEditActivity.EXTRA_TRACK_ID, trackId)
-            .putExtra(TrackEditActivity.EXTRA_USE_COURSE_PROVIDER,useCourseProivder);
+            .putExtra(TrackEditActivity.EXTRA_USE_COURSE_PROVIDER, useCourseProivder);
         startActivity(intent);
         return true;
       case R.id.track_detail_delete:
-        DeleteOneTrackDialogFragment.newInstance(trackId,useCourseProivder).show(
+        DeleteOneTrackDialogFragment.newInstance(trackId, useCourseProivder).show(
             getSupportFragmentManager(), DeleteOneTrackDialogFragment.DELETE_ONE_TRACK_DIALOG_TAG);
         return true;
       case R.id.track_detail_sensor_state:
@@ -454,8 +497,8 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
   public boolean onTrackballEvent(MotionEvent event) {
     if (event.getAction() == MotionEvent.ACTION_DOWN) {
       if (trackId == recordingTrackId && !recordingTrackPaused) {
-        TrackRecordingServiceConnectionUtils.addMarker(
-            this, trackRecordingServiceConnection, WaypointCreationRequest.DEFAULT_WAYPOINT);
+        TrackRecordingServiceConnectionUtils.addMarker(this, trackRecordingServiceConnection,
+            WaypointCreationRequest.DEFAULT_WAYPOINT);
         return true;
       }
     }
@@ -473,7 +516,7 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
   public TrackDataHub getTrackDataHub() {
     return trackDataHub;
   }
-  
+
   public TrackDataHub getCourseDataHub() {
     return courseDataHub;
   }
@@ -516,13 +559,13 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
     startActivity(newIntent);
     finish();
   }
-  
+
   @Override
   public void finish() {
     super.finish();
     Log.d(TAG, "finish");
   }
-  
+
   @Override
   public void onDestroy() {
     super.onDestroy();
@@ -545,7 +588,6 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
       }
     }
   }
-  
 
   /**
    * Updates the menu items.
@@ -612,5 +654,36 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
       }
     }
     return false;
+  }
+
+  private final BroadcastReceiver turboServiceReceiver = new BroadcastReceiver() {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+      String action = intent.getAction();
+      if (action.equals(TURBO_SERVICE_COURSE_STARTED_ACTION)) {
+        synchronized(bindChangedCallback) {
+          courseLoaded = true;
+        }
+        resume();
+      }
+    }
+  };
+
+  private static String TURBO_SERVICE_COURSE_STARTED_ACTION;
+
+  public void registerTurboServiceReceiver() {
+    if (isCourseMode()) {
+      TURBO_SERVICE_COURSE_STARTED_ACTION = this
+          .getString(R.string.turbo_service_action_course_start);
+      IntentFilter filter = new IntentFilter();
+      filter.addAction(TURBO_SERVICE_COURSE_STARTED_ACTION);
+      registerReceiver(turboServiceReceiver, filter);
+    }
+  }
+
+  public void unregisterTurboServiceReceiver() {
+    if (isCourseMode()) {
+      unregisterReceiver(turboServiceReceiver);
+    }
   }
 }
