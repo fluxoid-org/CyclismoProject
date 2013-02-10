@@ -3122,8 +3122,15 @@ limitations under the License.
     translation_description=" After an exception has been thrown by TurboService,
     	the confirmation message informing the user that
       the track and its markers will be permanently deleted from the device.">
-    An Error has occured communicating with your Turbo Trainer. Would you like to delete
+    An Error has occurred communicating with your Turbo Trainer. Would you like to delete
     this recording?
   </string>
-      
+  
+    
+  <string name="settings_ant_diagnostic_logging_summary_on">Ant logging enabled</string>
+  <string name="settings_ant_diagnostic_logging_summary_off">Ant logging disabled</string>    
+  <string name="settings_ant_diagnostic_logging_state">Enable ANT+ logging</string>  
+  <string name="settings_ant_diagnostic">Diagnostic</string> 
+  <string name="settings_ant">ANT+</string>
+  <string name="settings_ant_allow_logging_confirm_message">This should only be enabled for diagnostic purposes. Are you sure you want to enable this setting?</string>
 </resources>

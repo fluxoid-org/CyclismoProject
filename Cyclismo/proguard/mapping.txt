@@ -505,6 +505,9 @@ android.support.v4.app.NotificationCompat$Builder -> android.support.v4.app.ad:
     boolean mProgressIndeterminate -> p
     java.util.ArrayList mActions -> q
     android.app.Notification mNotification -> r
+    237:238:android.support.v4.app.NotificationCompat$Builder setSmallIcon(int) -> a
+    451:452:android.support.v4.app.NotificationCompat$Builder setOngoing$7abcb88d() -> a
+    558:558:android.app.Notification build() -> b
 android.support.v4.app.NotificationCompat$InboxStyle -> android.support.v4.app.ae:
     java.util.ArrayList mTexts -> a
 android.support.v4.app.NotificationCompat$NotificationCompatImpl -> android.support.v4.app.af:
@@ -1295,229 +1298,6 @@ android.support.v4.widget.ResourceCursorAdapter -> android.support.v4.d.j:
     android.view.LayoutInflater mInflater -> l
     106:106:android.view.View newView$4b8874c5(android.view.ViewGroup) -> a
     111:111:android.view.View newDropDownView$4b8874c5(android.view.ViewGroup) -> b
-bushido.AntTurboTrainer -> a.a:
-    org.cowboycoders.ant.Node node -> a
-bushido.BushidoBroadcastDataListener -> a.b:
-    java.lang.Byte[] data -> a
-    double speed -> b
-    double power -> c
-    double cadence -> d
-    double distance -> e
-    double heartRate -> f
-    java.lang.Byte[] bushidoPaused -> g
-    java.lang.Byte[] bushidoLogging -> h
-    java.lang.Byte[] bushidoDataIdentifier -> i
-    java.lang.Byte[] bushidoSPCidentifier -> j
-    java.lang.Byte[] bushidoDHidentifier -> k
-    java.lang.Byte[] bushidoStatusIdentifier -> l
-    bushido.BushidoInternalListener bushidoListener -> m
-    1:1:void receiveMessage(java.lang.Object) -> a
-bushido.BushidoButtonPressDescriptor -> a.c:
-    bushido.BushidoButtonPressDescriptor$Button button -> a
-    bushido.BushidoButtonPressDescriptor$Duration duration -> b
-    long recievedTimestamp -> c
-bushido.BushidoButtonPressDescriptor$Button -> a.d:
-    bushido.BushidoButtonPressDescriptor$Button LEFT -> a
-    bushido.BushidoButtonPressDescriptor$Button UP -> b
-    bushido.BushidoButtonPressDescriptor$Button OK -> c
-    bushido.BushidoButtonPressDescriptor$Button DOWN -> d
-    bushido.BushidoButtonPressDescriptor$Button RIGHT -> e
-    int id -> g
-    java.util.Map map -> h
-    int ID_MASK -> f
-    bushido.BushidoButtonPressDescriptor$Button[] ENUM$VALUES -> i
-    51:51:bushido.BushidoButtonPressDescriptor$Button fromByte(byte) -> a
-    1:1:bushido.BushidoButtonPressDescriptor$Button[] values() -> values
-    1:1:bushido.BushidoButtonPressDescriptor$Button valueOf(java.lang.String) -> valueOf
-bushido.BushidoButtonPressDescriptor$Duration -> a.e:
-    bushido.BushidoButtonPressDescriptor$Duration SHORT -> a
-    bushido.BushidoButtonPressDescriptor$Duration MEDIUM -> b
-    bushido.BushidoButtonPressDescriptor$Duration LONG -> c
-    int mask -> e
-    int DURATION_MASK -> d
-    bushido.BushidoButtonPressDescriptor$Duration[] ENUM$VALUES -> f
-    81:87:bushido.BushidoButtonPressDescriptor$Duration fromByte(byte) -> a
-    1:1:bushido.BushidoButtonPressDescriptor$Duration[] values() -> values
-    1:1:bushido.BushidoButtonPressDescriptor$Duration valueOf(java.lang.String) -> valueOf
-bushido.BushidoButtonPressListener -> a.f:
-    void onButtonPressFinished(bushido.BushidoButtonPressDescriptor) -> a
-    void onButtonPressActive(bushido.BushidoButtonPressDescriptor) -> b
-bushido.BushidoData -> a.g:
-    double speed -> a
-    double cadence -> b
-    double distance -> c
-    double heartRate -> d
-    double slope -> e
-    double power -> f
-    bushido.TrapezoidIntegral integralSpeed -> g
-    java.util.List packetProviders -> k
-    java.util.Iterator packetProvidersIterator -> h
-    bushido.DataPacketProvider slopeProvider -> i
-    bushido.DataPacketProvider keepAliveProvider -> j
-bushido.BushidoData$1 -> a.h:
-    bushido.BushidoData this$0 -> a
-    37:39:byte[] getDataPacket() -> a
-bushido.BushidoData$2 -> a.i:
-    bushido.BushidoData this$0 -> a
-    51:51:byte[] getDataPacket() -> a
-bushido.BushidoHeadunit -> a.j:
-    java.util.logging.Logger LOGGER -> a
-    long TIMEOUT_DISTANCE_UPDATED -> h
-    byte[] PACKET_ALIVE -> b
-    byte[] PACKET_RESET_ODOMETER -> c
-    byte[] PACKET_DISCONNECT -> d
-    byte[] PACKET_INIT_CONNECTION -> e
-    byte[] PACKET_START_CYLING -> f
-    long RESET_ODOMETER_TIMEOUT -> i
-    java.lang.Byte[] PARTIAL_PACKET_CONNECTION_SUCCESSFUL -> j
-    java.lang.Byte[] PARTIAL_PACKET_NO_CONNECTION -> k
-    org.cowboycoders.ant.events.MessageCondition CONDITION_CHANNEL_TX -> l
-    java.util.ArrayList listeners -> m
-    org.cowboycoders.ant.Node node -> n
-    org.cowboycoders.ant.NetworkKey key -> o
-    org.cowboycoders.ant.Channel channel -> p
-    java.util.concurrent.ExecutorService channelExecutorService -> q
-    bushido.ChannelMessageSender channelMessageSender -> r
-    bushido.BushidoData model -> s
-    java.util.concurrent.locks.Lock responseLock -> t
-    java.util.Set dataChangeListeners -> u
-    java.util.Set buttonPressListeners -> v
-    boolean distanceUpdated -> g
-    boolean respond -> w
-    248:250:org.cowboycoders.ant.messages.data.BroadcastDataMessage buildBroadcastMessage(byte[]) -> a
-    266:266:void registerDataListener(bushido.TurboTrainerDataListener) -> a
-    278:278:void setSlope(double) -> a
-    326:326:void registerChannelRxListener(org.cowboycoders.ant.events.BroadcastListener,java.lang.Class) -> a
-    337:340:void start() -> a
-    448:467:org.cowboycoders.ant.messages.StandardMessage sendAndRetry$f4dc8f8(org.cowboycoders.ant.messages.ChannelMessage,org.cowboycoders.ant.events.MessageCondition,java.util.concurrent.TimeUnit) -> a
-    528:539:void stop() -> b
-    542:546:byte[] padToDataLength(int[]) -> a
-    551:551:void unregisterDataListener(bushido.TurboTrainerDataListener) -> b
-    78:78:java.util.Set access$0(bushido.BushidoHeadunit) -> a
-    83:83:java.util.Set access$1(bushido.BushidoHeadunit) -> b
-    64:64:java.util.concurrent.ExecutorService access$2(bushido.BushidoHeadunit) -> c
-    73:73:java.util.concurrent.locks.Lock access$3(bushido.BushidoHeadunit) -> d
-    87:87:boolean access$4(bushido.BushidoHeadunit) -> e
-    63:63:org.cowboycoders.ant.Channel access$5(bushido.BushidoHeadunit) -> f
-    55:55:org.cowboycoders.ant.events.MessageCondition access$6() -> c
-    51:51:java.lang.Byte[] access$7() -> d
-    53:53:java.lang.Byte[] access$8() -> e
-bushido.BushidoHeadunit$1 -> a.k:
-    bushido.BushidoHeadunit this$0 -> a
-    369:389:void sendMessage(org.cowboycoders.ant.messages.ChannelMessage) -> a
-bushido.BushidoHeadunit$1$1 -> a.l:
-    bushido.BushidoHeadunit$1 this$1 -> a
-    org.cowboycoders.ant.messages.ChannelMessage val$msg -> b
-    375:387:void run() -> run
-bushido.BushidoHeadunit$2 -> a.m:
-    bushido.BushidoHeadunit this$0 -> a
-    418:421:boolean test(org.cowboycoders.ant.messages.StandardMessage) -> a
-bushido.BushidoHeadunit$3 -> a.n:
-    bushido.BushidoHeadunit this$0 -> a
-    436:439:boolean test(org.cowboycoders.ant.messages.StandardMessage) -> a
-bushido.BushidoHeadunit$BushidoUpdatesListener -> a.o:
-    bushido.BushidoData data -> a
-    bushido.ChannelMessageSender channelSender -> c
-    bushido.BushidoHeadunit this$0 -> b
-    105:110:void onRequestData() -> a
-    120:123:void onSpeedChange(double) -> a
-    137:140:void onPowerChange(double) -> b
-    154:157:void onCadenceChange(double) -> c
-    170:175:void onDistanceChange(double) -> d
-    190:193:void onHeartRateChange(double) -> e
-    206:208:void onRequestPauseStatus() -> b
-    214:214:void onButtonPressFinished(bushido.BushidoButtonPressDescriptor) -> a
-    230:230:void onButtonPressActive(bushido.BushidoButtonPressDescriptor) -> b
-bushido.BushidoHeadunit$BushidoUpdatesListener$1 -> a.p:
-    bushido.BushidoHeadunit$BushidoUpdatesListener this$1 -> a
-    double val$speed -> b
-    1:1:void performOperation(java.lang.Object) -> a
-bushido.BushidoHeadunit$BushidoUpdatesListener$2 -> a.q:
-    bushido.BushidoHeadunit$BushidoUpdatesListener this$1 -> a
-    double val$power -> b
-    1:1:void performOperation(java.lang.Object) -> a
-bushido.BushidoHeadunit$BushidoUpdatesListener$3 -> a.r:
-    bushido.BushidoHeadunit$BushidoUpdatesListener this$1 -> a
-    double val$cadence -> b
-    1:1:void performOperation(java.lang.Object) -> a
-bushido.BushidoHeadunit$BushidoUpdatesListener$4 -> a.s:
-    bushido.BushidoHeadunit$BushidoUpdatesListener this$1 -> a
-    1:1:void performOperation(java.lang.Object) -> a
-bushido.BushidoHeadunit$BushidoUpdatesListener$5 -> a.t:
-    bushido.BushidoHeadunit$BushidoUpdatesListener this$1 -> a
-    double val$heartRate -> b
-    1:1:void performOperation(java.lang.Object) -> a
-bushido.BushidoHeadunit$BushidoUpdatesListener$6 -> a.u:
-    bushido.BushidoHeadunit$BushidoUpdatesListener this$1 -> a
-    bushido.BushidoButtonPressDescriptor val$descriptor -> b
-    1:1:void performOperation(java.lang.Object) -> a
-bushido.BushidoHeadunit$BushidoUpdatesListener$7 -> a.v:
-    bushido.BushidoHeadunit$BushidoUpdatesListener this$1 -> a
-    bushido.BushidoButtonPressDescriptor val$descriptor -> b
-    1:1:void performOperation(java.lang.Object) -> a
-bushido.BushidoInternalButtonPressListener -> a.w:
-    java.lang.Byte[] data -> a
-    java.lang.Byte[] BUTTON_PRESS_SIGNATURE -> b
-    int BUTTON_PRESS_INDEX -> c
-    bushido.BushidoInternalListener bushidoListener -> d
-    java.util.Map dispatcherMap -> e
-    28:31:void initDispatcherMap() -> a
-    1:1:void receiveMessage(java.lang.Object) -> a
-bushido.BushidoInternalListener -> a.x:
-    void onRequestPauseStatus() -> b
-    void onRequestData() -> a
-bushido.ButtonPressDispatcher -> a.y:
-    long TIMEOUT_NANO_SECONDS -> a
-    long INDEPENDENT_MESSAGE_CUTOFF_NANO_SECONDS -> b
-    bushido.BushidoInternalListener listener -> c
-    java.util.concurrent.locks.Lock lock -> d
-    java.util.concurrent.locks.Condition newPressCondition -> e
-    bushido.BushidoButtonPressDescriptor currentDescriptor -> f
-    bushido.BushidoButtonPressDescriptor lastDescriptor -> g
-    java.util.concurrent.LinkedBlockingQueue oldDescriptors -> h
-    java.util.ArrayList descriptorDrain -> i
-    boolean newSubmit -> j
-    52:71:void submitButtonPress(bushido.BushidoButtonPressDescriptor) -> a
-    37:37:java.util.concurrent.locks.Lock access$0(bushido.ButtonPressDispatcher) -> a
-    115:115:boolean access$1(bushido.ButtonPressDispatcher) -> b
-    151:151:void access$2(bushido.ButtonPressDispatcher) -> c
-bushido.ButtonPressDispatcher$1 -> a.z:
-    bushido.ButtonPressDispatcher this$0 -> a
-    138:146:void run() -> run
-bushido.ChannelMessageSender -> a.aa:
-    void sendMessage(org.cowboycoders.ant.messages.ChannelMessage) -> a
-bushido.DataPacketProvider -> a.ab:
-    byte[] getDataPacket() -> a
-bushido.IterationOperator -> a.ac:
-    void performOperation(java.lang.Object) -> a
-bushido.IterationUtils -> a.ad:
-    7:10:void operateOnAll(java.lang.Iterable,bushido.IterationOperator) -> a
-bushido.LoopingListIterator -> a.ae:
-    java.util.List list -> a
-    int currentIndex -> b
-    31:31:boolean hasNext() -> hasNext
-    36:36:java.lang.Object next() -> next
-    41:41:void remove() -> remove
-bushido.TooFewAntChannelsAvailableException -> a.af:
-    long serialVersionUID -> serialVersionUID
-bushido.TrapezoidIntegral -> a.ag:
-    java.lang.Double lastY -> a
-    java.lang.Double lastX -> b
-    double integral -> c
-bushido.TurboCommunicationException -> a.ah:
-    long serialVersionUID -> serialVersionUID
-bushido.TurboTrainerDataListener -> a.ai:
-    void onSpeedChange(double) -> a
-    void onPowerChange(double) -> b
-    void onCadenceChange(double) -> c
-    void onDistanceChange(double) -> d
-    void onHeartRateChange(double) -> e
-bushido.TurboTrainerInterface -> a.aj:
-    void registerDataListener(bushido.TurboTrainerDataListener) -> a
-    void unregisterDataListener(bushido.TurboTrainerDataListener) -> b
-    void setSlope(double) -> a
-    void start() -> a
-    void stop() -> b
 com.dsi.ant.AntInterface -> com.dsi.ant.a:
     int mServiceLibraryVersionCode -> a
     java.lang.Object INSTANCE_LOCK -> b
@@ -1534,6 +1314,7 @@ com.dsi.ant.AntInterface -> com.dsi.ant.a:
     504:520:void ANTTxMessage(byte[]) -> a
     1506:1517:boolean claimInterface() -> d
     1534:1545:boolean releaseInterface() -> e
+    1566:1582:boolean requestForceClaimInterface(java.lang.String) -> a
     1599:1610:boolean stopRequestForceClaimInterface() -> f
     1627:1638:boolean hasClaimedInterface() -> g
     1653:1665:boolean hasAntSupport(android.content.Context) -> a
@@ -2125,7 +1906,7 @@ com.google.android.gms.internal.aj -> com.google.android.gms.internal.aj:
     void onAttachedToWindow() -> onAttachedToWindow
     void onDetachedFromWindow() -> onDetachedFromWindow
 com.google.android.gms.internal.ak -> com.google.android.gms.internal.r:
-    android.app.Activity i -> a
+    android.app.Activity g -> a
     android.content.Intent bo -> b
     int bp -> c
     void onClick(android.content.DialogInterface,int) -> onClick
@@ -2140,7 +1921,7 @@ com.google.android.gms.internal.al$a$a -> com.google.android.gms.internal.u:
     android.os.IBinder asBinder() -> asBinder
     void onFinish() -> a
     void onCancel() -> b
-com.google.android.gms.internal.am -> com.google.android.gms.internal.w:
+com.google.android.gms.internal.am -> com.google.android.gms.internal.v:
     void remove() -> a
     void clearTileCache() -> b
     java.lang.String getId() -> c
@@ -2262,7 +2043,7 @@ com.google.android.gms.internal.b$a$a -> com.google.android.gms.internal.ar:
     boolean isGeodesic() -> j
     boolean a(com.google.android.gms.internal.b) -> a
     int hashCodeRemote() -> k
-com.google.android.gms.internal.c -> com.google.android.gms.internal.as:
+com.google.android.gms.internal.d -> com.google.android.gms.internal.as:
     java.lang.String TAG -> b
     com.google.android.gms.dynamic.LifecycleDelegate cp -> a
     android.os.Bundle cq -> c
@@ -2270,7 +2051,7 @@ com.google.android.gms.internal.c -> com.google.android.gms.internal.as:
     com.google.android.gms.internal.ag cs -> e
     com.google.android.gms.dynamic.LifecycleDelegate aa() -> a
     void d(int) -> a
-    void a(android.os.Bundle,com.google.android.gms.internal.c$a) -> a
+    void a(android.os.Bundle,com.google.android.gms.internal.d$a) -> a
     void a(com.google.android.gms.internal.ag) -> a
     void onInflate(android.app.Activity,android.os.Bundle,android.os.Bundle) -> a
     void onCreate(android.os.Bundle) -> a
@@ -2281,45 +2062,45 @@ com.google.android.gms.internal.c -> com.google.android.gms.internal.as:
     void onDestroy() -> e
     void onSaveInstanceState(android.os.Bundle) -> b
     void onLowMemory() -> f
-    com.google.android.gms.dynamic.LifecycleDelegate a(com.google.android.gms.internal.c,com.google.android.gms.dynamic.LifecycleDelegate) -> a
-    java.util.LinkedList a(com.google.android.gms.internal.c) -> a
-    com.google.android.gms.dynamic.LifecycleDelegate b(com.google.android.gms.internal.c) -> b
-    android.os.Bundle a$2a334be7(com.google.android.gms.internal.c) -> c
-com.google.android.gms.internal.c$1 -> com.google.android.gms.internal.at:
-    com.google.android.gms.internal.c b -> a
+    com.google.android.gms.dynamic.LifecycleDelegate a(com.google.android.gms.internal.d,com.google.android.gms.dynamic.LifecycleDelegate) -> a
+    java.util.LinkedList a(com.google.android.gms.internal.d) -> a
+    com.google.android.gms.dynamic.LifecycleDelegate b(com.google.android.gms.internal.d) -> b
+    android.os.Bundle a$492c8918(com.google.android.gms.internal.d) -> c
+com.google.android.gms.internal.d$1 -> com.google.android.gms.internal.at:
+    com.google.android.gms.internal.d b -> a
     int getState() -> a
     void a$6728a24f() -> b
-com.google.android.gms.internal.c$2 -> com.google.android.gms.internal.au:
+com.google.android.gms.internal.d$2 -> com.google.android.gms.internal.au:
     android.content.Context c -> a
     int d -> b
-    com.google.android.gms.internal.c b -> c
+    com.google.android.gms.internal.d b -> c
     void onClick(android.view.View) -> onClick
-com.google.android.gms.internal.c$3 -> com.google.android.gms.internal.av:
+com.google.android.gms.internal.d$3 -> com.google.android.gms.internal.av:
     android.os.Bundle j -> a
-    com.google.android.gms.internal.c b -> b
+    com.google.android.gms.internal.d b -> b
     int getState() -> a
     void a$6728a24f() -> b
-com.google.android.gms.internal.c$4 -> com.google.android.gms.internal.aw:
+com.google.android.gms.internal.d$4 -> com.google.android.gms.internal.aw:
     android.widget.FrameLayout l -> a
     android.view.LayoutInflater m -> b
     android.view.ViewGroup n -> c
     android.os.Bundle j -> d
-    com.google.android.gms.internal.c b -> e
+    com.google.android.gms.internal.d b -> e
     int getState() -> a
     void a$6728a24f() -> b
-com.google.android.gms.internal.c$5 -> com.google.android.gms.internal.ax:
+com.google.android.gms.internal.d$5 -> com.google.android.gms.internal.ax:
     android.app.Activity o -> a
     android.os.Bundle p -> b
     android.os.Bundle j -> c
-    com.google.android.gms.internal.c b -> d
+    com.google.android.gms.internal.d b -> d
     int getState() -> a
     void a$6728a24f() -> b
-com.google.android.gms.internal.c$a -> com.google.android.gms.internal.ay:
+com.google.android.gms.internal.d$a -> com.google.android.gms.internal.ay:
     int getState() -> a
     void a$6728a24f() -> b
 com.google.android.gms.internal.e -> com.google.android.gms.internal.az:
-    int e -> a
-    android.net.Uri f -> b
+    int h -> a
+    android.net.Uri i -> b
     android.net.Uri a(java.lang.String) -> a
 com.google.android.gms.internal.f -> com.google.android.gms.internal.ba:
 com.google.android.gms.internal.f$a -> com.google.android.gms.internal.bb:
@@ -2351,7 +2132,7 @@ com.google.android.gms.internal.h$a$a -> com.google.android.gms.internal.bg:
     com.google.android.gms.internal.f a(float) -> a
     com.google.android.gms.internal.f a(android.graphics.Bitmap) -> a
 com.google.android.gms.internal.i -> com.google.android.gms.internal.bh:
-    com.google.android.gms.internal.c b -> a
+    com.google.android.gms.internal.d b -> a
     void b(com.google.android.gms.dynamic.LifecycleDelegate) -> a
 com.google.android.gms.internal.j -> com.google.android.gms.internal.bi:
     void onMapLongClick(com.google.android.gms.maps.model.LatLng) -> a
@@ -2470,7 +2251,7 @@ com.google.android.gms.internal.t -> com.google.android.gms.internal.by:
     java.util.ArrayList b(com.google.android.gms.internal.t) -> a
 com.google.android.gms.internal.t$c -> com.google.android.gms.internal.bz:
     java.lang.Object mListener -> b
-    com.google.android.gms.internal.t L -> a
+    com.google.android.gms.internal.t M -> a
 com.google.android.gms.internal.u -> com.google.android.gms.internal.ca:
     void h(com.google.android.gms.internal.s) -> a
 com.google.android.gms.internal.u$a -> com.google.android.gms.internal.cb:
@@ -2479,7 +2260,20 @@ com.google.android.gms.internal.u$a$a -> com.google.android.gms.internal.cc:
     android.os.IBinder a -> a
     android.os.IBinder asBinder() -> asBinder
     void h(com.google.android.gms.internal.s) -> a
-com.google.android.gms.internal.v -> com.google.android.gms.internal.v:
+com.google.android.gms.internal.v -> com.google.android.gms.internal.cd:
+    void a(android.os.Parcel,int,int) -> b
+    int a(android.os.Parcel,int) -> a
+    void b(android.os.Parcel,int) -> b
+    void a(android.os.Parcel,int,boolean) -> a
+    void a(android.os.Parcel,int,byte) -> a
+    void b(android.os.Parcel,int,int) -> a
+    void a(android.os.Parcel,int,float) -> a
+    void a(android.os.Parcel,int,double) -> a
+    void a(android.os.Parcel,int,java.lang.String) -> a
+    void a(android.os.Parcel,int,android.os.IBinder) -> a
+    void a(android.os.Parcel,int,android.os.Parcelable,int) -> a
+    void a$55be7d64(android.os.Parcel,java.util.List) -> a
+com.google.android.gms.internal.w -> com.google.android.gms.internal.w:
     int bQ -> l
     boolean bR -> a
     int bS -> b
@@ -2499,7 +2293,7 @@ com.google.android.gms.internal.v -> com.google.android.gms.internal.v:
     com.google.android.gms.internal.au cg -> i
     android.content.res.Resources ch -> j
     android.view.LayoutInflater ci -> k
-    com.google.android.gms.internal.v$a cj -> t
+    com.google.android.gms.internal.w$a cj -> t
     void onAttachedToWindow() -> onAttachedToWindow
     void onDetachedFromWindow() -> onDetachedFromWindow
     android.content.Context j$6263c3eb() -> b
@@ -2518,39 +2312,26 @@ com.google.android.gms.internal.v -> com.google.android.gms.internal.v:
     void V() -> f
     void a(android.graphics.Point) -> a
     void b(android.graphics.Point) -> b
-com.google.android.gms.internal.v$a -> com.google.android.gms.internal.cd:
-    com.google.android.gms.internal.v Z -> a
-com.google.android.gms.internal.v$b -> com.google.android.gms.internal.ce:
+com.google.android.gms.internal.w$a -> com.google.android.gms.internal.ce:
+    com.google.android.gms.internal.w Z -> a
+com.google.android.gms.internal.w$b -> com.google.android.gms.internal.cf:
     com.google.android.gms.plus.PlusOneButton$OnPlusOneClickListener co -> b
-    com.google.android.gms.internal.v Z -> a
+    com.google.android.gms.internal.w Z -> a
     void onClick(android.view.View) -> onClick
     void onPlusOneClick(android.content.Intent) -> a
-com.google.android.gms.internal.v$c -> com.google.android.gms.internal.cf:
-    com.google.android.gms.internal.v Z -> a
+com.google.android.gms.internal.w$c -> com.google.android.gms.internal.cg:
+    com.google.android.gms.internal.w Z -> a
     void toggle() -> toggle
-com.google.android.gms.internal.w -> com.google.android.gms.internal.cg:
-    void a(android.os.Parcel,int,int) -> b
-    int a(android.os.Parcel,int) -> a
-    void b(android.os.Parcel,int) -> b
-    void a(android.os.Parcel,int,boolean) -> a
-    void a(android.os.Parcel,int,byte) -> a
-    void b(android.os.Parcel,int,int) -> a
-    void a(android.os.Parcel,int,float) -> a
-    void a(android.os.Parcel,int,double) -> a
-    void a(android.os.Parcel,int,java.lang.String) -> a
-    void a(android.os.Parcel,int,android.os.IBinder) -> a
-    void a(android.os.Parcel,int,android.os.Parcelable,int) -> a
-    void a$55be7d64(android.os.Parcel,java.util.List) -> a
-com.google.android.gms.internal.y -> com.google.android.gms.internal.ch:
+com.google.android.gms.internal.x -> com.google.android.gms.internal.ch:
     void a$63557553(com.google.android.gms.plus.PlusClient$a,int) -> a
-com.google.android.gms.internal.y$b -> com.google.android.gms.internal.ci:
+com.google.android.gms.internal.x$b -> com.google.android.gms.internal.ci:
     com.google.android.gms.plus.PlusClient$a aT -> b
-    com.google.android.gms.internal.y af -> a
+    com.google.android.gms.internal.x ab -> a
     void a(int,android.os.Bundle,android.os.ParcelFileDescriptor) -> a
-com.google.android.gms.internal.y$c -> com.google.android.gms.internal.cj:
+com.google.android.gms.internal.x$c -> com.google.android.gms.internal.cj:
     com.google.android.gms.common.ConnectionResult br -> c
     android.os.ParcelFileDescriptor bs -> d
-    com.google.android.gms.internal.y af -> b
+    com.google.android.gms.internal.x ab -> b
 com.google.android.gms.internal.z -> com.google.android.gms.internal.ck:
     void c(com.google.android.gms.internal.s) -> a
     void e(com.google.android.gms.internal.s) -> b
@@ -2655,14 +2436,14 @@ com.google.android.gms.maps.MapFragment -> com.google.android.gms.maps.MapFragme
     void onSaveInstanceState(android.os.Bundle) -> onSaveInstanceState
     void setArguments(android.os.Bundle) -> setArguments
 com.google.android.gms.maps.MapFragment$a -> com.google.android.gms.maps.m:
-    android.app.Fragment g -> c
-    com.google.android.gms.internal.ag h -> b
-    android.app.Activity i -> d
+    android.app.Fragment e -> c
+    com.google.android.gms.internal.ag f -> b
+    android.app.Activity g -> d
     void a(com.google.android.gms.internal.ag) -> a
     void a() -> g
     void a(com.google.android.gms.maps.MapFragment$a,android.app.Activity) -> a
 com.google.android.gms.maps.MapFragment$b -> com.google.android.gms.maps.n:
-    android.app.Fragment g -> a
+    android.app.Fragment e -> a
     com.google.android.gms.maps.internal.IMapFragmentDelegate ah -> b
     void onInflate(android.app.Activity,android.os.Bundle,android.os.Bundle) -> a
     void onCreate(android.os.Bundle) -> a
@@ -2678,7 +2459,7 @@ com.google.android.gms.maps.MapView -> com.google.android.gms.maps.MapView:
 com.google.android.gms.maps.MapView$a -> com.google.android.gms.maps.o:
     android.view.ViewGroup cC -> c
     android.content.Context mContext -> d
-    com.google.android.gms.internal.ag h -> b
+    com.google.android.gms.internal.ag f -> b
     com.google.android.gms.maps.GoogleMapOptions cD -> e
     void a(com.google.android.gms.internal.ag) -> a
 com.google.android.gms.maps.MapView$b -> com.google.android.gms.maps.p:
@@ -2728,8 +2509,8 @@ com.google.android.gms.maps.SupportMapFragment$a -> com.google.android.gms.maps.
     void onSaveInstanceState(android.os.Bundle) -> b
 com.google.android.gms.maps.SupportMapFragment$b -> com.google.android.gms.maps.t:
     android.support.v4.app.Fragment ag -> c
-    com.google.android.gms.internal.ag h -> b
-    android.app.Activity i -> d
+    com.google.android.gms.internal.ag f -> b
+    android.app.Activity g -> d
     void a(com.google.android.gms.internal.ag) -> a
     void a() -> g
     void a(com.google.android.gms.maps.SupportMapFragment$b,android.app.Activity) -> a
@@ -2955,7 +2736,7 @@ com.google.android.gms.maps.internal.IUiSettingsDelegate$a$a -> com.google.andro
 com.google.android.gms.maps.model.BitmapDescriptor -> com.google.android.gms.maps.model.a:
     com.google.android.gms.internal.f bt -> a
 com.google.android.gms.maps.model.BitmapDescriptorFactory -> com.google.android.gms.maps.model.b:
-    com.google.android.gms.internal.h D -> a
+    com.google.android.gms.internal.h z -> a
     com.google.android.gms.maps.model.BitmapDescriptor fromResource(int) -> a
 com.google.android.gms.maps.model.CameraPosition -> com.google.android.gms.maps.model.CameraPosition:
     com.google.android.gms.maps.model.CameraPositionCreator CREATOR -> a
@@ -3041,10 +2822,10 @@ com.google.android.gms.maps.model.LatLngBounds -> com.google.android.gms.maps.mo
     double c(double,double) -> a
     double d(double,double) -> b
 com.google.android.gms.maps.model.LatLngBounds$Builder -> com.google.android.gms.maps.model.f:
-    double z -> a
-    double A -> b
-    double B -> c
-    double C -> d
+    double A -> a
+    double B -> b
+    double C -> c
+    double D -> d
     com.google.android.gms.maps.model.LatLngBounds$Builder include(com.google.android.gms.maps.model.LatLng) -> a
 com.google.android.gms.maps.model.LatLngBoundsCreator -> com.google.android.gms.maps.model.g:
     com.google.android.gms.maps.model.LatLngBounds createFromParcel(android.os.Parcel) -> a
@@ -3251,14 +3032,14 @@ com.google.android.gms.maps.model.internal.IPolylineDelegate$a$a -> com.google.a
     boolean equalsRemote(com.google.android.gms.maps.model.internal.IPolylineDelegate) -> a
     int hashCodeRemote() -> i
 com.google.android.gms.plus.PlusClient -> com.google.android.gms.plus.a:
-    com.google.android.gms.internal.y bn -> a
+    com.google.android.gms.internal.x bn -> a
     void registerConnectionCallbacks(com.google.android.gms.common.GooglePlayServicesClient$ConnectionCallbacks) -> a
     boolean isConnectionCallbacksRegistered(com.google.android.gms.common.GooglePlayServicesClient$ConnectionCallbacks) -> b
     void unregisterConnectionCallbacks(com.google.android.gms.common.GooglePlayServicesClient$ConnectionCallbacks) -> c
     boolean isConnectionFailedListenerRegistered(com.google.android.gms.common.GooglePlayServicesClient$OnConnectionFailedListener) -> a
 com.google.android.gms.plus.PlusClient$a -> com.google.android.gms.plus.b:
 com.google.android.gms.plus.PlusOneButton -> com.google.android.gms.plus.PlusOneButton:
-    com.google.android.gms.internal.v ct -> a
+    com.google.android.gms.internal.w ct -> a
     void setOnPlusOneClickListener(com.google.android.gms.plus.PlusOneButton$OnPlusOneClickListener) -> setOnPlusOneClickListener
     void setAnnotation(int) -> setAnnotation
     void setSize(int) -> setSize
@@ -4208,10 +3989,24 @@ com.ipaulpro.afilechooser.utils.FileUtils$3 -> com.ipaulpro.afilechooser.a.d:
     430:432:boolean accept(java.io.File) -> accept
 org.cowboycoders.ant.AntError -> org.cowboycoders.a.a:
     long serialVersionUID -> serialVersionUID
-org.cowboycoders.ant.BufferedNodeComponent -> org.cowboycoders.a.b:
+org.cowboycoders.ant.AntLogger -> org.cowboycoders.a.b:
+    void log(org.cowboycoders.ant.AntLogger$LogDataContainer) -> a
+org.cowboycoders.ant.AntLogger$Direction -> org.cowboycoders.a.c:
+    org.cowboycoders.ant.AntLogger$Direction RECEIVED -> a
+    org.cowboycoders.ant.AntLogger$Direction SENT -> b
+    org.cowboycoders.ant.AntLogger$Direction[] $VALUES -> c
+    7:7:org.cowboycoders.ant.AntLogger$Direction[] values() -> values
+    7:7:org.cowboycoders.ant.AntLogger$Direction valueOf(java.lang.String) -> valueOf
+org.cowboycoders.ant.AntLogger$LogDataContainer -> org.cowboycoders.a.d:
+    org.cowboycoders.ant.AntLogger$Direction direction -> a
+    java.lang.Class messageClass -> b
+    long timeStamp -> c
+    byte[] packet -> d
+    org.cowboycoders.ant.messages.StandardMessage message -> e
+org.cowboycoders.ant.BufferedNodeComponent -> org.cowboycoders.a.e:
     org.cowboycoders.ant.utils.SharedBuffer msgBuffer -> a
     org.cowboycoders.ant.utils.SharedBuffer ackBuffer -> b
-org.cowboycoders.ant.Channel -> org.cowboycoders.a.c:
+org.cowboycoders.ant.Channel -> org.cowboycoders.a.f:
     java.util.logging.Logger LOGGER -> c
     org.cowboycoders.ant.Node parent -> d
     java.lang.String name -> e
@@ -4242,28 +4037,28 @@ org.cowboycoders.ant.Channel -> org.cowboycoders.a.c:
     531:540:void open() -> h
     543:555:void close() -> i
     62:62:int access$000(org.cowboycoders.ant.Channel) -> a
-org.cowboycoders.ant.Channel$1 -> org.cowboycoders.a.d:
+org.cowboycoders.ant.Channel$1 -> org.cowboycoders.a.g:
     org.cowboycoders.ant.Channel this$0 -> a
     137:137:org.cowboycoders.ant.messages.MessageMetaWrapper send(org.cowboycoders.ant.messages.StandardMessage) -> a
-org.cowboycoders.ant.Channel$2 -> org.cowboycoders.a.e:
+org.cowboycoders.ant.Channel$2 -> org.cowboycoders.a.h:
     java.lang.Class val$clazz -> a
     org.cowboycoders.ant.events.BroadcastListener val$listener -> b
     org.cowboycoders.ant.Channel this$0 -> c
     237:237:void receiveMessage(java.lang.Object) -> a
-org.cowboycoders.ant.Channel$ChannelInstanceCondition -> org.cowboycoders.a.f:
+org.cowboycoders.ant.Channel$ChannelInstanceCondition -> org.cowboycoders.a.i:
     int number -> a
     189:194:boolean test(org.cowboycoders.ant.messages.StandardMessage) -> a
-org.cowboycoders.ant.Channel$ChannelResponseCondition -> org.cowboycoders.a.g:
+org.cowboycoders.ant.Channel$ChannelResponseCondition -> org.cowboycoders.a.j:
     int number -> a
     216:222:boolean test(org.cowboycoders.ant.messages.StandardMessage) -> a
-org.cowboycoders.ant.ChannelError -> org.cowboycoders.a.h:
+org.cowboycoders.ant.ChannelError -> org.cowboycoders.a.k:
     long serialVersionUID -> serialVersionUID
-org.cowboycoders.ant.ContainedMessageBuffer -> org.cowboycoders.a.i:
+org.cowboycoders.ant.ContainedMessageBuffer -> org.cowboycoders.a.l:
     org.cowboycoders.ant.events.MessageCondition condition -> a
     26:26:boolean offer(java.lang.Object) -> offer
-org.cowboycoders.ant.MessageSender -> org.cowboycoders.a.j:
+org.cowboycoders.ant.MessageSender -> org.cowboycoders.a.m:
     org.cowboycoders.ant.messages.MessageMetaWrapper send(org.cowboycoders.ant.messages.StandardMessage) -> a
-org.cowboycoders.ant.NetworkKey -> org.cowboycoders.a.k:
+org.cowboycoders.ant.NetworkKey -> org.cowboycoders.a.n:
     java.lang.String name -> b
     int[] key -> c
     int number -> a
@@ -4274,48 +4069,52 @@ org.cowboycoders.ant.NetworkKey -> org.cowboycoders.a.k:
     108:111:int hashCode() -> hashCode
     119:126:boolean equals(java.lang.Object) -> equals
     23:23:int compareTo(java.lang.Object) -> compareTo
-org.cowboycoders.ant.Node -> org.cowboycoders.a.l:
+org.cowboycoders.ant.Node -> org.cowboycoders.a.o:
     java.util.logging.Logger LOGGER -> c
-    boolean running -> d
-    org.cowboycoders.ant.events.EventMachine evm -> e
-    org.cowboycoders.ant.Channel[] channels -> f
-    org.cowboycoders.ant.NetworkKey[] networks -> g
-    org.cowboycoders.ant.messages.responses.CapabilityResponse capabilities -> h
-    org.cowboycoders.ant.interfaces.AntChipInterface antChipInterface -> i
-    org.cowboycoders.ant.events.BroadcastMessenger mStatusMessenger -> j
-    boolean weReset -> k
-    org.cowboycoders.ant.MessageSender nodeSender -> l
-    java.util.Map mAdapterListenerMap -> m
-    87:87:org.cowboycoders.ant.events.EventMachine getEvm() -> a
-    184:194:void start() -> b
-    197:202:void registerChannels(boolean) -> a
-    205:207:void registerSelf(boolean) -> b
-    210:235:org.cowboycoders.ant.messages.responses.CapabilityResponse getCapabilityResponse$57a7adb() -> e
-    271:275:org.cowboycoders.ant.Channel getFreeChannel() -> c
-    286:287:void freeChannel(org.cowboycoders.ant.Channel) -> a
-    296:309:void setNetworkKey(int,org.cowboycoders.ant.NetworkKey,boolean) -> a
-    317:318:void setNetworkKey$61c1badb(org.cowboycoders.ant.NetworkKey) -> a
-    331:331:int getMaxChannels() -> f
-    335:343:org.cowboycoders.ant.NetworkKey getNetworkKey(java.lang.String) -> a
-    367:423:org.cowboycoders.ant.messages.StandardMessage sendAndWaitWithAdapter(org.cowboycoders.ant.WaitAdapter,org.cowboycoders.ant.messages.StandardMessage,org.cowboycoders.ant.events.LockExchangeContainer,org.cowboycoders.ant.MessageSender,org.cowboycoders.ant.Receipt) -> a
-    436:452:void registerRxListener(org.cowboycoders.ant.events.BroadcastListener,java.lang.Class) -> a
-    457:464:void removeRxListener(org.cowboycoders.ant.events.BroadcastListener) -> a
-    475:486:org.cowboycoders.ant.messages.StandardMessage sendAndWaitForMessage(org.cowboycoders.ant.messages.StandardMessage,org.cowboycoders.ant.events.MessageCondition,java.lang.Long,java.util.concurrent.TimeUnit,java.lang.Long,org.cowboycoders.ant.BufferedNodeComponent,org.cowboycoders.ant.MessageSender,org.cowboycoders.ant.Receipt) -> a
-    499:511:org.cowboycoders.ant.messages.StandardMessage sendAndWaitForAck(org.cowboycoders.ant.messages.StandardMessage,org.cowboycoders.ant.events.MessageCondition,java.lang.Long,java.util.concurrent.TimeUnit,java.lang.Long,org.cowboycoders.ant.BufferedNodeComponent,org.cowboycoders.ant.MessageSender,org.cowboycoders.ant.Receipt) -> b
-    541:543:org.cowboycoders.ant.messages.MessageMetaWrapper send(org.cowboycoders.ant.messages.StandardMessage) -> a
-    547:553:void stop() -> d
-    58:58:boolean access$000(org.cowboycoders.ant.Node) -> a
-    58:58:boolean access$002$b188335(org.cowboycoders.ant.Node) -> b
-    58:58:org.cowboycoders.ant.events.EventMachine access$300(org.cowboycoders.ant.Node) -> c
-org.cowboycoders.ant.Node$1 -> org.cowboycoders.a.m:
+    java.util.Set antLoggers -> d
+    boolean running -> e
+    org.cowboycoders.ant.events.EventMachine evm -> f
+    org.cowboycoders.ant.Channel[] channels -> g
+    org.cowboycoders.ant.NetworkKey[] networks -> h
+    org.cowboycoders.ant.messages.responses.CapabilityResponse capabilities -> i
+    org.cowboycoders.ant.interfaces.AntChipInterface antChipInterface -> j
+    org.cowboycoders.ant.events.BroadcastMessenger mStatusMessenger -> k
+    boolean weReset -> l
+    org.cowboycoders.ant.MessageSender nodeSender -> m
+    java.util.Map mAdapterListenerMap -> n
+    93:93:org.cowboycoders.ant.events.EventMachine getEvm() -> a
+    191:201:void start() -> b
+    204:209:void registerChannels(boolean) -> a
+    212:214:void registerSelf(boolean) -> b
+    217:242:org.cowboycoders.ant.messages.responses.CapabilityResponse getCapabilityResponse$57a7adb() -> e
+    278:282:org.cowboycoders.ant.Channel getFreeChannel() -> c
+    293:294:void freeChannel(org.cowboycoders.ant.Channel) -> a
+    303:316:void setNetworkKey(int,org.cowboycoders.ant.NetworkKey,boolean) -> a
+    324:325:void setNetworkKey$61c1badb(org.cowboycoders.ant.NetworkKey) -> a
+    338:338:int getMaxChannels() -> f
+    342:350:org.cowboycoders.ant.NetworkKey getNetworkKey(java.lang.String) -> a
+    374:430:org.cowboycoders.ant.messages.StandardMessage sendAndWaitWithAdapter(org.cowboycoders.ant.WaitAdapter,org.cowboycoders.ant.messages.StandardMessage,org.cowboycoders.ant.events.LockExchangeContainer,org.cowboycoders.ant.MessageSender,org.cowboycoders.ant.Receipt) -> a
+    443:459:void registerRxListener(org.cowboycoders.ant.events.BroadcastListener,java.lang.Class) -> a
+    464:471:void removeRxListener(org.cowboycoders.ant.events.BroadcastListener) -> a
+    482:493:org.cowboycoders.ant.messages.StandardMessage sendAndWaitForMessage(org.cowboycoders.ant.messages.StandardMessage,org.cowboycoders.ant.events.MessageCondition,java.lang.Long,java.util.concurrent.TimeUnit,java.lang.Long,org.cowboycoders.ant.BufferedNodeComponent,org.cowboycoders.ant.MessageSender,org.cowboycoders.ant.Receipt) -> a
+    506:518:org.cowboycoders.ant.messages.StandardMessage sendAndWaitForAck(org.cowboycoders.ant.messages.StandardMessage,org.cowboycoders.ant.events.MessageCondition,java.lang.Long,java.util.concurrent.TimeUnit,java.lang.Long,org.cowboycoders.ant.BufferedNodeComponent,org.cowboycoders.ant.MessageSender,org.cowboycoders.ant.Receipt) -> b
+    548:558:void logMessage(org.cowboycoders.ant.AntLogger$Direction,org.cowboycoders.ant.messages.StandardMessage) -> a
+    562:566:org.cowboycoders.ant.messages.MessageMetaWrapper send(org.cowboycoders.ant.messages.StandardMessage) -> a
+    570:576:void stop() -> d
+    587:589:void registerAntLogger(org.cowboycoders.ant.AntLogger) -> a
+    63:63:boolean access$000(org.cowboycoders.ant.Node) -> a
+    63:63:void access$100(org.cowboycoders.ant.Node,org.cowboycoders.ant.AntLogger$Direction,org.cowboycoders.ant.messages.StandardMessage) -> a
+    63:63:boolean access$002$b188335(org.cowboycoders.ant.Node) -> b
+    63:63:org.cowboycoders.ant.events.EventMachine access$400(org.cowboycoders.ant.Node) -> c
+org.cowboycoders.ant.Node$1 -> org.cowboycoders.a.p:
     org.cowboycoders.ant.Node this$0 -> a
-    350:350:org.cowboycoders.ant.messages.MessageMetaWrapper send(org.cowboycoders.ant.messages.StandardMessage) -> a
-org.cowboycoders.ant.Node$2 -> org.cowboycoders.a.n:
+    357:357:org.cowboycoders.ant.messages.MessageMetaWrapper send(org.cowboycoders.ant.messages.StandardMessage) -> a
+org.cowboycoders.ant.Node$2 -> org.cowboycoders.a.q:
     java.lang.Class val$clazz -> a
     org.cowboycoders.ant.events.BroadcastListener val$listener -> b
     org.cowboycoders.ant.Node this$0 -> c
-    436:436:void receiveMessage(java.lang.Object) -> a
-org.cowboycoders.ant.Node$3 -> org.cowboycoders.a.o:
+    443:443:void receiveMessage(java.lang.Object) -> a
+org.cowboycoders.ant.Node$3 -> org.cowboycoders.a.r:
     org.cowboycoders.ant.BufferedNodeComponent val$component -> a
     org.cowboycoders.ant.events.MessageCondition val$condition -> b
     java.lang.Long val$timeout -> c
@@ -4323,8 +4122,8 @@ org.cowboycoders.ant.Node$3 -> org.cowboycoders.a.o:
     org.cowboycoders.ant.events.LockExchangeContainer val$lockContainer -> e
     java.lang.Long val$cutOffTimestamp -> f
     org.cowboycoders.ant.Node this$0 -> g
-    481:481:org.cowboycoders.ant.messages.MessageMetaWrapper execute() -> a
-org.cowboycoders.ant.Node$4 -> org.cowboycoders.a.p:
+    488:488:org.cowboycoders.ant.messages.MessageMetaWrapper execute() -> a
+org.cowboycoders.ant.Node$4 -> org.cowboycoders.a.s:
     org.cowboycoders.ant.BufferedNodeComponent val$component -> a
     org.cowboycoders.ant.events.MessageCondition val$condition -> b
     java.lang.Long val$timeout -> c
@@ -4332,25 +4131,25 @@ org.cowboycoders.ant.Node$4 -> org.cowboycoders.a.p:
     org.cowboycoders.ant.events.LockExchangeContainer val$lockContainer -> e
     java.lang.Long val$cutOffTimestamp -> f
     org.cowboycoders.ant.Node this$0 -> g
-    506:506:org.cowboycoders.ant.messages.MessageMetaWrapper execute() -> a
-org.cowboycoders.ant.Node$MessageListener -> org.cowboycoders.a.q:
+    513:513:org.cowboycoders.ant.messages.MessageMetaWrapper execute() -> a
+org.cowboycoders.ant.Node$MessageListener -> org.cowboycoders.a.t:
     org.cowboycoders.ant.Node this$0 -> a
-    115:115:void receiveMessage(java.lang.Object) -> a
-org.cowboycoders.ant.Node$StatusListener -> org.cowboycoders.a.r:
+    121:121:void receiveMessage(java.lang.Object) -> a
+org.cowboycoders.ant.Node$StatusListener -> org.cowboycoders.a.u:
     org.cowboycoders.ant.Node this$0 -> a
-    97:97:void receiveMessage(java.lang.Object) -> a
-org.cowboycoders.ant.Node$ThreadedWait -> org.cowboycoders.a.s:
+    103:103:void receiveMessage(java.lang.Object) -> a
+org.cowboycoders.ant.Node$ThreadedWait -> org.cowboycoders.a.v:
     org.cowboycoders.ant.WaitAdapter waitAdapter -> b
     org.cowboycoders.ant.Node this$0 -> a
-    60:60:java.lang.Object call() -> call
-org.cowboycoders.ant.Receipt -> org.cowboycoders.a.t:
+    65:65:java.lang.Object call() -> call
+org.cowboycoders.ant.Receipt -> org.cowboycoders.a.w:
     long rxTimestamp -> a
     long txTimestamp -> b
-org.cowboycoders.ant.SharedMetaBuffer -> org.cowboycoders.a.u:
-org.cowboycoders.ant.SharedThreadPool -> org.cowboycoders.a.v:
+org.cowboycoders.ant.SharedMetaBuffer -> org.cowboycoders.a.x:
+org.cowboycoders.ant.SharedThreadPool -> org.cowboycoders.a.y:
     java.util.concurrent.ExecutorService dispatchPool -> a
     39:39:java.util.concurrent.ExecutorService getThreadPool() -> a
-org.cowboycoders.ant.WaitAdapter -> org.cowboycoders.a.w:
+org.cowboycoders.ant.WaitAdapter -> org.cowboycoders.a.z:
     org.cowboycoders.ant.messages.MessageMetaWrapper execute() -> a
 org.cowboycoders.ant.events.BroadcastListener -> org.cowboycoders.a.a.a:
     void receiveMessage(java.lang.Object) -> a
@@ -4489,6 +4288,7 @@ org.cowboycoders.ant.interfaces.AndroidAntTransceiver -> org.cowboycoders.a.b.b:
     841:854:void receiveAntRxMessages(boolean) -> a
     909:947:void shutDown() -> j
     950:983:void setRunning(boolean) -> b
+    1003:1005:boolean requestForceClaimInterface(java.lang.String) -> a
     906:906:void access$13(org.cowboycoders.ant.interfaces.AndroidAntTransceiver) -> a
     878:878:void access$16(org.cowboycoders.ant.interfaces.AndroidAntTransceiver,byte[]) -> a
 org.cowboycoders.ant.interfaces.AndroidAntTransceiver$1 -> org.cowboycoders.a.b.c:
@@ -4748,6 +4548,7 @@ org.cowboycoders.ant.messages.StandardMessage -> org.cowboycoders.a.c.t:
     boolean allElementsMustBePresent -> b
     int totalElementLength -> e
     org.cowboycoders.ant.messages.Constants$DataElements[] messageElements -> c
+    168:168:byte[] encode() -> c
     205:206:void decode(byte[]) -> a
     void validate() -> b
     242:244:void setStandardPayload(java.util.ArrayList) -> a
@@ -4805,7 +4606,7 @@ org.cowboycoders.ant.messages.data.BurstDataMessage -> org.cowboycoders.a.c.c.d:
 org.cowboycoders.ant.messages.data.DataMessage -> org.cowboycoders.a.c.c.e:
     org.cowboycoders.ant.messages.Constants$DataElements[] additionalElements -> d
     63:67:void setData(byte[]) -> b
-    109:111:java.lang.Byte[] getData() -> c
+    109:111:java.lang.Byte[] getData() -> d
 org.cowboycoders.ant.messages.data.ExtendedAcknowledgedDataMessage -> org.cowboycoders.a.c.c.f:
 org.cowboycoders.ant.messages.data.ExtendedBroadcastDataMessage -> org.cowboycoders.a.c.c.g:
 org.cowboycoders.ant.messages.data.ExtendedBurstDataMessage -> org.cowboycoders.a.c.c.h:
@@ -4823,13 +4624,13 @@ org.cowboycoders.ant.messages.responses.CapabilityResponse -> org.cowboycoders.a
     org.cowboycoders.ant.messages.Constants$DataElements[] additionalElements -> e
     66:66:void validate() -> b
     121:121:int getMaxChannels() -> a
-    128:128:int getMaxNetworks() -> c
+    128:128:int getMaxNetworks() -> d
 org.cowboycoders.ant.messages.responses.ChannelIdResponse -> org.cowboycoders.a.c.e.b:
 org.cowboycoders.ant.messages.responses.ChannelResponse -> org.cowboycoders.a.c.e.c:
     org.cowboycoders.ant.messages.Constants$DataElements[] additionalElements -> d
     62:66:void validate() -> b
-    74:74:org.cowboycoders.ant.messages.MessageId getMessageId() -> c
-    78:78:org.cowboycoders.ant.messages.responses.ResponseCode getResponseCode() -> d
+    74:74:org.cowboycoders.ant.messages.MessageId getMessageId() -> d
+    78:78:org.cowboycoders.ant.messages.responses.ResponseCode getResponseCode() -> e
 org.cowboycoders.ant.messages.responses.ChannelStatusResponse -> org.cowboycoders.a.c.e.d:
     org.cowboycoders.ant.messages.Constants$DataElements[] additionalElements -> d
     95:99:void validate() -> b
@@ -5002,33 +4803,33 @@ org.cowboycoders.cyclisimo.ChartView -> org.cowboycoders.cyclisimo.ChartView:
     289:290:void setShowPointer(boolean) -> setShowPointer
     298:298:void addDataPoints(java.util.ArrayList) -> a
     318:318:void addOverlay(java.util.ArrayList) -> b
-    340:340:void reset() -> a
-    352:353:void resetScroll() -> b
-    361:361:void addWaypoint(org.cowboycoders.cyclisimo.content.Waypoint) -> a
-    370:370:void clearWaypoints() -> c
-    379:379:boolean canZoomIn() -> d
-    386:386:boolean canZoomOut() -> e
-    393:398:void zoomIn() -> f
-    401:403:void updateAllPaths() -> h
-    409:421:void zoomOut() -> g
-    440:449:void scrollBy(int) -> a
-    457:466:void computeScroll() -> computeScroll
-    470:537:boolean onTouchEvent(android.view.MotionEvent) -> onTouchEvent
-    542:545:void onMeasure(int,int) -> onMeasure
-    549:549:void onDraw(android.graphics.Canvas) -> onDraw
-    683:696:int[] getTitleDimenions(org.cowboycoders.cyclisimo.ChartValueSeries[]) -> b
-    724:729:java.lang.String getXAxisLabel() -> i
-    752:762:double getXAxisInterval() -> j
-    769:778:java.util.ArrayList getXAxisMarkerPositions(double) -> a
-    802:808:org.cowboycoders.cyclisimo.ChartValueSeries[] getCombindSeries() -> k
-    876:876:void updatePaths(org.cowboycoders.cyclisimo.ChartValueSeries[],java.util.ArrayList) -> a
-    958:978:void updateDimensions() -> l
-    1001:1003:void updateEffectiveDimensions() -> m
-    1026:1030:int getX(double) -> b
-    1040:1043:int getY(org.cowboycoders.cyclisimo.ChartValueSeries,double) -> a
-    1052:1056:double getWaypointXValue(org.cowboycoders.cyclisimo.content.Waypoint) -> b
-    1067:1069:android.graphics.Rect getRect(android.graphics.Paint,java.lang.String) -> a
-    1078:1089:boolean allowIfEmpty(int) -> b
+    341:341:void reset() -> a
+    353:354:void resetScroll() -> b
+    362:362:void addWaypoint(org.cowboycoders.cyclisimo.content.Waypoint) -> a
+    371:371:void clearWaypoints() -> c
+    380:380:boolean canZoomIn() -> d
+    387:387:boolean canZoomOut() -> e
+    394:399:void zoomIn() -> f
+    402:404:void updateAllPaths() -> h
+    410:422:void zoomOut() -> g
+    441:450:void scrollBy(int) -> a
+    458:467:void computeScroll() -> computeScroll
+    471:538:boolean onTouchEvent(android.view.MotionEvent) -> onTouchEvent
+    543:546:void onMeasure(int,int) -> onMeasure
+    550:550:void onDraw(android.graphics.Canvas) -> onDraw
+    684:697:int[] getTitleDimenions(org.cowboycoders.cyclisimo.ChartValueSeries[]) -> b
+    725:730:java.lang.String getXAxisLabel() -> i
+    753:763:double getXAxisInterval() -> j
+    770:779:java.util.ArrayList getXAxisMarkerPositions(double) -> a
+    803:809:org.cowboycoders.cyclisimo.ChartValueSeries[] getCombindSeries() -> k
+    878:878:void updatePaths(org.cowboycoders.cyclisimo.ChartValueSeries[],java.util.ArrayList) -> a
+    960:980:void updateDimensions() -> l
+    1003:1005:void updateEffectiveDimensions() -> m
+    1028:1032:int getX(double) -> b
+    1042:1045:int getY(org.cowboycoders.cyclisimo.ChartValueSeries,double) -> a
+    1054:1058:double getWaypointXValue(org.cowboycoders.cyclisimo.content.Waypoint) -> b
+    1069:1071:android.graphics.Rect getRect(android.graphics.Paint,java.lang.String) -> a
+    1080:1091:boolean allowIfEmpty(int) -> b
 org.cowboycoders.cyclisimo.ContextualActionModeCallback -> org.cowboycoders.cyclisimo.b:
     boolean onClick(int,int,long) -> a
 org.cowboycoders.cyclisimo.CourseListActivity -> org.cowboycoders.cyclisimo.CourseListActivity:
@@ -5126,41 +4927,41 @@ org.cowboycoders.cyclisimo.CourseSetupActivity -> org.cowboycoders.cyclisimo.Cou
     org.cowboycoders.cyclisimo.services.TrackRecordingServiceConnection trackRecordingServiceConnection -> g
     java.lang.Runnable bindChangedCallback -> h
     boolean startNewRecording -> i
-    45:45:java.lang.Long getTrackId() -> c
-    53:55:void setTrackId(java.lang.Long) -> a
-    95:98:void doBindService() -> a
-    101:106:void doUnbindService() -> b
-    159:211:void onCreate(android.os.Bundle) -> onCreate
-    221:224:void onStart() -> onStart
-    227:235:void finish(boolean) -> a
-    262:263:void finish() -> finish
-    283:285:void onStop() -> onStop
-    44:44:java.lang.Long access$0(org.cowboycoders.cyclisimo.CourseSetupActivity) -> a
-    156:156:boolean access$1(org.cowboycoders.cyclisimo.CourseSetupActivity) -> b
-    114:114:org.cowboycoders.cyclisimo.services.TrackRecordingServiceConnection access$2(org.cowboycoders.cyclisimo.CourseSetupActivity) -> c
-    156:156:void access$3$179d393f(org.cowboycoders.cyclisimo.CourseSetupActivity) -> d
-    108:108:void access$4(org.cowboycoders.cyclisimo.CourseSetupActivity) -> e
-    268:268:void access$5(org.cowboycoders.cyclisimo.CourseSetupActivity) -> f
-    52:52:void access$6(org.cowboycoders.cyclisimo.CourseSetupActivity,java.lang.Long) -> a
-    243:243:void access$7(org.cowboycoders.cyclisimo.CourseSetupActivity) -> g
-    67:67:void access$8(org.cowboycoders.cyclisimo.CourseSetupActivity,java.lang.String) -> a
+    43:43:java.lang.Long getTrackId() -> c
+    51:53:void setTrackId(java.lang.Long) -> a
+    94:97:void doBindService() -> a
+    100:105:void doUnbindService() -> b
+    159:209:void onCreate(android.os.Bundle) -> onCreate
+    219:222:void onStart() -> onStart
+    225:233:void finish(boolean) -> a
+    260:261:void finish() -> finish
+    281:283:void onStop() -> onStop
+    42:42:java.lang.Long access$0(org.cowboycoders.cyclisimo.CourseSetupActivity) -> a
+    266:266:void access$1(org.cowboycoders.cyclisimo.CourseSetupActivity) -> b
+    156:156:boolean access$2(org.cowboycoders.cyclisimo.CourseSetupActivity) -> c
+    113:113:org.cowboycoders.cyclisimo.services.TrackRecordingServiceConnection access$3(org.cowboycoders.cyclisimo.CourseSetupActivity) -> d
+    156:156:void access$4$179d393f(org.cowboycoders.cyclisimo.CourseSetupActivity) -> e
+    107:107:void access$5(org.cowboycoders.cyclisimo.CourseSetupActivity) -> f
+    50:50:void access$6(org.cowboycoders.cyclisimo.CourseSetupActivity,java.lang.Long) -> a
+    241:241:void access$7(org.cowboycoders.cyclisimo.CourseSetupActivity) -> g
+    65:65:void access$8(org.cowboycoders.cyclisimo.CourseSetupActivity,java.lang.String) -> a
 org.cowboycoders.cyclisimo.CourseSetupActivity$1 -> org.cowboycoders.cyclisimo.m:
     org.cowboycoders.cyclisimo.CourseSetupActivity this$0 -> a
-    79:85:void onServiceConnected(android.content.ComponentName,android.os.IBinder) -> onServiceConnected
-    88:90:void onServiceDisconnected(android.content.ComponentName) -> onServiceDisconnected
+    77:84:void onServiceConnected(android.content.ComponentName,android.os.IBinder) -> onServiceConnected
+    87:89:void onServiceDisconnected(android.content.ComponentName) -> onServiceDisconnected
 org.cowboycoders.cyclisimo.CourseSetupActivity$2 -> org.cowboycoders.cyclisimo.n:
     org.cowboycoders.cyclisimo.CourseSetupActivity this$0 -> a
-    121:151:void run() -> run
+    120:151:void run() -> run
 org.cowboycoders.cyclisimo.CourseSetupActivity$3 -> org.cowboycoders.cyclisimo.o:
     org.cowboycoders.cyclisimo.CourseSetupActivity this$0 -> a
     175:176:void onClick(android.view.View) -> onClick
 org.cowboycoders.cyclisimo.CourseSetupActivity$4 -> org.cowboycoders.cyclisimo.p:
     org.cowboycoders.cyclisimo.CourseSetupActivity this$0 -> a
-    184:188:void onClick(android.view.View) -> onClick
+    184:186:void onClick(android.view.View) -> onClick
 org.cowboycoders.cyclisimo.CourseSetupActivity$5 -> org.cowboycoders.cyclisimo.q:
     org.cowboycoders.cyclisimo.CourseSetupActivity this$0 -> a
-    197:199:void onTrackIdUpdate(java.lang.Long) -> a
-    203:206:void onCourseModeUpdate(java.lang.String) -> a
+    195:197:void onTrackIdUpdate(java.lang.Long) -> a
+    201:204:void onCourseModeUpdate(java.lang.String) -> a
 org.cowboycoders.cyclisimo.DummyOverlay -> org.cowboycoders.cyclisimo.r:
     33:35:void update(com.google.android.gms.maps.GoogleMap,java.util.ArrayList,boolean) -> a
 org.cowboycoders.cyclisimo.HelpActivity -> org.cowboycoders.cyclisimo.HelpActivity:
@@ -5225,21 +5026,32 @@ org.cowboycoders.cyclisimo.IntegerListPreference -> org.cowboycoders.cyclisimo.I
     77:77:boolean persistString(java.lang.String) -> persistString
     81:94:void verifyEntryValues(java.lang.CharSequence[]) -> a
 org.cowboycoders.cyclisimo.MapOverlay -> org.cowboycoders.cyclisimo.y:
-    android.content.SharedPreferences$OnSharedPreferenceChangeListener sharedPreferenceChangeListener -> h
-    android.content.Context context -> a
+    java.lang.String TAG -> a
+    android.content.SharedPreferences$OnSharedPreferenceChangeListener sharedPreferenceChangeListener -> d
+    android.content.Context context -> e
     java.util.List locations -> b
     java.util.concurrent.BlockingQueue pendingLocations -> c
-    java.util.List waypoints -> d
-    java.lang.String trackColorMode -> e
-    boolean showEndMarker -> f
-    org.cowboycoders.cyclisimo.maps.TrackPath trackPath -> g
-    195:198:void addLocation(android.location.Location) -> a
-    205:208:void addSegmentSplit() -> a
-    226:226:void addWaypoint(org.cowboycoders.cyclisimo.content.Waypoint) -> a
-    257:257:void update(com.google.android.gms.maps.GoogleMap,java.util.ArrayList,boolean) -> a
+    java.util.List waypoints -> f
+    java.lang.String trackColorMode -> g
+    boolean showEndMarker -> h
+    org.cowboycoders.cyclisimo.maps.TrackPath trackPath -> i
+    org.cowboycoders.cyclisimo.StaticOverlay underlay -> j
+    90:90:java.util.List getLocations() -> a
+    196:199:void addLocation(android.location.Location) -> a
+    206:209:void addSegmentSplit() -> b
+    215:215:void clearPoints() -> c
+    227:227:void addWaypoint(org.cowboycoders.cyclisimo.content.Waypoint) -> a
+    236:236:void clearWaypoints() -> d
+    247:248:void setShowEndMarker(boolean) -> a
+    258:258:void update(com.google.android.gms.maps.GoogleMap,java.util.ArrayList,boolean) -> a
+    346:351:void addUnderlay(org.cowboycoders.cyclisimo.StaticOverlay) -> a
+    72:72:android.content.Context access$0(org.cowboycoders.cyclisimo.MapOverlay) -> a
+    103:103:void access$1(org.cowboycoders.cyclisimo.MapOverlay,java.lang.String) -> a
+    103:103:java.lang.String access$2(org.cowboycoders.cyclisimo.MapOverlay) -> b
+    106:106:void access$3(org.cowboycoders.cyclisimo.MapOverlay,org.cowboycoders.cyclisimo.maps.TrackPath) -> a
 org.cowboycoders.cyclisimo.MapOverlay$1 -> org.cowboycoders.cyclisimo.z:
     org.cowboycoders.cyclisimo.MapOverlay this$0 -> a
-    64:70:void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
+    63:69:void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
 org.cowboycoders.cyclisimo.MapOverlay$CachedLocation -> org.cowboycoders.cyclisimo.aa:
     boolean valid -> a
     com.google.android.gms.maps.model.LatLng latLng -> b
@@ -5491,74 +5303,95 @@ org.cowboycoders.cyclisimo.TrackDetailActivity -> org.cowboycoders.cyclisimo.Tra
     long markerId -> w
     boolean useCourseProivder -> x
     long courseTrackId -> y
-    long recordingTrackId -> z
-    boolean recordingTrackPaused -> A
-    android.view.MenuItem insertMarkerMenuItem -> B
-    android.view.MenuItem playMenuItem -> C
-    android.view.MenuItem shareMenuItem -> D
-    android.view.MenuItem sendGoogleMenuItem -> E
-    android.view.MenuItem saveMenuItem -> F
-    android.view.MenuItem voiceFrequencyMenuItem -> G
-    android.view.MenuItem splitFrequencyMenuItem -> H
-    java.lang.Runnable bindChangedCallback -> I
-    android.content.SharedPreferences$OnSharedPreferenceChangeListener sharedPreferenceChangeListener -> J
-    android.view.View$OnClickListener recordListener -> K
-    android.view.View$OnClickListener stopListener -> L
-    102:102:boolean isUsingCourseProivder() -> i
-    211:250:void onCreate(android.os.Bundle) -> onCreate
-    253:253:long getCourseTrackId() -> j
-    258:266:void onStart() -> onStart
-    271:280:void onResume() -> onResume
-    284:286:void onPause() -> onPause
-    290:295:void onStop() -> onStop
-    304:304:boolean isCourseMode() -> k
-    309:311:void onSaveInstanceState(android.os.Bundle) -> onSaveInstanceState
-    315:315:int getLayoutResId() -> f
-    320:320:boolean hideTitle() -> g
-    325:328:void onHomeSelected() -> h
-    332:335:void onNewIntent(android.content.Intent) -> onNewIntent
-    339:359:boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
-    364:368:boolean onPrepareOptionsMenu(android.view.Menu) -> onPrepareOptionsMenu
-    374:451:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
-    457:464:boolean onTrackballEvent(android.view.MotionEvent) -> onTrackballEvent
-    469:469:org.cowboycoders.cyclisimo.services.TrackRecordingServiceConnection getTrackRecordingServiceConnection() -> d_
-    476:476:org.cowboycoders.cyclisimo.content.TrackDataHub getTrackDataHub() -> l
-    480:480:org.cowboycoders.cyclisimo.content.TrackDataHub getCourseDataHub() -> m
-    487:503:void handleIntent(android.content.Intent) -> b
-    506:509:org.cowboycoders.cyclisimo.content.MyTracksProviderUtils getProviderUtils() -> n
-    517:520:void exit() -> o
-    524:526:void finish() -> finish
-    530:532:void onDestroy() -> onDestroy
-    538:549:void showMarker() -> p
-    558:588:void updateMenuItems(boolean,boolean) -> a
-    596:601:void startSaveActivity(org.cowboycoders.cyclisimo.io.file.TrackWriterFactory$TrackFileFormat) -> a
-    90:90:org.cowboycoders.cyclisimo.TrackController access$0(org.cowboycoders.cyclisimo.TrackDetailActivity) -> a
-    93:93:long access$1(org.cowboycoders.cyclisimo.TrackDetailActivity) -> b
-    107:107:long access$2(org.cowboycoders.cyclisimo.TrackDetailActivity) -> c
-    108:108:boolean access$3(org.cowboycoders.cyclisimo.TrackDetailActivity) -> d
-    107:107:void access$4(org.cowboycoders.cyclisimo.TrackDetailActivity,long) -> a
-    108:108:void access$5(org.cowboycoders.cyclisimo.TrackDetailActivity,boolean) -> a
-    557:557:void access$6(org.cowboycoders.cyclisimo.TrackDetailActivity,boolean,boolean) -> a
-    85:85:org.cowboycoders.cyclisimo.services.TrackRecordingServiceConnection access$7(org.cowboycoders.cyclisimo.TrackDetailActivity) -> e
+    boolean courseLoaded -> z
+    long recordingTrackId -> A
+    boolean recordingTrackPaused -> B
+    android.view.MenuItem insertMarkerMenuItem -> C
+    android.view.MenuItem playMenuItem -> D
+    android.view.MenuItem shareMenuItem -> E
+    android.view.MenuItem sendGoogleMenuItem -> F
+    android.view.MenuItem saveMenuItem -> G
+    android.view.MenuItem voiceFrequencyMenuItem -> H
+    android.view.MenuItem splitFrequencyMenuItem -> I
+    java.lang.Runnable bindChangedCallback -> J
+    android.content.SharedPreferences$OnSharedPreferenceChangeListener sharedPreferenceChangeListener -> K
+    android.view.View$OnClickListener recordListener -> L
+    android.view.View$OnClickListener stopListener -> M
+    android.content.BroadcastReceiver turboServiceReceiver -> N
+    java.lang.String TURBO_SERVICE_EXCEPTION_THROWN_ACTION -> O
+    java.lang.String TURBO_SERVICE_COURSE_STARTED_ACTION -> P
+    104:104:boolean isUsingCourseProivder() -> i
+    249:287:void onCreate(android.os.Bundle) -> onCreate
+    290:290:long getCourseTrackId() -> j
+    295:303:void onStart() -> onStart
+    308:319:void onResume() -> onResume
+    323:326:void onPause() -> onPause
+    330:335:void onStop() -> onStop
+    344:346:boolean isCourseMode() -> k
+    351:353:void onSaveInstanceState(android.os.Bundle) -> onSaveInstanceState
+    357:357:int getLayoutResId() -> f
+    362:362:boolean hideTitle() -> g
+    367:370:void onHomeSelected() -> h
+    374:377:void onNewIntent(android.content.Intent) -> onNewIntent
+    381:401:boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
+    406:409:boolean onPrepareOptionsMenu(android.view.Menu) -> onPrepareOptionsMenu
+    415:492:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
+    498:505:boolean onTrackballEvent(android.view.MotionEvent) -> onTrackballEvent
+    510:510:org.cowboycoders.cyclisimo.services.TrackRecordingServiceConnection getTrackRecordingServiceConnection() -> d_
+    517:517:org.cowboycoders.cyclisimo.content.TrackDataHub getTrackDataHub() -> l
+    521:521:org.cowboycoders.cyclisimo.content.TrackDataHub getCourseDataHub() -> m
+    528:544:void handleIntent(android.content.Intent) -> b
+    547:550:org.cowboycoders.cyclisimo.content.MyTracksProviderUtils getProviderUtils() -> q
+    558:561:void exit() -> r
+    565:567:void finish() -> finish
+    571:573:void onDestroy() -> onDestroy
+    579:590:void showMarker() -> s
+    598:628:void updateMenuItems(boolean,boolean) -> a
+    636:641:void startSaveActivity(org.cowboycoders.cyclisimo.io.file.TrackWriterFactory$TrackFileFormat) -> a
+    86:86:org.cowboycoders.cyclisimo.services.TrackRecordingServiceConnection access$0(org.cowboycoders.cyclisimo.TrackDetailActivity) -> a
+    109:109:void access$1(org.cowboycoders.cyclisimo.TrackDetailActivity,boolean) -> a
+    91:91:org.cowboycoders.cyclisimo.TrackController access$2(org.cowboycoders.cyclisimo.TrackDetailActivity) -> b
+    94:94:long access$3(org.cowboycoders.cyclisimo.TrackDetailActivity) -> c
+    108:108:long access$4(org.cowboycoders.cyclisimo.TrackDetailActivity) -> d
+    109:109:boolean access$5(org.cowboycoders.cyclisimo.TrackDetailActivity) -> e
+    108:108:void access$6(org.cowboycoders.cyclisimo.TrackDetailActivity,long) -> a
+    597:597:void access$7(org.cowboycoders.cyclisimo.TrackDetailActivity,boolean,boolean) -> a
+    195:195:void access$8(org.cowboycoders.cyclisimo.TrackDetailActivity) -> f
+    208:208:void access$9(org.cowboycoders.cyclisimo.TrackDetailActivity) -> g
+    679:679:java.lang.String access$10() -> n
+    119:119:java.lang.Runnable access$11(org.cowboycoders.cyclisimo.TrackDetailActivity) -> h
+    98:98:void access$12$2dacd099(org.cowboycoders.cyclisimo.TrackDetailActivity) -> i
+    677:677:java.lang.String access$13() -> o
+    81:81:java.lang.String access$14() -> p
+    96:96:boolean access$15(org.cowboycoders.cyclisimo.TrackDetailActivity) -> j
 org.cowboycoders.cyclisimo.TrackDetailActivity$1 -> org.cowboycoders.cyclisimo.ay:
     org.cowboycoders.cyclisimo.TrackDetailActivity this$0 -> a
-    123:129:void run() -> run
+    124:146:void run() -> run
 org.cowboycoders.cyclisimo.TrackDetailActivity$1$1 -> org.cowboycoders.cyclisimo.az:
     org.cowboycoders.cyclisimo.TrackDetailActivity$1 this$1 -> a
-    126:127:void run() -> run
+    127:143:void run() -> run
 org.cowboycoders.cyclisimo.TrackDetailActivity$2 -> org.cowboycoders.cyclisimo.ba:
     org.cowboycoders.cyclisimo.TrackDetailActivity this$0 -> a
-    141:162:void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
-    137:137:org.cowboycoders.cyclisimo.TrackDetailActivity access$0(org.cowboycoders.cyclisimo.TrackDetailActivity$2) -> a
+    157:179:void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
+    153:153:org.cowboycoders.cyclisimo.TrackDetailActivity access$0(org.cowboycoders.cyclisimo.TrackDetailActivity$2) -> a
 org.cowboycoders.cyclisimo.TrackDetailActivity$2$1 -> org.cowboycoders.cyclisimo.bb:
     org.cowboycoders.cyclisimo.TrackDetailActivity$2 this$1 -> a
-    156:159:void run() -> run
+    173:176:void run() -> run
 org.cowboycoders.cyclisimo.TrackDetailActivity$3 -> org.cowboycoders.cyclisimo.bc:
     org.cowboycoders.cyclisimo.TrackDetailActivity this$0 -> a
-    168:181:void onClick(android.view.View) -> onClick
+    185:192:void onClick(android.view.View) -> onClick
 org.cowboycoders.cyclisimo.TrackDetailActivity$4 -> org.cowboycoders.cyclisimo.bd:
     org.cowboycoders.cyclisimo.TrackDetailActivity this$0 -> a
-    187:191:void onClick(android.view.View) -> onClick
+    225:229:void onClick(android.view.View) -> onClick
+org.cowboycoders.cyclisimo.TrackDetailActivity$5 -> org.cowboycoders.cyclisimo.be:
+    org.cowboycoders.cyclisimo.TrackDetailActivity this$0 -> a
+    662:674:void onReceive(android.content.Context,android.content.Intent) -> onReceive
+org.cowboycoders.cyclisimo.TrackDetailActivity$6 -> org.cowboycoders.cyclisimo.bf:
+    org.cowboycoders.cyclisimo.TrackDetailActivity this$0 -> a
+    200:204:void run() -> run
+org.cowboycoders.cyclisimo.TrackDetailActivity$7 -> org.cowboycoders.cyclisimo.bg:
+    org.cowboycoders.cyclisimo.TrackDetailActivity this$0 -> a
+    213:217:void run() -> run
 org.cowboycoders.cyclisimo.TrackEditActivity -> org.cowboycoders.cyclisimo.TrackEditActivity:
     java.lang.String TAG -> n
     java.lang.Long trackId -> o
@@ -5578,16 +5411,16 @@ org.cowboycoders.cyclisimo.TrackEditActivity -> org.cowboycoders.cyclisimo.Track
     56:56:android.widget.EditText access$3(org.cowboycoders.cyclisimo.TrackEditActivity) -> c
     59:59:android.widget.EditText access$4(org.cowboycoders.cyclisimo.TrackEditActivity) -> d
     52:52:org.cowboycoders.cyclisimo.content.MyTracksProviderUtils access$5(org.cowboycoders.cyclisimo.TrackEditActivity) -> e
-org.cowboycoders.cyclisimo.TrackEditActivity$1 -> org.cowboycoders.cyclisimo.be:
+org.cowboycoders.cyclisimo.TrackEditActivity$1 -> org.cowboycoders.cyclisimo.bh:
     org.cowboycoders.cyclisimo.TrackEditActivity this$0 -> a
     107:109:void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
-org.cowboycoders.cyclisimo.TrackEditActivity$2 -> org.cowboycoders.cyclisimo.bf:
+org.cowboycoders.cyclisimo.TrackEditActivity$2 -> org.cowboycoders.cyclisimo.bi:
     org.cowboycoders.cyclisimo.TrackEditActivity this$0 -> a
     115:121:void onFocusChange(android.view.View,boolean) -> onFocusChange
-org.cowboycoders.cyclisimo.TrackEditActivity$3 -> org.cowboycoders.cyclisimo.bg:
+org.cowboycoders.cyclisimo.TrackEditActivity$3 -> org.cowboycoders.cyclisimo.bj:
     org.cowboycoders.cyclisimo.TrackEditActivity this$0 -> a
     130:137:void onClick(android.view.View) -> onClick
-org.cowboycoders.cyclisimo.TrackEditActivity$4 -> org.cowboycoders.cyclisimo.bh:
+org.cowboycoders.cyclisimo.TrackEditActivity$4 -> org.cowboycoders.cyclisimo.bk:
     org.cowboycoders.cyclisimo.TrackEditActivity this$0 -> a
     154:155:void onClick(android.view.View) -> onClick
 org.cowboycoders.cyclisimo.TrackListActivity -> org.cowboycoders.cyclisimo.TrackListActivity:
@@ -5649,32 +5482,32 @@ org.cowboycoders.cyclisimo.TrackListActivity -> org.cowboycoders.cyclisimo.Track
     713:713:void access$11(org.cowboycoders.cyclisimo.TrackListActivity) -> g
     322:322:boolean access$12(org.cowboycoders.cyclisimo.TrackListActivity) -> h
     95:95:java.lang.String[] access$13() -> i
-org.cowboycoders.cyclisimo.TrackListActivity$1 -> org.cowboycoders.cyclisimo.bi:
+org.cowboycoders.cyclisimo.TrackListActivity$1 -> org.cowboycoders.cyclisimo.bl:
     org.cowboycoders.cyclisimo.TrackListActivity this$0 -> a
     109:142:void run() -> run
-org.cowboycoders.cyclisimo.TrackListActivity$1$1 -> org.cowboycoders.cyclisimo.bj:
+org.cowboycoders.cyclisimo.TrackListActivity$1$1 -> org.cowboycoders.cyclisimo.bm:
     org.cowboycoders.cyclisimo.TrackListActivity$1 this$1 -> a
     112:114:void run() -> run
-org.cowboycoders.cyclisimo.TrackListActivity$10 -> org.cowboycoders.cyclisimo.bk:
+org.cowboycoders.cyclisimo.TrackListActivity$10 -> org.cowboycoders.cyclisimo.bn:
     org.cowboycoders.cyclisimo.TrackListActivity this$0 -> a
     658:659:void onCancel(android.content.DialogInterface) -> onCancel
-org.cowboycoders.cyclisimo.TrackListActivity$2 -> org.cowboycoders.cyclisimo.bl:
+org.cowboycoders.cyclisimo.TrackListActivity$2 -> org.cowboycoders.cyclisimo.bo:
     org.cowboycoders.cyclisimo.TrackListActivity this$0 -> a
     153:184:void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
     150:150:org.cowboycoders.cyclisimo.TrackListActivity access$0(org.cowboycoders.cyclisimo.TrackListActivity$2) -> a
-org.cowboycoders.cyclisimo.TrackListActivity$2$1 -> org.cowboycoders.cyclisimo.bm:
+org.cowboycoders.cyclisimo.TrackListActivity$2$1 -> org.cowboycoders.cyclisimo.bp:
     org.cowboycoders.cyclisimo.TrackListActivity$2 this$1 -> a
     176:181:void run() -> run
-org.cowboycoders.cyclisimo.TrackListActivity$3 -> org.cowboycoders.cyclisimo.bn:
+org.cowboycoders.cyclisimo.TrackListActivity$3 -> org.cowboycoders.cyclisimo.bq:
     org.cowboycoders.cyclisimo.TrackListActivity this$0 -> a
     192:192:boolean onClick(int,int,long) -> a
-org.cowboycoders.cyclisimo.TrackListActivity$4 -> org.cowboycoders.cyclisimo.bo:
+org.cowboycoders.cyclisimo.TrackListActivity$4 -> org.cowboycoders.cyclisimo.br:
     org.cowboycoders.cyclisimo.TrackListActivity this$0 -> a
     198:221:void onClick(android.view.View) -> onClick
-org.cowboycoders.cyclisimo.TrackListActivity$5 -> org.cowboycoders.cyclisimo.bp:
+org.cowboycoders.cyclisimo.TrackListActivity$5 -> org.cowboycoders.cyclisimo.bs:
     org.cowboycoders.cyclisimo.TrackListActivity this$0 -> a
     227:228:void onClick(android.view.View) -> onClick
-org.cowboycoders.cyclisimo.TrackListActivity$6 -> org.cowboycoders.cyclisimo.bq:
+org.cowboycoders.cyclisimo.TrackListActivity$6 -> org.cowboycoders.cyclisimo.bt:
     org.cowboycoders.cyclisimo.TrackListActivity this$0 -> a
     235:235:void onTrackUpdated(org.cowboycoders.cyclisimo.content.Track) -> a
     240:240:void onSelectedTrackChanged(org.cowboycoders.cyclisimo.content.Track) -> b
@@ -5691,13 +5524,13 @@ org.cowboycoders.cyclisimo.TrackListActivity$6 -> org.cowboycoders.cyclisimo.bq:
     295:295:void onLocationChanged(android.location.Location) -> d
     305:305:void clearWaypoints() -> c
     310:310:void clearTrackPoints() -> d
-org.cowboycoders.cyclisimo.TrackListActivity$7 -> org.cowboycoders.cyclisimo.br:
+org.cowboycoders.cyclisimo.TrackListActivity$7 -> org.cowboycoders.cyclisimo.bu:
     org.cowboycoders.cyclisimo.TrackListActivity this$0 -> a
     356:362:void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
-org.cowboycoders.cyclisimo.TrackListActivity$8 -> org.cowboycoders.cyclisimo.bs:
+org.cowboycoders.cyclisimo.TrackListActivity$8 -> org.cowboycoders.cyclisimo.bv:
     org.cowboycoders.cyclisimo.TrackListActivity this$0 -> j
     367:389:void bindView(android.view.View,android.content.Context,android.database.Cursor) -> a
-org.cowboycoders.cyclisimo.TrackListActivity$9 -> org.cowboycoders.cyclisimo.bt:
+org.cowboycoders.cyclisimo.TrackListActivity$9 -> org.cowboycoders.cyclisimo.bw:
     org.cowboycoders.cyclisimo.TrackListActivity this$0 -> a
     398:398:android.support.v4.content.Loader onCreateLoader$e57f803() -> b_
     409:410:void onLoaderReset$5dda1f52() -> c_
@@ -6519,88 +6352,91 @@ org.cowboycoders.cyclisimo.fragments.ChartFragment -> org.cowboycoders.cyclisimo
     long currentCourseId -> a
     org.cowboycoders.cyclisimo.ChartView chartView -> ac
     android.widget.ZoomControls zoomControls -> ad
-    boolean courseMode -> ae
+    boolean overlayCourseData -> ae
     java.lang.Runnable updateChart -> af
     org.cowboycoders.cyclisimo.content.TrackDataHub courseDataHub -> ag
     org.cowboycoders.cyclisimo.content.TrackDataListener courseTrackDataListener -> ah
-    306:313:void onCreate(android.os.Bundle) -> a
-    318:332:android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> a
-    337:342:void onStart() -> e_
-    346:370:void onResume() -> q
-    374:377:void onPause() -> r
-    381:384:void onStop() -> e
-    389:389:void onLocationStateChanged(org.cowboycoders.cyclisimo.content.TrackDataListener$LocationState) -> a
-    394:394:void onLocationChanged(android.location.Location) -> d
-    404:404:void onSelectedTrackChanged(org.cowboycoders.cyclisimo.content.Track) -> b
-    408:423:void onTrackUpdated(org.cowboycoders.cyclisimo.content.Track) -> a
-    427:441:void clearTrackPoints() -> d
-    445:451:void onSampledInTrackPoint(android.location.Location) -> c
-    455:458:void onSampledOutTrackPoint(android.location.Location) -> b
-    462:465:void onSegmentSplit(android.location.Location) -> a
-    469:475:void onNewTrackPointsDone() -> f_
-    479:482:void clearWaypoints() -> c
-    486:489:void onNewWaypoint(org.cowboycoders.cyclisimo.content.Waypoint) -> a
-    493:496:void onNewWaypointsDone() -> g_
-    500:516:boolean onMetricUnitsChanged(boolean) -> b
-    521:541:boolean onReportSpeedChanged(boolean) -> a
-    546:553:boolean onMinRecordingDistanceChanged(int) -> a
-    608:613:boolean setSeriesEnabled(int,boolean) -> a
-    622:626:void resumeTrackDataHub() -> B
-    633:635:void pauseTrackDataHub() -> C
-    642:642:boolean isSelectedTrackRecording() -> D
-    650:653:void reloadTrackDataHub() -> E
-    660:665:void reloadCourseDataHub() -> F
-    673:677:void pauseCourseDataHub() -> G
-    684:693:void resumeCourseDataHub() -> H
-    729:791:void fillDataPoint(android.location.Location,double[],org.cowboycoders.cyclisimo.stats.TripStatisticsUpdater) -> a
+    316:323:void onCreate(android.os.Bundle) -> a
+    328:342:android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> a
+    347:352:void onStart() -> e_
+    356:386:void onResume() -> q
+    390:393:void onPause() -> r
+    397:400:void onStop() -> e
+    405:405:void onLocationStateChanged(org.cowboycoders.cyclisimo.content.TrackDataListener$LocationState) -> a
+    410:410:void onLocationChanged(android.location.Location) -> d
+    420:420:void onSelectedTrackChanged(org.cowboycoders.cyclisimo.content.Track) -> b
+    424:439:void onTrackUpdated(org.cowboycoders.cyclisimo.content.Track) -> a
+    443:457:void clearTrackPoints() -> d
+    461:467:void onSampledInTrackPoint(android.location.Location) -> c
+    471:474:void onSampledOutTrackPoint(android.location.Location) -> b
+    478:481:void onSegmentSplit(android.location.Location) -> a
+    485:491:void onNewTrackPointsDone() -> f_
+    495:498:void clearWaypoints() -> c
+    502:505:void onNewWaypoint(org.cowboycoders.cyclisimo.content.Waypoint) -> a
+    509:512:void onNewWaypointsDone() -> g_
+    516:532:boolean onMetricUnitsChanged(boolean) -> b
+    537:557:boolean onReportSpeedChanged(boolean) -> a
+    562:569:boolean onMinRecordingDistanceChanged(int) -> a
+    624:629:boolean setSeriesEnabled(int,boolean) -> a
+    638:642:void resumeTrackDataHub() -> B
+    649:651:void pauseTrackDataHub() -> C
+    658:658:boolean isSelectedTrackRecording() -> D
+    666:669:void reloadTrackDataHub() -> E
+    676:681:void reloadCourseDataHub() -> F
+    689:693:void pauseCourseDataHub() -> G
+    700:710:void resumeCourseDataHub() -> H
+    746:809:void fillDataPoint(android.location.Location,double[],org.cowboycoders.cyclisimo.stats.TripStatisticsUpdater) -> a
     69:69:org.cowboycoders.cyclisimo.content.TrackDataHub access$0(org.cowboycoders.cyclisimo.fragments.ChartFragment) -> a
     94:94:android.widget.ZoomControls access$1(org.cowboycoders.cyclisimo.fragments.ChartFragment) -> b
     93:93:org.cowboycoders.cyclisimo.ChartView access$2(org.cowboycoders.cyclisimo.fragments.ChartFragment) -> c
-    641:641:boolean access$3(org.cowboycoders.cyclisimo.fragments.ChartFragment) -> d
+    657:657:boolean access$3(org.cowboycoders.cyclisimo.fragments.ChartFragment) -> d
     80:80:long access$4(org.cowboycoders.cyclisimo.fragments.ChartFragment) -> e
     73:73:java.util.concurrent.locks.Lock access$5(org.cowboycoders.cyclisimo.fragments.ChartFragment) -> f
     75:75:java.util.concurrent.locks.Condition access$6(org.cowboycoders.cyclisimo.fragments.ChartFragment) -> g
     79:79:void access$7(org.cowboycoders.cyclisimo.fragments.ChartFragment,org.cowboycoders.cyclisimo.stats.TripStatisticsUpdater) -> a
     79:79:org.cowboycoders.cyclisimo.stats.TripStatisticsUpdater access$8(org.cowboycoders.cyclisimo.fragments.ChartFragment) -> h
     67:67:java.util.ArrayList access$9(org.cowboycoders.cyclisimo.fragments.ChartFragment) -> i
-    102:102:java.lang.Runnable access$10(org.cowboycoders.cyclisimo.fragments.ChartFragment) -> j
-    699:699:void access$11(org.cowboycoders.cyclisimo.fragments.ChartFragment) -> k
-    708:708:void access$12(org.cowboycoders.cyclisimo.fragments.ChartFragment) -> l
+    96:96:boolean access$10(org.cowboycoders.cyclisimo.fragments.ChartFragment) -> j
+    102:102:java.lang.Runnable access$11(org.cowboycoders.cyclisimo.fragments.ChartFragment) -> k
+    716:716:void access$12(org.cowboycoders.cyclisimo.fragments.ChartFragment) -> l
+    725:725:void access$13(org.cowboycoders.cyclisimo.fragments.ChartFragment) -> m
 org.cowboycoders.cyclisimo.fragments.ChartFragment$1 -> org.cowboycoders.cyclisimo.fragments.b:
     org.cowboycoders.cyclisimo.fragments.ChartFragment this$0 -> a
     105:113:void run() -> run
 org.cowboycoders.cyclisimo.fragments.ChartFragment$2 -> org.cowboycoders.cyclisimo.fragments.c:
+    org.cowboycoders.cyclisimo.content.Track currentCourse -> b
+    boolean overlayAdded -> c
     org.cowboycoders.cyclisimo.fragments.ChartFragment this$0 -> a
-    124:124:void onLocationStateChanged(org.cowboycoders.cyclisimo.content.TrackDataListener$LocationState) -> a
-    129:129:void onLocationChanged(android.location.Location) -> d
-    139:139:void onSelectedTrackChanged(org.cowboycoders.cyclisimo.content.Track) -> b
-    143:146:void onTrackUpdated(org.cowboycoders.cyclisimo.content.Track) -> a
-    150:180:void clearTrackPoints() -> d
-    184:190:void onSampledInTrackPoint(android.location.Location) -> c
-    197:197:void onSampledOutTrackPoint(android.location.Location) -> b
-    201:204:void onSegmentSplit(android.location.Location) -> a
-    208:214:void onNewTrackPointsDone() -> f_
-    221:221:void clearWaypoints() -> c
-    228:228:void onNewWaypoint(org.cowboycoders.cyclisimo.content.Waypoint) -> a
-    235:235:void onNewWaypointsDone() -> g_
-    239:239:boolean onMetricUnitsChanged(boolean) -> b
-    261:261:boolean onReportSpeedChanged(boolean) -> a
-    287:287:boolean onMinRecordingDistanceChanged(int) -> a
+    130:130:void onLocationStateChanged(org.cowboycoders.cyclisimo.content.TrackDataListener$LocationState) -> a
+    135:135:void onLocationChanged(android.location.Location) -> d
+    145:145:void onSelectedTrackChanged(org.cowboycoders.cyclisimo.content.Track) -> b
+    149:153:void onTrackUpdated(org.cowboycoders.cyclisimo.content.Track) -> a
+    157:187:void clearTrackPoints() -> d
+    191:197:void onSampledInTrackPoint(android.location.Location) -> c
+    204:204:void onSampledOutTrackPoint(android.location.Location) -> b
+    208:211:void onSegmentSplit(android.location.Location) -> a
+    215:224:void onNewTrackPointsDone() -> f_
+    231:231:void clearWaypoints() -> c
+    238:238:void onNewWaypoint(org.cowboycoders.cyclisimo.content.Waypoint) -> a
+    245:245:void onNewWaypointsDone() -> g_
+    249:249:boolean onMetricUnitsChanged(boolean) -> b
+    271:271:boolean onReportSpeedChanged(boolean) -> a
+    297:297:boolean onMinRecordingDistanceChanged(int) -> a
 org.cowboycoders.cyclisimo.fragments.ChartFragment$3 -> org.cowboycoders.cyclisimo.fragments.d:
     org.cowboycoders.cyclisimo.fragments.ChartFragment this$0 -> a
-    323:324:void onClick(android.view.View) -> onClick
+    333:334:void onClick(android.view.View) -> onClick
 org.cowboycoders.cyclisimo.fragments.ChartFragment$4 -> org.cowboycoders.cyclisimo.fragments.e:
     org.cowboycoders.cyclisimo.fragments.ChartFragment this$0 -> a
-    329:330:void onClick(android.view.View) -> onClick
+    339:340:void onClick(android.view.View) -> onClick
 org.cowboycoders.cyclisimo.fragments.ChartFragment$5 -> org.cowboycoders.cyclisimo.fragments.f:
     org.cowboycoders.cyclisimo.fragments.ChartFragment this$0 -> a
-    435:438:void run() -> run
+    451:454:void run() -> run
 org.cowboycoders.cyclisimo.fragments.ChartFragment$6 -> org.cowboycoders.cyclisimo.fragments.g:
     org.cowboycoders.cyclisimo.fragments.ChartFragment this$0 -> a
-    509:512:void run() -> run
+    525:528:void run() -> run
 org.cowboycoders.cyclisimo.fragments.ChartFragment$7 -> org.cowboycoders.cyclisimo.fragments.h:
     org.cowboycoders.cyclisimo.fragments.ChartFragment this$0 -> a
-    534:537:void run() -> run
+    550:553:void run() -> run
 org.cowboycoders.cyclisimo.fragments.ChooseActivityDialogFragment -> org.cowboycoders.cyclisimo.fragments.ChooseActivityDialogFragment:
     android.support.v4.app.FragmentActivity activity -> W
     android.content.pm.PackageManager packageManager -> X
@@ -6715,12 +6551,14 @@ org.cowboycoders.cyclisimo.fragments.DeleteOneMarkerDialogFragment$1$1 -> org.co
     org.cowboycoders.cyclisimo.fragments.DeleteOneMarkerDialogFragment$1 this$1 -> a
     67:70:void run() -> run
 org.cowboycoders.cyclisimo.fragments.DeleteOneTrackDialogFragment -> org.cowboycoders.cyclisimo.fragments.DeleteOneTrackDialogFragment:
-    android.support.v4.app.FragmentActivity activity -> W
-    org.cowboycoders.cyclisimo.fragments.DeleteOneTrackDialogFragment$DeleteOneTrackCaller caller -> X
+    int messageId -> W
+    android.support.v4.app.FragmentActivity activity -> X
+    org.cowboycoders.cyclisimo.fragments.DeleteOneTrackDialogFragment$DeleteOneTrackCaller caller -> Y
     61:66:org.cowboycoders.cyclisimo.fragments.DeleteOneTrackDialogFragment newInstance(long) -> a
     74:78:void onAttach(android.app.Activity) -> a
     84:85:android.app.Dialog onCreateDialog$5709b310() -> c
     129:136:android.support.v4.app.DialogFragment newInstance(long,boolean) -> a
+    140:142:android.support.v4.app.DialogFragment newInstance$15d5f618(long,boolean) -> b
     69:69:android.support.v4.app.FragmentActivity access$0(org.cowboycoders.cyclisimo.fragments.DeleteOneTrackDialogFragment) -> a
     70:70:org.cowboycoders.cyclisimo.fragments.DeleteOneTrackDialogFragment$DeleteOneTrackCaller access$1(org.cowboycoders.cyclisimo.fragments.DeleteOneTrackDialogFragment) -> b
 org.cowboycoders.cyclisimo.fragments.DeleteOneTrackDialogFragment$1 -> org.cowboycoders.cyclisimo.fragments.x:
@@ -6767,157 +6605,157 @@ org.cowboycoders.cyclisimo.fragments.InstallEarthDialogFragment$1 -> org.cowboyc
     org.cowboycoders.cyclisimo.fragments.InstallEarthDialogFragment this$0 -> a
     54:62:void onClick(android.content.DialogInterface,int) -> onClick
 org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment -> org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment:
-    org.cowboycoders.cyclisimo.content.TrackDataHub trackDataHub -> b
-    org.cowboycoders.cyclisimo.content.TrackDataHub courseDataHub -> c
-    android.location.Location currentLocation -> d
-    boolean keepCurrentLocationVisible -> e
-    boolean zoomToCurrentLocation -> f
-    com.google.android.gms.maps.LocationSource$OnLocationChangedListener onLocationChangedListener -> g
-    long markerTrackId -> h
-    long markerId -> i
-    org.cowboycoders.cyclisimo.content.Track currentTrack -> W
-    org.cowboycoders.cyclisimo.content.Track currentCourse -> X
-    boolean courseMode -> Y
-    java.util.ArrayList paths -> Z
+    long COURSE_LOAD_TIMEOUT_NS -> b
+    org.cowboycoders.cyclisimo.content.TrackDataHub trackDataHub -> c
+    org.cowboycoders.cyclisimo.content.TrackDataHub courseDataHub -> d
+    android.location.Location currentLocation -> e
+    boolean keepCurrentLocationVisible -> f
+    boolean zoomToCurrentLocation -> g
+    com.google.android.gms.maps.LocationSource$OnLocationChangedListener onLocationChangedListener -> h
+    long markerTrackId -> i
+    long markerId -> W
+    org.cowboycoders.cyclisimo.content.Track currentTrack -> X
+    org.cowboycoders.cyclisimo.content.Track currentCourse -> Y
+    boolean courseMode -> Z
+    java.util.ArrayList paths -> aa
     boolean reloadPaths -> a
-    com.google.android.gms.maps.GoogleMap googleMap -> aa
-    org.cowboycoders.cyclisimo.MapOverlay mapOverlay -> ab
-    org.cowboycoders.cyclisimo.DummyOverlay courseDummyOverlay -> ac
-    org.cowboycoders.cyclisimo.StaticOverlay courseOverlay -> ad
-    android.view.View mapView -> ae
-    android.widget.ImageButton myLocationImageButton -> af
-    android.widget.TextView messageTextView -> ag
-    boolean mUseCourseProvider -> ah
-    long courseTrackId -> ai
-    org.cowboycoders.cyclisimo.content.TrackDataListener courseTrackDataListener -> aj
-    311:327:void onCreate(android.os.Bundle) -> a
-    332:424:android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> a
-    429:440:void onActivityCreated(android.os.Bundle) -> c
-    444:447:void onResume() -> q
-    451:460:void onSaveInstanceState(android.os.Bundle) -> d
-    464:467:void onPause() -> r
-    480:480:void showMarker(long,long) -> a
-    494:495:void onCreateOptionsMenu(android.view.Menu,android.view.MenuInflater) -> a
-    499:523:void onPrepareOptionsMenu(android.view.Menu) -> a
-    527:548:boolean onOptionsItemSelected(android.view.MenuItem) -> a
-    553:624:void onLocationStateChanged(org.cowboycoders.cyclisimo.content.TrackDataListener$LocationState) -> a
-    628:635:void onLocationChanged(android.location.Location) -> d
-    644:669:void onSelectedTrackChanged(org.cowboycoders.cyclisimo.content.Track) -> b
-    686:686:void onTrackUpdated(org.cowboycoders.cyclisimo.content.Track) -> a
-    695:700:void clearTrackPoints() -> d
-    704:711:void onSampledInTrackPoint(android.location.Location) -> c
-    716:716:void onSampledOutTrackPoint(android.location.Location) -> b
-    720:726:void onSegmentSplit(android.location.Location) -> a
-    730:743:void onNewTrackPointsDone() -> f_
-    747:752:void clearWaypoints() -> c
-    756:759:void onNewWaypoint(org.cowboycoders.cyclisimo.content.Waypoint) -> a
-    763:773:void onNewWaypointsDone() -> g_
-    778:778:boolean onMetricUnitsChanged(boolean) -> b
-    784:784:boolean onReportSpeedChanged(boolean) -> a
-    790:790:boolean onMinRecordingDistanceChanged(int) -> a
-    794:809:void redrawCourseOverlay() -> B
-    816:820:void resumeTrackDataHub() -> C
-    828:832:void pauseCourseDataHub() -> D
-    839:843:void resumeCourseDataHub() -> E
-    850:854:void pauseTrackDataHub() -> F
-    861:861:boolean isSelectedTrackRecording() -> G
-    869:875:void forceUpdateLocation() -> H
-    881:897:void updateCurrentLocation() -> I
-    907:950:void showTrack(org.cowboycoders.cyclisimo.content.Track) -> c
-    958:978:void showMarker(long) -> a
-    994:997:org.cowboycoders.cyclisimo.content.MyTracksProviderUtils getProvider() -> J
-    127:127:boolean access$0(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> a
-    125:125:void access$1(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment,org.cowboycoders.cyclisimo.content.Track) -> a
-    137:137:org.cowboycoders.cyclisimo.StaticOverlay access$2(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> b
-    906:906:void access$3(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment,org.cowboycoders.cyclisimo.content.Track) -> b
-    136:136:org.cowboycoders.cyclisimo.DummyOverlay access$4(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> c
-    106:106:org.cowboycoders.cyclisimo.content.TrackDataHub access$5(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> d
-    134:134:com.google.android.gms.maps.GoogleMap access$6(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> e
-    137:137:void access$7(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment,org.cowboycoders.cyclisimo.StaticOverlay) -> a
-    868:868:void access$8(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> f
-    112:112:void access$9(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment,boolean) -> a
-    115:115:void access$10(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment,boolean) -> b
-    880:880:void access$11(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> g
-    117:117:void access$12(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment,com.google.android.gms.maps.LocationSource$OnLocationChangedListener) -> a
-    112:112:boolean access$13(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> h
-    109:109:android.location.Location access$14(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> i
-    1005:1005:boolean access$15(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment,android.location.Location) -> a
-    793:793:void access$16(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> j
-    109:109:void access$17$32a17358(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> k
-    860:860:boolean access$18(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> l
-    140:140:android.widget.TextView access$19(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> m
-    135:135:org.cowboycoders.cyclisimo.MapOverlay access$20(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> n
-    130:130:java.util.ArrayList access$21(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> o
-    117:117:com.google.android.gms.maps.LocationSource$OnLocationChangedListener access$22(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> p
-    115:115:boolean access$23(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> q
-    138:138:android.view.View access$24(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> r
-    993:993:org.cowboycoders.cyclisimo.content.MyTracksProviderUtils access$25(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> s
+    com.google.android.gms.maps.GoogleMap googleMap -> ab
+    org.cowboycoders.cyclisimo.MapOverlay mapOverlay -> ac
+    org.cowboycoders.cyclisimo.DummyOverlay courseDummyOverlay -> ad
+    org.cowboycoders.cyclisimo.StaticOverlay courseOverlay -> ae
+    android.view.View mapView -> af
+    android.widget.ImageButton myLocationImageButton -> ag
+    android.widget.TextView messageTextView -> ah
+    boolean mUseCourseProvider -> ai
+    long courseTrackId -> aj
+    java.util.concurrent.locks.Lock courseLoadLock -> ak
+    java.util.concurrent.locks.Condition courseLoadedChanged -> al
+    org.cowboycoders.cyclisimo.content.TrackDataListener courseTrackDataListener -> am
+    327:343:void onCreate(android.os.Bundle) -> a
+    348:440:android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> a
+    445:456:void onActivityCreated(android.os.Bundle) -> c
+    460:463:void onResume() -> q
+    467:476:void onSaveInstanceState(android.os.Bundle) -> d
+    480:483:void onPause() -> r
+    496:496:void showMarker(long,long) -> a
+    510:511:void onCreateOptionsMenu(android.view.Menu,android.view.MenuInflater) -> a
+    515:539:void onPrepareOptionsMenu(android.view.Menu) -> a
+    543:564:boolean onOptionsItemSelected(android.view.MenuItem) -> a
+    569:641:void onLocationStateChanged(org.cowboycoders.cyclisimo.content.TrackDataListener$LocationState) -> a
+    645:654:void onLocationChanged(android.location.Location) -> d
+    663:686:void onSelectedTrackChanged(org.cowboycoders.cyclisimo.content.Track) -> b
+    703:703:void onTrackUpdated(org.cowboycoders.cyclisimo.content.Track) -> a
+    712:717:void clearTrackPoints() -> d
+    721:730:void onSampledInTrackPoint(android.location.Location) -> c
+    735:735:void onSampledOutTrackPoint(android.location.Location) -> b
+    739:745:void onSegmentSplit(android.location.Location) -> a
+    749:782:void onNewTrackPointsDone() -> f_
+    786:791:void clearWaypoints() -> c
+    795:798:void onNewWaypoint(org.cowboycoders.cyclisimo.content.Waypoint) -> a
+    802:812:void onNewWaypointsDone() -> g_
+    817:817:boolean onMetricUnitsChanged(boolean) -> b
+    823:823:boolean onReportSpeedChanged(boolean) -> a
+    829:829:boolean onMinRecordingDistanceChanged(int) -> a
+    855:859:void resumeTrackDataHub() -> B
+    867:871:void pauseCourseDataHub() -> C
+    878:882:void resumeCourseDataHub() -> D
+    889:893:void pauseTrackDataHub() -> E
+    900:900:boolean isSelectedTrackRecording() -> F
+    908:914:void forceUpdateLocation() -> G
+    920:936:void updateCurrentLocation() -> H
+    946:989:void showTrack(org.cowboycoders.cyclisimo.content.Track) -> c
+    997:1017:void showMarker(long) -> a
+    1033:1036:org.cowboycoders.cyclisimo.content.MyTracksProviderUtils getProvider() -> I
+    133:133:boolean access$0(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> a
+    131:131:void access$1(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment,org.cowboycoders.cyclisimo.content.Track) -> a
+    143:143:org.cowboycoders.cyclisimo.StaticOverlay access$2(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> b
+    945:945:void access$3(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment,org.cowboycoders.cyclisimo.content.Track) -> b
+    142:142:org.cowboycoders.cyclisimo.DummyOverlay access$4(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> c
+    112:112:org.cowboycoders.cyclisimo.content.TrackDataHub access$5(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> d
+    140:140:com.google.android.gms.maps.GoogleMap access$6(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> e
+    143:143:void access$7(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment,org.cowboycoders.cyclisimo.StaticOverlay) -> a
+    151:151:java.util.concurrent.locks.Lock access$8(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> f
+    152:152:java.util.concurrent.locks.Condition access$9(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> g
+    907:907:void access$10(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> h
+    118:118:void access$11(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment,boolean) -> a
+    121:121:void access$12(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment,boolean) -> b
+    919:919:void access$13(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> i
+    123:123:void access$14(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment,com.google.android.gms.maps.LocationSource$OnLocationChangedListener) -> a
+    118:118:boolean access$15(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> j
+    115:115:android.location.Location access$16(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> k
+    1044:1044:boolean access$17(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment,android.location.Location) -> a
+    115:115:void access$18$32a17358(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> l
+    899:899:boolean access$19(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> m
+    146:146:android.widget.TextView access$20(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> n
+    141:141:org.cowboycoders.cyclisimo.MapOverlay access$21(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> o
+    136:136:java.util.ArrayList access$22(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> p
+    123:123:com.google.android.gms.maps.LocationSource$OnLocationChangedListener access$23(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> q
+    121:121:boolean access$24(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> r
+    144:144:android.view.View access$25(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> s
+    1032:1032:org.cowboycoders.cyclisimo.content.MyTracksProviderUtils access$26(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment) -> t
 org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment$1 -> org.cowboycoders.cyclisimo.fragments.ae:
     org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment this$0 -> a
-    156:156:void onLocationStateChanged(org.cowboycoders.cyclisimo.content.TrackDataListener$LocationState) -> a
-    162:162:void onLocationChanged(android.location.Location) -> d
-    171:203:void onSelectedTrackChanged(org.cowboycoders.cyclisimo.content.Track) -> b
-    208:208:void onTrackUpdated(org.cowboycoders.cyclisimo.content.Track) -> a
-    212:216:void clearTrackPoints() -> d
-    220:223:void onSampledInTrackPoint(android.location.Location) -> c
-    228:228:void onSampledOutTrackPoint(android.location.Location) -> b
-    232:235:void onSegmentSplit(android.location.Location) -> a
-    240:259:void onNewTrackPointsDone() -> f_
-    263:266:void clearWaypoints() -> c
-    270:273:void onNewWaypoint(org.cowboycoders.cyclisimo.content.Waypoint) -> a
-    277:286:void onNewWaypointsDone() -> g_
-    291:291:boolean onMetricUnitsChanged(boolean) -> b
-    297:297:boolean onReportSpeedChanged(boolean) -> a
-    303:303:boolean onMinRecordingDistanceChanged(int) -> a
+    166:166:void onLocationStateChanged(org.cowboycoders.cyclisimo.content.TrackDataListener$LocationState) -> a
+    172:172:void onLocationChanged(android.location.Location) -> d
+    181:213:void onSelectedTrackChanged(org.cowboycoders.cyclisimo.content.Track) -> b
+    218:218:void onTrackUpdated(org.cowboycoders.cyclisimo.content.Track) -> a
+    222:226:void clearTrackPoints() -> d
+    230:233:void onSampledInTrackPoint(android.location.Location) -> c
+    238:238:void onSampledOutTrackPoint(android.location.Location) -> b
+    242:245:void onSegmentSplit(android.location.Location) -> a
+    250:275:void onNewTrackPointsDone() -> f_
+    279:282:void clearWaypoints() -> c
+    286:289:void onNewWaypoint(org.cowboycoders.cyclisimo.content.Waypoint) -> a
+    293:302:void onNewWaypointsDone() -> g_
+    307:307:boolean onMetricUnitsChanged(boolean) -> b
+    313:313:boolean onReportSpeedChanged(boolean) -> a
+    319:319:boolean onMinRecordingDistanceChanged(int) -> a
 org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment$1$1 -> org.cowboycoders.cyclisimo.fragments.af:
     org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment$1 this$1 -> a
-    245:256:void run() -> run
+    255:272:void run() -> run
 org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment$1$2 -> org.cowboycoders.cyclisimo.fragments.ag:
     org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment$1 this$1 -> a
-    280:283:void run() -> run
+    296:299:void run() -> run
 org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment$10 -> org.cowboycoders.cyclisimo.fragments.ah:
     org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment this$0 -> a
-    883:895:void run() -> run
+    922:934:void run() -> run
 org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment$11 -> org.cowboycoders.cyclisimo.fragments.ai:
     org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment this$0 -> a
     org.cowboycoders.cyclisimo.content.Track val$track -> b
-    912:948:void run() -> run
+    951:987:void run() -> run
 org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment$12 -> org.cowboycoders.cyclisimo.fragments.aj:
     org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment this$0 -> a
     long val$id -> b
-    961:975:void run() -> run
+    1000:1014:void run() -> run
 org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment$2 -> org.cowboycoders.cyclisimo.fragments.ak:
     org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment this$0 -> a
-    341:345:void onClick(android.view.View) -> onClick
+    357:361:void onClick(android.view.View) -> onClick
 org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment$3 -> org.cowboycoders.cyclisimo.fragments.al:
     org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment this$0 -> a
-    373:383:boolean onMarkerClick(com.google.android.gms.maps.model.Marker) -> a
+    389:399:boolean onMarkerClick(com.google.android.gms.maps.model.Marker) -> a
 org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment$4 -> org.cowboycoders.cyclisimo.fragments.am:
     org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment this$0 -> a
-    390:391:void activate(com.google.android.gms.maps.LocationSource$OnLocationChangedListener) -> a
-    395:396:void deactivate() -> a
+    406:407:void activate(com.google.android.gms.maps.LocationSource$OnLocationChangedListener) -> a
+    411:412:void deactivate() -> a
 org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment$5 -> org.cowboycoders.cyclisimo.fragments.an:
     org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment this$0 -> a
-    402:419:void onCameraChange$20e624a2() -> a
+    418:435:void onCameraChange$20e624a2() -> a
 org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment$6 -> org.cowboycoders.cyclisimo.fragments.ao:
     org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment this$0 -> a
     org.cowboycoders.cyclisimo.content.TrackDataListener$LocationState val$state -> b
     int[] $SWITCH_TABLE$org$cowboycoders$cyclisimo$content$TrackDataListener$LocationState -> c
-    557:621:void run() -> run
-    554:554:int[] $SWITCH_TABLE$org$cowboycoders$cyclisimo$content$TrackDataListener$LocationState() -> a
-    554:554:org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment access$1(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment$6) -> a
+    574:638:void run() -> run
+    571:571:int[] $SWITCH_TABLE$org$cowboycoders$cyclisimo$content$TrackDataListener$LocationState() -> a
+    571:571:org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment access$1(org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment$6) -> a
 org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment$6$1 -> org.cowboycoders.cyclisimo.fragments.ap:
     org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment$6 this$1 -> a
-    611:616:void onClick(android.view.View) -> onClick
+    628:633:void onClick(android.view.View) -> onClick
 org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment$7 -> org.cowboycoders.cyclisimo.fragments.aq:
     org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment this$0 -> a
-    734:740:void run() -> run
+    771:779:void run() -> run
 org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment$8 -> org.cowboycoders.cyclisimo.fragments.ar:
     org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment this$0 -> a
-    766:770:void run() -> run
-org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment$9 -> org.cowboycoders.cyclisimo.fragments.as:
-    org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment this$0 -> a
-    802:806:void run() -> run
+    805:809:void run() -> run
 org.cowboycoders.cyclisimo.fragments.StatsFragment -> org.cowboycoders.cyclisimo.fragments.StatsFragment:
     org.cowboycoders.cyclisimo.content.TrackDataHub trackDataHub -> a
     android.os.Handler handler -> b
@@ -6956,24 +6794,24 @@ org.cowboycoders.cyclisimo.fragments.StatsFragment -> org.cowboycoders.cyclisimo
     56:56:android.location.Location access$5(org.cowboycoders.cyclisimo.fragments.StatsFragment) -> e
     57:57:void access$6(org.cowboycoders.cyclisimo.fragments.StatsFragment,org.cowboycoders.cyclisimo.stats.TripStatistics) -> a
     279:279:void access$7(org.cowboycoders.cyclisimo.fragments.StatsFragment,android.support.v4.app.FragmentActivity) -> a
-org.cowboycoders.cyclisimo.fragments.StatsFragment$1 -> org.cowboycoders.cyclisimo.fragments.at:
+org.cowboycoders.cyclisimo.fragments.StatsFragment$1 -> org.cowboycoders.cyclisimo.fragments.as:
     org.cowboycoders.cyclisimo.fragments.StatsFragment this$0 -> a
     62:69:void run() -> run
-org.cowboycoders.cyclisimo.fragments.StatsFragment$2 -> org.cowboycoders.cyclisimo.fragments.au:
+org.cowboycoders.cyclisimo.fragments.StatsFragment$2 -> org.cowboycoders.cyclisimo.fragments.at:
     org.cowboycoders.cyclisimo.fragments.StatsFragment this$0 -> a
     104:108:void run() -> run
-org.cowboycoders.cyclisimo.fragments.StatsFragment$3 -> org.cowboycoders.cyclisimo.fragments.av:
+org.cowboycoders.cyclisimo.fragments.StatsFragment$3 -> org.cowboycoders.cyclisimo.fragments.au:
     org.cowboycoders.cyclisimo.fragments.StatsFragment this$0 -> a
     android.location.Location val$location -> b
     119:130:void run() -> run
-org.cowboycoders.cyclisimo.fragments.StatsFragment$4 -> org.cowboycoders.cyclisimo.fragments.aw:
+org.cowboycoders.cyclisimo.fragments.StatsFragment$4 -> org.cowboycoders.cyclisimo.fragments.av:
     org.cowboycoders.cyclisimo.fragments.StatsFragment this$0 -> a
     org.cowboycoders.cyclisimo.content.Track val$track -> b
     156:160:void run() -> run
-org.cowboycoders.cyclisimo.fragments.StatsFragment$5 -> org.cowboycoders.cyclisimo.fragments.ax:
+org.cowboycoders.cyclisimo.fragments.StatsFragment$5 -> org.cowboycoders.cyclisimo.fragments.aw:
     org.cowboycoders.cyclisimo.fragments.StatsFragment this$0 -> a
     211:214:void run() -> run
-org.cowboycoders.cyclisimo.fragments.StatsFragment$6 -> org.cowboycoders.cyclisimo.fragments.ay:
+org.cowboycoders.cyclisimo.fragments.StatsFragment$6 -> org.cowboycoders.cyclisimo.fragments.ax:
     org.cowboycoders.cyclisimo.fragments.StatsFragment this$0 -> a
     226:229:void run() -> run
 org.cowboycoders.cyclisimo.fragments.WelcomeDialogFragment -> org.cowboycoders.cyclisimo.fragments.WelcomeDialogFragment:
@@ -6982,7 +6820,7 @@ org.cowboycoders.cyclisimo.fragments.WelcomeDialogFragment -> org.cowboycoders.c
     49:50:android.app.Dialog onCreateDialog$5709b310() -> c
     63:66:void onDone() -> B
     62:62:void access$0(org.cowboycoders.cyclisimo.fragments.WelcomeDialogFragment) -> a
-org.cowboycoders.cyclisimo.fragments.WelcomeDialogFragment$1 -> org.cowboycoders.cyclisimo.fragments.az:
+org.cowboycoders.cyclisimo.fragments.WelcomeDialogFragment$1 -> org.cowboycoders.cyclisimo.fragments.ay:
     org.cowboycoders.cyclisimo.fragments.WelcomeDialogFragment this$0 -> a
     54:55:void onClick(android.content.DialogInterface,int) -> onClick
 org.cowboycoders.cyclisimo.io.backup.BackupActivity -> org.cowboycoders.cyclisimo.io.backup.BackupActivity:
@@ -7928,93 +7766,93 @@ org.cowboycoders.cyclisimo.services.TrackRecordingService -> org.cowboycoders.cy
     android.content.SharedPreferences$OnSharedPreferenceChangeListener sharedPreferenceChangeListener -> z
     android.location.LocationListener locationListener -> A
     java.util.TimerTask checkLocationListener -> B
-    273:305:void onCreate() -> onCreate
-    316:317:void onStart(android.content.Intent,int) -> onStart
-    328:329:int onStartCommand(android.content.Intent,int,int) -> onStartCommand
-    334:334:android.os.IBinder onBind(android.content.Intent) -> onBind
-    339:381:void onDestroy() -> onDestroy
-    387:387:boolean isRecording() -> a
-    394:394:boolean isPaused() -> b
-    401:404:org.cowboycoders.cyclisimo.stats.TripStatistics getTripStatistics() -> c
-    414:475:long insertWaypoint(org.cowboycoders.cyclisimo.content.WaypointCreationRequest) -> a
-    504:512:void handleStartCommand(android.content.Intent,int) -> a
-    666:684:void startRecording(boolean) -> a
-    719:722:android.location.Location getLastValidTrackPointInCurrentSegment(long) -> a
-    762:781:void endRecording(boolean,long) -> a
-    790:794:void updateRecordingState(long,boolean) -> a
-    893:920:void insertLocation(org.cowboycoders.cyclisimo.content.Track,android.location.Location,android.location.Location) -> a
-    924:937:void updateRecordingTrack(org.cowboycoders.cyclisimo.content.Track,long,boolean) -> a
-    951:965:void registerLocationListener() -> e
-    971:976:void unregisterLocationListener() -> f
-    1010:1014:void releaseWakeLock() -> g
-    1020:1035:void showNotification() -> h
-    1044:1051:void sendTrackBroadcast(int,long) -> a
-    98:98:android.content.Context access$0(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> a
-    105:105:void access$1(org.cowboycoders.cyclisimo.services.TrackRecordingService,long) -> a
-    106:106:void access$2(org.cowboycoders.cyclisimo.services.TrackRecordingService,boolean) -> a
-    101:101:org.cowboycoders.cyclisimo.services.tasks.PeriodicTaskExecutor access$3(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> b
-    102:102:org.cowboycoders.cyclisimo.services.tasks.PeriodicTaskExecutor access$4(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> c
-    107:107:void access$5(org.cowboycoders.cyclisimo.services.TrackRecordingService,org.cowboycoders.cyclisimo.services.LocationListenerPolicy) -> a
-    108:108:void access$6(org.cowboycoders.cyclisimo.services.TrackRecordingService,int) -> a
-    109:109:void access$7(org.cowboycoders.cyclisimo.services.TrackRecordingService,int) -> b
-    110:110:void access$8(org.cowboycoders.cyclisimo.services.TrackRecordingService,int) -> c
-    111:111:void access$9(org.cowboycoders.cyclisimo.services.TrackRecordingService,int) -> d
-    100:100:org.cowboycoders.cyclisimo.services.MyTracksLocationManager access$10(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> d
-    103:103:java.util.concurrent.ExecutorService access$11(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> e
-    801:801:void access$12(org.cowboycoders.cyclisimo.services.TrackRecordingService,android.location.Location) -> a
-    126:126:android.os.Handler access$13(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> f
-    950:950:void access$14(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> g
-    554:554:long access$15(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> h
-    728:728:void access$16(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> i
-    636:636:void access$17(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> j
-    689:689:void access$18(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> k
-    105:105:long access$19(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> l
-    115:115:org.cowboycoders.cyclisimo.stats.TripStatisticsUpdater access$20(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> m
-    219:219:android.location.LocationListener access$21(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> n
-    118:118:org.cowboycoders.cyclisimo.services.sensors.SensorManager access$22(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> o
-    86:86:java.lang.String access$23() -> d
+    272:304:void onCreate() -> onCreate
+    315:316:void onStart(android.content.Intent,int) -> onStart
+    327:328:int onStartCommand(android.content.Intent,int,int) -> onStartCommand
+    333:333:android.os.IBinder onBind(android.content.Intent) -> onBind
+    338:380:void onDestroy() -> onDestroy
+    386:386:boolean isRecording() -> a
+    393:393:boolean isPaused() -> b
+    400:403:org.cowboycoders.cyclisimo.stats.TripStatistics getTripStatistics() -> c
+    413:474:long insertWaypoint(org.cowboycoders.cyclisimo.content.WaypointCreationRequest) -> a
+    503:511:void handleStartCommand(android.content.Intent,int) -> a
+    665:683:void startRecording(boolean) -> a
+    718:721:android.location.Location getLastValidTrackPointInCurrentSegment(long) -> a
+    761:780:void endRecording(boolean,long) -> a
+    789:793:void updateRecordingState(long,boolean) -> a
+    892:919:void insertLocation(org.cowboycoders.cyclisimo.content.Track,android.location.Location,android.location.Location) -> a
+    923:936:void updateRecordingTrack(org.cowboycoders.cyclisimo.content.Track,long,boolean) -> a
+    950:964:void registerLocationListener() -> e
+    970:975:void unregisterLocationListener() -> f
+    1009:1013:void releaseWakeLock() -> g
+    1019:1034:void showNotification() -> h
+    1043:1050:void sendTrackBroadcast(int,long) -> a
+    97:97:android.content.Context access$0(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> a
+    104:104:void access$1(org.cowboycoders.cyclisimo.services.TrackRecordingService,long) -> a
+    105:105:void access$2(org.cowboycoders.cyclisimo.services.TrackRecordingService,boolean) -> a
+    100:100:org.cowboycoders.cyclisimo.services.tasks.PeriodicTaskExecutor access$3(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> b
+    101:101:org.cowboycoders.cyclisimo.services.tasks.PeriodicTaskExecutor access$4(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> c
+    106:106:void access$5(org.cowboycoders.cyclisimo.services.TrackRecordingService,org.cowboycoders.cyclisimo.services.LocationListenerPolicy) -> a
+    107:107:void access$6(org.cowboycoders.cyclisimo.services.TrackRecordingService,int) -> a
+    108:108:void access$7(org.cowboycoders.cyclisimo.services.TrackRecordingService,int) -> b
+    109:109:void access$8(org.cowboycoders.cyclisimo.services.TrackRecordingService,int) -> c
+    110:110:void access$9(org.cowboycoders.cyclisimo.services.TrackRecordingService,int) -> d
+    99:99:org.cowboycoders.cyclisimo.services.MyTracksLocationManager access$10(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> d
+    102:102:java.util.concurrent.ExecutorService access$11(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> e
+    800:800:void access$12(org.cowboycoders.cyclisimo.services.TrackRecordingService,android.location.Location) -> a
+    125:125:android.os.Handler access$13(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> f
+    949:949:void access$14(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> g
+    553:553:long access$15(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> h
+    727:727:void access$16(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> i
+    635:635:void access$17(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> j
+    688:688:void access$18(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> k
+    104:104:long access$19(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> l
+    114:114:org.cowboycoders.cyclisimo.stats.TripStatisticsUpdater access$20(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> m
+    218:218:android.location.LocationListener access$21(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> n
+    117:117:org.cowboycoders.cyclisimo.services.sensors.SensorManager access$22(org.cowboycoders.cyclisimo.services.TrackRecordingService) -> o
+    85:85:java.lang.String access$23() -> d
 org.cowboycoders.cyclisimo.services.TrackRecordingService$1 -> org.cowboycoders.cyclisimo.services.j:
     org.cowboycoders.cyclisimo.services.TrackRecordingService this$0 -> a
-    138:216:void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
+    137:215:void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
 org.cowboycoders.cyclisimo.services.TrackRecordingService$2 -> org.cowboycoders.cyclisimo.services.k:
     org.cowboycoders.cyclisimo.services.TrackRecordingService this$0 -> a
-    223:223:void onProviderDisabled(java.lang.String) -> onProviderDisabled
-    228:228:void onProviderEnabled(java.lang.String) -> onProviderEnabled
-    233:233:void onStatusChanged(java.lang.String,int,android.os.Bundle) -> onStatusChanged
-    237:248:void onLocationChanged(android.location.Location) -> onLocationChanged
-    219:219:org.cowboycoders.cyclisimo.services.TrackRecordingService access$0(org.cowboycoders.cyclisimo.services.TrackRecordingService$2) -> a
+    222:222:void onProviderDisabled(java.lang.String) -> onProviderDisabled
+    227:227:void onProviderEnabled(java.lang.String) -> onProviderEnabled
+    232:232:void onStatusChanged(java.lang.String,int,android.os.Bundle) -> onStatusChanged
+    236:247:void onLocationChanged(android.location.Location) -> onLocationChanged
+    218:218:org.cowboycoders.cyclisimo.services.TrackRecordingService access$0(org.cowboycoders.cyclisimo.services.TrackRecordingService$2) -> a
 org.cowboycoders.cyclisimo.services.TrackRecordingService$2$1 -> org.cowboycoders.cyclisimo.services.l:
     org.cowboycoders.cyclisimo.services.TrackRecordingService$2 this$1 -> a
     android.location.Location val$location -> b
-    245:246:void run() -> run
+    244:245:void run() -> run
 org.cowboycoders.cyclisimo.services.TrackRecordingService$3 -> org.cowboycoders.cyclisimo.services.m:
     org.cowboycoders.cyclisimo.services.TrackRecordingService this$0 -> a
-    254:261:void run() -> run
-    251:251:org.cowboycoders.cyclisimo.services.TrackRecordingService access$0(org.cowboycoders.cyclisimo.services.TrackRecordingService$3) -> a
+    253:260:void run() -> run
+    250:250:org.cowboycoders.cyclisimo.services.TrackRecordingService access$0(org.cowboycoders.cyclisimo.services.TrackRecordingService$3) -> a
 org.cowboycoders.cyclisimo.services.TrackRecordingService$3$1 -> org.cowboycoders.cyclisimo.services.n:
     org.cowboycoders.cyclisimo.services.TrackRecordingService$3 this$1 -> a
-    257:258:void run() -> run
+    256:257:void run() -> run
 org.cowboycoders.cyclisimo.services.TrackRecordingService$ServiceBinder -> org.cowboycoders.cyclisimo.services.o:
     org.cowboycoders.cyclisimo.services.TrackRecordingService trackRecordingService -> a
     android.os.IBinder$DeathRecipient deathRecipient -> b
-    1072:1072:boolean isBinderAlive() -> isBinderAlive
-    1077:1077:boolean pingBinder() -> pingBinder
-    1082:1083:void linkToDeath(android.os.IBinder$DeathRecipient,int) -> linkToDeath
-    1087:1091:boolean unlinkToDeath(android.os.IBinder$DeathRecipient,int) -> unlinkToDeath
-    1096:1099:long startNewTrack() -> a
-    1104:1108:void pauseCurrentTrack() -> b
-    1112:1116:void resumeCurrentTrack() -> c
-    1120:1124:void endCurrentTrack() -> d
-    1128:1131:boolean isRecording() -> e
-    1136:1139:boolean isPaused() -> f
-    1144:1147:long getRecordingTrackId() -> g
-    1152:1162:long getTotalTime() -> h
-    1167:1170:long insertWaypoint(org.cowboycoders.cyclisimo.content.WaypointCreationRequest) -> a
-    1175:1179:void insertTrackPoint(android.location.Location) -> a
-    1183:1194:byte[] getSensorData() -> i
-    1199:1206:int getSensorState() -> j
-    1216:1222:boolean canAccess() -> k
-    1231:1231:void access$0(org.cowboycoders.cyclisimo.services.TrackRecordingService$ServiceBinder) -> a
+    1071:1071:boolean isBinderAlive() -> isBinderAlive
+    1076:1076:boolean pingBinder() -> pingBinder
+    1081:1082:void linkToDeath(android.os.IBinder$DeathRecipient,int) -> linkToDeath
+    1086:1090:boolean unlinkToDeath(android.os.IBinder$DeathRecipient,int) -> unlinkToDeath
+    1095:1098:long startNewTrack() -> a
+    1103:1107:void pauseCurrentTrack() -> b
+    1111:1115:void resumeCurrentTrack() -> c
+    1119:1123:void endCurrentTrack() -> d
+    1127:1130:boolean isRecording() -> e
+    1135:1138:boolean isPaused() -> f
+    1143:1146:long getRecordingTrackId() -> g
+    1151:1161:long getTotalTime() -> h
+    1166:1169:long insertWaypoint(org.cowboycoders.cyclisimo.content.WaypointCreationRequest) -> a
+    1174:1178:void insertTrackPoint(android.location.Location) -> a
+    1182:1193:byte[] getSensorData() -> i
+    1198:1205:int getSensorState() -> j
+    1215:1221:boolean canAccess() -> k
+    1230:1230:void access$0(org.cowboycoders.cyclisimo.services.TrackRecordingService$ServiceBinder) -> a
 org.cowboycoders.cyclisimo.services.TrackRecordingServiceConnection -> org.cowboycoders.cyclisimo.services.p:
     java.lang.String TAG -> a
     android.os.IBinder$DeathRecipient deathRecipient -> b
@@ -8204,6 +8042,17 @@ org.cowboycoders.cyclisimo.settings.AbstractSettingsFragment$UpdateSummaryCaller
     int summaryId -> d
     org.cowboycoders.cyclisimo.util.PreferencesUtils$SettingsSelectionSummarizer summarizer -> e
     org.cowboycoders.cyclisimo.settings.AbstractSettingsFragment this$0 -> f
+org.cowboycoders.cyclisimo.settings.AntSettingsActivity -> org.cowboycoders.cyclisimo.settings.AntSettingsActivity:
+    android.preference.CheckBoxPreference antLoggingCheckBoxPreference -> a
+    43:63:void onCreate(android.os.Bundle) -> onCreate
+    67:70:android.app.Dialog onCreateDialog(int) -> onCreateDialog
+    38:38:android.preference.CheckBoxPreference access$0(org.cowboycoders.cyclisimo.settings.AntSettingsActivity) -> a
+org.cowboycoders.cyclisimo.settings.AntSettingsActivity$1 -> org.cowboycoders.cyclisimo.settings.d:
+    org.cowboycoders.cyclisimo.settings.AntSettingsActivity this$0 -> a
+    55:59:boolean onPreferenceChange(android.preference.Preference,java.lang.Object) -> onPreferenceChange
+org.cowboycoders.cyclisimo.settings.AntSettingsActivity$2 -> org.cowboycoders.cyclisimo.settings.e:
+    org.cowboycoders.cyclisimo.settings.AntSettingsActivity this$0 -> a
+    75:76:void onClick(android.content.DialogInterface,int) -> onClick
 org.cowboycoders.cyclisimo.settings.BackupSettingsActivity -> org.cowboycoders.cyclisimo.settings.BackupSettingsActivity:
     android.content.SharedPreferences sharedPreferences -> a
     android.preference.Preference backupPreference -> b
@@ -8218,20 +8067,20 @@ org.cowboycoders.cyclisimo.settings.BackupSettingsActivity -> org.cowboycoders.c
     142:149:void updateUi() -> a
     51:51:void access$0(org.cowboycoders.cyclisimo.settings.BackupSettingsActivity,long) -> a
     141:141:void access$1(org.cowboycoders.cyclisimo.settings.BackupSettingsActivity) -> a
-org.cowboycoders.cyclisimo.settings.BackupSettingsActivity$1 -> org.cowboycoders.cyclisimo.settings.d:
+org.cowboycoders.cyclisimo.settings.BackupSettingsActivity$1 -> org.cowboycoders.cyclisimo.settings.f:
     org.cowboycoders.cyclisimo.settings.BackupSettingsActivity this$0 -> a
     61:74:void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
     58:58:org.cowboycoders.cyclisimo.settings.BackupSettingsActivity access$0(org.cowboycoders.cyclisimo.settings.BackupSettingsActivity$1) -> a
-org.cowboycoders.cyclisimo.settings.BackupSettingsActivity$1$1 -> org.cowboycoders.cyclisimo.settings.e:
+org.cowboycoders.cyclisimo.settings.BackupSettingsActivity$1$1 -> org.cowboycoders.cyclisimo.settings.g:
     org.cowboycoders.cyclisimo.settings.BackupSettingsActivity$1 this$1 -> a
     70:71:void run() -> run
-org.cowboycoders.cyclisimo.settings.BackupSettingsActivity$2 -> org.cowboycoders.cyclisimo.settings.f:
+org.cowboycoders.cyclisimo.settings.BackupSettingsActivity$2 -> org.cowboycoders.cyclisimo.settings.h:
     org.cowboycoders.cyclisimo.settings.BackupSettingsActivity this$0 -> a
     88:90:boolean onPreferenceClick(android.preference.Preference) -> onPreferenceClick
-org.cowboycoders.cyclisimo.settings.BackupSettingsActivity$3 -> org.cowboycoders.cyclisimo.settings.g:
+org.cowboycoders.cyclisimo.settings.BackupSettingsActivity$3 -> org.cowboycoders.cyclisimo.settings.i:
     org.cowboycoders.cyclisimo.settings.BackupSettingsActivity this$0 -> a
     97:98:boolean onPreferenceClick(android.preference.Preference) -> onPreferenceClick
-org.cowboycoders.cyclisimo.settings.BackupSettingsActivity$4 -> org.cowboycoders.cyclisimo.settings.h:
+org.cowboycoders.cyclisimo.settings.BackupSettingsActivity$4 -> org.cowboycoders.cyclisimo.settings.j:
     org.cowboycoders.cyclisimo.settings.BackupSettingsActivity this$0 -> a
     113:115:void onClick(android.content.DialogInterface,int) -> onClick
 org.cowboycoders.cyclisimo.settings.ChartSettingsActivity -> org.cowboycoders.cyclisimo.settings.ChartSettingsActivity:
@@ -8240,7 +8089,7 @@ org.cowboycoders.cyclisimo.settings.ChartSettingsActivity -> org.cowboycoders.cy
 org.cowboycoders.cyclisimo.settings.CourseSetupActivity -> org.cowboycoders.cyclisimo.settings.CourseSetupActivity:
     java.lang.String TAG -> a
     42:66:void onCreate(android.os.Bundle) -> onCreate
-org.cowboycoders.cyclisimo.settings.CourseSetupActivity$1 -> org.cowboycoders.cyclisimo.settings.i:
+org.cowboycoders.cyclisimo.settings.CourseSetupActivity$1 -> org.cowboycoders.cyclisimo.settings.k:
     org.cowboycoders.cyclisimo.settings.CourseSetupActivity this$0 -> a
     49:49:boolean onPreferenceChange(android.preference.Preference,java.lang.Object) -> onPreferenceChange
 org.cowboycoders.cyclisimo.settings.MapSettingsActivity -> org.cowboycoders.cyclisimo.settings.MapSettingsActivity:
@@ -8261,24 +8110,24 @@ org.cowboycoders.cyclisimo.settings.MapSettingsActivity -> org.cowboycoders.cycl
     240:240:int access$3(org.cowboycoders.cyclisimo.settings.MapSettingsActivity,int) -> b
     43:43:java.lang.String access$4() -> a
     270:270:void access$5(org.cowboycoders.cyclisimo.settings.MapSettingsActivity) -> a
-org.cowboycoders.cyclisimo.settings.MapSettingsActivity$1 -> org.cowboycoders.cyclisimo.settings.j:
+org.cowboycoders.cyclisimo.settings.MapSettingsActivity$1 -> org.cowboycoders.cyclisimo.settings.l:
     org.cowboycoders.cyclisimo.settings.MapSettingsActivity this$0 -> a
     67:68:boolean onPreferenceChange(android.preference.Preference,java.lang.Object) -> onPreferenceChange
-org.cowboycoders.cyclisimo.settings.MapSettingsActivity$2 -> org.cowboycoders.cyclisimo.settings.k:
+org.cowboycoders.cyclisimo.settings.MapSettingsActivity$2 -> org.cowboycoders.cyclisimo.settings.m:
     org.cowboycoders.cyclisimo.settings.MapSettingsActivity this$0 -> a
     int val$keyId -> b
     96:98:boolean onPreferenceChange(android.preference.Preference,java.lang.Object) -> onPreferenceChange
-org.cowboycoders.cyclisimo.settings.MapSettingsActivity$3 -> org.cowboycoders.cyclisimo.settings.l:
+org.cowboycoders.cyclisimo.settings.MapSettingsActivity$3 -> org.cowboycoders.cyclisimo.settings.n:
     org.cowboycoders.cyclisimo.settings.MapSettingsActivity this$0 -> a
     int val$keyId -> b
     104:106:boolean onPreferenceClick(android.preference.Preference) -> onPreferenceClick
-org.cowboycoders.cyclisimo.settings.MapSettingsActivity$4 -> org.cowboycoders.cyclisimo.settings.m:
+org.cowboycoders.cyclisimo.settings.MapSettingsActivity$4 -> org.cowboycoders.cyclisimo.settings.o:
     org.cowboycoders.cyclisimo.settings.MapSettingsActivity this$0 -> a
     119:133:boolean onPreferenceChange(android.preference.Preference,java.lang.Object) -> onPreferenceChange
-org.cowboycoders.cyclisimo.settings.MapSettingsActivity$5 -> org.cowboycoders.cyclisimo.settings.n:
+org.cowboycoders.cyclisimo.settings.MapSettingsActivity$5 -> org.cowboycoders.cyclisimo.settings.p:
     org.cowboycoders.cyclisimo.settings.MapSettingsActivity this$0 -> a
     140:143:boolean onPreferenceClick(android.preference.Preference) -> onPreferenceClick
-org.cowboycoders.cyclisimo.settings.MapSettingsActivity$6 -> org.cowboycoders.cyclisimo.settings.o:
+org.cowboycoders.cyclisimo.settings.MapSettingsActivity$6 -> org.cowboycoders.cyclisimo.settings.q:
     org.cowboycoders.cyclisimo.settings.MapSettingsActivity this$0 -> a
     android.preference.EditTextPreference val$editTextPreference -> b
     159:165:boolean onEditorAction(android.widget.TextView,int,android.view.KeyEvent) -> onEditorAction
@@ -8289,13 +8138,13 @@ org.cowboycoders.cyclisimo.settings.SensorSettingsActivity -> org.cowboycoders.c
     119:137:void updateAntSensor(int,int,boolean) -> a
     141:143:void onResume() -> onResume
     94:94:void access$0(org.cowboycoders.cyclisimo.settings.SensorSettingsActivity,java.lang.String) -> a
-org.cowboycoders.cyclisimo.settings.SensorSettingsActivity$1 -> org.cowboycoders.cyclisimo.settings.p:
+org.cowboycoders.cyclisimo.settings.SensorSettingsActivity$1 -> org.cowboycoders.cyclisimo.settings.r:
     org.cowboycoders.cyclisimo.settings.SensorSettingsActivity this$0 -> a
     64:65:boolean onPreferenceChange(android.preference.Preference,java.lang.Object) -> onPreferenceChange
-org.cowboycoders.cyclisimo.settings.SensorSettingsActivity$2 -> org.cowboycoders.cyclisimo.settings.q:
+org.cowboycoders.cyclisimo.settings.SensorSettingsActivity$2 -> org.cowboycoders.cyclisimo.settings.s:
     org.cowboycoders.cyclisimo.settings.SensorSettingsActivity this$0 -> a
     74:76:boolean onPreferenceClick(android.preference.Preference) -> onPreferenceClick
-org.cowboycoders.cyclisimo.settings.SensorSettingsActivity$3 -> org.cowboycoders.cyclisimo.settings.r:
+org.cowboycoders.cyclisimo.settings.SensorSettingsActivity$3 -> org.cowboycoders.cyclisimo.settings.t:
     org.cowboycoders.cyclisimo.settings.SensorSettingsActivity this$0 -> a
     int val$valueKey -> b
     131:133:boolean onPreferenceClick(android.preference.Preference) -> onPreferenceClick
@@ -8303,60 +8152,63 @@ org.cowboycoders.cyclisimo.settings.SettingsActivity -> org.cowboycoders.cyclisi
     java.lang.String TAG -> a
     android.preference.ListPreference googleAccountListPreference -> b
     android.preference.Preference resetPreference -> c
-    61:166:void onCreate(android.os.Bundle) -> onCreate
-    170:176:void onResume() -> onResume
-    184:187:void updateSwitchAccountSummary(java.lang.String) -> a
-    191:194:android.app.Dialog onCreateDialog(int) -> onCreateDialog
-    183:183:void access$0(org.cowboycoders.cyclisimo.settings.SettingsActivity,java.lang.String) -> a
-    206:206:void access$1(org.cowboycoders.cyclisimo.settings.SettingsActivity) -> a
-    52:52:java.lang.String access$2() -> a
-org.cowboycoders.cyclisimo.settings.SettingsActivity$1 -> org.cowboycoders.cyclisimo.settings.s:
+    60:175:void onCreate(android.os.Bundle) -> onCreate
+    179:185:void onResume() -> onResume
+    193:196:void updateSwitchAccountSummary(java.lang.String) -> a
+    200:203:android.app.Dialog onCreateDialog(int) -> onCreateDialog
+    192:192:void access$0(org.cowboycoders.cyclisimo.settings.SettingsActivity,java.lang.String) -> a
+    215:215:void access$1(org.cowboycoders.cyclisimo.settings.SettingsActivity) -> a
+    51:51:java.lang.String access$2() -> a
+org.cowboycoders.cyclisimo.settings.SettingsActivity$1 -> org.cowboycoders.cyclisimo.settings.u:
     org.cowboycoders.cyclisimo.settings.SettingsActivity this$0 -> a
-    68:70:boolean onPreferenceClick(android.preference.Preference) -> onPreferenceClick
-org.cowboycoders.cyclisimo.settings.SettingsActivity$10 -> org.cowboycoders.cyclisimo.settings.t:
+    67:69:boolean onPreferenceClick(android.preference.Preference) -> onPreferenceClick
+org.cowboycoders.cyclisimo.settings.SettingsActivity$10 -> org.cowboycoders.cyclisimo.settings.v:
     org.cowboycoders.cyclisimo.settings.SettingsActivity this$0 -> a
-    198:199:void onClick(android.content.DialogInterface,int) -> onClick
-org.cowboycoders.cyclisimo.settings.SettingsActivity$11 -> org.cowboycoders.cyclisimo.settings.u:
+    171:172:boolean onPreferenceClick(android.preference.Preference) -> onPreferenceClick
+org.cowboycoders.cyclisimo.settings.SettingsActivity$11 -> org.cowboycoders.cyclisimo.settings.w:
     org.cowboycoders.cyclisimo.settings.SettingsActivity this$0 -> a
-    211:229:void run() -> run
-    208:208:org.cowboycoders.cyclisimo.settings.SettingsActivity access$0(org.cowboycoders.cyclisimo.settings.SettingsActivity$11) -> a
-org.cowboycoders.cyclisimo.settings.SettingsActivity$11$1 -> org.cowboycoders.cyclisimo.settings.v:
-    org.cowboycoders.cyclisimo.settings.SettingsActivity$11 this$1 -> a
-    221:227:void run() -> run
-org.cowboycoders.cyclisimo.settings.SettingsActivity$2 -> org.cowboycoders.cyclisimo.settings.w:
+    207:208:void onClick(android.content.DialogInterface,int) -> onClick
+org.cowboycoders.cyclisimo.settings.SettingsActivity$12 -> org.cowboycoders.cyclisimo.settings.x:
     org.cowboycoders.cyclisimo.settings.SettingsActivity this$0 -> a
-    78:80:boolean onPreferenceClick(android.preference.Preference) -> onPreferenceClick
-org.cowboycoders.cyclisimo.settings.SettingsActivity$3 -> org.cowboycoders.cyclisimo.settings.x:
+    220:238:void run() -> run
+    217:217:org.cowboycoders.cyclisimo.settings.SettingsActivity access$0(org.cowboycoders.cyclisimo.settings.SettingsActivity$12) -> a
+org.cowboycoders.cyclisimo.settings.SettingsActivity$12$1 -> org.cowboycoders.cyclisimo.settings.y:
+    org.cowboycoders.cyclisimo.settings.SettingsActivity$12 this$1 -> a
+    230:236:void run() -> run
+org.cowboycoders.cyclisimo.settings.SettingsActivity$2 -> org.cowboycoders.cyclisimo.settings.z:
     org.cowboycoders.cyclisimo.settings.SettingsActivity this$0 -> a
-    88:90:boolean onPreferenceClick(android.preference.Preference) -> onPreferenceClick
-org.cowboycoders.cyclisimo.settings.SettingsActivity$4 -> org.cowboycoders.cyclisimo.settings.y:
+    77:79:boolean onPreferenceClick(android.preference.Preference) -> onPreferenceClick
+org.cowboycoders.cyclisimo.settings.SettingsActivity$3 -> org.cowboycoders.cyclisimo.settings.aa:
     org.cowboycoders.cyclisimo.settings.SettingsActivity this$0 -> a
-    99:101:boolean onPreferenceClick(android.preference.Preference) -> onPreferenceClick
-org.cowboycoders.cyclisimo.settings.SettingsActivity$5 -> org.cowboycoders.cyclisimo.settings.z:
+    87:89:boolean onPreferenceClick(android.preference.Preference) -> onPreferenceClick
+org.cowboycoders.cyclisimo.settings.SettingsActivity$4 -> org.cowboycoders.cyclisimo.settings.ab:
     org.cowboycoders.cyclisimo.settings.SettingsActivity this$0 -> a
-    109:111:boolean onPreferenceClick(android.preference.Preference) -> onPreferenceClick
-org.cowboycoders.cyclisimo.settings.SettingsActivity$6 -> org.cowboycoders.cyclisimo.settings.aa:
+    98:100:boolean onPreferenceClick(android.preference.Preference) -> onPreferenceClick
+org.cowboycoders.cyclisimo.settings.SettingsActivity$5 -> org.cowboycoders.cyclisimo.settings.ac:
     org.cowboycoders.cyclisimo.settings.SettingsActivity this$0 -> a
-    119:121:boolean onPreferenceClick(android.preference.Preference) -> onPreferenceClick
-org.cowboycoders.cyclisimo.settings.SettingsActivity$7 -> org.cowboycoders.cyclisimo.settings.ab:
+    108:110:boolean onPreferenceClick(android.preference.Preference) -> onPreferenceClick
+org.cowboycoders.cyclisimo.settings.SettingsActivity$6 -> org.cowboycoders.cyclisimo.settings.ad:
     org.cowboycoders.cyclisimo.settings.SettingsActivity this$0 -> a
-    129:131:boolean onPreferenceClick(android.preference.Preference) -> onPreferenceClick
-org.cowboycoders.cyclisimo.settings.SettingsActivity$8 -> org.cowboycoders.cyclisimo.settings.ac:
+    118:120:boolean onPreferenceClick(android.preference.Preference) -> onPreferenceClick
+org.cowboycoders.cyclisimo.settings.SettingsActivity$7 -> org.cowboycoders.cyclisimo.settings.ae:
     org.cowboycoders.cyclisimo.settings.SettingsActivity this$0 -> a
-    153:154:boolean onPreferenceChange(android.preference.Preference,java.lang.Object) -> onPreferenceChange
-org.cowboycoders.cyclisimo.settings.SettingsActivity$9 -> org.cowboycoders.cyclisimo.settings.ad:
+    128:130:boolean onPreferenceClick(android.preference.Preference) -> onPreferenceClick
+org.cowboycoders.cyclisimo.settings.SettingsActivity$8 -> org.cowboycoders.cyclisimo.settings.af:
     org.cowboycoders.cyclisimo.settings.SettingsActivity this$0 -> a
-    162:163:boolean onPreferenceClick(android.preference.Preference) -> onPreferenceClick
+    138:140:boolean onPreferenceClick(android.preference.Preference) -> onPreferenceClick
+org.cowboycoders.cyclisimo.settings.SettingsActivity$9 -> org.cowboycoders.cyclisimo.settings.ag:
+    org.cowboycoders.cyclisimo.settings.SettingsActivity this$0 -> a
+    162:163:boolean onPreferenceChange(android.preference.Preference,java.lang.Object) -> onPreferenceChange
 org.cowboycoders.cyclisimo.settings.SharingSettingsActivity -> org.cowboycoders.cyclisimo.settings.SharingSettingsActivity:
     android.preference.CheckBoxPreference defaultMapPublicCheckBoxPreference -> a
     android.preference.CheckBoxPreference allowAccessCheckBoxPreference -> b
     45:70:void onCreate(android.os.Bundle) -> onCreate
     74:77:android.app.Dialog onCreateDialog(int) -> onCreateDialog
     40:40:android.preference.CheckBoxPreference access$0(org.cowboycoders.cyclisimo.settings.SharingSettingsActivity) -> a
-org.cowboycoders.cyclisimo.settings.SharingSettingsActivity$1 -> org.cowboycoders.cyclisimo.settings.ae:
+org.cowboycoders.cyclisimo.settings.SharingSettingsActivity$1 -> org.cowboycoders.cyclisimo.settings.ah:
     org.cowboycoders.cyclisimo.settings.SharingSettingsActivity this$0 -> a
     62:66:boolean onPreferenceChange(android.preference.Preference,java.lang.Object) -> onPreferenceChange
-org.cowboycoders.cyclisimo.settings.SharingSettingsActivity$2 -> org.cowboycoders.cyclisimo.settings.af:
+org.cowboycoders.cyclisimo.settings.SharingSettingsActivity$2 -> org.cowboycoders.cyclisimo.settings.ai:
     org.cowboycoders.cyclisimo.settings.SharingSettingsActivity this$0 -> a
     82:83:void onClick(android.content.DialogInterface,int) -> onClick
 org.cowboycoders.cyclisimo.settings.StatsSettingsActivity -> org.cowboycoders.cyclisimo.settings.StatsSettingsActivity:
@@ -8370,11 +8222,11 @@ org.cowboycoders.cyclisimo.settings.StatsSettingsActivity -> org.cowboycoders.cy
     93:101:void updateUi() -> a
     62:62:void access$0(org.cowboycoders.cyclisimo.settings.StatsSettingsActivity,boolean) -> a
     92:92:void access$1(org.cowboycoders.cyclisimo.settings.StatsSettingsActivity) -> a
-org.cowboycoders.cyclisimo.settings.StatsSettingsActivity$1 -> org.cowboycoders.cyclisimo.settings.ag:
+org.cowboycoders.cyclisimo.settings.StatsSettingsActivity$1 -> org.cowboycoders.cyclisimo.settings.aj:
     org.cowboycoders.cyclisimo.settings.StatsSettingsActivity this$0 -> a
     45:58:void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
     42:42:org.cowboycoders.cyclisimo.settings.StatsSettingsActivity access$0(org.cowboycoders.cyclisimo.settings.StatsSettingsActivity$1) -> a
-org.cowboycoders.cyclisimo.settings.StatsSettingsActivity$1$1 -> org.cowboycoders.cyclisimo.settings.ah:
+org.cowboycoders.cyclisimo.settings.StatsSettingsActivity$1$1 -> org.cowboycoders.cyclisimo.settings.ak:
     org.cowboycoders.cyclisimo.settings.StatsSettingsActivity$1 this$1 -> a
     54:55:void run() -> run
 org.cowboycoders.cyclisimo.stats.DoubleBuffer -> org.cowboycoders.cyclisimo.stats.a:
@@ -8469,17 +8321,17 @@ org.cowboycoders.cyclisimo.stats.TripStatistics$Creator -> org.cowboycoders.cycl
 org.cowboycoders.cyclisimo.stats.TripStatisticsUpdater -> org.cowboycoders.cyclisimo.stats.d:
     org.cowboycoders.cyclisimo.stats.TripStatistics tripStatistics -> c
     org.cowboycoders.cyclisimo.stats.TripStatistics currentSegment -> d
-    android.location.Location lastLocation -> e
-    android.location.Location lastMovingLocation -> f
-    org.cowboycoders.cyclisimo.stats.DoubleBuffer speedBuffer -> a
+    android.location.Location lastLocation -> a
+    android.location.Location lastMovingLocation -> e
+    org.cowboycoders.cyclisimo.stats.DoubleBuffer speedBuffer -> f
     org.cowboycoders.cyclisimo.stats.DoubleBuffer elevationBuffer -> b
     org.cowboycoders.cyclisimo.stats.DoubleBuffer distanceBuffer -> g
     org.cowboycoders.cyclisimo.stats.DoubleBuffer gradeBuffer -> h
-    77:79:void updateTime(long) -> a
-    86:88:org.cowboycoders.cyclisimo.stats.TripStatistics getTripStatistics() -> a
-    98:147:void addLocation(android.location.Location,int) -> a
-    155:155:double getSmoothedElevation() -> b
-    224:227:org.cowboycoders.cyclisimo.stats.TripStatistics init(long) -> b
+    76:78:void updateTime(long) -> a
+    85:87:org.cowboycoders.cyclisimo.stats.TripStatistics getTripStatistics() -> a
+    97:146:void addLocation(android.location.Location,int) -> a
+    154:154:double getSmoothedElevation() -> b
+    228:231:org.cowboycoders.cyclisimo.stats.TripStatistics init(long) -> b
 org.cowboycoders.cyclisimo.turbo.AntHubService -> org.cowboycoders.cyclisimo.turbo.AntHubService:
     org.cowboycoders.ant.Node node -> a
     org.cowboycoders.ant.interfaces.AndroidAntTransceiver transceiver -> b
@@ -8490,23 +8342,31 @@ org.cowboycoders.cyclisimo.turbo.AntHubService -> org.cowboycoders.cyclisimo.tur
     android.content.BroadcastReceiver receiver -> g
     java.lang.String ANT_KILL_ACTION -> h
     46:46:org.cowboycoders.ant.Node getNode() -> a
-    66:67:android.os.IBinder onBind(android.content.Intent) -> onBind
-    73:75:void onRebind(android.content.Intent) -> onRebind
-    80:84:boolean onUnbind(android.content.Intent) -> onUnbind
-    90:99:void onCreate() -> onCreate
-    109:114:int onStartCommand(android.content.Intent,int,int) -> onStartCommand
-    125:130:void onDestroy() -> onDestroy
-    156:160:void doFinish() -> b
-    145:145:java.lang.String access$0() -> c
-    60:60:int access$1(org.cowboycoders.cyclisimo.turbo.AntHubService) -> a
-    60:60:void access$2(org.cowboycoders.cyclisimo.turbo.AntHubService,int) -> a
+    53:53:org.cowboycoders.ant.interfaces.AndroidAntTransceiver getTransceiver() -> b
+    73:74:android.os.IBinder onBind(android.content.Intent) -> onBind
+    80:82:void onRebind(android.content.Intent) -> onRebind
+    87:91:boolean onUnbind(android.content.Intent) -> onUnbind
+    97:106:void onCreate() -> onCreate
+    116:121:int onStartCommand(android.content.Intent,int,int) -> onStartCommand
+    132:137:void onDestroy() -> onDestroy
+    163:167:void doFinish() -> c
+    152:152:java.lang.String access$0() -> d
+    67:67:int access$1(org.cowboycoders.cyclisimo.turbo.AntHubService) -> a
+    67:67:void access$2(org.cowboycoders.cyclisimo.turbo.AntHubService,int) -> a
 org.cowboycoders.cyclisimo.turbo.AntHubService$1 -> org.cowboycoders.cyclisimo.turbo.a:
     org.cowboycoders.cyclisimo.turbo.AntHubService this$0 -> a
-    135:141:void onReceive(android.content.Context,android.content.Intent) -> onReceive
+    142:148:void onReceive(android.content.Context,android.content.Intent) -> onReceive
 org.cowboycoders.cyclisimo.turbo.AntHubService$LocalBinder -> org.cowboycoders.cyclisimo.turbo.b:
     org.cowboycoders.cyclisimo.turbo.AntHubService this$0 -> a
-    55:55:org.cowboycoders.cyclisimo.turbo.AntHubService getService() -> a
-org.cowboycoders.cyclisimo.turbo.CourseLoader -> org.cowboycoders.cyclisimo.turbo.c:
+    62:62:org.cowboycoders.cyclisimo.turbo.AntHubService getService() -> a
+org.cowboycoders.cyclisimo.turbo.AntLoggerImpl -> org.cowboycoders.cyclisimo.turbo.c:
+    java.lang.String TAG -> a
+    java.lang.String fileName -> b
+    java.io.File directory -> c
+    java.io.File file -> d
+    boolean setupOk -> e
+    38:79:void log(org.cowboycoders.ant.AntLogger$LogDataContainer) -> a
+org.cowboycoders.cyclisimo.turbo.CourseLoader -> org.cowboycoders.cyclisimo.turbo.d:
     java.lang.String TAG -> a
     org.cowboycoders.cyclisimo.content.TrackDataHub courseDataHub -> b
     java.util.ArrayList latLongAlts -> c
@@ -8522,7 +8382,7 @@ org.cowboycoders.cyclisimo.turbo.CourseLoader -> org.cowboycoders.cyclisimo.turb
     27:27:long access$4(org.cowboycoders.cyclisimo.turbo.CourseLoader) -> d
     25:25:void access$5$572cdd49(org.cowboycoders.cyclisimo.turbo.CourseLoader) -> e
     23:23:org.cowboycoders.cyclisimo.content.TrackDataHub access$6(org.cowboycoders.cyclisimo.turbo.CourseLoader) -> f
-org.cowboycoders.cyclisimo.turbo.CourseLoader$1 -> org.cowboycoders.cyclisimo.turbo.d:
+org.cowboycoders.cyclisimo.turbo.CourseLoader$1 -> org.cowboycoders.cyclisimo.turbo.e:
     org.cowboycoders.cyclisimo.turbo.CourseLoader this$0 -> a
     50:50:void onLocationStateChanged(org.cowboycoders.cyclisimo.content.TrackDataListener$LocationState) -> a
     56:56:void onLocationChanged(android.location.Location) -> d
@@ -8540,80 +8400,92 @@ org.cowboycoders.cyclisimo.turbo.CourseLoader$1 -> org.cowboycoders.cyclisimo.tu
     152:152:boolean onReportSpeedChanged(boolean) -> a
     158:158:boolean onMinRecordingDistanceChanged(int) -> a
 org.cowboycoders.cyclisimo.turbo.TurboService -> org.cowboycoders.cyclisimo.turbo.TurboService:
-    android.os.Binder turboBinder -> g
+    android.os.Binder turboBinder -> h
     java.lang.String TAG -> a
     java.lang.String COURSE_TRACK_ID -> b
     double TARGET_TRACKPOINT_DISTANCE_METRES -> c
-    int GPS_ACCURACY -> h
-    java.util.List latLongAlts -> i
+    org.cowboycoders.cyclisimo.turbo.AntLoggerImpl antLogger -> d
+    int GPS_ACCURACY -> i
     boolean running -> j
-    double distanceBetweenPoints -> k
-    double lastSubmittedDistance -> l
-    int currentLatLongIndex -> m
-    java.lang.String WAKE_LOCK -> n
-    boolean mIsBound -> o
-    org.cowboycoders.ant.Node antNode -> p
-    int ONGOING_NOTIFICATION -> d
-    double lastRecordedSpeed -> e
-    bushido.TurboTrainerInterface turboTrainer -> q
-    bushido.TurboTrainerDataListener dataListener -> f
-    android.os.PowerManager$WakeLock wakeLock -> r
-    android.content.ServiceConnection mConnection -> s
-    org.cowboycoders.cyclisimo.services.TrackRecordingServiceConnection trackRecordingServiceConnection -> t
-    java.lang.Runnable bindChangedCallback -> u
-    android.content.BroadcastReceiver receiver -> v
-    java.lang.String TRACK_STOPPED_ACTION -> w
-    java.lang.String TRACK_PAUSED_ACTION -> x
-    142:152:void doFinish() -> a
-    167:168:int onStartCommand(android.content.Intent,int,int) -> onStartCommand
-    173:227:void start(long,android.content.Context) -> a
-    323:351:void updateLocation(org.cowboycoders.location.LatLongAlt) -> a
-    355:369:void onDestroy() -> onDestroy
-    373:401:boolean shutDownTurbo() -> d
-    414:414:android.os.IBinder onBind(android.content.Intent) -> onBind
-    422:428:void onCreate() -> onCreate
-    62:62:double access$0(org.cowboycoders.cyclisimo.turbo.TurboService) -> a
-    60:60:double access$1(org.cowboycoders.cyclisimo.turbo.TurboService) -> b
-    56:56:java.util.List access$2(org.cowboycoders.cyclisimo.turbo.TurboService) -> c
-    64:64:int access$3(org.cowboycoders.cyclisimo.turbo.TurboService) -> d
-    322:322:void access$4(org.cowboycoders.cyclisimo.turbo.TurboService,org.cowboycoders.location.LatLongAlt) -> a
-    62:62:void access$5(org.cowboycoders.cyclisimo.turbo.TurboService,double) -> a
-    77:77:bushido.TurboTrainerInterface access$6(org.cowboycoders.cyclisimo.turbo.TurboService) -> e
-    60:60:void access$7(org.cowboycoders.cyclisimo.turbo.TurboService,double) -> b
-    64:64:void access$8(org.cowboycoders.cyclisimo.turbo.TurboService,int) -> a
-    70:70:void access$9(org.cowboycoders.cyclisimo.turbo.TurboService,org.cowboycoders.ant.Node) -> a
-    70:70:org.cowboycoders.ant.Node access$10(org.cowboycoders.cyclisimo.turbo.TurboService) -> f
-    77:77:void access$11(org.cowboycoders.cyclisimo.turbo.TurboService,bushido.TurboTrainerInterface) -> a
-    455:455:java.lang.String access$12() -> b
-    456:456:java.lang.String access$13() -> c
-    372:372:boolean access$14(org.cowboycoders.cyclisimo.turbo.TurboService) -> g
-org.cowboycoders.cyclisimo.turbo.TurboService$1 -> org.cowboycoders.cyclisimo.turbo.e:
+    org.cowboycoders.ant.interfaces.AndroidAntTransceiver transceiver -> k
+    java.lang.String WAKE_LOCK -> l
+    boolean mIsBound -> m
+    boolean attachAntLogger -> n
+    org.cowboycoders.ant.Node antNode -> o
+    int ONGOING_NOTIFICATION -> e
+    double lastRecordedSpeed -> f
+    org.cowboycoders.turbotrainers.TurboTrainerInterface turboTrainer -> p
+    org.cowboycoders.turbotrainers.TurboTrainerDataListener dataListener -> g
+    android.os.PowerManager$WakeLock wakeLock -> q
+    org.cowboycoders.turbotrainers.CourseTracker courseTracker -> r
+    long recordingTrackId -> s
+    org.cowboycoders.cyclisimo.turbo.TurboService$ErrorProneCall startTurbo -> t
+    android.content.ServiceConnection mConnection -> u
+    org.cowboycoders.cyclisimo.services.TrackRecordingServiceConnection trackRecordingServiceConnection -> v
+    boolean networkProviderEnabled -> w
+    java.lang.Runnable bindChangedCallback -> x
+    android.content.BroadcastReceiver receiver -> y
+    java.lang.String TRACK_STOPPED_ACTION -> z
+    java.lang.String TRACK_PAUSED_ACTION -> A
+    203:211:void doFinish() -> a
+    226:227:int onStartCommand(android.content.Intent,int,int) -> onStartCommand
+    231:285:void start(long,android.content.Context) -> a
+    378:398:boolean enableLocationProvider(java.lang.String) -> a
+    413:427:void disableLocationProvider(java.lang.String) -> b
+    430:457:void updateLocation(org.cowboycoders.location.LatLongAlt) -> a
+    461:475:void onDestroy() -> onDestroy
+    479:506:boolean shutDownTurbo() -> d
+    518:518:android.os.IBinder onBind(android.content.Intent) -> onBind
+    527:532:void onCreate() -> onCreate
+    577:642:void handleException(java.lang.Exception,java.lang.String,boolean,int) -> a
+    197:197:org.cowboycoders.turbotrainers.CourseTracker access$0(org.cowboycoders.cyclisimo.turbo.TurboService) -> a
+    429:429:void access$1(org.cowboycoders.cyclisimo.turbo.TurboService,org.cowboycoders.location.LatLongAlt) -> a
+    97:97:org.cowboycoders.turbotrainers.TurboTrainerInterface access$2(org.cowboycoders.cyclisimo.turbo.TurboService) -> b
+    90:90:void access$3(org.cowboycoders.cyclisimo.turbo.TurboService,org.cowboycoders.ant.Node) -> a
+    88:88:boolean access$4(org.cowboycoders.cyclisimo.turbo.TurboService) -> c
+    90:90:org.cowboycoders.ant.Node access$5(org.cowboycoders.cyclisimo.turbo.TurboService) -> d
+    76:76:void access$6(org.cowboycoders.cyclisimo.turbo.TurboService,org.cowboycoders.ant.interfaces.AndroidAntTransceiver) -> a
+    97:97:void access$7(org.cowboycoders.cyclisimo.turbo.TurboService,org.cowboycoders.turbotrainers.TurboTrainerInterface) -> a
+    305:305:org.cowboycoders.cyclisimo.turbo.TurboService$ErrorProneCall access$8(org.cowboycoders.cyclisimo.turbo.TurboService) -> e
+    291:291:void access$9$4bba8cd3(org.cowboycoders.cyclisimo.turbo.TurboService$ErrorProneCall) -> a
+    576:576:void access$10$34e6b81d(org.cowboycoders.cyclisimo.turbo.TurboService,java.lang.Exception,java.lang.String) -> a
+    557:557:java.lang.String access$11() -> b
+    558:558:java.lang.String access$12() -> c
+    478:478:boolean access$13(org.cowboycoders.cyclisimo.turbo.TurboService) -> f
+org.cowboycoders.cyclisimo.turbo.TurboService$1 -> org.cowboycoders.cyclisimo.turbo.f:
+    boolean updating -> a
+    java.util.concurrent.locks.Lock updatingLock -> b
+    org.cowboycoders.cyclisimo.turbo.TurboService this$0 -> c
+    109:132:void onSpeedChange(double) -> a
+    136:139:void onPowerChange(double) -> b
+    143:147:void onCadenceChange(double) -> c
+    155:182:void onDistanceChange(double) -> d
+    186:191:void onHeartRateChange(double) -> e
+org.cowboycoders.cyclisimo.turbo.TurboService$2 -> org.cowboycoders.cyclisimo.turbo.g:
     org.cowboycoders.cyclisimo.turbo.TurboService this$0 -> a
-    83:87:void onSpeedChange(double) -> a
-    91:94:void onPowerChange(double) -> b
-    98:102:void onCadenceChange(double) -> c
-    106:125:void onDistanceChange(double) -> d
-    129:134:void onHeartRateChange(double) -> e
-org.cowboycoders.cyclisimo.turbo.TurboService$2 -> org.cowboycoders.cyclisimo.turbo.f:
-    org.cowboycoders.cyclisimo.turbo.TurboService this$0 -> a
-    233:257:void onServiceConnected(android.content.ComponentName,android.os.IBinder) -> onServiceConnected
-    260:262:void onServiceDisconnected(android.content.ComponentName) -> onServiceDisconnected
-    229:229:org.cowboycoders.cyclisimo.turbo.TurboService access$0(org.cowboycoders.cyclisimo.turbo.TurboService$2) -> a
-org.cowboycoders.cyclisimo.turbo.TurboService$2$1 -> org.cowboycoders.cyclisimo.turbo.g:
-    org.cowboycoders.cyclisimo.turbo.TurboService$2 this$1 -> a
-    242:248:void run() -> run
+    309:310:void call() -> a
 org.cowboycoders.cyclisimo.turbo.TurboService$3 -> org.cowboycoders.cyclisimo.turbo.h:
     org.cowboycoders.cyclisimo.turbo.TurboService this$0 -> a
-    436:436:void run() -> run
-org.cowboycoders.cyclisimo.turbo.TurboService$4 -> org.cowboycoders.cyclisimo.turbo.i:
+    319:353:void onServiceConnected(android.content.ComponentName,android.os.IBinder) -> onServiceConnected
+    356:358:void onServiceDisconnected(android.content.ComponentName) -> onServiceDisconnected
+    316:316:org.cowboycoders.cyclisimo.turbo.TurboService access$0(org.cowboycoders.cyclisimo.turbo.TurboService$3) -> a
+org.cowboycoders.cyclisimo.turbo.TurboService$3$1 -> org.cowboycoders.cyclisimo.turbo.i:
+    org.cowboycoders.cyclisimo.turbo.TurboService$3 this$1 -> a
+    332:349:void run() -> run
+org.cowboycoders.cyclisimo.turbo.TurboService$4 -> org.cowboycoders.cyclisimo.turbo.j:
     org.cowboycoders.cyclisimo.turbo.TurboService this$0 -> a
-    444:451:void onReceive(android.content.Context,android.content.Intent) -> onReceive
-org.cowboycoders.cyclisimo.turbo.TurboService$5 -> org.cowboycoders.cyclisimo.turbo.j:
+    540:540:void run() -> run
+org.cowboycoders.cyclisimo.turbo.TurboService$5 -> org.cowboycoders.cyclisimo.turbo.k:
     org.cowboycoders.cyclisimo.turbo.TurboService this$0 -> a
-    361:362:void run() -> run
-org.cowboycoders.cyclisimo.turbo.TurboService$TurboBinder -> org.cowboycoders.cyclisimo.turbo.k:
+    548:554:void onReceive(android.content.Context,android.content.Intent) -> onReceive
+org.cowboycoders.cyclisimo.turbo.TurboService$6 -> org.cowboycoders.cyclisimo.turbo.l:
     org.cowboycoders.cyclisimo.turbo.TurboService this$0 -> a
-    407:407:org.cowboycoders.cyclisimo.turbo.TurboService getService() -> a
+    467:468:void run() -> run
+org.cowboycoders.cyclisimo.turbo.TurboService$ErrorProneCall -> org.cowboycoders.cyclisimo.turbo.m:
+    void call() -> a
+org.cowboycoders.cyclisimo.turbo.TurboService$TurboBinder -> org.cowboycoders.cyclisimo.turbo.n:
+    org.cowboycoders.cyclisimo.turbo.TurboService this$0 -> a
+    512:512:org.cowboycoders.cyclisimo.turbo.TurboService getService() -> a
 org.cowboycoders.cyclisimo.util.Api10Adapter -> org.cowboycoders.cyclisimo.b.a:
 org.cowboycoders.cyclisimo.util.Api11Adapter -> org.cowboycoders.cyclisimo.b.b:
     51:51:void hideTitle(android.app.Activity) -> a
@@ -8828,3 +8700,255 @@ org.cowboycoders.location.LocationUtils -> org.cowboycoders.b.c:
     70:78:java.util.List interpolatePoints(java.util.List,double) -> a
     88:100:java.util.List interpolateBetweenPoints(org.cowboycoders.location.LatLongAlt,org.cowboycoders.location.LatLongAlt,double) -> a
     110:112:double getLocalisedGradient(org.cowboycoders.location.LatLongAlt,org.cowboycoders.location.LatLongAlt) -> a
+org.cowboycoders.turbotrainers.AntTurboTrainer -> org.cowboycoders.c.a:
+    org.cowboycoders.ant.Node node -> a
+org.cowboycoders.turbotrainers.ChannelMessageSender -> org.cowboycoders.c.b:
+    void sendMessage(org.cowboycoders.ant.messages.ChannelMessage,java.lang.Runnable) -> a
+org.cowboycoders.turbotrainers.CourseTracker -> org.cowboycoders.c.c:
+    java.util.Map distanceLocationMap -> b
+    java.lang.Double[] distanceMarkers -> c
+    int lastKnownDistanceMarkerIndex -> d
+    boolean $assertionsDisabled -> a
+    39:52:org.cowboycoders.location.LatLongAlt getNearestLocation(double) -> a
+    56:59:boolean hasFinished() -> a
+    63:68:double getCurrentGradient() -> b
+org.cowboycoders.turbotrainers.DataPacketProvider -> org.cowboycoders.c.d:
+    byte[] getDataPacket() -> a
+org.cowboycoders.turbotrainers.TooFewAntChannelsAvailableException -> org.cowboycoders.c.e:
+    long serialVersionUID -> serialVersionUID
+org.cowboycoders.turbotrainers.TurboCommunicationException -> org.cowboycoders.c.f:
+    long serialVersionUID -> serialVersionUID
+org.cowboycoders.turbotrainers.TurboTrainerDataListener -> org.cowboycoders.c.g:
+    void onSpeedChange(double) -> a
+    void onPowerChange(double) -> b
+    void onCadenceChange(double) -> c
+    void onDistanceChange(double) -> d
+    void onHeartRateChange(double) -> e
+org.cowboycoders.turbotrainers.TurboTrainerInterface -> org.cowboycoders.c.h:
+    void registerDataListener(org.cowboycoders.turbotrainers.TurboTrainerDataListener) -> a
+    void unregisterDataListener(org.cowboycoders.turbotrainers.TurboTrainerDataListener) -> b
+    void setSlope(double) -> a
+    void start() -> a
+    void stop() -> b
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoBroadcastDataListener -> org.cowboycoders.c.a.a.a:
+    java.lang.Byte[] data -> a
+    double speed -> b
+    double power -> c
+    double cadence -> d
+    double distance -> e
+    double heartRate -> f
+    java.lang.Byte[] PARTIAL_PACKET_PAUSED -> g
+    java.lang.Byte[] PARTIAL_PACKET_REQUEST_DATA -> h
+    java.lang.Byte[] PARTIAL_PACKET_DATA -> i
+    java.lang.Byte[] PARTIAL_PACKET_SPEED_POWER_CADENCE -> j
+    java.lang.Byte[] PARTIAL_PACKET_DISTANCE_HEART_RATE -> k
+    java.lang.Byte[] PARTIAL_PACKET_REQUEST_STATUS -> l
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoInternalListener bushidoListener -> m
+    1:1:void receiveMessage(java.lang.Object) -> a
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor -> org.cowboycoders.c.a.a.b:
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Button button -> a
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Duration duration -> b
+    long recievedTimestamp -> c
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Button -> org.cowboycoders.c.a.a.c:
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Button LEFT -> a
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Button UP -> b
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Button OK -> c
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Button DOWN -> d
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Button RIGHT -> e
+    int id -> g
+    java.util.Map map -> h
+    int ID_MASK -> f
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Button[] ENUM$VALUES -> i
+    51:51:org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Button fromByte(byte) -> a
+    1:1:org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Button[] values() -> values
+    1:1:org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Button valueOf(java.lang.String) -> valueOf
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Duration -> org.cowboycoders.c.a.a.d:
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Duration SHORT -> a
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Duration MEDIUM -> b
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Duration LONG -> c
+    int mask -> e
+    int DURATION_MASK -> d
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Duration[] ENUM$VALUES -> f
+    81:87:org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Duration fromByte(byte) -> a
+    1:1:org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Duration[] values() -> values
+    1:1:org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Duration valueOf(java.lang.String) -> valueOf
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressListener -> org.cowboycoders.c.a.a.e:
+    void onButtonPressFinished(org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor) -> a
+    void onButtonPressActive(org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor) -> b
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoData -> org.cowboycoders.c.a.a.f:
+    double speed -> a
+    double cadence -> b
+    double distance -> c
+    double heartRate -> d
+    double slope -> e
+    double power -> f
+    org.cowboycoders.utils.TrapezoidIntegral integralSpeed -> g
+    java.util.List packetProviders -> k
+    java.util.Iterator packetProvidersIterator -> h
+    org.cowboycoders.turbotrainers.DataPacketProvider slopeProvider -> i
+    org.cowboycoders.turbotrainers.DataPacketProvider keepAliveProvider -> j
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoData$1 -> org.cowboycoders.c.a.a.g:
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoData this$0 -> a
+    42:44:byte[] getDataPacket() -> a
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoData$2 -> org.cowboycoders.c.a.a.h:
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoData this$0 -> a
+    56:56:byte[] getDataPacket() -> a
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit -> org.cowboycoders.c.a.a.i:
+    java.util.logging.Logger LOGGER -> a
+    long TIMEOUT_DISTANCE_UPDATED -> h
+    byte[] PACKET_ALIVE -> b
+    byte[] PACKET_RESET_ODOMETER -> c
+    byte[] PACKET_DISCONNECT -> d
+    byte[] PACKET_INIT_CONNECTION -> e
+    byte[] PACKET_START_CYLING -> f
+    long RESET_ODOMETER_TIMEOUT -> i
+    java.lang.Byte[] PARTIAL_PACKET_CONNECTION_SUCCESSFUL -> j
+    java.lang.Byte[] PARTIAL_PACKET_NO_CONNECTION -> k
+    org.cowboycoders.ant.events.MessageCondition CONDITION_CHANNEL_TX -> l
+    java.util.ArrayList listeners -> m
+    org.cowboycoders.ant.Node node -> n
+    org.cowboycoders.ant.NetworkKey key -> o
+    org.cowboycoders.ant.Channel channel -> p
+    java.util.concurrent.ExecutorService channelExecutorService -> q
+    org.cowboycoders.turbotrainers.ChannelMessageSender channelMessageSender -> r
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoData model -> s
+    java.util.concurrent.locks.Lock responseLock -> t
+    java.util.Set dataChangeListeners -> u
+    java.util.Set buttonPressListeners -> v
+    boolean distanceUpdated -> g
+    java.util.concurrent.locks.Lock requestPauseLock -> w
+    boolean requestPauseInProgess -> x
+    java.util.concurrent.locks.Lock requestDataLock -> y
+    boolean requestDataInProgess -> z
+    java.lang.Runnable requestPauseCallback -> A
+    java.lang.Runnable requestDataCallback -> B
+    boolean respond -> C
+    314:316:org.cowboycoders.ant.messages.data.BroadcastDataMessage buildBroadcastMessage(byte[]) -> a
+    332:332:void registerDataListener(org.cowboycoders.turbotrainers.TurboTrainerDataListener) -> a
+    344:344:void setSlope(double) -> a
+    392:392:void registerChannelRxListener(org.cowboycoders.ant.events.BroadcastListener,java.lang.Class) -> a
+    403:406:void start() -> a
+    529:548:org.cowboycoders.ant.messages.StandardMessage sendAndRetry$f4dc8f8(org.cowboycoders.ant.messages.ChannelMessage,org.cowboycoders.ant.events.MessageCondition,java.util.concurrent.TimeUnit) -> a
+    609:620:void stop() -> b
+    623:627:byte[] padToDataLength(int[]) -> a
+    632:632:void unregisterDataListener(org.cowboycoders.turbotrainers.TurboTrainerDataListener) -> b
+    96:96:java.util.concurrent.locks.Lock access$0(org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit) -> a
+    97:97:void access$1(org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit,boolean) -> a
+    98:98:java.util.concurrent.locks.Lock access$2(org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit) -> b
+    99:99:void access$3(org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit,boolean) -> b
+    99:99:boolean access$4(org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit) -> c
+    115:115:java.lang.Runnable access$5(org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit) -> d
+    86:86:java.util.Set access$6(org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit) -> e
+    97:97:boolean access$7(org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit) -> f
+    100:100:java.lang.Runnable access$8(org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit) -> g
+    91:91:java.util.Set access$9(org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit) -> h
+    72:72:java.util.concurrent.ExecutorService access$10(org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit) -> i
+    81:81:java.util.concurrent.locks.Lock access$11(org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit) -> j
+    131:131:boolean access$12(org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit) -> k
+    71:71:org.cowboycoders.ant.Channel access$13(org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit) -> l
+    63:63:org.cowboycoders.ant.events.MessageCondition access$14() -> c
+    59:59:java.lang.Byte[] access$15() -> d
+    61:61:java.lang.Byte[] access$16() -> e
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit$1 -> org.cowboycoders.c.a.a.j:
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit this$0 -> a
+    105:111:void run() -> run
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit$2 -> org.cowboycoders.c.a.a.k:
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit this$0 -> a
+    120:126:void run() -> run
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit$3 -> org.cowboycoders.c.a.a.l:
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit this$0 -> a
+    435:464:void sendMessage(org.cowboycoders.ant.messages.ChannelMessage,java.lang.Runnable) -> a
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit$3$1 -> org.cowboycoders.c.a.a.m:
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit$3 this$1 -> a
+    java.lang.Runnable val$callback -> b
+    org.cowboycoders.ant.messages.ChannelMessage val$msg -> c
+    441:462:void run() -> run
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit$4 -> org.cowboycoders.c.a.a.n:
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit this$0 -> a
+    499:502:boolean test(org.cowboycoders.ant.messages.StandardMessage) -> a
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit$5 -> org.cowboycoders.c.a.a.o:
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit this$0 -> a
+    517:520:boolean test(org.cowboycoders.ant.messages.StandardMessage) -> a
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit$BushidoUpdatesListener -> org.cowboycoders.c.a.a.p:
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoData data -> a
+    org.cowboycoders.turbotrainers.ChannelMessageSender channelSender -> c
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit this$0 -> b
+    153:166:void onRequestData() -> a
+    176:179:void onSpeedChange(double) -> a
+    193:196:void onPowerChange(double) -> b
+    210:213:void onCadenceChange(double) -> c
+    226:233:void onDistanceChange(double) -> d
+    248:251:void onHeartRateChange(double) -> e
+    265:274:void onRequestPauseStatus() -> b
+    280:280:void onButtonPressFinished(org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor) -> a
+    296:296:void onButtonPressActive(org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor) -> b
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit$BushidoUpdatesListener$1 -> org.cowboycoders.c.a.a.q:
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit$BushidoUpdatesListener this$1 -> a
+    double val$speed -> b
+    1:1:void performOperation(java.lang.Object) -> a
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit$BushidoUpdatesListener$2 -> org.cowboycoders.c.a.a.r:
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit$BushidoUpdatesListener this$1 -> a
+    double val$power -> b
+    1:1:void performOperation(java.lang.Object) -> a
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit$BushidoUpdatesListener$3 -> org.cowboycoders.c.a.a.s:
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit$BushidoUpdatesListener this$1 -> a
+    double val$cadence -> b
+    1:1:void performOperation(java.lang.Object) -> a
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit$BushidoUpdatesListener$4 -> org.cowboycoders.c.a.a.t:
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit$BushidoUpdatesListener this$1 -> a
+    1:1:void performOperation(java.lang.Object) -> a
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit$BushidoUpdatesListener$5 -> org.cowboycoders.c.a.a.u:
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit$BushidoUpdatesListener this$1 -> a
+    double val$heartRate -> b
+    1:1:void performOperation(java.lang.Object) -> a
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit$BushidoUpdatesListener$6 -> org.cowboycoders.c.a.a.v:
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit$BushidoUpdatesListener this$1 -> a
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor val$descriptor -> b
+    1:1:void performOperation(java.lang.Object) -> a
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit$BushidoUpdatesListener$7 -> org.cowboycoders.c.a.a.w:
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit$BushidoUpdatesListener this$1 -> a
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor val$descriptor -> b
+    1:1:void performOperation(java.lang.Object) -> a
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoInternalButtonPressListener -> org.cowboycoders.c.a.a.x:
+    java.lang.Byte[] data -> a
+    java.lang.Byte[] BUTTON_PRESS_SIGNATURE -> b
+    int BUTTON_PRESS_INDEX -> c
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoInternalListener bushidoListener -> d
+    java.util.Map dispatcherMap -> e
+    28:31:void initDispatcherMap() -> a
+    1:1:void receiveMessage(java.lang.Object) -> a
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoInternalListener -> org.cowboycoders.c.a.a.y:
+    void onRequestPauseStatus() -> b
+    void onRequestData() -> a
+org.cowboycoders.turbotrainers.bushido.headunit.ButtonPressDispatcher -> org.cowboycoders.c.a.a.z:
+    long TIMEOUT_NANO_SECONDS -> a
+    long INDEPENDENT_MESSAGE_CUTOFF_NANO_SECONDS -> b
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoInternalListener listener -> c
+    java.util.concurrent.locks.Lock lock -> d
+    java.util.concurrent.locks.Condition newPressCondition -> e
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor currentDescriptor -> f
+    org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor lastDescriptor -> g
+    java.util.concurrent.LinkedBlockingQueue oldDescriptors -> h
+    java.util.ArrayList descriptorDrain -> i
+    boolean newSubmit -> j
+    54:73:void submitButtonPress(org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor) -> a
+    39:39:java.util.concurrent.locks.Lock access$0(org.cowboycoders.turbotrainers.bushido.headunit.ButtonPressDispatcher) -> a
+    117:117:boolean access$1(org.cowboycoders.turbotrainers.bushido.headunit.ButtonPressDispatcher) -> b
+    153:153:void access$2(org.cowboycoders.turbotrainers.bushido.headunit.ButtonPressDispatcher) -> c
+org.cowboycoders.turbotrainers.bushido.headunit.ButtonPressDispatcher$1 -> org.cowboycoders.c.a.a.aa:
+    org.cowboycoders.turbotrainers.bushido.headunit.ButtonPressDispatcher this$0 -> a
+    140:148:void run() -> run
+org.cowboycoders.utils.IterationOperator -> org.cowboycoders.d.a:
+    void performOperation(java.lang.Object) -> a
+org.cowboycoders.utils.IterationUtils -> org.cowboycoders.d.b:
+    7:10:void operateOnAll(java.lang.Iterable,org.cowboycoders.utils.IterationOperator) -> a
+org.cowboycoders.utils.LoopingListIterator -> org.cowboycoders.d.c:
+    java.util.List list -> a
+    int currentIndex -> b
+    31:31:boolean hasNext() -> hasNext
+    36:36:java.lang.Object next() -> next
+    41:41:void remove() -> remove
+org.cowboycoders.utils.TrapezoidIntegral -> org.cowboycoders.d.d:
+    java.lang.Double lastY -> a
+    java.lang.Double lastX -> b
+    double integral -> c

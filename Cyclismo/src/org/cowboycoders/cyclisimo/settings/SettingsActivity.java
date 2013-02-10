@@ -16,8 +16,6 @@
 
 package org.cowboycoders.cyclisimo.settings;
 
-import org.cowboycoders.cyclisimo.R;
-
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Dialog;
@@ -37,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.cowboycoders.cyclisimo.Constants;
+import org.cowboycoders.cyclisimo.R;
 import org.cowboycoders.cyclisimo.util.DialogUtils;
 import org.cowboycoders.cyclisimo.util.IntentUtils;
 import org.cowboycoders.cyclisimo.util.PreferencesUtils;
@@ -107,6 +106,16 @@ public class SettingsActivity extends AbstractSettingsActivity {
         @Override
       public boolean onPreferenceClick(Preference preference) {
         Intent intent = IntentUtils.newIntent(SettingsActivity.this, SharingSettingsActivity.class);
+        startActivity(intent);
+        return true;
+      }
+    });
+    
+    Preference bushidoPreference = findPreference(getString(R.string.settings_ant_key));
+    bushidoPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        @Override
+      public boolean onPreferenceClick(Preference preference) {
+        Intent intent = IntentUtils.newIntent(SettingsActivity.this, AntSettingsActivity.class);
         startActivity(intent);
         return true;
       }

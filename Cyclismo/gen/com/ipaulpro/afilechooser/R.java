@@ -32,7 +32,7 @@ public final class R {
 		public static final int ic_file = 0x7f02000e;
 	}
 	public static final class xml {
-		public static final int mimetypes = 0x7f040004;
+		public static final int mimetypes = 0x7f040005;
 	}
 	public static final class dimen {
 		public static final int list_item_padding = 0x7f090001;

@@ -958,66 +958,6 @@ android.support.v4.widget.SearchViewCompatHoneycomb$OnQueryTextListenerCompatBri
 android.support.v4.widget.SimpleCursorAdapter
 android.support.v4.widget.SimpleCursorAdapter$CursorToStringConverter
 android.support.v4.widget.SimpleCursorAdapter$ViewBinder
-bushido.AntTurboTrainer:
-    19:19:public org.cowboycoders.ant.Node getNode()
-    public abstract void start()
-bushido.BushidoButtonDescriptorTest
-bushido.BushidoButtonPressDescriptor:
-    101:101:public long getRecievedTimestamp()
-bushido.BushidoButtonPressDescriptor$Button:
-    43:44:public void setId(int)
-    47:47:public static bushido.BushidoButtonPressDescriptor$Button fromId(int)
-bushido.BushidoButtonPressDispatcherTest
-bushido.BushidoButtonPressDispatcherTest$1
-bushido.BushidoButtonPressDispatcherTest$2
-bushido.BushidoButtonPressDispatcherTest$3
-bushido.BushidoButtonPressDispatcherTest$4
-bushido.BushidoButtonPressDispatcherTest$5
-bushido.BushidoData:
-    68:68:public double getHeartRate()
-    75:76:public void setHeartRate(double)
-    82:82:public double getSpeed()
-    89:89:public double getCadence()
-    96:96:public double getPower()
-    127:127:public double getSlope()
-    155:157:public void incrementSlope(double)
-    160:161:public void incrementSlope()
-    164:166:public void decrementSlope(double)
-    169:170:public void decrementSlope()
-bushido.BushidoHeadunit:
-    257:260:public void registerButtonPressListener(bushido.BushidoButtonPressListener)
-    272:272:public double getSlope()
-    284:287:public void incrementSlope(double)
-    290:293:public void decrementSlope(double)
-    296:297:public void incrementSlope()
-    300:301:public void decrementSlope()
-    308:308:public double getRealDistance()
-    558:558:public boolean supportsSpeed()
-    563:563:public boolean supportsPower()
-    568:568:public boolean supportsCadence()
-    573:573:public boolean supportsHeartRate()
-bushido.BushidoHeadunit$BushidoUpdatesListener:
-    116:116:public synchronized void onRequestKeepAlive()
-bushido.BushidoInternalListener:
-    public abstract void onRequestKeepAlive()
-bushido.BushidoUtils:
-    4:6:private BushidoUtils()
-bushido.IterationUtils:
-    4:4:private IterationUtils()
-bushido.TooFewAntChannelsAvailableException:
-    28:30:public TooFewAntChannelsAvailableException(java.lang.String)
-    36:38:public TooFewAntChannelsAvailableException(java.lang.Throwable)
-    45:47:public TooFewAntChannelsAvailableException(java.lang.String,java.lang.Throwable)
-bushido.TrapezoidIntegral:
-    36:42:public static void main(java.lang.String[])
-bushido.TurboCommunicationException:
-    16:18:public TurboCommunicationException(java.lang.String,java.lang.Throwable)
-bushido.TurboTrainerInterface:
-    public abstract boolean supportsSpeed()
-    public abstract boolean supportsPower()
-    public abstract boolean supportsCadence()
-    public abstract boolean supportsHeartRate()
-    public abstract double getSlope()
 com.android.common.ArrayListCursor
 com.android.common.GoogleLogTags
 com.android.common.NetworkConnectivityListener
@@ -1075,7 +1015,6 @@ com.dsi.ant.AntInterface:
     1410:1426:public void ANTDisableEventBuffering()
     1445:1462:public int getServiceLibraryVersionCode()
     1478:1489:public java.lang.String getServiceLibraryVersionName()
-    1566:1582:public boolean requestForceClaimInterface(java.lang.String)
 com.dsi.ant.AntInterfaceIntent
 com.dsi.ant.AntMesg
 com.dsi.ant.IAnt_6$Stub:
@@ -1445,9 +1384,9 @@ com.google.android.gms.internal.aw:
     private aw()
 com.google.android.gms.internal.b$a:
     public b$a()
-com.google.android.gms.internal.d
-com.google.android.gms.internal.d$a
-com.google.android.gms.internal.d$a$a
+com.google.android.gms.internal.c
+com.google.android.gms.internal.c$a
+com.google.android.gms.internal.c$a$a
 com.google.android.gms.internal.e:
     public e()
 com.google.android.gms.internal.h$a:
@@ -1507,6 +1446,8 @@ com.google.android.gms.internal.t$e
 com.google.android.gms.internal.u$a:
     public u$a()
 com.google.android.gms.internal.v:
+    private v()
+com.google.android.gms.internal.w:
     protected java.lang.String cf
     public void initialize(com.google.android.gms.plus.PlusClient,java.lang.String,int)
     public void onConnected()
@@ -1518,22 +1459,16 @@ com.google.android.gms.internal.v:
     public void Q()
     protected void S()
     protected void D()
-com.google.android.gms.internal.v$a:
+com.google.android.gms.internal.w$a:
     public void a(com.google.android.gms.common.ConnectionResult,com.google.android.gms.internal.au)
-com.google.android.gms.internal.w:
-    private w()
-com.google.android.gms.internal.x
-com.google.android.gms.internal.x$a
-com.google.android.gms.internal.x$b
-com.google.android.gms.internal.x$c
-com.google.android.gms.internal.y:
+com.google.android.gms.internal.x:
+    private final java.lang.String cy
     private final java.lang.String cz
     private final java.lang.String cA
-    private final java.lang.String cB
-    public varargs y(android.content.Context,java.lang.String,java.lang.String,java.lang.String,com.google.android.gms.common.GooglePlayServicesClient$ConnectionCallbacks,com.google.android.gms.common.GooglePlayServicesClient$OnConnectionFailedListener,java.lang.String[])
-    public varargs y(android.content.Context,java.lang.String,java.lang.String,com.google.android.gms.common.GooglePlayServicesClient$ConnectionCallbacks,com.google.android.gms.common.GooglePlayServicesClient$OnConnectionFailedListener,java.lang.String[])
-    public varargs y(android.content.Context,java.lang.String,com.google.android.gms.common.GooglePlayServicesClient$ConnectionCallbacks,com.google.android.gms.common.GooglePlayServicesClient$OnConnectionFailedListener,java.lang.String[])
-    public varargs y(android.content.Context,com.google.android.gms.common.GooglePlayServicesClient$ConnectionCallbacks,com.google.android.gms.common.GooglePlayServicesClient$OnConnectionFailedListener,java.lang.String[])
+    public varargs x(android.content.Context,java.lang.String,java.lang.String,java.lang.String,com.google.android.gms.common.GooglePlayServicesClient$ConnectionCallbacks,com.google.android.gms.common.GooglePlayServicesClient$OnConnectionFailedListener,java.lang.String[])
+    public varargs x(android.content.Context,java.lang.String,java.lang.String,com.google.android.gms.common.GooglePlayServicesClient$ConnectionCallbacks,com.google.android.gms.common.GooglePlayServicesClient$OnConnectionFailedListener,java.lang.String[])
+    public varargs x(android.content.Context,java.lang.String,com.google.android.gms.common.GooglePlayServicesClient$ConnectionCallbacks,com.google.android.gms.common.GooglePlayServicesClient$OnConnectionFailedListener,java.lang.String[])
+    public varargs x(android.content.Context,com.google.android.gms.common.GooglePlayServicesClient$ConnectionCallbacks,com.google.android.gms.common.GooglePlayServicesClient$OnConnectionFailedListener,java.lang.String[])
     public java.lang.String getAccountName()
     public void a(com.google.android.gms.plus.PlusClient$b,java.lang.String)
     public void clearDefaultAccount()
@@ -1542,12 +1477,16 @@ com.google.android.gms.internal.y:
     protected java.lang.String i()
     protected void a(com.google.android.gms.internal.m,com.google.android.gms.internal.t$a)
     protected bridge synthetic android.os.IInterface j(android.os.IBinder)
-com.google.android.gms.internal.y$a
-com.google.android.gms.internal.y$c:
+com.google.android.gms.internal.x$a
+com.google.android.gms.internal.x$c:
     public void a(com.google.android.gms.plus.PlusClient$a)
     public void q()
     public bridge synthetic void b(java.lang.Object)
-com.google.android.gms.internal.y$d
+com.google.android.gms.internal.x$d
+com.google.android.gms.internal.y
+com.google.android.gms.internal.y$a
+com.google.android.gms.internal.y$b
+com.google.android.gms.internal.y$c
 com.google.android.gms.internal.z$a:
     public z$a()
 com.google.android.gms.maps.CameraUpdateFactory:
@@ -3902,6 +3841,8 @@ org.apache.commons.logging.impl.WeakHashtable$WeakKey
 org.cowboycoders.ant.AntError:
     34:36:public AntError(java.lang.String,java.lang.Throwable)
     39:41:public AntError(java.lang.String)
+org.cowboycoders.ant.AntLogger$LogDataContainer:
+    59:59:public org.cowboycoders.ant.messages.StandardMessage getMessage()
 org.cowboycoders.ant.BufferedNodeComponent:
     private static final int ACK_BUFFER_LENGTH
     private static final int MSG_BUFFER_LENGTH
@@ -3920,15 +3861,16 @@ org.cowboycoders.ant.NetworkKey:
     70:71:public void setKey(int[])
     89:90:public NetworkKey(int[])
 org.cowboycoders.ant.Node:
-    149:149:public org.cowboycoders.ant.interfaces.AntChipInterface getAntChip()
-    157:158:public synchronized void registerStatusListener(org.cowboycoders.ant.events.BroadcastListener)
-    165:166:public synchronized void removeStatusListener(org.cowboycoders.ant.events.BroadcastListener)
-    173:180:public synchronized java.util.List getCapabiltites()
-    324:324:public synchronized int getMaxNetworks()
-    358:358:public org.cowboycoders.ant.messages.StandardMessage sendAndWaitWithAdapter(org.cowboycoders.ant.WaitAdapter,org.cowboycoders.ant.messages.StandardMessage,org.cowboycoders.ant.events.LockExchangeContainer)
-    517:533:public synchronized void reset(boolean)
-    537:538:public void reset()
-    557:560:public synchronized boolean isRunning()
+    156:156:public org.cowboycoders.ant.interfaces.AntChipInterface getAntChip()
+    164:165:public synchronized void registerStatusListener(org.cowboycoders.ant.events.BroadcastListener)
+    172:173:public synchronized void removeStatusListener(org.cowboycoders.ant.events.BroadcastListener)
+    180:187:public synchronized java.util.List getCapabiltites()
+    331:331:public synchronized int getMaxNetworks()
+    365:365:public org.cowboycoders.ant.messages.StandardMessage sendAndWaitWithAdapter(org.cowboycoders.ant.WaitAdapter,org.cowboycoders.ant.messages.StandardMessage,org.cowboycoders.ant.events.LockExchangeContainer)
+    524:540:public synchronized void reset(boolean)
+    544:545:public void reset()
+    580:583:public synchronized boolean isRunning()
+    594:597:public void unregisterAntLogger(org.cowboycoders.ant.AntLogger)
 org.cowboycoders.ant.Receipt:
     34:34:public static long getCurrentTimestamp()
     43:43:public long getTxTimestamp()
@@ -3958,7 +3900,6 @@ org.cowboycoders.ant.interfaces.AndroidAntTransceiver:
     private static final java.lang.String RADIO_ANT
     431:438:private void waitForInititalReset()
     465:472:private void waitForVersionResponse()
-    1003:1005:public boolean requestForceClaimInterface(java.lang.String)
     1020:1022:public boolean stopRequestForceClaimInterface()
     1034:1035:public static void goToMarket(android.content.Context)
     1055:1059:public boolean isRunning()
@@ -4172,6 +4113,23 @@ org.cowboycoders.ant.messages.responses.VersionResponse:
     private static final byte VERSION_STRING_LENGTH
     61:65:public java.lang.String getVersionString()
 org.cowboycoders.ant.messages.responses.VersionResponseTest
+org.cowboycoders.ant.temp.BushidoBrakeHacking
+org.cowboycoders.ant.temp.BushidoBrakeModel
+org.cowboycoders.ant.temp.BushidoBrakeModel$1
+org.cowboycoders.ant.temp.BushidoBrakeModel$2
+org.cowboycoders.ant.temp.BushidoBrakeModel$3
+org.cowboycoders.ant.temp.BushidoBrakeModel$4
+org.cowboycoders.ant.temp.BushidoBrakeModel$5
+org.cowboycoders.ant.temp.BushidoBrakeModel$6
+org.cowboycoders.ant.temp.BushidoBrakeModel$7
+org.cowboycoders.ant.temp.BushidoBrakeModel$8
+org.cowboycoders.ant.temp.BushidoBrakeModel$CalibrationState
+org.cowboycoders.ant.temp.BushidoBrakeTest
+org.cowboycoders.ant.temp.BushidoBrakeTest$1
+org.cowboycoders.ant.temp.BushidoBrakeTest$2
+org.cowboycoders.ant.temp.BushidoBrakeTest$3
+org.cowboycoders.ant.temp.BushidoBrakeTest$4
+org.cowboycoders.ant.temp.BushidoBrakeTest$Listener
 org.cowboycoders.ant.tests.AnTest
 org.cowboycoders.ant.tests.AnTest$WaitForMessageOpts
 org.cowboycoders.ant.tests.Dave
@@ -4179,6 +4137,7 @@ org.cowboycoders.ant.tests.TestQueue
 org.cowboycoders.ant.tests.TestQueue$1
 org.cowboycoders.ant.utils.AndroidUtils:
     15:15:private AndroidUtils()
+org.cowboycoders.ant.utils.AntLoggerImpl
 org.cowboycoders.ant.utils.ArrayUtils:
     3:3:public ArrayUtils()
     16:20:public static java.lang.Byte[] intsToBytes(int[])
@@ -4237,7 +4196,7 @@ org.cowboycoders.cyclisimo.ChartView:
     private static final int BORDER
     private static final int SPACER
     private static final int Y_AXIS_OFFSET
-    1100:1100:public boolean isMetricUnits()
+    1102:1102:public boolean isMetricUnits()
 org.cowboycoders.cyclisimo.ColoredPath
 org.cowboycoders.cyclisimo.Constants
 org.cowboycoders.cyclisimo.CourseListActivity:
@@ -4259,8 +4218,8 @@ org.cowboycoders.cyclisimo.MapOverlay:
     private static final float MARKER_X_ANCHOR
     private static final float MARKER_Y_ANCHOR
     private static final int INITIAL_LOCATIONS_SIZE
-    99:99:public java.util.List getWaypoints()
-    115:115:public android.content.Context getContext()
+    98:98:public java.util.List getWaypoints()
+    116:116:public android.content.Context getContext()
 org.cowboycoders.cyclisimo.MarkerDetailActivity:
     public static final java.lang.String EXTRA_MARKER_ID
 org.cowboycoders.cyclisimo.MarkerEditActivity:
@@ -4645,12 +4604,12 @@ org.cowboycoders.cyclisimo.fragments.AboutDialogFragment:
 org.cowboycoders.cyclisimo.fragments.ChartFragment:
     public static final java.lang.String TAG
     public static final java.lang.String CHART_FRAGMENT_TAG
-    795:795:org.cowboycoders.cyclisimo.ChartView getChartView()
-    800:801:void setTripStatisticsUpdater(long)
-    805:806:void setChartView(org.cowboycoders.cyclisimo.ChartView)
-    810:811:void setMetricUnits(boolean)
-    815:816:void setReportSpeed(boolean)
-    820:821:void setChartByDistance(boolean)
+    813:813:org.cowboycoders.cyclisimo.ChartView getChartView()
+    818:819:void setTripStatisticsUpdater(long)
+    823:824:void setChartView(org.cowboycoders.cyclisimo.ChartView)
+    828:829:void setMetricUnits(boolean)
+    833:834:void setReportSpeed(boolean)
+    838:839:void setChartByDistance(boolean)
 org.cowboycoders.cyclisimo.fragments.ChooseActivityDialogFragment:
     public static final java.lang.String CHOOSE_ACTIVITY_DIALOG_TAG
     private static final java.lang.String KEY_TRACK_ID
@@ -4699,8 +4658,10 @@ org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment:
     private static final int MAP_VIEW_PADDING
     private static final long COURSE_OVERLAY_REDRAW_REFRESH_PERIOD_MS
     private long redrawCourseOverlayTimestamp
-    672:675:private void reloadCourse()
-    678:681:private void reloadTrack()
+    689:692:private void reloadCourse()
+    695:698:private void reloadTrack()
+    833:848:private synchronized void redrawCourseOverlay()
+org.cowboycoders.cyclisimo.fragments.MyTracksMapFragment$9
 org.cowboycoders.cyclisimo.fragments.StatsFragment:
     public static final java.lang.String STATS_FRAGMENT_TAG
     private static final int ONE_SECOND
@@ -4973,6 +4934,8 @@ org.cowboycoders.cyclisimo.services.tasks.AnnouncementPeriodicTask:
     private static final long HOUR_TO_MILLISECOND
 org.cowboycoders.cyclisimo.services.tasks.PeriodicTaskExecutor:
     private static final long MINUTE_TO_MILLISECONDS
+org.cowboycoders.cyclisimo.settings.AntSettingsActivity:
+    private static final int DIALOG_CONFIRM_ALLOW_LOGGING_ID
 org.cowboycoders.cyclisimo.settings.BackupSettingsActivity:
     private static final int DIALOG_CONFIRM_RESTORE_ID
 org.cowboycoders.cyclisimo.settings.SettingsActivity:
@@ -4981,12 +4944,18 @@ org.cowboycoders.cyclisimo.settings.SharingSettingsActivity:
     private static final int DIALOG_CONFIRM_ALLOW_ACCESS_ID
 org.cowboycoders.cyclisimo.stats.DoubleBuffer:
     87:101:public double[] getAverageAndVariance()
+org.cowboycoders.cyclisimo.stats.TripStatisticsUpdater:
+    158:158:public double getSmoothedSpeed()
 org.cowboycoders.cyclisimo.turbo.AntHubService:
     private static final java.lang.String TAG
-    120:120:private void handleCommand(android.content.Intent)
+    127:127:private void handleCommand(android.content.Intent)
+org.cowboycoders.cyclisimo.turbo.AntLoggerImpl:
+    private static final java.lang.String DIRECTORY_NAME
 org.cowboycoders.cyclisimo.turbo.TurboException
 org.cowboycoders.cyclisimo.turbo.TurboService:
     private static final int RESULT_ERROR
+    public static final int NOTIFCATION_ID_STARTUP
+    public static final int NOTIFCATION_ID_SHUTDOWN
     private static final java.lang.String MOCK_LOCATION_PROVIDER
 org.cowboycoders.cyclisimo.util.AnalyticsUtils:
     private static final java.lang.String UA
@@ -5142,10 +5111,82 @@ org.cowboycoders.location.LatLong:
     37:37:public int toMicro(double)
 org.cowboycoders.location.LocationUtils:
     10:12:private LocationUtils()
-    116:134:public static void main(java.lang.String[])
+    116:142:public static void main(java.lang.String[])
 org.cowboycoders.location.PolyLineUtils
 org.cowboycoders.location.PolyLineUtilsTest
 org.cowboycoders.location.TrackedCharSequence
 org.cowboycoders.location.TrackedCharSequenceTest
+org.cowboycoders.turbotrainers.AntTurboTrainer:
+    19:19:public org.cowboycoders.ant.Node getNode()
+    public abstract void start()
+org.cowboycoders.turbotrainers.ChannelMessageSender:
+    public abstract void sendMessage(org.cowboycoders.ant.messages.ChannelMessage)
+org.cowboycoders.turbotrainers.CourseTracker:
+    private static final double ACCURACY
+    74:89:public static void main(java.lang.String[])
+org.cowboycoders.turbotrainers.ExceptionHandler
+org.cowboycoders.turbotrainers.ExceptionWrapper
+org.cowboycoders.turbotrainers.ExceptionWrapper$Context
+org.cowboycoders.turbotrainers.TooFewAntChannelsAvailableException:
+    28:30:public TooFewAntChannelsAvailableException(java.lang.String)
+    36:38:public TooFewAntChannelsAvailableException(java.lang.Throwable)
+    45:47:public TooFewAntChannelsAvailableException(java.lang.String,java.lang.Throwable)
+org.cowboycoders.turbotrainers.TurboCommunicationException:
+    16:18:public TurboCommunicationException(java.lang.String,java.lang.Throwable)
+    21:23:public TurboCommunicationException(java.lang.String)
+org.cowboycoders.turbotrainers.TurboTrainerInterface:
+    public abstract boolean supportsSpeed()
+    public abstract boolean supportsPower()
+    public abstract boolean supportsCadence()
+    public abstract boolean supportsHeartRate()
+    public abstract double getSlope()
+org.cowboycoders.turbotrainers.bushido.BushidoUtils:
+    4:6:private BushidoUtils()
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonDescriptorTest
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor:
+    101:101:public long getRecievedTimestamp()
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Button:
+    43:44:public void setId(int)
+    47:47:public static org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Button fromId(int)
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDispatcherTest
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDispatcherTest$1
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDispatcherTest$2
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDispatcherTest$3
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDispatcherTest$4
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDispatcherTest$5
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoData:
+    73:73:public double getHeartRate()
+    80:81:public void setHeartRate(double)
+    87:87:public double getSpeed()
+    94:94:public double getCadence()
+    101:101:public double getPower()
+    132:132:public double getSlope()
+    160:162:public void incrementSlope(double)
+    165:166:public void incrementSlope()
+    169:171:public void decrementSlope(double)
+    174:175:public void decrementSlope()
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit:
+    323:326:public void registerButtonPressListener(org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressListener)
+    338:338:public double getSlope()
+    350:353:public void incrementSlope(double)
+    356:359:public void decrementSlope(double)
+    362:363:public void incrementSlope()
+    366:367:public void decrementSlope()
+    374:374:public double getRealDistance()
+    639:639:public org.cowboycoders.ant.messages.MessageMetaWrapper send(org.cowboycoders.ant.messages.ChannelMessage)
+    644:644:public boolean supportsSpeed()
+    649:649:public boolean supportsPower()
+    654:654:public boolean supportsCadence()
+    659:659:public boolean supportsHeartRate()
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit$3:
+    468:470:public void sendMessage(org.cowboycoders.ant.messages.ChannelMessage)
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit$BushidoUpdatesListener:
+    172:172:public void onRequestKeepAlive()
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoInternalListener:
+    public abstract void onRequestKeepAlive()
+org.cowboycoders.utils.IterationUtils:
+    4:4:private IterationUtils()
+org.cowboycoders.utils.TrapezoidIntegral:
+    36:42:public static void main(java.lang.String[])
 org.teleal.android.util.FixedAndroidHandler
 org.teleal.android.util.FixedAndroidHandler$1

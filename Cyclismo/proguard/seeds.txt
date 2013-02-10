@@ -46,12 +46,6 @@ android.support.v4.view.ViewPager$LayoutParams
 android.support.v4.view.ViewPager$LayoutParams: ViewPager$LayoutParams(android.content.Context,android.util.AttributeSet)
 android.support.v4.view.ViewPager$SavedState
 android.support.v4.view.ViewPager$SavedState: android.os.Parcelable$Creator CREATOR
-bushido.BushidoButtonPressDescriptor$Button: bushido.BushidoButtonPressDescriptor$Button[] values()
-bushido.BushidoButtonPressDescriptor$Button: bushido.BushidoButtonPressDescriptor$Button valueOf(java.lang.String)
-bushido.BushidoButtonPressDescriptor$Duration: bushido.BushidoButtonPressDescriptor$Duration[] values()
-bushido.BushidoButtonPressDescriptor$Duration: bushido.BushidoButtonPressDescriptor$Duration valueOf(java.lang.String)
-bushido.TooFewAntChannelsAvailableException: long serialVersionUID
-bushido.TurboCommunicationException: long serialVersionUID
 com.android.common.NetworkConnectivityListener$State: com.android.common.NetworkConnectivityListener$State[] values()
 com.android.common.NetworkConnectivityListener$State: com.android.common.NetworkConnectivityListener$State valueOf(java.lang.String)
 com.dsi.ant.IAnt_6
@@ -120,14 +114,14 @@ com.google.android.gms.internal.k: void setTextSize(int,float)
 com.google.android.gms.internal.k: void setSingleLine()
 com.google.android.gms.internal.k: void setGravity(int)
 com.google.android.gms.internal.k: void setTextColor(int)
-com.google.android.gms.internal.v
-com.google.android.gms.internal.v: v(android.content.Context)
-com.google.android.gms.internal.v: v(android.content.Context,android.util.AttributeSet)
-com.google.android.gms.internal.v: void setOnPlusOneClickListener(com.google.android.gms.plus.PlusOneButton$OnPlusOneClickListener)
-com.google.android.gms.internal.v: void setOnClickListener(android.view.View$OnClickListener)
-com.google.android.gms.internal.v: void setAnnotation(int)
-com.google.android.gms.internal.v: void setSize(int)
-com.google.android.gms.internal.v: void setType(int)
+com.google.android.gms.internal.w
+com.google.android.gms.internal.w: w(android.content.Context)
+com.google.android.gms.internal.w: w(android.content.Context,android.util.AttributeSet)
+com.google.android.gms.internal.w: void setOnPlusOneClickListener(com.google.android.gms.plus.PlusOneButton$OnPlusOneClickListener)
+com.google.android.gms.internal.w: void setOnClickListener(android.view.View$OnClickListener)
+com.google.android.gms.internal.w: void setAnnotation(int)
+com.google.android.gms.internal.w: void setSize(int)
+com.google.android.gms.internal.w: void setType(int)
 com.google.android.gms.maps.GoogleMapOptions
 com.google.android.gms.maps.MapFragment
 com.google.android.gms.maps.MapView
@@ -606,6 +600,8 @@ com.ipaulpro.afilechooser.R$xml: int mimetypes
 javax.annotation.meta.When: javax.annotation.meta.When[] values()
 javax.annotation.meta.When: javax.annotation.meta.When valueOf(java.lang.String)
 org.cowboycoders.ant.AntError: long serialVersionUID
+org.cowboycoders.ant.AntLogger$Direction: org.cowboycoders.ant.AntLogger$Direction[] values()
+org.cowboycoders.ant.AntLogger$Direction: org.cowboycoders.ant.AntLogger$Direction valueOf(java.lang.String)
 org.cowboycoders.ant.ChannelError: long serialVersionUID
 org.cowboycoders.ant.TransferException: long serialVersionUID
 org.cowboycoders.ant.interfaces.AntCommunicationException: long serialVersionUID
@@ -639,6 +635,8 @@ org.cowboycoders.ant.messages.responses.ChannelStatusResponse$State: org.cowboyc
 org.cowboycoders.ant.messages.responses.ChannelStatusResponse$State: org.cowboycoders.ant.messages.responses.ChannelStatusResponse$State valueOf(java.lang.String)
 org.cowboycoders.ant.messages.responses.ResponseCode: org.cowboycoders.ant.messages.responses.ResponseCode[] values()
 org.cowboycoders.ant.messages.responses.ResponseCode: org.cowboycoders.ant.messages.responses.ResponseCode valueOf(java.lang.String)
+org.cowboycoders.ant.temp.BushidoBrakeModel$CalibrationState: org.cowboycoders.ant.temp.BushidoBrakeModel$CalibrationState[] values()
+org.cowboycoders.ant.temp.BushidoBrakeModel$CalibrationState: org.cowboycoders.ant.temp.BushidoBrakeModel$CalibrationState valueOf(java.lang.String)
 org.cowboycoders.cyclisimo.AbstractMyTracksActivity
 org.cowboycoders.cyclisimo.AbstractMyTracksActivity: AbstractMyTracksActivity()
 org.cowboycoders.cyclisimo.AggregatedStatsActivity
@@ -711,6 +709,7 @@ org.cowboycoders.cyclisimo.R$attr: int zOrderOnTop
 org.cowboycoders.cyclisimo.R$color: int black
 org.cowboycoders.cyclisimo.R$color: int cadence_border
 org.cowboycoders.cyclisimo.R$color: int cadence_fill
+org.cowboycoders.cyclisimo.R$color: int course_underlay
 org.cowboycoders.cyclisimo.R$color: int elevation_border
 org.cowboycoders.cyclisimo.R$color: int elevation_fill
 org.cowboycoders.cyclisimo.R$color: int fast_path
@@ -1405,6 +1404,16 @@ org.cowboycoders.cyclisimo.R$string: int sensor_type_value_ant
 org.cowboycoders.cyclisimo.R$string: int sensor_type_value_none
 org.cowboycoders.cyclisimo.R$string: int sensor_type_value_polar
 org.cowboycoders.cyclisimo.R$string: int sensor_type_value_zephyr
+org.cowboycoders.cyclisimo.R$string: int settings_ant
+org.cowboycoders.cyclisimo.R$string: int settings_ant_allow_logging_confirm_message
+org.cowboycoders.cyclisimo.R$string: int settings_ant_diagnostic
+org.cowboycoders.cyclisimo.R$string: int settings_ant_diagnostic_logging_state
+org.cowboycoders.cyclisimo.R$string: int settings_ant_diagnostic_logging_state_key
+org.cowboycoders.cyclisimo.R$string: int settings_ant_diagnostic_logging_summary_off
+org.cowboycoders.cyclisimo.R$string: int settings_ant_diagnostic_logging_summary_on
+org.cowboycoders.cyclisimo.R$string: int settings_ant_diagnostic_root_key
+org.cowboycoders.cyclisimo.R$string: int settings_ant_key
+org.cowboycoders.cyclisimo.R$string: int settings_ant_root_key
 org.cowboycoders.cyclisimo.R$string: int settings_backup
 org.cowboycoders.cyclisimo.R$string: int settings_backup_key
 org.cowboycoders.cyclisimo.R$string: int settings_backup_now
@@ -1418,6 +1427,7 @@ org.cowboycoders.cyclisimo.R$string: int settings_backup_restore_no_backup
 org.cowboycoders.cyclisimo.R$string: int settings_backup_restore_progress_message
 org.cowboycoders.cyclisimo.R$string: int settings_backup_restore_select_title
 org.cowboycoders.cyclisimo.R$string: int settings_backup_restore_summary
+org.cowboycoders.cyclisimo.R$string: int settings_bushido_antlog_filename
 org.cowboycoders.cyclisimo.R$string: int settings_chart_by_distance
 org.cowboycoders.cyclisimo.R$string: int settings_chart_by_time
 org.cowboycoders.cyclisimo.R$string: int settings_chart_key
@@ -1567,6 +1577,7 @@ org.cowboycoders.cyclisimo.R$string: int track_color_mode_medium_key
 org.cowboycoders.cyclisimo.R$string: int track_color_mode_percentage_key
 org.cowboycoders.cyclisimo.R$string: int track_color_mode_slow_key
 org.cowboycoders.cyclisimo.R$string: int track_detail_chart_tab
+org.cowboycoders.cyclisimo.R$string: int track_detail_delete_after_turbo_exception
 org.cowboycoders.cyclisimo.R$string: int track_detail_delete_confirm_message
 org.cowboycoders.cyclisimo.R$string: int track_detail_install_earth_error
 org.cowboycoders.cyclisimo.R$string: int track_detail_install_earth_message
@@ -1596,6 +1607,8 @@ org.cowboycoders.cyclisimo.R$string: int track_widget_item3
 org.cowboycoders.cyclisimo.R$string: int track_widget_item4
 org.cowboycoders.cyclisimo.R$string: int turbo_mode_service_running_notification_text
 org.cowboycoders.cyclisimo.R$string: int turbo_mode_service_running_notification_title
+org.cowboycoders.cyclisimo.R$string: int turbo_service_action_course_start
+org.cowboycoders.cyclisimo.R$string: int turbo_service_action_exception_thrown
 org.cowboycoders.cyclisimo.R$string: int unit_feet
 org.cowboycoders.cyclisimo.R$string: int unit_kilometer
 org.cowboycoders.cyclisimo.R$string: int unit_kilometer_per_hour
@@ -1820,6 +1833,7 @@ org.cowboycoders.cyclisimo.R$styleable: int MapAttrs_uiZoomControls
 org.cowboycoders.cyclisimo.R$styleable: int MapAttrs_uiZoomGestures
 org.cowboycoders.cyclisimo.R$styleable: int MapAttrs_useViewLifecycle
 org.cowboycoders.cyclisimo.R$styleable: int MapAttrs_zOrderOnTop
+org.cowboycoders.cyclisimo.R$xml: int ant_settings
 org.cowboycoders.cyclisimo.R$xml: int backup_settings
 org.cowboycoders.cyclisimo.R$xml: int chart_settings
 org.cowboycoders.cyclisimo.R$xml: int course_settings
@@ -1943,6 +1957,8 @@ org.cowboycoders.cyclisimo.services.sensors.ant.AntSensorManager$ChannelStates: 
 org.cowboycoders.cyclisimo.settings.AbstractSettingsActivity
 org.cowboycoders.cyclisimo.settings.AbstractSettingsActivity: AbstractSettingsActivity()
 org.cowboycoders.cyclisimo.settings.AbstractSettingsFragment
+org.cowboycoders.cyclisimo.settings.AntSettingsActivity
+org.cowboycoders.cyclisimo.settings.AntSettingsActivity: AntSettingsActivity()
 org.cowboycoders.cyclisimo.settings.BackupSettingsActivity
 org.cowboycoders.cyclisimo.settings.BackupSettingsActivity: BackupSettingsActivity()
 org.cowboycoders.cyclisimo.settings.ChartSettingsActivity
@@ -1972,3 +1988,11 @@ org.cowboycoders.cyclisimo.widgets.TrackWidgetProvider: TrackWidgetProvider()
 org.cowboycoders.jformica.R$string: int app_name
 org.cowboycoders.jformica.R$style: int AppTheme
 org.cowboycoders.location.DecodeException: long serialVersionUID
+org.cowboycoders.turbotrainers.ExceptionWrapper$Context: org.cowboycoders.turbotrainers.ExceptionWrapper$Context[] values()
+org.cowboycoders.turbotrainers.ExceptionWrapper$Context: org.cowboycoders.turbotrainers.ExceptionWrapper$Context valueOf(java.lang.String)
+org.cowboycoders.turbotrainers.TooFewAntChannelsAvailableException: long serialVersionUID
+org.cowboycoders.turbotrainers.TurboCommunicationException: long serialVersionUID
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Button: org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Button[] values()
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Button: org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Button valueOf(java.lang.String)
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Duration: org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Duration[] values()
+org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Duration: org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor$Duration valueOf(java.lang.String)

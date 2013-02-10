@@ -107,5 +107,6 @@ Google은 이용자에 대한 위치정보의 이용∙제공사실을 위치정
   <string name="sensor_data_double_value">org.cowboycoders.cyclisimo.SENSOR_DATA_DOUBLE_VALUE</string>
   <string name="turbo_service_action_course_start">org.cowboycoders.cyclisimo.TURBO_SERVICE_COURSE_START</string>
   <string name="turbo_service_action_exception_thrown">org.cowboycoders.cyclisimo.TURBO_SERVICE_EXCEPTION_THROWN</string>
+  <string name="settings_bushido_antlog_filename">antlog</string>
   
 </resources>

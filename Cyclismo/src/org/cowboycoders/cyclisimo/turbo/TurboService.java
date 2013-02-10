@@ -62,6 +62,8 @@ public class TurboService extends Service {
   public static String COURSE_TRACK_ID = "COURSE_TRACK_ID";
 
   public static double TARGET_TRACKPOINT_DISTANCE_METRES = 5;
+  
+  protected AntLoggerImpl antLogger;
 
   private final static String MOCK_LOCATION_PROVIDER = LocationManager.GPS_PROVIDER;// LocationManager.NETWORK_PROVIDER;
 
@@ -82,9 +84,12 @@ public class TurboService extends Service {
   private static String WAKE_LOCK = TurboService.class.getSimpleName();
 
   private boolean mIsBound = false;
+  
+  private boolean attachAntLogger = false;
 
   private Node antNode;
-
+  
+  // Notification that we are running
   public static int ONGOING_NOTIFICATION = 1786;
 
   double lastRecordedSpeed = 0.0; // kmh
@@ -227,6 +232,8 @@ public class TurboService extends Service {
       return;
     }
     running = true;
+    
+    attachAntLogger = PreferencesUtils.getBoolean(context,R.string.settings_ant_diagnostic_logging_state_key, false);
 
     wakeLock.acquire();
 
@@ -300,16 +307,21 @@ public class TurboService extends Service {
     @Override
     public void call() throws TurboCommunicationException, InterruptedException, TimeoutException {
       turboTrainer.start();
-      turboTrainer.registerDataListener(dataListener);
     }
     
   };
+
+
 
   private ServiceConnection mConnection = new ServiceConnection() {
 
     public void onServiceConnected(ComponentName className, IBinder binder) {
       AntHubService s = ((AntHubService.LocalBinder) binder).getService();
       antNode = s.getNode();
+      if (attachAntLogger) {
+        antLogger = new AntLoggerImpl(TurboService.this);
+        antNode.registerAntLogger(antLogger);
+      }
       transceiver = s.getTransceiver();
       TurboService.this.turboTrainer = new BushidoHeadunit(antNode);
 
@@ -318,6 +330,7 @@ public class TurboService extends Service {
           try {
             // slight hack to get around timeout errors on my tablet 
             retryErrorProneCall(startTurbo,10);
+            turboTrainer.registerDataListener(dataListener);
             //turboTrainer.start();
             //turboTrainer.registerDataListener(dataListener);
             // if
@@ -590,7 +603,7 @@ public class TurboService extends Service {
       mBuilder.setContentText("Ant radio is powered off");
       notification = mBuilder.build();
       
-    } else if (e instanceof Exception) {
+    } else if (e instanceof Exception) { //too long : just show message?
       StringBuilder message = new StringBuilder();
       Throwable cause = e.getCause();
       message.append("Exception: " + e.getMessage());

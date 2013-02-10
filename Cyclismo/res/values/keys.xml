@@ -62,6 +62,7 @@ limitations under the License.
   <string name="voice_frequency_key">voiceFrequency</string>
   <string name="course_mode">courseMode</string>
   <string name="course_track_id">courseSelectedTrackId</string>
+  
         
   <!-- Keys for persistend preferences. But they should not get backed up or restored. -->
   <string name="auto_resume_track_current_retry_key">autoResumeTrackCurrentRetry</string>
@@ -73,6 +74,10 @@ limitations under the License.
   <string name="settings_backup_key">settingsBackup</string>
   <string name="settings_backup_now_key">settingsBackupNow</string>
   <string name="settings_backup_restore_key">settingsBackupRestore</string>
+  <string name="settings_ant_key">settingsBushido</string>
+  <string name="settings_ant_root_key">settingsBushidoRoot</string>
+  <string name="settings_ant_diagnostic_root_key">settingsBushidoDiagnostic</string>
+  <string name="settings_ant_diagnostic_logging_state_key">settings_bushido_diagnostic_logging_state_key</string>
   <string name="settings_chart_key">settingsChart</string>
   <string name="settings_map_key">settingsMap</string>
   <string name="settings_map_medium_display_key">settingsMapMediumDisplay</string>

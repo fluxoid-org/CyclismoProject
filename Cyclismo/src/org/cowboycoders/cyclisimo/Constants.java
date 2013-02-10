@@ -25,13 +25,13 @@ public abstract class Constants {
   /**
    * Should be used by all log statements
    */
-  public static final String TAG = "MyTracks";
+  public static final String TAG = "Cyclismo";
 
   /**
    * Name of the top-level directory inside the SD card where our files will
    * be read from/written to.
    */
-  public static final String SDCARD_TOP_DIR = "MyTracks";
+  public static final String SDCARD_TOP_DIR = "Cyclismo";
 
   /**
    * The number of distance readings to smooth to get a stable signal.
