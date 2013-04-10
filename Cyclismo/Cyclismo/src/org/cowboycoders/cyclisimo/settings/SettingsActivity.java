@@ -55,6 +55,7 @@ import java.util.List;
 
 import org.cowboycoders.cyclisimo.Constants;
 import org.cowboycoders.cyclisimo.R;
+import org.cowboycoders.cyclisimo.UserListActivity;
 import org.cowboycoders.cyclisimo.util.DialogUtils;
 import org.cowboycoders.cyclisimo.util.IntentUtils;
 import org.cowboycoders.cyclisimo.util.PreferencesUtils;
@@ -78,6 +79,16 @@ public class SettingsActivity extends AbstractSettingsActivity {
   protected void onCreate(Bundle bundle) {
     super.onCreate(bundle);
     addPreferencesFromResource(R.xml.settings);
+    
+    Preference userSelectPreference = findPreference(getString(R.string.settings_select_user_key));
+    userSelectPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        @Override
+      public boolean onPreferenceClick(Preference preference) {
+        Intent intent = IntentUtils.newIntent(SettingsActivity.this, UserListActivity.class);
+        startActivity(intent);
+        return true;
+      }
+    });
 
     Preference mapPreference = findPreference(getString(R.string.settings_map_key));
     mapPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -119,6 +130,18 @@ public class SettingsActivity extends AbstractSettingsActivity {
         return true;
       }
     });
+    
+    Preference turboPreference = findPreference(getString(R.string.settings_generic_turbo_key));
+    turboPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        @Override
+      public boolean onPreferenceClick(Preference preference) {
+        Intent intent = IntentUtils.newIntent(
+            SettingsActivity.this, TurboSettingsActivity.class);
+        startActivity(intent);
+        return true;
+      }
+    });
+
 
     Preference sharingPreference = findPreference(getString(R.string.settings_sharing_key));
     sharingPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {

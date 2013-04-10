@@ -37,6 +37,7 @@ import org.cowboycoders.ant.AntError;
 import org.cowboycoders.ant.Channel;
 import org.cowboycoders.ant.NetworkKey;
 import org.cowboycoders.ant.Node;
+import org.cowboycoders.ant.Receipt;
 import org.cowboycoders.ant.TransferException;
 import org.cowboycoders.ant.events.BroadcastListener;
 import org.cowboycoders.ant.events.MessageCondition;
@@ -50,7 +51,7 @@ import org.cowboycoders.ant.messages.commands.ChannelRequestMessage;
 import org.cowboycoders.ant.messages.commands.ResetMessage;
 import org.cowboycoders.ant.messages.data.BroadcastDataMessage;
 import org.cowboycoders.ant.messages.responses.CapabilityResponse;
-import org.cowboycoders.ant.utils.ByteMerger;
+import org.cowboycoders.ant.utils.ByteUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -121,7 +122,7 @@ public class AntTransceiverTest {
   }
   
  //@Test
-  public void basic_node() throws InterruptedException {
+  public void basic_node() throws InterruptedException, TimeoutException {
     AntTransceiver ant = antchip;
     
     ant.start();
@@ -142,10 +143,22 @@ public class AntTransceiverTest {
     
     //n.reset();
     
-    n.send(msg);
+    MessageCondition condition = new MessageCondition() {
+
+		@Override
+		public boolean test(StandardMessage msg) {
+			return true;
+		}
+    	
+    };
     
+    Receipt receipt = new Receipt();
+    
+    n.sendAndWaitForMessage(msg, condition, null, null, null, receipt);
+    
+    System.out.println(receipt.getLastSent().getTimestamp());
 
-
+    System.out.println(receipt.getLastReceived().getTimestamp());
     
     Thread.sleep(1000);
     
@@ -155,7 +168,7 @@ public class AntTransceiverTest {
     
   }
   
-  //@Test
+  @Test
   public void test_init() throws InterruptedException, TimeoutException {
     //Object mBound = bindService(new Intent(MainActivity.getAppContext(), DummyService.class));
     //antchip.start();
@@ -184,7 +197,9 @@ public class AntTransceiverTest {
     
     // try expose a race condition or dead lock
     int i = 0;
-    while (++i < 100) {
+    while (++i < 1000
+    		
+    		) {
       StandardMessage capabilitiesMessage = new ChannelRequestMessage(
           0,ChannelRequestMessage.Request.CAPABILITIES );
       StandardMessage capabilitiesResponse;
@@ -193,8 +208,9 @@ public class AntTransceiverTest {
         capabilitiesResponse = n.sendAndWaitForMessage(
             capabilitiesMessage, 
             condition,
-            10L,TimeUnit.SECONDS,null,null,null, null
+            10L,TimeUnit.SECONDS,null,null
             );
+        System.out.println(((CapabilityResponse)capabilitiesResponse).getMaxNetworks());
       } catch (InterruptedException e) {
         throw new AntError(e);
       } catch (TimeoutException e) {
@@ -350,7 +366,7 @@ class Listener implements BroadcastListener<BroadcastDataMessage> {
 }
   
   
-  @Test
+  //@Test
   public void test_hrm() throws InterruptedException, TimeoutException {
     
     int repeats = 10;
@@ -420,7 +436,7 @@ class Listener implements BroadcastListener<BroadcastDataMessage> {
           msg.setData(new byte[] {(byte) 0xde,(byte) 0xad,(byte) 0xbe,(byte) 0xef,0x00,0x00,0x00,0x00});
           MessageCondition condition = MessageConditionFactory.newResponseCondition(null, null);
           try {
-            c.sendAndWaitForAck(msg, condition, 10L, TimeUnit.SECONDS, null, null) ;
+            c.sendAndWaitForMessage(msg, condition, 10L, TimeUnit.SECONDS, null) ;
           } catch (InterruptedException e) {
             e.printStackTrace();
           } catch (TimeoutException e) {
@@ -437,7 +453,7 @@ class Listener implements BroadcastListener<BroadcastDataMessage> {
     public void send(ChannelMessage msg) {
       MessageCondition condition = MessageConditionFactory.newResponseCondition(null, null);
       try {
-        c.sendAndWaitForAck(msg, condition, 10L, TimeUnit.SECONDS, null, null) ;
+        c.sendAndWaitForMessage(msg, condition, 10L, TimeUnit.SECONDS, null) ;
       } catch (InterruptedException e) {
         e.printStackTrace();
       } catch (TimeoutException e) {
@@ -490,7 +506,7 @@ class Listener implements BroadcastListener<BroadcastDataMessage> {
     
     for (int i = 0 ; i < repeats ; i++) {
       BroadcastDataMessage msg = new BroadcastDataMessage();
-      List<Byte> bytes = ByteMerger.lsbSplit(i, 4);
+      List<Byte> bytes = ByteUtils.lsbSplit(i, 4);
       msg.setData(new byte[] {(byte) 0xde,(byte) 0xad,(byte) 0xbe,(byte) 0xef,bytes.get(0),bytes.get(1),bytes.get(2),bytes.get(3)});
       MessageCondition condition = MessageConditionFactory.newResponseCondition(null, null);
       //c.enqueue(msg, condition, null, null);

@@ -29,6 +29,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.location.Location;
 import android.location.LocationManager;
 import android.location.LocationProvider;
@@ -50,8 +52,13 @@ import org.cowboycoders.ant.interfaces.AndroidAntTransceiver;
 import org.cowboycoders.ant.interfaces.AntRadioPoweredOffException;
 import org.cowboycoders.ant.interfaces.AntRadioServiceNotInstalledException;
 import org.cowboycoders.ant.interfaces.ServiceAlreadyClaimedException;
+import org.cowboycoders.cyclisimo.Constants;
 import org.cowboycoders.cyclisimo.R;
 import org.cowboycoders.cyclisimo.TrackEditActivity;
+import org.cowboycoders.cyclisimo.content.Bike;
+import org.cowboycoders.cyclisimo.content.CyclismoProviderUtils;
+import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils;
+import org.cowboycoders.cyclisimo.content.User;
 import org.cowboycoders.cyclisimo.services.TrackRecordingServiceConnection;
 import org.cowboycoders.cyclisimo.util.IntentUtils;
 import org.cowboycoders.cyclisimo.util.PreferencesUtils;
@@ -59,13 +66,22 @@ import org.cowboycoders.cyclisimo.util.TrackRecordingServiceConnectionUtils;
 import org.cowboycoders.cyclisimo.util.UnitConversions;
 import org.cowboycoders.location.LatLongAlt;
 import org.cowboycoders.turbotrainers.CourseTracker;
+import org.cowboycoders.turbotrainers.Mode;
+import org.cowboycoders.turbotrainers.Parameters;
 import org.cowboycoders.turbotrainers.TooFewAntChannelsAvailableException;
 import org.cowboycoders.turbotrainers.TurboCommunicationException;
 import org.cowboycoders.turbotrainers.TurboTrainerDataListener;
 import org.cowboycoders.turbotrainers.TurboTrainerInterface;
+import org.cowboycoders.turbotrainers.bushido.brake.BushidoBrake;
+import org.cowboycoders.turbotrainers.bushido.brake.PidBrakeController;
+import org.cowboycoders.turbotrainers.bushido.brake.SpeedResistanceMapper;
 import org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit;
 
 public class TurboService extends Service {
+
+  private static final int DEFAULT_BIKE_WEIGHT = 7;
+
+  private static final int DEFAULT_USER_WEIGHT = 60;
 
   private static final int RESULT_ERROR = 0;
 
@@ -92,6 +108,8 @@ public class TurboService extends Service {
 
   private boolean running = false;
   
+  private float scaleFactor = 1.0f; //multiply positive gradients by this value
+  
   private AndroidAntTransceiver transceiver;
 
   // private double distanceBetweenPoints;
@@ -114,6 +132,21 @@ public class TurboService extends Service {
   double lastRecordedSpeed = 0.0; // kmh
 
   private TurboTrainerInterface turboTrainer;
+  
+  private Lock parameterBuilderLock = new ReentrantLock();
+  
+  private Parameters.Builder parameterBuilder;
+  
+  public void setParameterBuilder(Parameters.Builder builder) {
+    try {
+      parameterBuilderLock.lock();
+      parameterBuilder = builder;
+    } finally {
+      parameterBuilderLock.unlock();
+    }
+   
+  }
+  
 
   TurboTrainerDataListener dataListener = new TurboTrainerDataListener() {
 
@@ -185,7 +218,17 @@ public class TurboService extends Service {
       double gradient = courseTracker.getCurrentGradient(); // returns 0.0 if
                                                             // finished for warm
                                                             // down
-      turboTrainer.setSlope(gradient);
+      if (gradient > 0) {
+        gradient = gradient * scaleFactor;
+      }
+      
+      try {
+        parameterBuilderLock.lock();
+        turboTrainer.setParameters(parameterBuilder.buildTargetSlope(gradient));
+      } finally {
+        parameterBuilderLock.unlock();
+      }
+      
       Log.d(TAG, "New Gradient: " + gradient);
       if (courseTracker.hasFinished()) {
         doFinish();
@@ -217,7 +260,12 @@ public class TurboService extends Service {
 
   private long recordingTrackId;
 
+  private SharedPreferences preferences;
+
+  private String selectedTurboTrainer;
+
   public void doFinish() {
+    preferences.unregisterOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
     // if (recordingTrackId != PreferencesUtils.RECORDING_TRACK_ID_DEFAULT) {
     Intent intent = IntentUtils.newIntent(getBaseContext(), TrackEditActivity.class)
         .putExtra(TrackEditActivity.EXTRA_TRACK_ID, recordingTrackId)
@@ -251,6 +299,42 @@ public class TurboService extends Service {
       return;
     }
     running = true;
+    
+    preferences = context.getSharedPreferences(Constants.SETTINGS_NAME, Context.MODE_PRIVATE);
+    
+    preferences.registerOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
+    
+    syncScaleFactor();
+    
+    this.selectedTurboTrainer = preferences.getString(context.getString(R.string.turbotrainer_selected), context.getString(R.string.turbotrainer_tacx_bushido_headunit_value));
+    
+    Log.d(TAG,selectedTurboTrainer);
+    
+    
+    // accessing database so should be put into a task
+    double userWeight;
+    double bikeWeight;
+    Bike selectedBike;
+    
+    CyclismoProviderUtils providerUtils = MyTracksProviderUtils.Factory.getCyclimso(context);
+    User currentUser = providerUtils.getUser(PreferencesUtils.getLong(context, R.string.settings_select_user_current_selection_key));
+    if (currentUser!= null) {
+      userWeight = currentUser.getWeight();
+      selectedBike = providerUtils.getBike(PreferencesUtils.getLong(context, R.string.settings_select_bike_current_selection_key));
+    } else {
+      Log.w(TAG, "using default user weight");
+      userWeight = DEFAULT_USER_WEIGHT; //kg
+      selectedBike = null;
+    }
+    if (selectedBike != null) {
+      bikeWeight = selectedBike.getWeight();
+    } else {
+      Log.w(TAG, "using default bike weight");
+      bikeWeight = DEFAULT_BIKE_WEIGHT; //kg
+    }
+    setParameterBuilder(new Parameters.Builder(userWeight,bikeWeight));
+    Log.d(TAG,"user weight: " + userWeight);
+    Log.d(TAG,"bike weight: " + bikeWeight);
     
     attachAntLogger = PreferencesUtils.getBoolean(context,R.string.settings_ant_diagnostic_logging_state_key, false);
 
@@ -342,11 +426,12 @@ public class TurboService extends Service {
         antNode.registerAntLogger(antLogger);
       }
       transceiver = s.getTransceiver();
-      TurboService.this.turboTrainer = new BushidoHeadunit(antNode);
+      TurboService.this.turboTrainer =  getTurboTrainer();
 
       new Thread() {
         public void run() {
           try {
+            turboTrainer.setMode(Mode.TARGET_SLOPE);
             // slight hack to get around timeout errors on my tablet 
             retryErrorProneCall(startTurbo,10);
             turboTrainer.registerDataListener(dataListener);
@@ -386,6 +471,20 @@ public class TurboService extends Service {
   void doBindService() {
     bindService(new Intent(this, AntHubService.class), mConnection, Context.BIND_AUTO_CREATE);
     mIsBound = true;
+  }
+
+  protected TurboTrainerInterface getTurboTrainer() {
+    if (selectedTurboTrainer == getString(R.string.turbotrainer_tacx_bushido_headunit_value)) {
+      return new BushidoHeadunit(antNode);
+    } else if (selectedTurboTrainer == getString(R.string.turbotrainer_tacx_bushido_brake_headunit_simulation_value)) {
+      SpeedResistanceMapper mapper = new SpeedResistanceMapper();
+      return new BushidoBrake(antNode,mapper);
+    } else if (selectedTurboTrainer == getString(R.string.turbotrainer_tacx_bushido_brake_pid_control_value)) {
+      PidBrakeController pid = new PidBrakeController();
+      return new BushidoBrake(antNode,pid);
+    }
+    
+    return null;
   }
 
   private void startServiceInBackround() {
@@ -660,6 +759,27 @@ public class TurboService extends Service {
  
   }
   
+  /*
+   * Note that sharedPreferenceChangeListenr cannot be an anonymous inner class.
+   * Anonymous inner class will get garbage collected.
+   */
+  private final OnSharedPreferenceChangeListener sharedPreferenceChangeListener = new OnSharedPreferenceChangeListener() {
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
+      if (key == getString(R.string.settings_turbotrainer_generic_scale_factor_key)) {
+        syncScaleFactor();
+      } else if (key == getString(R.string.turbotrainer_selected)) {
+        selectedTurboTrainer = preferences.getString(getString(R.string.turbotrainer_selected),getString(R.string.turbotrainer_tacx_bushido_headunit_value));
+      }
+      
+    }
+  
+  };
+  
+  private void syncScaleFactor() {
+    scaleFactor = Float.parseFloat(preferences.getString(getString(R.string.settings_turbotrainer_generic_scale_factor_key), "1.0"));
+  }
+ 
 
   // if
   // (context.getString(R.string.track_paused_broadcast_action).equals(action)
