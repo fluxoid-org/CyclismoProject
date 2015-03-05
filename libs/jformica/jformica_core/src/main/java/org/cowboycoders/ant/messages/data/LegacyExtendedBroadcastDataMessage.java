@@ -1,5 +1,5 @@
 /**
- *     Copyright (c) 2012, Will Szumski
+ *     Copyright (c) 2013, Will Szumski
  *
  *     This file is part of formicidae.
  *
@@ -18,6 +18,7 @@
  */
 package org.cowboycoders.ant.messages.data;
 
+import org.cowboycoders.ant.ChannelId;
 import org.cowboycoders.ant.messages.DeviceInfoQueryable;
 import org.cowboycoders.ant.messages.DeviceInfoSettable;
 import org.cowboycoders.ant.messages.LegacyMessage;
@@ -29,17 +30,17 @@ import org.cowboycoders.ant.messages.MessageId;
  * @author will
  *
  */
-public class LegacyExtendedBroadcastDataMessage extends AcknowledgedDataMessage
-  implements DeviceInfoQueryable, DeviceInfoSettable{
+public class LegacyExtendedBroadcastDataMessage extends BroadcastDataMessage
+  implements DeviceInfoQueryable, DeviceInfoSettable {
     
   public LegacyExtendedBroadcastDataMessage() {
       this(0);
     }
 
     public LegacyExtendedBroadcastDataMessage(int channel) {
-      super(new LegacyMessage(), MessageId.EXT_ACKNOWLEDGED_DATA, channel);
+      super(new LegacyMessage(), MessageId.EXT_BROADCAST_DATA, channel);
     }
-    
+
     @Override
     public Integer getDeviceNumber() {
       return ((LegacyMessage)getBackendMessage()).getDeviceNumber();
@@ -54,7 +55,7 @@ public class LegacyExtendedBroadcastDataMessage extends AcknowledgedDataMessage
     public Byte getTransmissionType() {
       return ((LegacyMessage)getBackendMessage()).getDeviceType();
     }
-
+    
     @Override
     public void setDeviceNumber(int deviceId) throws ValidationException {
       ((LegacyMessage)getBackendMessage()).setDeviceNumber(deviceId);
@@ -73,4 +74,39 @@ public class LegacyExtendedBroadcastDataMessage extends AcknowledgedDataMessage
       ((LegacyMessage)getBackendMessage()).setTransmissionType(transmissionType);
       
     }
+
+    @Override
+    public void setChannelId(ChannelId id) {
+    	setDeviceNumber(id.getDeviceNumber());
+    	setDeviceType(id.getDeviceType());
+    	setTransmissionType(id.getTransmissonType());
+    	setPairingFlag(id.isPairingFlagSet());
+    }
+
+
+    @Override
+    public ChannelId getChannelId() {
+      	ChannelId id = ChannelId.Builder.newInstance()
+          		.setDeviceNumber(getDeviceNumber())
+          		.setDeviceType(getDeviceType())
+          		.setTransmissonType(getTransmissionType())
+          		.setPairingFlag(isPairingFlagSet())
+          		.build();
+      	return id;
+    }
+
+	@Override
+	public void setPairingFlag(boolean pair) {
+		((LegacyMessage)getBackendMessage()).setPairingFlag(pair);
+	}
+
+	@Override
+	public Boolean isPairingFlagSet() {
+		return ((LegacyMessage)getBackendMessage()).isPairingFlagSet();
+	}
+
+
+
+
+
 }

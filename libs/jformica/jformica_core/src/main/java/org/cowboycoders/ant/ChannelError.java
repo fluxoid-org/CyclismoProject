@@ -1,5 +1,5 @@
 /**
- *     Copyright (c) 2012, Will Szumski
+ *     Copyright (c) 2013, Will Szumski
  *
  *     This file is part of formicidae.
  *
@@ -18,7 +18,7 @@
  */
 package org.cowboycoders.ant;
 
-public class ChannelError extends RuntimeException{
+public class ChannelError extends AntError{
 
   /**
    * 

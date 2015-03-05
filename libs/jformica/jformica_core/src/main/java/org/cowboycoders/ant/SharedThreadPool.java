@@ -1,5 +1,5 @@
 /**
- *     Copyright (c) 2012, Will Szumski
+ *     Copyright (c) 2013, Will Szumski
  *
  *     This file is part of formicidae.
  *
@@ -18,10 +18,10 @@
  */
 package org.cowboycoders.ant;
 
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -50,10 +50,17 @@ public class SharedThreadPool {
     //initPool(1,Integer.MAX_VALUE,60,TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(5));
     // can't have a non unary length queue as we rely on each call to execute in a new thread
     //initPool(1,Integer.MAX_VALUE,60,TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(1)); 
-    dispatchPool = Executors.newCachedThreadPool();
+    dispatchPool = Executors.newCachedThreadPool(new ThreadFactory() {
+ 	   @Override
+ 	   public Thread newThread(Runnable runnable) {
+ 	      Thread thread = Executors.defaultThreadFactory().newThread(runnable);
+ 	      thread.setDaemon(true);
+ 	      return thread;
+ 	   }
+ 	});
   }
   
-  private static void initPool(int coreSize, int maxSize, int timeout, TimeUnit timeoutUnit,
+private static void initPool(int coreSize, int maxSize, int timeout, TimeUnit timeoutUnit,
       BlockingQueue<Runnable> backingQueue) {
     dispatchPool = new ThreadPoolExecutor(coreSize,
         maxSize, 

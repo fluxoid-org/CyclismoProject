@@ -1,5 +1,5 @@
 /**
- *     Copyright (c) 2012, Will Szumski
+ *     Copyright (c) 2013, Will Szumski
  *
  *     This file is part of formicidae.
  *
@@ -17,30 +17,32 @@
  *     along with formicidae.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * 
+ *
  */
 package org.cowboycoders.ant.interfaces;
+
+import org.cowboycoders.ant.AntError;
 
 /**
  * @author will
  *
  */
-public class AntCommunicationException extends RuntimeException {
+public class AntCommunicationException extends AntError {
 
   /**
-   * 
+   *
    */
   private static final long serialVersionUID = 1L;
 
   /**
-   * 
+   *
    */
   public AntCommunicationException() {
     // TODO Auto-generated constructor stub
   }
 
   /**
-   * @param detailMessage
+   * @param detailMessage TODO : to document
    */
   public AntCommunicationException(String detailMessage) {
     super(detailMessage);
@@ -48,7 +50,7 @@ public class AntCommunicationException extends RuntimeException {
   }
 
   /**
-   * @param throwable
+   * @param throwable TODO : to document
    */
   public AntCommunicationException(Throwable throwable) {
     super(throwable);
@@ -56,8 +58,8 @@ public class AntCommunicationException extends RuntimeException {
   }
 
   /**
-   * @param detailMessage
-   * @param throwable
+   * @param detailMessage TODO : to document
+   * @param throwable TODO : to document
    */
   public AntCommunicationException(String detailMessage, Throwable throwable) {
     super(detailMessage, throwable);

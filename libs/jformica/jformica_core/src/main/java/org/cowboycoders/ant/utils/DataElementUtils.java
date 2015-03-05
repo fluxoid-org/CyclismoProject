@@ -1,5 +1,5 @@
 /**
- *     Copyright (c) 2012, Will Szumski
+ *     Copyright (c) 2013, Will Szumski
  *
  *     This file is part of formicidae.
  *
@@ -17,7 +17,7 @@
  *     along with formicidae.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * 
+ *
  */
 package org.cowboycoders.ant.utils;
 
@@ -26,21 +26,21 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.cowboycoders.ant.messages.FatalMessageException;
-import org.cowboycoders.ant.messages.Constants.DataElements;
+import org.cowboycoders.ant.messages.Constants.DataElement;
 
 /**
  * @author will
  *
  */
 public class DataElementUtils {
-  
+
   private DataElementUtils() {
-    
+
   }
-  
+
   /**
    * Sets a DataElement in a payload
-   * @param payload to modify 
+   * @param payload to modify
    * @param messageElements describe the composition of the payload
    * @param element to modify
    * @param value to set {@code element} to
@@ -50,8 +50,8 @@ public class DataElementUtils {
    */
   public static boolean setDataElement(
       ArrayList<Byte> payload,
-      DataElements [] messageElements,      
-      DataElements element, 
+      DataElement [] messageElements,
+      DataElement element,
       Integer value,
       int offset,
       int skip
@@ -59,20 +59,20 @@ public class DataElementUtils {
     if (!Arrays.asList(messageElements).contains(element)) {
       throw new FatalMessageException("Arg, element, not in expected list");
     }
-    
+
     boolean completed = false;
-    List<Byte> insertionBytes = ByteMerger.lsbSplit(value, element.getLength());
-    
+    List<Byte> insertionBytes = ByteUtils.lsbSplit(value, element.getLength());
+
     completed = insertElementBytes(payload, messageElements, element, insertionBytes, offset,skip);
-    
+
     if (!completed) {
       throw new FatalMessageException("Byte insertion failed");
     }
-    
+
     return completed;
-    
+
   }
-  
+
   /**
    * Inserts data, given as  a {@code List} of Bytes, into a payload
    * @param payload the payload to insert bytes into
@@ -85,19 +85,19 @@ public class DataElementUtils {
    */
   private static boolean insertElementBytes(
       ArrayList<Byte> payload,
-      DataElements [] messageElements,
-      DataElements element,
+      DataElement [] messageElements,
+      DataElement element,
       List<Byte> bytesToInsert,
       int offset,
       int skip
       ) {
-    assert bytesToInsert.size() == element.getLength() : 
+    assert bytesToInsert.size() == element.getLength() :
       "Number of bytes to insert doesn't match expected element length";
-    
+
     boolean completed = false;
     int elementCount = 0;
     int index = offset;
-    for (DataElements e : messageElements) {
+    for (DataElement e : messageElements) {
       if (e == element) {
         if (elementCount == skip) {
           for (byte b : bytesToInsert) {
@@ -112,43 +112,44 @@ public class DataElementUtils {
       }
       index += e.getLength();
     }
-    
+
     return completed;
   }
-  
+
   /**
    * Gets the data associated with a given {@code DataElement}
    * @param payload to get the data from
    * @param messageElements describes the composition of the payload
    * @param element to get data for
    * @param offset in payload to start of messageElements
-   * @return
+   * @param skip in payload to start of messageElements
+   * @return data element
    */
   public static Integer getDataElement(
       ArrayList<Byte> payload,
-      DataElements [] messageElements,
-      DataElements element, 
+      DataElement [] messageElements,
+      DataElement element,
       int offset,
       int skip) {
-    
+
     if (!Arrays.asList(messageElements).contains(element)) {
       throw new FatalMessageException("Arg, element, not in expected list");
     }
-    
+
     Integer rtn = null;
     int elementCount = 0;
     int index = offset;
-    for (DataElements e : messageElements) {
+    for (DataElement e : messageElements) {
       if (e == element) {
         if (elementCount == skip) {
-          rtn = ByteMerger.lsbMerge(payload.subList(index, index += e.getLength()));
+          rtn = ByteUtils.lsbMerge(payload.subList(index, index += e.getLength()));
           break;
         }
         elementCount++;
       }
       index += e.getLength();
     }
-    
+
     return rtn;
   }
 

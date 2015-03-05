@@ -1,5 +1,5 @@
 /**
- *     Copyright (c) 2012, Will Szumski
+ *     Copyright (c) 2013, Will Szumski
  *
  *     This file is part of formicidae.
  *
@@ -22,7 +22,6 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.cowboycoders.ant.events.FixedSizeBuffer;
 
 public class SharedBuffer<V> {
   
@@ -32,7 +31,7 @@ public class SharedBuffer<V> {
 
   private Condition contentsChanged = lock.newCondition();
 
-  private FixedSizeBuffer<V> msgBuffer = null;
+  private FixedSizeQueue<V> msgBuffer = null;
   
   private boolean clearable = true;
   
@@ -78,17 +77,17 @@ public class SharedBuffer<V> {
   /**
    * @return the msgBuffer
    */
-  public FixedSizeBuffer<V> getMsgBuffer() {
+  public FixedSizeQueue<V> getMsgBuffer() {
     return msgBuffer;
   }
 
   public SharedBuffer(int length) {
     this.length = length;
-    msgBuffer = new FixedSizeBuffer<V>(length);
+    msgBuffer = new FixedSizeFifo<V>(length);
     
   }
   
-  public SharedBuffer(FixedSizeBuffer<V> buffer) {
+  public SharedBuffer(FixedSizeQueue<V> buffer) {
     this.length = buffer.size();
     msgBuffer = buffer;
     

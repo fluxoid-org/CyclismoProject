@@ -1,5 +1,5 @@
 /**
- *     Copyright (c) 2012, Will Szumski
+ *     Copyright (c) 2013, Will Szumski
  *
  *     This file is part of formicidae.
  *
@@ -21,62 +21,68 @@ package org.cowboycoders.ant.messages;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.cowboycoders.ant.messages.Constants.DataElements;
+import org.cowboycoders.ant.messages.Constants.DataElement;
 import org.cowboycoders.ant.utils.ListUtils;
 
 public abstract class ChannelMessage extends StandardMessage {
 
   public static final byte MAX_CHANNEL_NO = 127;
   public static final byte CHANNEL_NO_OFFSET = 0;
-  
+
   /**
    * Creates a ChannelMessage using the a {@code Message}
    * as the backend. See @{code ChannelMessage(message, id, payload)}
    * for param explanations.
-   * @throws ValidationException 
+   * @param id id of the message
+   * @param channelNo channel to use
+   * @param messageElements elements of the message
+   * @throws ValidationException  TODO : to document
    */
   public ChannelMessage(MessageId id, Integer channelNo,
-      ArrayList<DataElements> messageElements) {
+      ArrayList<DataElement> messageElements) {
     this(null,id, channelNo,messageElements);
   }
-  
+
   public ChannelMessage(MessageId id, Integer channelNo,
-      DataElements [] messageElements) {
+      DataElement [] messageElements) {
     this(null,id, channelNo,
         messageElements);
   }
-  
+
   public ChannelMessage(Message backend,MessageId id, Integer channelNo,
-      DataElements [] messageElements) {
+      DataElement [] messageElements) {
     this(backend,id, channelNo,
-        new ArrayList<DataElements>(Arrays.asList(messageElements)));
+        new ArrayList<DataElement>(Arrays.asList(messageElements)));
   }
-  
+
   /**
    * Creates a ChannelMessage using the a {@code Message}
-   * as the backend without any additional data elements. 
+   * as the backend without any additional data elements.
    * See @{code ChannelMessage(message, id, payload)}
    * for param explanations.
-   * @throws ValidationException 
+   * @param id Message ID
+   * @param channelNo channel
+   * @throws ValidationException TODO : to document
    */
   public ChannelMessage(MessageId id, Integer channelNo) {
-    this(null,id, channelNo,new DataElements[0]);
+    this(null,id, channelNo,new DataElement[0]);
   }
-  
+
   /**
    * Creates a ChannelMessage using {@code message} as its
    * backend
    * @param message the message to use as the backend
    * @param id the id of the message
+   * @param channelNo Channel number
    * @param messageElements additional message elements - this is appended
    *        to the the standard channel message list of elements
    * @throws FatalMessageException on error creating the message
    */
   public ChannelMessage(Message message, MessageId id, Integer channelNo,
-      ArrayList<DataElements> messageElements) {
+      ArrayList<DataElement> messageElements) {
     super(message, id, ListUtils.prefixList(
-        messageElements, 
-        new DataElements [] {DataElements.CHANNEL_ID})
+        messageElements,
+        new DataElement [] {DataElement.CHANNEL_ID})
         );
         try {
           setChannelNumber(channelNo.byteValue());
@@ -84,11 +90,11 @@ public abstract class ChannelMessage extends StandardMessage {
           throw new FatalMessageException("invalid channel no",e);
         }
   }
-  
-   
+
+
   /**
    * Sets the channel to transmit on
-   * 
+   *
    * @param channelNumber channel number (id)
    * @throws ValidationException if cahnnelNumber out of range
    */
@@ -100,9 +106,9 @@ public abstract class ChannelMessage extends StandardMessage {
     //ArrayList<Byte >payload = getStandardPayload();
     //payload.set(CHANNEL_NO_OFFSET, channelNumber);
    //setStandardPayload(payload);
-    setDataElement(DataElements.CHANNEL_ID, channelNumber);
+    setDataElement(DataElement.CHANNEL_ID, channelNumber);
   }
-  
+
   /**
    * Gets the channel number
    * @return the channel number
@@ -110,9 +116,9 @@ public abstract class ChannelMessage extends StandardMessage {
   public int getChannelNumber(){
     //ArrayList<Byte >payload = getStandardPayload();
     //return payload.get(CHANNEL_NO_OFFSET);
-    return getDataElement(DataElements.CHANNEL_ID);
+    return getDataElement(DataElement.CHANNEL_ID);
   }
-  
+
   // TODO: validate that message id is a suitable value
   @Override
   public void validate() throws MessageException {
@@ -121,10 +127,10 @@ public abstract class ChannelMessage extends StandardMessage {
     } catch (IndexOutOfBoundsException e) {
       throw new MessageException("Payload too small", e);
     }
-    
-    
+
+
   }
-  
-  
- 
+
+
+
 }

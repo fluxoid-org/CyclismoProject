@@ -1,5 +1,5 @@
 /**
- *     Copyright (c) 2012, Will Szumski
+ *     Copyright (c) 2013, Will Szumski
  *
  *     This file is part of formicidae.
  *
@@ -22,7 +22,7 @@ import org.cowboycoders.ant.messages.ChannelMessage;
 import org.cowboycoders.ant.messages.FatalMessageException;
 import org.cowboycoders.ant.messages.ValidationException;
 import org.cowboycoders.ant.messages.MessageId;
-import org.cowboycoders.ant.messages.Constants.DataElements;
+import org.cowboycoders.ant.messages.Constants.DataElement;
 
 /**
  * Request channel / ant info
@@ -30,30 +30,30 @@ import org.cowboycoders.ant.messages.Constants.DataElements;
  *
  */
 public class ChannelRequestMessage extends ChannelMessage {
-  
+
   /**
    * The additional elements we are adding to channel message
    */
-  private static DataElements [] additionalElements = 
-      new DataElements [] {
-    DataElements.CHANNEL_REQUEST_MSG_ID,
+  private static DataElement [] additionalElements =
+      new DataElement [] {
+    DataElement.CHANNEL_REQUEST_MSG_ID,
   };
-  
+
   /**
    * Supported request messages
    * @author will
    *
    */
   public enum Request {
+	CHANNEL_STATUS(0x52),
     CHANNEL_ID(0x51),
     ANT_VERSION(0x3E),
     CAPABILITIES(0x54),
     SERIAL_NUMBER(0x61),
-    
     ;
-    
+
     byte msgId;
-    
+
     /**
      * @return the msgId
      */
@@ -82,13 +82,22 @@ public class ChannelRequestMessage extends ChannelMessage {
       throw new FatalMessageException("Error setting values",e);
     }
   }
-  
+
+  /**
+   * Use default channel (zero). If sent though {TODO : fix link org.cowycoders.ant.Channel} this
+   * will be set to the corresponding channel number associated with that instance.
+   * @param request TODO : to document
+   */
+  public ChannelRequestMessage(Request request) {
+	  this(0,request);
+  }
+
   /**
    * @param request to set
    * @throws ValidationException if fails validation
    */
   private void setRequest(Request request) throws ValidationException {
-    setAndValidateDataElement(DataElements.CHANNEL_REQUEST_MSG_ID, request.getMsgId());
+    setAndValidateDataElement(DataElement.CHANNEL_REQUEST_MSG_ID, request.getMsgId());
   }
 
 }

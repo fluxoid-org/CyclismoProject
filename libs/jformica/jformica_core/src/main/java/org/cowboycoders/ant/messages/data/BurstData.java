@@ -1,5 +1,5 @@
 /**
- *     Copyright (c) 2012, Will Szumski
+ *     Copyright (c) 2013, Will Szumski
  *
  *     This file is part of formicidae.
  *
@@ -21,7 +21,7 @@ package org.cowboycoders.ant.messages.data;
 import org.cowboycoders.ant.messages.Message;
 import org.cowboycoders.ant.messages.ValidationException;
 import org.cowboycoders.ant.messages.MessageId;
-import org.cowboycoders.ant.messages.Constants.DataElements;
+import org.cowboycoders.ant.messages.Constants.DataElement;
 
 /**
  * Common functionality to all burst message types
@@ -29,7 +29,7 @@ import org.cowboycoders.ant.messages.Constants.DataElements;
  *
  */
 public abstract class BurstData extends DataMessage {
-  
+
   public static final int CHANNEL_MASK = 0x1F;
   public static final int BURST_MAX_CHANNEL_NO = 0x1f;
   public static final int SEQUENCE_MASK =  0xe0;
@@ -48,7 +48,7 @@ public abstract class BurstData extends DataMessage {
       throw new ValidationException("Channel number must be between 0 and " +
           BURST_MAX_CHANNEL_NO);
     }
-    setPartialDataElement(DataElements.CHANNEL_ID, (int) channelNumber,(int) CHANNEL_MASK);
+    setPartialDataElement(DataElement.CHANNEL_ID, (int) channelNumber,(int) CHANNEL_MASK);
   }
 
   /* (non-Javadoc)
@@ -56,31 +56,31 @@ public abstract class BurstData extends DataMessage {
    */
   @Override
   public int getChannelNumber() {
-    return getDataElement(DataElements.CHANNEL_ID).byteValue() & CHANNEL_MASK;
+    return getDataElement(DataElement.CHANNEL_ID).byteValue() & CHANNEL_MASK;
   }
-  
+
   /**
    * Each burst element corresponds to a value in the burst
    * sequence.
-   * @param sequence current value 
-   * @throws ValidationException if sequence is < 0 or > 7
+   * @param sequence current value
+   * @throws ValidationException if sequence is &lt; 0 or &gt; 7
    */
   public void setSequenceNumber(int sequence) throws ValidationException {
     if (sequence > SEQUENCE_MAX || sequence < 0) {
       throw new ValidationException("sequnece number must be between 0 and " +
           SEQUENCE_MAX);
     }
-    setPartialDataElement(DataElements.CHANNEL_ID,sequence,SEQUENCE_MASK);
+    setPartialDataElement(DataElement.CHANNEL_ID,sequence,SEQUENCE_MASK);
   }
-  
+
   /**
    * Gets this burst packets sequence number
    * @return sequence number of this burst packet
    */
   public int getSequenceNumber() {
-    return getDataElement(DataElements.CHANNEL_ID).byteValue() & SEQUENCE_MASK;
+    return (getDataElement(DataElement.CHANNEL_ID) & SEQUENCE_MASK) >>> 5 ;
   }
-  
-  
+
+
 
 }

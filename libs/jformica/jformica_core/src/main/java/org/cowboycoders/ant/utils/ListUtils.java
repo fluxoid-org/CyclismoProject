@@ -1,5 +1,5 @@
 /**
- *     Copyright (c) 2012, Will Szumski
+ *     Copyright (c) 2013, Will Szumski
  *
  *     This file is part of formicidae.
  *
@@ -23,13 +23,15 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ListUtils {
-  
+
   private ListUtils() {
-    
+
   }
-  
+
   /**
    * prefixes a list with elements given in an array
+   * @param <X> TODO: document this
+   * @param <V> TODO: document this
    * @param list that will be prefixed (must be mutable)
    * @param prefix the prefix to added to @{code ArrayList}
    * @return the List with prefix attached
@@ -41,9 +43,11 @@ public class ListUtils {
     prefixList(list,prefixList,clazz);
     return list;
   }
-  
+
   /**
-   * prefixes a list with elements given in an List 
+   * prefixes a list with elements given in an List
+   * @param <X> TODO: document this
+   * @param <V> TODO: document this
    * @param list that will be prefixed (must be mutable)
    * @param prefix the prefix to added to @{code ArrayList}
    * @param clazz the class of Objects held in the two lists

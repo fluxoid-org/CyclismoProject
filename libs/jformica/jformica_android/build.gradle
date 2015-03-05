@@ -1,39 +1,45 @@
-    apply plugin : 'android-library'
+apply plugin: 'android'
 
-    android {
-        target = "android-15"
-    }
+android {
+    compileSdkVersion 21
+    buildToolsVersion "21.0.2"
 
-    android {
-        sourceSets {
-            main {
-                manifest {
-                    srcFile 'AndroidManifest.xml'
-                }
-                java {
-                    srcDir 'src'
-                    exclude 'some/unwanted/package/**'
-                }
-                res {
-                    srcDir 'res'
-                }
-                assets {
-                    srcDir 'assets'
-                }
-                resources {
-                    srcDir 'src'
-                }
+//    defaultConfig {
+//        minSdkVersion 23
+//        targetSdkVersion 23
+//    }
+}
+
+android {
+    sourceSets {
+        main {
+            manifest {
+                srcFile 'AndroidManifest.xml'
             }
-            test {
-                java {
-                    srcDir 'tests/src'
-                }
+            java {
+                srcDir 'src'
+                exclude 'some/unwanted/package/**'
+            }
+            res {
+                srcDir 'res'
+            }
+            assets {
+                srcDir 'assets'
+            }
+            resources {
+                srcDir 'src'
+            }
+        }
+        test {
+            java {
+                srcDir 'tests/src'
             }
         }
     }
+}
 
 
 
-    dependencies {
-        compile project(':jformica_core'), fileTree(dir: 'libs', include: '**/*.jar')
-    }
+dependencies {
+    compile project(':jformica_core'), fileTree(dir: 'libs', include: '**/*.jar')
+}

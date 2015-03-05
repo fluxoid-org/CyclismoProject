@@ -1,45 +1,59 @@
-
 buildscript {
     repositories {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.2', 'nl.javadude.gradle.plugins:license-gradle-plugin:0.5.0'
+        classpath 'com.android.tools.build:gradle:0.13.+', 'nl.javadude.gradle.plugins:license-gradle-plugin:0.10.0'
+    }
+	
+	
+}
+
+subprojects { project ->
+    logger.info('applying license to ' + project.name)
+    apply plugin: 'license'
+
+    license {
+        header rootProject.file('LICENSE')
+        // strictCheck true
     }
 }
 
-
-rootDir.eachFile() { file-> 
-if (file.isDirectory() && file.getName().startsWith('jformica')) { 
-    logger.info('applying license to ' + file.getName() )
-    project(':' + file.getName() ){
-        apply plugin: 'license'
-
-        license {
-            header rootProject.file('LICENSE')
-             strictCheck true
-        }
-
-    }
-}  
-} 
-
-
 allprojects {
-    
-
-
-    version = '0.0.1'
+    version = '0.0.5-SNAPSHOT'
     repositories {
         mavenCentral()
     }
 
-    tasks.withType(Compile) {
+    tasks.withType(JavaCompile) {
         options.compilerArgs << "-Xlint:unchecked"
-  }
+    }
 
+    apply plugin: 'idea'
+    apply plugin: 'maven'
 
+//	apply plugin: 'maven-publish'
+//	group = 'org.cowboycoders.ant'
+//	version = '0.0.5-SNAPSHOT'
+//	publishing {
+//    	publications {
+//        	mavenJava(MavenPublication) {
+//            	from components.
+//        	}
+//    	}
+//    	repositories {
+//        	maven {
+//            	// change to point to your repo, e.g. http://my.org/repo
+//            	url "$buildDir/repo"
+//        	}
+//    	}
+//	}	
 
+	
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.1'
 }
 
 

@@ -20,10 +20,6 @@
 
 import static org.junit.Assert.*;
 
-
-
-
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -36,7 +32,9 @@ import java.util.logging.Level;
 import org.cowboycoders.ant.AntError;
 import org.cowboycoders.ant.Channel;
 import org.cowboycoders.ant.NetworkKey;
+import org.cowboycoders.ant.NetworkKeys;
 import org.cowboycoders.ant.Node;
+import org.cowboycoders.ant.Receipt;
 import org.cowboycoders.ant.TransferException;
 import org.cowboycoders.ant.events.BroadcastListener;
 import org.cowboycoders.ant.events.MessageCondition;
@@ -50,7 +48,7 @@ import org.cowboycoders.ant.messages.commands.ChannelRequestMessage;
 import org.cowboycoders.ant.messages.commands.ResetMessage;
 import org.cowboycoders.ant.messages.data.BroadcastDataMessage;
 import org.cowboycoders.ant.messages.responses.CapabilityResponse;
-import org.cowboycoders.ant.utils.ByteMerger;
+import org.cowboycoders.ant.utils.ByteUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -66,23 +64,14 @@ public class AntTransceiverTest {
   public static void beforeClass() {
     AntTransceiver.LOGGER.setLevel(Level.ALL);
     ConsoleHandler handler = new ConsoleHandler();
-    // PUBLISH this level
     handler.setLevel(Level.ALL);
     AntTransceiver.LOGGER.addHandler(handler);
-    //Node.LOGGER.setLevel(Level.ALL);
-    //Node.LOGGER.addHandler(handler);
-    StandardMessage msg = new ResetMessage();
-    //StandardMessage msg = new BroadcastDataMessage();
-    //antchip.start();
-    //antchip.send(msg.encode());
-    //antchip.send(msg.encode());
-    //antchip.stop();
+
   }
   
   @AfterClass
   public static void afterClass() {
     antchip.stop();
-    //antchip.stop();
   }
   
   @Before
@@ -121,7 +110,7 @@ public class AntTransceiverTest {
   }
   
  //@Test
-  public void basic_node() throws InterruptedException {
+  public void basic_node() throws InterruptedException, TimeoutException {
     AntTransceiver ant = antchip;
     
     ant.start();
@@ -142,10 +131,22 @@ public class AntTransceiverTest {
     
     //n.reset();
     
-    n.send(msg);
+    MessageCondition condition = new MessageCondition() {
+
+		@Override
+		public boolean test(StandardMessage msg) {
+			return true;
+		}
+    	
+    };
     
+    Receipt receipt = new Receipt();
+    
+    n.sendAndWaitForMessage(msg, condition, null, null, null, receipt);
+    
+    System.out.println(receipt.getLastSent().getTimestamp());
 
-
+    System.out.println(receipt.getLastReceived().getTimestamp());
     
     Thread.sleep(1000);
     
@@ -184,7 +185,9 @@ public class AntTransceiverTest {
     
     // try expose a race condition or dead lock
     int i = 0;
-    while (++i < 100) {
+    while (++i < 1000
+    		
+    		) {
       StandardMessage capabilitiesMessage = new ChannelRequestMessage(
           0,ChannelRequestMessage.Request.CAPABILITIES );
       StandardMessage capabilitiesResponse;
@@ -193,8 +196,9 @@ public class AntTransceiverTest {
         capabilitiesResponse = n.sendAndWaitForMessage(
             capabilitiesMessage, 
             condition,
-            10L,TimeUnit.SECONDS,null,null,null, null
+            10L,TimeUnit.SECONDS,null,null
             );
+        System.out.println(((CapabilityResponse)capabilitiesResponse).getMaxNetworks());
       } catch (InterruptedException e) {
         throw new AntError(e);
       } catch (TimeoutException e) {
@@ -293,7 +297,7 @@ class BushidoData {
 	
 }
     
-@Test
+//@Test
 public void testCompare(){
 	int[] packet = {0xad , 0x01 , 0x03 , 0x0a , 0x00 , 0x00, 0x0a, 0x02};
 	int[] pattern = {0xad, 0x01, 0x03}; 
@@ -357,13 +361,8 @@ class Listener implements BroadcastListener<BroadcastDataMessage> {
     
     Node n = new Node(antchip);
     
-    NetworkKey key = new NetworkKey(0xB9,0xA5,0x21,0xFB,0xBD,0x72,0xC3,0x45);
-    key.setName("N:ANT+");
-    
     n.start();
     n.reset();
-    
-    n.setNetworkKey(0, key);
     
     
     Channel c;
@@ -372,7 +371,7 @@ class Listener implements BroadcastListener<BroadcastDataMessage> {
     c.setName("C:BUSHIDO");
     
     SlaveChannelType channelType = new SlaveChannelType();
-    c.assign("N:ANT+", channelType);
+    c.assign(NetworkKeys.ANT_SPORT, channelType);
     
     c.registerRxListener(new Listener(), BroadcastDataMessage.class);
     
@@ -420,7 +419,7 @@ class Listener implements BroadcastListener<BroadcastDataMessage> {
           msg.setData(new byte[] {(byte) 0xde,(byte) 0xad,(byte) 0xbe,(byte) 0xef,0x00,0x00,0x00,0x00});
           MessageCondition condition = MessageConditionFactory.newResponseCondition(null, null);
           try {
-            c.sendAndWaitForAck(msg, condition, 10L, TimeUnit.SECONDS, null, null) ;
+            c.sendAndWaitForMessage(msg, condition, 10L, TimeUnit.SECONDS, null) ;
           } catch (InterruptedException e) {
             e.printStackTrace();
           } catch (TimeoutException e) {
@@ -437,7 +436,7 @@ class Listener implements BroadcastListener<BroadcastDataMessage> {
     public void send(ChannelMessage msg) {
       MessageCondition condition = MessageConditionFactory.newResponseCondition(null, null);
       try {
-        c.sendAndWaitForAck(msg, condition, 10L, TimeUnit.SECONDS, null, null) ;
+        c.sendAndWaitForMessage(msg, condition, 10L, TimeUnit.SECONDS, null) ;
       } catch (InterruptedException e) {
         e.printStackTrace();
       } catch (TimeoutException e) {
@@ -473,7 +472,7 @@ class Listener implements BroadcastListener<BroadcastDataMessage> {
     c.setName("C:HRM");
     
     MasterChannelType channelType = new MasterChannelType();
-    c.assign("N:ANT+", channelType);
+    c.assign(NetworkKeys.ANT_SPORT, channelType);
     
     
     c.setId(33, 1, 1, false);
@@ -490,7 +489,7 @@ class Listener implements BroadcastListener<BroadcastDataMessage> {
     
     for (int i = 0 ; i < repeats ; i++) {
       BroadcastDataMessage msg = new BroadcastDataMessage();
-      List<Byte> bytes = ByteMerger.lsbSplit(i, 4);
+      List<Byte> bytes = ByteUtils.lsbSplit(i, 4);
       msg.setData(new byte[] {(byte) 0xde,(byte) 0xad,(byte) 0xbe,(byte) 0xef,bytes.get(0),bytes.get(1),bytes.get(2),bytes.get(3)});
       MessageCondition condition = MessageConditionFactory.newResponseCondition(null, null);
       //c.enqueue(msg, condition, null, null);

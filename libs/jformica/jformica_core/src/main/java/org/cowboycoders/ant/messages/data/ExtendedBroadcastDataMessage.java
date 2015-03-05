@@ -1,5 +1,5 @@
 /**
- *     Copyright (c) 2012, Will Szumski
+ *     Copyright (c) 2013, Will Szumski
  *
  *     This file is part of formicidae.
  *
@@ -18,11 +18,15 @@
  */
 package org.cowboycoders.ant.messages.data;
 
+import org.cowboycoders.ant.ChannelId;
+import org.cowboycoders.ant.messages.Constants.DataElement;
 import org.cowboycoders.ant.messages.DeviceInfoQueryable;
+import org.cowboycoders.ant.messages.DeviceInfoSettable;
 import org.cowboycoders.ant.messages.ExtendedMessage;
 import org.cowboycoders.ant.messages.MessageId;
 import org.cowboycoders.ant.messages.RssiInfoQueryable;
 import org.cowboycoders.ant.messages.TimestampInfoQueryable;
+import org.cowboycoders.ant.messages.ValidationException;
 
 /**
  * Extended broadcast data message
@@ -30,7 +34,7 @@ import org.cowboycoders.ant.messages.TimestampInfoQueryable;
  *
  */
 public class ExtendedBroadcastDataMessage extends BroadcastDataMessage
-  implements DeviceInfoQueryable, RssiInfoQueryable, TimestampInfoQueryable {
+  implements DeviceInfoQueryable, DeviceInfoSettable, RssiInfoQueryable, TimestampInfoQueryable {
     
   public ExtendedBroadcastDataMessage() {
       this(0);
@@ -75,5 +79,46 @@ public class ExtendedBroadcastDataMessage extends BroadcastDataMessage
       return ((ExtendedMessage)getBackendMessage()).getTransmissionType();
     }
     
+    public void setChannelId(ChannelId id) {
+    	((ExtendedMessage)getBackendMessage()).setChannelId(id);
+    }
     
+    public ChannelId getChannelId() {
+      	ChannelId id = ChannelId.Builder.newInstance()
+          		.setDeviceNumber(getDeviceNumber())
+          		.setDeviceType(getDeviceType())
+          		.setTransmissonType(getTransmissionType())
+          		.setPairingFlag(isPairingFlagSet())
+          		.build();
+      	return id;
+      }
+    
+	@Override
+	public void setDeviceNumber(int deviceId) throws ValidationException {
+		   ((ExtendedMessage)getBackendMessage()).setDeviceNumber(deviceId);
+	}
+
+	@Override
+	public void setDeviceType(int deviceType) throws ValidationException {
+	   ((ExtendedMessage)getBackendMessage()).setDeviceType(deviceType);
+		
+	}
+
+	@Override
+	public void setTransmissionType(int transmissionType)
+			throws ValidationException {
+	   ((ExtendedMessage)getBackendMessage()).setTransmissionType(transmissionType);
+	}
+	
+	@Override
+	public void setPairingFlag(boolean pair) {
+		((ExtendedMessage)getBackendMessage()).setPairingFlag(pair);
+		
+	}
+
+	@Override
+	public Boolean isPairingFlagSet() {
+		return ((ExtendedMessage)getBackendMessage()).isPairingFlagSet();
+	}
+     
 }

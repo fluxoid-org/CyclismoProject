@@ -1,5 +1,5 @@
 /**
- *     Copyright (c) 2012, Will Szumski
+ *     Copyright (c) 2013, Will Szumski
  *
  *     This file is part of formicidae.
  *
@@ -19,7 +19,7 @@
 package org.cowboycoders.ant.messages;
 
 import org.cowboycoders.ant.utils.ValidationUtils;
-import org.cowboycoders.ant.utils.ValidationUtils.MaxMinExceptionProducable;
+import org.cowboycoders.ant.utils.ValidationUtils.MaxMinExceptionProducer;
 
 /**
  * Creates commonly used exceptions
@@ -46,9 +46,9 @@ public class MessageExceptionFactory {
    * @param identifier variableName being tested
    * @return the created factory
    */
-  public static ValidationUtils.MaxMinExceptionProducable<ValidationException> 
+  public static ValidationUtils.MaxMinExceptionProducer<ValidationException> 
     createMaxMinExceptionProducable(final String identifier) {
-    return new MaxMinExceptionProducable<ValidationException> () {
+    return new MaxMinExceptionProducer<ValidationException> () {
       
       @Override
       public ValidationException getMaxMinException(int min, int max, int value) {

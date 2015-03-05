@@ -34,17 +34,6 @@
  */
 package org.cowboycoders.cyclisimo.content;
 
-import org.cowboycoders.cyclisimo.content.DescriptionGenerator;
-import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils;
-import org.cowboycoders.cyclisimo.content.MyTracksProviderUtilsImpl;
-import org.cowboycoders.cyclisimo.content.Track;
-import org.cowboycoders.cyclisimo.content.TrackPointsColumns;
-import org.cowboycoders.cyclisimo.content.TracksColumns;
-import org.cowboycoders.cyclisimo.content.Waypoint;
-import org.cowboycoders.cyclisimo.content.WaypointsColumns;
-import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils.LocationFactory;
-import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils.LocationIterator;
-import org.cowboycoders.cyclisimo.stats.TripStatistics;
 import com.google.android.testing.mocking.AndroidMock;
 import com.google.android.testing.mocking.UsesMocks;
 
@@ -62,8 +51,10 @@ import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.cowboycoders.cyclisimo.content.MyTracksProvider;
+import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils.LocationFactory;
+import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils.LocationIterator;
 import org.cowboycoders.cyclisimo.services.TrackRecordingServiceTest.MockContext;
+import org.cowboycoders.cyclisimo.stats.TripStatistics;
 
 /**
  * A unit test for {@link MyTracksProviderUtilsImpl}.
@@ -246,7 +237,7 @@ public class MyTracksProviderUtilsImplTest extends AndroidTestCase {
     assertEquals(name, track.getName());
     AndroidMock.verify(cursorMock);
   }
-
+  
   /**
    * Tests the method {@link MyTracksProviderUtilsImpl#deleteAllTracks()}
    */

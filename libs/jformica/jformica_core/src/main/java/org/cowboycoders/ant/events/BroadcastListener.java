@@ -1,5 +1,5 @@
 /**
- *     Copyright (c) 2012, Will Szumski
+ *     Copyright (c) 2013, Will Szumski
  *
  *     This file is part of formicidae.
  *
@@ -19,10 +19,10 @@
 package org.cowboycoders.ant.events;
 
 public interface BroadcastListener<V> {
-   
+
    /**
     * Called whenever a message is broadcast. Should be thread safe.
-    * @param message
+    * @param message TODO: document this
     */
    void receiveMessage(V message);
 
