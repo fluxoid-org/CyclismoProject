@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="google-api-client-1.5.0-beta">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/Cyclismo/Cyclismo/libs/google-api-client-1.5.0-beta.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

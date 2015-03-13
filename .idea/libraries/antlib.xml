@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="antlib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/Cyclismo/libs/jformica/jformica_android/libs/antlib.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

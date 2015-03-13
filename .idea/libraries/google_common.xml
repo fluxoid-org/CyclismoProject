@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="google-common">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/Cyclismo/Cyclismo/libs/google-common.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="gson-1.6">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/Cyclismo/Cyclismo/libs/gson-1.6.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

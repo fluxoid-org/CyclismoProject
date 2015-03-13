@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="protobuf-java-2.3.0-lite">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/Cyclismo/CyclismoLib/libs/protobuf-java-2.3.0-lite.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
