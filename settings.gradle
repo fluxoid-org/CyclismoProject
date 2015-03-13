@@ -1,13 +1,21 @@
-include ':Cyclismo:Cyclismo', ':mylibrary'
+include ':Cyclismo:Cyclismo'
 include ':Cyclismo:CyclismoLib'
-include ':Cyclismo:CyclismoTest'
-include ':Cyclismo:google-play-services_lib'
+
+include ':aFileChooser'
+project(':aFileChooser').projectDir = new File('Cyclismo/libs/aFileChooser/aFileChooser')
+
+include ':jformica_jsr80'
+project(':jformica_jsr80').projectDir = new File('Cyclismo/libs/jformica/jformica_jsr80')
+include ':jformica_android'
+project(':jformica_android').projectDir = new File('Cyclismo/libs/jformica/jformica_android')
+include ':jformica_core'
+project(':jformica_core').projectDir = new File('Cyclismo/libs/jformica/jformica_core')
 
 include ':Location'
+project(':Location').projectDir = new File('Cyclismo/libs/Location')
+
 include ':JTurbo'
+project(':JTurbo').projectDir = new File('Cyclismo/libs/JTurbo')
 
-include ':libs:aFileChooser:aFileChooser'
-include ':libs:jformica:jformica_jsr80'
-include ':libs:jformica:jformica_android'
-include ':libs:jformica:jformica_core'
-
+include ':google-play-services_lib'
+project(':google-play-services_lib').projectDir = new File('Cyclismo/libs/google-play-services_lib')
