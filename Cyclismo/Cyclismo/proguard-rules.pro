@@ -118,6 +118,10 @@
 -dontwarn org.codehaus.jackson.**
 -dontwarn org.cowboycoders.ant.interfaces.AntTransceiver
 -dontwarn org.cowboycoders.location.DrivingDirectionsUtils
+-dontwarn android.test.*
+-dontwarn org.cowboycoders.ant.utils.UsbUtils
+-dontwarn android.test.suitebuilder.*
+-dontwarn org.cowboycoders.ant.interfaces.AntTransceiver$UsbReader
 
 # Make our stack traces useful
 # Line numbers will be correct, file names will be replaced by "MT" since the
