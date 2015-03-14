@@ -6,17 +6,16 @@ task wrapper(type: Wrapper) {
 
 dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
-    compile 'com.android.support:support-v4:13.0.+'
+    compile 'com.android.support:support-v4:13.+'
 }
 
 repositories {
     mavenCentral()
 }
 
-
 android {
     compileSdkVersion 16
-    buildToolsVersion "21.1.2"
+    buildToolsVersion "22"
 
     sourceSets {
         main {
@@ -42,3 +41,4 @@ android {
         release.setRoot('build-types/release')
     }
 }
+
