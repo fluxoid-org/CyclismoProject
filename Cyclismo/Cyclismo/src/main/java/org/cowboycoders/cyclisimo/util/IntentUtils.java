@@ -68,7 +68,7 @@ public class IntentUtils {
    * @param context the context
    * @param cls the class
    */
-  public static final Intent newIntent(Context context, Class<?> cls) {
+  public static Intent newIntent(Context context, Class<?> cls) {
     return new Intent(context, cls).addFlags(
         Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
   }
@@ -82,7 +82,7 @@ public class IntentUtils {
    * @param packageName the sharing app package name
    * @param className the sharing app class name
    */
-  public static final Intent newShareUrlIntent(
+  public static Intent newShareUrlIntent(
       Context context, long trackId, String trackUrl, String packageName, String className) {
     Track track = MyTracksProviderUtils.Factory.get(context).getTrack(trackId);
     String trackDescription = track == null ? ""
@@ -108,7 +108,7 @@ public class IntentUtils {
    * @param filePath the file path
    * @param trackFileFormat the track file format
    */
-  public static final Intent newShareFileIntent(
+  public static Intent newShareFileIntent(
       Context context, long trackId, String filePath, TrackFileFormat trackFileFormat) {
     Track track = MyTracksProviderUtils.Factory.get(context).getTrack(trackId);
     String trackDescription = track == null ? ""

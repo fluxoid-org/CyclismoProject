@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="javax.usb">
-    <CLASSES>
-      <root url="file://$PROJECT_DIR$/Cyclismo/libs/JTurbo/config/javax.usb.properties" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

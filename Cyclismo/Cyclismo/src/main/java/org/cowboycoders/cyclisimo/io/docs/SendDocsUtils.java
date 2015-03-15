@@ -380,7 +380,7 @@ public class SendDocsUtils {
    * @param metricUnits true to use metric
    */
   @VisibleForTesting
-  static final String getDistance(double distanceInMeter, boolean metricUnits) {
+  static String getDistance(double distanceInMeter, boolean metricUnits) {
     double distanceInKilometer = distanceInMeter * UnitConversions.M_TO_KM;
     double distance = metricUnits ? distanceInKilometer
         : distanceInKilometer * UnitConversions.KM_TO_MI;
@@ -394,7 +394,7 @@ public class SendDocsUtils {
    * @param metricUnits true to use metric
    */
   @VisibleForTesting
-  static final String getSpeed(double speedInMeterPerSecond, boolean metricUnits) {
+  static String getSpeed(double speedInMeterPerSecond, boolean metricUnits) {
     double speedInKilometerPerHour = speedInMeterPerSecond * UnitConversions.MS_TO_KMH;
     double speed = metricUnits ? speedInKilometerPerHour
         : speedInKilometerPerHour * UnitConversions.KM_TO_MI;
@@ -408,7 +408,7 @@ public class SendDocsUtils {
    * @param metricUnits true to use metric
    */
   @VisibleForTesting
-  static final String getElevation(double elevationInMeter, boolean metricUnits) {
+  static String getElevation(double elevationInMeter, boolean metricUnits) {
     double elevation = metricUnits ? elevationInMeter : elevationInMeter * UnitConversions.M_TO_FT;
     return INTEGER_FORMAT.format(elevation);
   }
@@ -420,7 +420,7 @@ public class SendDocsUtils {
    * @param rowContent the row content
    * @param authToken the auth token
    */
-  private static final void addRow(String worksheetUri, String rowContent, String authToken)
+  private static void addRow(String worksheetUri, String rowContent, String authToken)
       throws IOException {
     URL url = new URL(worksheetUri);
     URLConnection conn = url.openConnection();

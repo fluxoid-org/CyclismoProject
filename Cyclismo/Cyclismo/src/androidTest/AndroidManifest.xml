@@ -30,8 +30,7 @@ limitations under the License.
     android:targetPackage="org.cowboycoders.cyclisimo" />
 
   <uses-sdk
-    android:minSdkVersion="8"
-    android:targetSdkVersion="17" />
+    android:minSdkVersion="14"/>
 
   <application
     tools:replace="android:label"
