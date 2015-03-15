@@ -6,9 +6,9 @@ buildscript {
     }
 }
 
-  repositories {
-        mavenCentral()
-    }
+repositories {
+    mavenCentral()
+}
 
 dependencies {
     compile group: 'junit', name: 'junit', version: '4.+'
@@ -33,3 +33,34 @@ sourceSets {
 check.dependsOn -= test
 task test(overwrite: true) << { println "FIXME: Tests disabled until ant usb device is mocked." }
 check.dependsOn += test
+
+subprojects { project ->
+
+    buildscript {
+        repositories {
+            mavenCentral()
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+allprojects {
+
+    apply plugin: 'findbugs'
+
+    findbugs { 
+        // your findbugs configuration.
+        ignoreFailures = true 
+    }
+
+    tasks.withType(FindBugs) {
+        reports {
+            xml.enabled = false
+            html.enabled = true
+        }
+    }
+}
+

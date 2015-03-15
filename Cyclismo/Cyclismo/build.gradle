@@ -1,4 +1,8 @@
 apply plugin: 'com.android.application'
+apply plugin: 'checkstyle'
+apply plugin: 'findbugs'
+
+check.dependsOn 'findbugs'
 
 buildscript {
     repositories {
@@ -46,5 +50,46 @@ android {
     lintOptions {
         abortOnError false
     }
+}
+
+task checkstyle(type: Checkstyle) {
+    // FIXME: Check this in
+    configFile file("${project.rootDir}/quality/checkstyle/checkstyle.xml")
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+
+    classpath = files()
+}
+
+findbugs {
+    sourceSets = []
+    ignoreFailures = true
+}
+
+task findbugs(type: FindBugs, dependsOn: assembleDebug) {
+
+    description 'Run findbugs'
+    group 'verification'
+
+    classes = fileTree('build/intermediates/classes/debug/')
+    classes.exclude '**/R.class'
+    classes.exclude '**/R$*.class'
+
+    source = fileTree('src')
+    classpath = files()
+
+    effort = 'max'
+
+    excludeFilter = file("${project.rootDir}/quality/findbugs/exclude.xml")
+
+    reports {
+        xml.enabled = false
+        html.enabled = true
+    }
+}
+
+check.doLast {
+    project.tasks.getByName("findbugs").execute()
 }
 
