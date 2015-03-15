@@ -28,7 +28,7 @@ dependencies {
     compile project(':JTurbo')
     compile project(':google-play-services_lib')
     androidTestCompile fileTree(dir: 'test_libs', include: '*.jar')
-    compile 'com.android.support:support-v4:13.+'
+    compile 'com.android.support:support-v4:22.0.0'
 }
 
 android {
@@ -36,7 +36,7 @@ android {
     buildToolsVersion "22"
 
     defaultConfig {
-        minSdkVersion 8
+        minSdkVersion 14
         targetSdkVersion 16
     }
 

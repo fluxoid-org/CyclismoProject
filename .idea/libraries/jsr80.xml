@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="jsr80">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/Cyclismo/libs/jformica/jformica_jsr80/libs/jsr80/jsr80.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

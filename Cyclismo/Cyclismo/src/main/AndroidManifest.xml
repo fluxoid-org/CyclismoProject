@@ -96,8 +96,7 @@ limitations under the License.
 
     <uses-sdk
         tools:overrideLibrary="org.cowboycoders.jformica"
-        android:minSdkVersion="8"
-        android:targetSdkVersion="16" />
+        android:minSdkVersion="14" />
     <!-- Required features -->
     <uses-feature
         android:glEsVersion="0x00020000"
