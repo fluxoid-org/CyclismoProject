@@ -68,7 +68,7 @@ public class Parameters {
 		
 		/**
 		 * outside tire radius in m
-		 * @return soutside tire radius
+		 * @return outside tire radius
 		 */
 		public abstract double getOutsideRadiusTire();
 
@@ -342,7 +342,8 @@ public class Parameters {
 		
 		/**
 		 * Builder with constant weight
-		 * @param weight in kg
+		 * @param riderWeight in kg
+         * @param bikeWeight in kg
 		 */
 		public Builder(double riderWeight, double bikeWeight) {
 			this.riderWeight = riderWeight;

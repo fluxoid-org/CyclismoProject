@@ -481,9 +481,9 @@ public class TurboService extends Service {
       return new BushidoBrake(antNode,mapper);
     } else if (selectedTurboTrainer == getString(R.string.turbotrainer_tacx_bushido_brake_pid_control_value)) {
       PidBrakeController pid = new PidBrakeController();
+
       return new BushidoBrake(antNode,pid);
-    }
-    
+  }
     return null;
   }
 
