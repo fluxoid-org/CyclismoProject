@@ -22,8 +22,8 @@ or import to android studio.
 Troubleshooting
 ------------------
 
-*The error is bad class file magic (cafebabe) or version (0034.0000)*
+###The error is bad class file magic (cafebabe) or version (0034.0000)###
 
 If compiling from android studio, set the `project byte code version` to `1.7` in:
 
-File -> Other Settings -> Default Settings -> Compiler:Java Compiler
+`File -> Other Settings -> Default Settings -> Compiler:Java Compiler`
