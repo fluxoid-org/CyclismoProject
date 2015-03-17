@@ -22,9 +22,12 @@ package org.cowboycoders.location;
 public class LatLong {
 	
 	private double latitude;
-	
 	private double longitude;
-	
+
+    /**
+     * @param latitude - Latitude (decimal degrees)
+     * @param longitude - Longitude (decimal degrees)
+     */
 	public LatLong(double latitude, double longitude) {
 		this.latitude = latitude;
 		this.longitude = longitude;
@@ -45,18 +48,22 @@ public class LatLong {
 	public void setLongitude(double longitude) {
 		this.longitude = longitude;
 	}
-	
-	public static LatLong fromMicro(int lat, int lng) {
-		double latitude = (lat / Math.pow(10, 6));
-		double longitude = (lng / Math.pow(10, 6));
+
+    /**
+     * Converts lat/long in micro decimal degrees to decimal degrees.
+     *
+     * @param uLatitude Latitude in micro decimal degrees
+     * @param uLongitude Longitude in micro decimal degrees
+     * @return Lat/long in decimal degrees
+     */
+	public static LatLong fromMicroDegrees(int uLatitude, int uLongitude) {
+		double latitude = (uLatitude / Math.pow(10, 6));
+		double longitude = (uLongitude / Math.pow(10, 6));
 		return new LatLong(latitude,longitude);
 	}
 	
-	public int toMicro(double number) {
+	public static int toMicroDegrees(double number) {
 		return (int) Math.round(number * Math.pow(10, 6));
 	}
-	
-	
-	
 
 }

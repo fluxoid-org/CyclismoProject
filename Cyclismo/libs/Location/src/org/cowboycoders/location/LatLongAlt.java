@@ -30,6 +30,11 @@ public class LatLongAlt extends LatLong {
     return altitude;
   }
 
+    /**
+     * @param latitude - Latitude (decimal)
+     * @param longitude - Longitude (decimal)
+     * @param altitude - Altitude (m)
+     */
   public LatLongAlt(double latitude, double longitude, double altitude) {
     super(latitude, longitude);
     this.altitude = altitude;

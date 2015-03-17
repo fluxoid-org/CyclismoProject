@@ -59,12 +59,15 @@ public class LocationUtils {
 }
   
   /**
+   * Calculates the distance over the surface of the Earth between two points.
+   *
    * see http://www.movable-type.co.uk/scripts/latlong.html
+   *
    * @param point1
    * @param point2
    * @return distance in m
    */
-  public static double distance(LatLong point1, LatLong point2) {
+  public static double getDistance(LatLong point1, LatLong point2) {
     double lat1 = point1.getLatitude();
     double lon1 = point1.getLongitude();
     double lat2 = point2.getLatitude();
@@ -85,7 +88,7 @@ public class LocationUtils {
   }
   
   public static double gradientCorrectedDistance(LatLongAlt point1, LatLongAlt point2) {
-	    double horizontalDistance = distance(point1,point2);
+	    double horizontalDistance = getDistance(point1, point2);
 	    double heightDifference = point2.getAltitude() - point1.getAltitude();
 	    return Math.sqrt(Math.pow(heightDifference,2) + Math.pow(horizontalDistance, 2));
   }
@@ -110,7 +113,7 @@ public class LocationUtils {
    * @param maximumDistance max distance between two points in m
    */
   public static List<LatLongAlt> interpolateBetweenPoints(LatLongAlt point1, LatLongAlt point2, final double maximumDistance ) {
-    if (distance(point1,point2) < maximumDistance) {
+    if (getDistance(point1, point2) < maximumDistance) {
       return Collections.<LatLongAlt>emptyList();
     }
     List<LatLongAlt> left = new ArrayList<LatLongAlt>();
@@ -132,7 +135,7 @@ public class LocationUtils {
    * @return gradient in percent
    */
   public static double getLocalisedGradient(LatLongAlt point1, LatLongAlt point2) {
-    double horizontalDistance = distance(point1,point2);
+    double horizontalDistance = getDistance(point1, point2);
     double heightDifference = point2.getAltitude() - point1.getAltitude();
     return (heightDifference / horizontalDistance) * 100;
   }
@@ -144,11 +147,11 @@ public class LocationUtils {
     System.out.println("Lat: " + l3.getLatitude());
     System.out.println("Long: " + l3.getLongitude());
     System.out.println("Alt: " + l3.getAltitude());
-    System.out.println(distance(l1,l2));
+    System.out.println(getDistance(l1, l2));
     System.out.println(interpolateBetweenPoints(l1,l2,1000).size());
     List<LatLongAlt> locations = interpolateBetweenPoints(l1,l2,1000);
     for (int i = 0 ; i< locations.size() -2 ; i++) {
-      System.out.println(distance(locations.get(i),locations.get(i+1)));
+      System.out.println(getDistance(locations.get(i), locations.get(i + 1)));
     }
     List<LatLongAlt> rtn = new ArrayList<LatLongAlt>();
     rtn.add(l1);
