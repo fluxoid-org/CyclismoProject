@@ -3,6 +3,12 @@
 Build instructions
 ------------------
 
+Set up the android sdk. In particular, make sure you have set the ANDROID_HOME environmental variable, eg:
+
+```
+export ANDROID_HOME=$HOME/android-sdks
+```
+
 run: 
 
 ```bash
