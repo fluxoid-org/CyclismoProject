@@ -48,5 +48,17 @@ subprojects { project ->
     repositories {
         mavenCentral()
     }
+
+
+}
+
+subprojects {
+    afterEvaluate { project ->
+        // should really check if java / android plugin applied
+	// println "${project.getProperty('plugins')}"
+        if (project.hasProperty('sourceCompatibility')) {
+            project.setProperty('sourceCompatibility', '1.7')
+        }
+    }
 }
 
