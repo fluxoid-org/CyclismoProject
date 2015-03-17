@@ -46,3 +46,7 @@ log.txt
 build
 gen
 bin
+
+#Android studio
+*.iml
+.idea
