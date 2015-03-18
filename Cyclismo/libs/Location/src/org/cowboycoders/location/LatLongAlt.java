@@ -23,12 +23,11 @@ public class LatLongAlt extends LatLong {
   
   private double altitude;
 
-  /**
-   * @return the altitude
-   */
   public double getAltitude() {
     return altitude;
   }
+
+  public void setAltitude(double altitude) { this.altitude = altitude; }
 
     /**
      * @param latitude - Latitude (decimal)
@@ -41,4 +40,11 @@ public class LatLongAlt extends LatLong {
     
   }
 
+  @Override
+  public String toString() {
+      return "point: " +
+              String.valueOf(this.getLatitude()) + ", " +
+              String.valueOf(this.getLongitude()) + ", " +
+              String.valueOf(this.getAltitude());
+  }
 }

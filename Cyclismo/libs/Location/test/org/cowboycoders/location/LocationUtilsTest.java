@@ -2,7 +2,10 @@ package org.cowboycoders.location;
 
 import org.junit.Test;
 
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class LocationUtilsTest {
 
@@ -29,6 +32,25 @@ public class LocationUtilsTest {
     @Test
     public void testDistance() {
         assertEquals(968853.0, LocationUtils.getDistance(landsEnd, johnoGroats), COARSE);
+    }
+
+    @Test
+    public void testInterpolateBetweenPoints() {
+        // Two points about 50m apart, going down a slight hill
+        LatLongAlt src = new LatLongAlt(51.38026, 12.35125, 123);
+        LatLongAlt dst = new LatLongAlt(51.37993, 12.35073, 122);
+        double maxSpacing = 2.0;
+
+        // Interpolate between the two points
+        List<LatLongAlt> points = LocationUtils.interpolateBetweenPoints(src, dst, maxSpacing);
+
+        // Check that the interpolated points do not exceed the maximum spacing
+        LatLongAlt last = src;
+        for (LatLongAlt point: points) {
+            assertTrue(maxSpacing >= LocationUtils.getDistance(last, point));
+            last = point;
+        }
+
     }
 
 }

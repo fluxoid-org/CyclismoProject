@@ -29,22 +29,26 @@ import org.cowboycoders.cyclisimo.content.TrackDataListener;
 import org.cowboycoders.cyclisimo.content.TrackDataType;
 import org.cowboycoders.cyclisimo.content.Waypoint;
 import org.cowboycoders.location.LatLongAlt;
+import org.cowboycoders.location.LocationUtils;
+import org.cowboycoders.utils.RunningAverager;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-public class CourseLoader{
-  
+public class CourseLoader {
+
+  public static final double MINIMUM_TRACK_POINT_SPACING_M = 10.0;
+
   public static String TAG = CourseLoader.class.getSimpleName();
   
   private TrackDataHub courseDataHub;
-  private ArrayList<LatLongAlt> latLongAlts = new ArrayList<LatLongAlt>();
+  private List<LatLongAlt> latLongAlts = new ArrayList<LatLongAlt>();
   private boolean finished = false;
   private Track currentTrack;
   private final long expectedId;
-  
-  
+  private LatLongAlt lastAddedPoint = null;
+
   CourseLoader(Context context, long trackId) {
     courseDataHub = TrackDataHub.newInstance(context,true);
     expectedId = trackId;
@@ -100,19 +104,33 @@ public class CourseLoader{
 
     @Override
     public synchronized void onSampledInTrackPoint(Location location) {
-      if (!finished) {
-      Log.i(TAG,"new track point");
-      double lat = location.getLatitude();
-      double lng = location.getLongitude();
-      double alt = location.getAltitude();
-      Log.d(TAG,"alt: " + alt);
-      Log.d(TAG,"lat: " + lat);
-      Log.d(TAG,"long: " + lng);
-      LatLongAlt latLngAlt = new LatLongAlt(lat,lng,alt);
-      latLongAlts.add(latLngAlt);
+      if (finished)
+          return;
+
+      // TODO: Check location is in decimal degrees
+      LatLongAlt point = new LatLongAlt(
+              location.getLatitude(),
+              location.getLongitude(),
+              location.getAltitude());
+      Log.d(TAG, point.toString());
+
+      if (lastAddedPoint == null) {
+          lastAddedPoint = point;
+          Log.i(TAG, "first track point");
+          latLongAlts.add(point);
+          return;
       }
-      // TODO Auto-generated method stub
-      
+
+      double pointSep = LocationUtils.getDistance(lastAddedPoint, point);
+
+      if (pointSep >  MINIMUM_TRACK_POINT_SPACING_M) {
+          Log.i(TAG,"added track point, spacing " + LocationUtils.getDistance(lastAddedPoint, point));
+          lastAddedPoint = point;
+          latLongAlts.add(point);
+      } else {
+          Log.i(TAG,"filtered track point");
+      }
+
     }
 
     @Override
@@ -132,6 +150,21 @@ public class CourseLoader{
       Log.i(TAG, "track points done");
       if (currentTrack != null && currentTrack.getId() == expectedId ) {
         finished = true;
+        // TODO: Move to own method
+        // Interpolate and smooth the data points to prevent large changes in the simulated gradient.
+        latLongAlts = LocationUtils.interpolatePoints(latLongAlts, MINIMUM_TRACK_POINT_SPACING_M);
+        // Smooth the altitudes
+
+        for (int i = 0; i < 3; ++i) {
+            RunningAverager runningAverager = new RunningAverager(100);
+            for (LatLongAlt p: latLongAlts) {
+                runningAverager.add(p.getAltitude());
+                p.setAltitude(runningAverager.getAverage());
+            }
+        }
+
+        gradientsToLog();
+
         courseDataHub.stop();
         courseDataHub.unregisterTrackDataListener(this);
         this.notifyAll();
@@ -178,23 +211,32 @@ public class CourseLoader{
   };
   
   public List<LatLongAlt> getLatLongAlts() throws InterruptedException {
-    
-    //Thread.sleep(1000);
-    
+
     synchronized (trackDataListener) {
       while (!finished) {
         trackDataListener.wait();
       }
     }
-    
+
     Log.i(TAG,"lat long length: " + latLongAlts.size());
-    
-    //courseDataHub.stop();
-    //courseDataHub.unregisterTrackDataListener(trackDataListener);
-    
+
     return latLongAlts;
   }
 
-
+  /**
+  * Log gradients for course points array.
+  */
+  public void gradientsToLog() {
+    Log.d(TAG, "gradient log start");
+    for (int i = 1; i < latLongAlts.size(); ++i){
+      Log.i(TAG,
+              "gradient: " +
+                LocationUtils.getLocalisedGradient(latLongAlts.get(i - 1), latLongAlts.get(i))
+                    + " point: "
+                        + latLongAlts.get(i).toString()
+      );
+    }
+    Log.i(TAG, "gradient log stop");
+  }
 
 }

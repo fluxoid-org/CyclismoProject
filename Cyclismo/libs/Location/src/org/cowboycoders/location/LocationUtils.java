@@ -63,25 +63,25 @@ public class LocationUtils {
    *
    * see http://www.movable-type.co.uk/scripts/latlong.html
    *
-   * @param point1
-   * @param point2
+   * @param src Source point.
+   * @param dst Destination point.
    * @return distance in m
    */
-  public static double getDistance(LatLong point1, LatLong point2) {
-    double lat1 = point1.getLatitude();
-    double lon1 = point1.getLongitude();
-    double lat2 = point2.getLatitude();
-    double lon2 = point2.getLongitude();
+  public static double getDistance(LatLong src, LatLong dst) {
+    double srcLat = src.getLatitude();
+    double srcLon = src.getLongitude();
+    double dstLat = dst.getLatitude();
+    double dstLon = dst.getLongitude();
 
-    double dLat = Math.toRadians(lat2-lat1);
-    double dLon = Math.toRadians(lon2-lon1);
+    double dLat = Math.toRadians(dstLat-srcLat);
+    double dLon = Math.toRadians(dstLon-srcLon);
     
-    lat1 = Math.toRadians(lat1);
-    lat2 = Math.toRadians(lat2);
+    srcLat = Math.toRadians(srcLat);
+    dstLat = Math.toRadians(dstLat);
     
 
     double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-            Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+            Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(srcLat) * Math.cos(dstLat);
     double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
     double d = EARTH_RADIUS  * c;
     return d;
@@ -92,51 +92,73 @@ public class LocationUtils {
 	    double heightDifference = point2.getAltitude() - point1.getAltitude();
 	    return Math.sqrt(Math.pow(heightDifference,2) + Math.pow(horizontalDistance, 2));
   }
-  
 
-  public static List<LatLongAlt> interpolatePoints(List<LatLongAlt> locations, double maximumDistance) {
-    List<LatLongAlt> rtn = new ArrayList<LatLongAlt>();
-    for (int i = 0 ; i< locations.size() -1 ; i++) {
+  /**
+   * Returns a list of interpolated points with a specified maximum separation.
+   *
+   * @param locations List of points to interpolate between
+   * @param maxDist Maximum separation between points
+   * @return List of interpolated points with a specified maximum separation
+   */
+  public static List<LatLongAlt> interpolatePoints(List<LatLongAlt> locations, double maxDist) {
+    List<LatLongAlt> interpolatedPoints = new ArrayList<LatLongAlt>();
+    for (int i = 0 ; i < locations.size() - 1 ; i++) {
       // add points to the left
-      rtn.add(locations.get(i));
-      rtn.addAll(interpolateBetweenPoints(locations.get(i),locations.get(i + 1), maximumDistance));
+      interpolatedPoints.add(locations.get(i));
+      interpolatedPoints.addAll(
+              interpolateBetweenPoints(locations.get(i), locations.get(i + 1), maxDist));
     }
     // add right most
-    rtn.add(locations.get(locations.size() -1));
-    return rtn;
+    interpolatedPoints.add(locations.get(locations.size() - 1));
+    return interpolatedPoints;
   }
   
   /**
-   * Does no return original points
-   * @param point1
-   * @param point2
-   * @param maximumDistance max distance between two points in m
+   * Returns a list of points interpolated between the specified points, with a specified
+   * maximum spacing. If the the specified points are closer than the maximum spacing no points
+   * are returned.
+   *
+   * The source and destination points are NOT returned.
+   *
+   * @param src Source point
+   * @param dst Destination point
+   * @param maxDist Max spacing between any two points in m
+   * @return List of interpolated points
    */
-  public static List<LatLongAlt> interpolateBetweenPoints(LatLongAlt point1, LatLongAlt point2, final double maximumDistance ) {
-    if (getDistance(point1, point2) < maximumDistance) {
+  public static List<LatLongAlt> interpolateBetweenPoints(
+          LatLongAlt src,
+          LatLongAlt dst,
+          final double maxDist)
+  {
+    // Avoid stack overflow
+    assert(maxDist > 0.0);
+
+    if (getDistance(src, dst) < maxDist) {
       return Collections.<LatLongAlt>emptyList();
     }
-    List<LatLongAlt> left = new ArrayList<LatLongAlt>();
-    List<LatLongAlt> right = new ArrayList<LatLongAlt>();
-    LatLongAlt midpoint = midPoint(point1,point2);
-    left = interpolateBetweenPoints(point1,midpoint,maximumDistance);
-    right = interpolateBetweenPoints(midpoint,point2,maximumDistance);
-    List<LatLongAlt> rtn = new ArrayList<LatLongAlt>(left.size() + 1 + right.size());
-    rtn.addAll(left);
-    rtn.add(midpoint);
-    rtn.addAll(right);
-    return rtn;
+
+    LatLongAlt midpoint = midPoint(src, dst);
+    List<LatLongAlt> left = interpolateBetweenPoints(src, midpoint, maxDist);
+    List<LatLongAlt> right = interpolateBetweenPoints(midpoint, dst, maxDist);
+
+    List<LatLongAlt> interpolatedPoints = new ArrayList<LatLongAlt>(left.size() + 1 + right.size());
+    interpolatedPoints.addAll(left);
+    interpolatedPoints.add(midpoint);
+    interpolatedPoints.addAll(right);
+
+    return interpolatedPoints;
   }
   
   /**
-   * Gradient in percent between two points
-   * @param point1
-   * @param point2
+   * Gradient in percent between two points.
+   *
+   * @param src - Source point
+   * @param dst - Destination point
    * @return gradient in percent
    */
-  public static double getLocalisedGradient(LatLongAlt point1, LatLongAlt point2) {
-    double horizontalDistance = getDistance(point1, point2);
-    double heightDifference = point2.getAltitude() - point1.getAltitude();
+  public static double getLocalisedGradient(LatLongAlt src, LatLongAlt dst) {
+    double horizontalDistance = getDistance(src, dst);
+    double heightDifference = dst.getAltitude() - src.getAltitude();
     return (heightDifference / horizontalDistance) * 100;
   }
   
@@ -160,9 +182,5 @@ public class LocationUtils {
     locations = interpolatePoints(rtn,1000);
     System.out.println("locations.size(): " + locations.size());
   }
-  
-  
-  
-  
 
 }
