@@ -161,7 +161,7 @@ public class LocationUtils {
     double heightDifference = dst.getAltitude() - src.getAltitude();
     return (heightDifference / horizontalDistance) * 100;
   }
-  
+
   public static void main(String[] args) {
     LatLongAlt l1 = new LatLongAlt(50.066389,5.715, 1000);
     LatLongAlt l2 = new LatLongAlt(58.643889,3.07, 4000);

@@ -28,6 +28,7 @@ import org.cowboycoders.cyclisimo.content.TrackDataHub;
 import org.cowboycoders.cyclisimo.content.TrackDataListener;
 import org.cowboycoders.cyclisimo.content.TrackDataType;
 import org.cowboycoders.cyclisimo.content.Waypoint;
+import org.cowboycoders.location.AltitudeSmoother;
 import org.cowboycoders.location.LatLongAlt;
 import org.cowboycoders.location.LocationUtils;
 import org.cowboycoders.utils.RunningAverager;
@@ -38,7 +39,8 @@ import java.util.List;
 
 public class CourseLoader {
 
-  public static final double MINIMUM_TRACK_POINT_SPACING_M = 10.0;
+  // Remove any track points separated by less than this
+  public static final double MINIMUM_TRACK_POINT_SPACING_M = 5.0;
 
   public static String TAG = CourseLoader.class.getSimpleName();
   
@@ -107,7 +109,6 @@ public class CourseLoader {
       if (finished)
           return;
 
-      // TODO: Check location is in decimal degrees
       LatLongAlt point = new LatLongAlt(
               location.getLatitude(),
               location.getLongitude(),
@@ -116,7 +117,7 @@ public class CourseLoader {
 
       if (lastAddedPoint == null) {
           lastAddedPoint = point;
-          Log.i(TAG, "first track point");
+          Log.d(TAG, "first track point");
           latLongAlts.add(point);
           return;
       }
@@ -124,11 +125,11 @@ public class CourseLoader {
       double pointSep = LocationUtils.getDistance(lastAddedPoint, point);
 
       if (pointSep >  MINIMUM_TRACK_POINT_SPACING_M) {
-          Log.i(TAG,"added track point, spacing " + LocationUtils.getDistance(lastAddedPoint, point));
+          Log.d(TAG,"added track point, spacing " + LocationUtils.getDistance(lastAddedPoint, point));
           lastAddedPoint = point;
           latLongAlts.add(point);
       } else {
-          Log.i(TAG,"filtered track point");
+          Log.d(TAG,"filtered track point");
       }
 
     }
@@ -150,21 +151,10 @@ public class CourseLoader {
       Log.i(TAG, "track points done");
       if (currentTrack != null && currentTrack.getId() == expectedId ) {
         finished = true;
-        // TODO: Move to own method
-        // Interpolate and smooth the data points to prevent large changes in the simulated gradient.
-        latLongAlts = LocationUtils.interpolatePoints(latLongAlts, MINIMUM_TRACK_POINT_SPACING_M);
-        // Smooth the altitudes
-
-        for (int i = 0; i < 3; ++i) {
-            RunningAverager runningAverager = new RunningAverager(100);
-            for (LatLongAlt p: latLongAlts) {
-                runningAverager.add(p.getAltitude());
-                p.setAltitude(runningAverager.getAverage());
-            }
-        }
-
+        AltitudeSmoother smoother = new AltitudeSmoother();
+        smoother.setAveragingSweeps(50).setMinTrackPointSpacing(7.0);
+        smoother.smoothTrackPointAltitudes(latLongAlts);
         gradientsToLog();
-
         courseDataHub.stop();
         courseDataHub.unregisterTrackDataListener(this);
         this.notifyAll();
@@ -229,14 +219,14 @@ public class CourseLoader {
   public void gradientsToLog() {
     Log.d(TAG, "gradient log start");
     for (int i = 1; i < latLongAlts.size(); ++i){
-      Log.i(TAG,
+      Log.d(TAG,
               "gradient: " +
-                LocationUtils.getLocalisedGradient(latLongAlts.get(i - 1), latLongAlts.get(i))
-                    + " point: "
-                        + latLongAlts.get(i).toString()
+                      LocationUtils.getLocalisedGradient(latLongAlts.get(i - 1), latLongAlts.get(i))
+                      + " point: "
+                      + latLongAlts.get(i).toString()
       );
     }
-    Log.i(TAG, "gradient log stop");
+    Log.d(TAG, "gradient log stop");
   }
 
 }
