@@ -296,7 +296,7 @@ public class MapOverlay {
       boolean needReload = reload || trackPath.updateState();
       if (needReload) {
         // clear all layers ?
-        googleMap.getLayerManager().getLayers().clear();
+        //googleMap.getLayerManager().getLayers().clear();
         paths.clear();
         if (underlay != null) {
           updateUnderlay(googleMap);

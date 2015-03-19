@@ -72,6 +72,7 @@ import android.widget.Toast;
 //import com.google.android.gms.maps.model.Polyline;
 
 
+import org.cowboycoders.cyclisimo.maps.AugmentedPolyline;
 import org.mapsforge.map.android.util.AndroidUtil;
 import org.mapsforge.map.android.view.MapView;
 import org.mapsforge.map.layer.LayerManager;
@@ -190,7 +191,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
   private boolean courseMode = false;
 
   // Current paths
-  private ArrayList<Polyline> paths = new ArrayList<Polyline>();
+  private ArrayList<AugmentedPolyline> paths = new ArrayList<AugmentedPolyline>();
   boolean reloadPaths = true;
 
   // UI elements
@@ -452,7 +453,9 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
 //        }
 //      });
       Model model = googleMap.getModel();
-      mapViewPos = new MapViewPosition(model.displayModel);
+      mapViewPos = googleMap.getModel().mapViewPosition;
+      //TODO: move this to button
+      googleMap.setClickable(true);
       mapViewPos.addObserver(new Observer() {
 
           @Override
@@ -468,6 +471,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
       Layers layers = layerManager.getLayers();
 
       mapViewPos.setZoomLevel((byte) 16);
+
       this.tileCache = AndroidUtil.createTileCache(this.getActivity(),
               "fragments",
               this.googleMap.getModel().displayModel.getTileSize(), 1.0f,
@@ -795,12 +799,11 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
         
         public void run() {
           if (isResumed() && googleMap != null) {
-            //redrawCourseOverlay();
-            //mapOverlay.addUnderlay(courseOverlay);
-            //mapOverlay.update(googleMap, paths, reloadPaths);
+
+            mapOverlay.addUnderlay(courseOverlay);
+            mapOverlay.update(googleMap, paths, reloadPaths);
             //add the overlays
             reloadPaths = false;
-//            loadCompleted = true;
             
           }
         }
@@ -812,7 +815,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
   public synchronized void clearWaypoints() {
     if (isResumed()) {
       //clear layer
-      //mapOverlay.clearWaypoints();
+      mapOverlay.clearWaypoints();
     }
 
   }
@@ -830,7 +833,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
       getActivity().runOnUiThread(new Runnable() {
         public void run() {
           if (isResumed() && googleMap != null) {
-            //mapOverlay.update(googleMap, paths, true);
+            mapOverlay.update(googleMap, paths, true);
           }
         }
       });
@@ -857,14 +860,14 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
   
   private synchronized void redrawCourseOverlay() {
     if (courseOverlay != null && googleMap != null && courseMode) {
-        
+
       Log.d(TAG,"redrawing courseOverlay");
-      
+
       getActivity().runOnUiThread(new Runnable() {
         @Override
       public void run() {
       try {
-      //courseOverlay.update(googleMap);
+      courseOverlay.update(googleMap);
       } catch (IllegalStateException e) {
         Log.d(TAG,"Illegal state exception whilst updating map polyline");
       }
@@ -955,7 +958,6 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
           LatLong LatLong = new LatLong(currentLocation.getLatitude(), currentLocation.getLongitude());
           mapViewPos.animateTo(LatLong);
           zoomToCurrentLocation = false;
-          //redrawCourseOverlay();
         }
       };
     });
