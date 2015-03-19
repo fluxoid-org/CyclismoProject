@@ -36,12 +36,14 @@ package org.cowboycoders.cyclisimo.maps;
 
 import android.content.Context;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Polyline;
+
 
 import org.cowboycoders.cyclisimo.MapOverlay.CachedLocation;
 import org.cowboycoders.cyclisimo.R;
+import org.mapsforge.core.graphics.Color;
+import org.mapsforge.map.android.view.MapView;
+import org.mapsforge.map.layer.overlay.Polyline;
+import org.mapsforge.core.model.LatLong;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,17 +55,17 @@ import java.util.List;
  */
 public class SingleColorTrackPath implements TrackPath {
 
-  final int color;
+  final Color color;
   
   /**
    * @return the color
    */
-  public int getColor() {
+  public Color getColor() {
     return color;
   }
 
   public SingleColorTrackPath(Context context) {
-    color = context.getResources().getColor(R.color.fast_path);
+    color = Color.RED;
   }
 
   @Override
@@ -72,7 +74,7 @@ public class SingleColorTrackPath implements TrackPath {
   }
 
   @Override
-  public void updatePath(GoogleMap googleMap, ArrayList<Polyline> paths, int startIndex,
+  public void updatePath(MapView googleMap, ArrayList<AugmentedPolyline> paths, int startIndex,
       List<CachedLocation> locations) {
     if (googleMap == null) {
       return;
@@ -82,7 +84,7 @@ public class SingleColorTrackPath implements TrackPath {
     }
 
     boolean newSegment = startIndex == 0 || !locations.get(startIndex - 1).isValid();
-    ArrayList<LatLng> lastSegmentPoints = new ArrayList<LatLng>();
+    ArrayList<LatLong> lastSegmentPoints = new ArrayList<LatLong>();
     boolean useLastPolyline = true;
     for (int i = startIndex; i < locations.size(); i++) {
       CachedLocation cachedLocation = locations.get(i);
@@ -92,7 +94,7 @@ public class SingleColorTrackPath implements TrackPath {
         newSegment = true;
         continue;
       }
-      LatLng latLng = cachedLocation.getLatLng();
+      LatLong latLng = cachedLocation.getLatLong();
       if (newSegment) {
         TrackPathUtils.addPath(googleMap, paths, lastSegmentPoints, getColor(), useLastPolyline);
         useLastPolyline = false;

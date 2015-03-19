@@ -20,13 +20,16 @@
 package org.cowboycoders.cyclisimo;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
+import org.cowboycoders.cyclisimo.maps.AugmentedPolyline;
+import org.mapsforge.core.graphics.Bitmap;
+import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
+import org.mapsforge.map.android.view.MapView;
+import org.mapsforge.map.layer.overlay.Marker;
+import org.mapsforge.map.layer.overlay.Polyline;
+import org.mapsforge.core.model.LatLong;
 
 import org.cowboycoders.cyclisimo.MapOverlay.CachedLocation;
 import org.cowboycoders.cyclisimo.content.Waypoint;
@@ -53,7 +56,7 @@ public class StaticOverlay {
   
   private TrackPath trackPath;
   
-  private ArrayList<Polyline> paths = new ArrayList<Polyline>();
+  private ArrayList<AugmentedPolyline> paths = new ArrayList<AugmentedPolyline>();
   
   private List<CachedLocation> locations;
   
@@ -104,7 +107,7 @@ public class StaticOverlay {
   /**
    * @return the paths
    */
-  public ArrayList<Polyline> getPaths() {
+  public ArrayList<AugmentedPolyline> getPaths() {
     return paths;
   }
 
@@ -113,7 +116,7 @@ public class StaticOverlay {
   /**
    * @param paths the paths to set
    */
-  public void setPaths(ArrayList<Polyline> paths) {
+  public void setPaths(ArrayList<AugmentedPolyline> paths) {
     this.paths = paths;
   }
 
@@ -167,11 +170,9 @@ public class StaticOverlay {
   /**
    * Updates the track, start and end markers, and waypoints.
    * 
-   * @param googleMap the google map
-   * @param paths the paths
-   * @param reload true to reload all points
+   * @param googleMap the osm map
    */
-  public void update(GoogleMap googleMap) {
+  public void update(MapView googleMap) {
 
     synchronized (locations) {
       // Merge pendingLocations with locations
@@ -190,16 +191,16 @@ public class StaticOverlay {
    * 
    * @param googleMap the google map
    */
-  protected void updateStartAndEndMarkers(GoogleMap googleMap) {
+  protected void updateStartAndEndMarkers(MapView googleMap) {
     // Add the end marker
     if (showEndMarker) {
       for (int i = locations.size() - 1; i >= 0; i--) {
         CachedLocation cachedLocation = locations.get(i);
         if (cachedLocation.isValid()) {
-          MarkerOptions markerOptions = new MarkerOptions().position(cachedLocation.getLatLng())
-              .anchor(MARKER_X_ANCHOR, MARKER_Y_ANCHOR).draggable(false).visible(true)
-              .icon(BitmapDescriptorFactory.fromResource(R.drawable.red_dot));
-          googleMap.addMarker(markerOptions);
+            Drawable drawable = context.getResources().getDrawable(R.drawable.red_dot);
+            Bitmap bitmap = AndroidGraphicFactory.convertToBitmap(drawable);
+            Marker marker = new Marker(cachedLocation.getLatLong(), bitmap, (int) MARKER_X_ANCHOR, (int) MARKER_Y_ANCHOR);
+            googleMap.getLayerManager().getLayers().add(marker);
           break;
         }
       }
@@ -209,10 +210,10 @@ public class StaticOverlay {
     for (int i = 0; i < locations.size(); i++) {
       CachedLocation cachedLocation = locations.get(i);
       if (cachedLocation.isValid()) {
-        MarkerOptions markerOptions = new MarkerOptions().position(cachedLocation.getLatLng())
-            .anchor(MARKER_X_ANCHOR, MARKER_Y_ANCHOR).draggable(false).visible(true)
-            .icon(BitmapDescriptorFactory.fromResource(R.drawable.green_dot));
-        googleMap.addMarker(markerOptions);
+          Drawable drawable = context.getResources().getDrawable(R.drawable.green_dot);
+          Bitmap bitmap = AndroidGraphicFactory.convertToBitmap(drawable);
+          Marker marker = new Marker(cachedLocation.getLatLong(), bitmap, (int) MARKER_X_ANCHOR, (int) MARKER_Y_ANCHOR);
+          googleMap.getLayerManager().getLayers().add(marker);
         break;
       }
     }
@@ -223,18 +224,18 @@ public class StaticOverlay {
    * 
    * @param googleMap the google map.
    */
-  protected void updateWaypoints(GoogleMap googleMap) {
+  protected void updateWaypoints(MapView googleMap) {
     synchronized (waypoints) {
       for (Waypoint waypoint : waypoints) {
         Location location = waypoint.getLocation();
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        LatLong latLng = new LatLong(location.getLatitude(), location.getLongitude());
         int drawableId = waypoint.getType() == Waypoint.TYPE_STATISTICS ? R.drawable.yellow_pushpin
             : R.drawable.blue_pushpin;
-        MarkerOptions markerOptions = new MarkerOptions().position(latLng)
-            .anchor(WAYPOINT_X_ANCHOR, WAYPOINT_Y_ANCHOR).draggable(false).visible(true)
-            .icon(BitmapDescriptorFactory.fromResource(drawableId))
-            .title(String.valueOf(waypoint.getId()));
-        googleMap.addMarker(markerOptions);
+          // TODO: title
+          Drawable drawable = context.getResources().getDrawable(drawableId);
+          Bitmap bitmap = AndroidGraphicFactory.convertToBitmap(drawable);
+          Marker marker = new Marker(latLng, bitmap, (int) MARKER_X_ANCHOR, (int) MARKER_Y_ANCHOR);
+          googleMap.getLayerManager().getLayers().add(marker);
       }
     }
   }

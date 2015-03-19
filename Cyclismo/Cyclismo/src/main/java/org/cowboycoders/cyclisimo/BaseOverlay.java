@@ -19,9 +19,9 @@
 */
 package org.cowboycoders.cyclisimo;
 
-import com.google.android.gms.maps.model.Polyline;
 
 import org.cowboycoders.cyclisimo.MapOverlay.CachedLocation;
+import org.mapsforge.map.layer.overlay.Polyline;
 
 import java.util.ArrayList;
 import java.util.List;

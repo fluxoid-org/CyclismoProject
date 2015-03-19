@@ -21,7 +21,7 @@ package org.cowboycoders.cyclisimo.maps;
 
 import android.content.Context;
 
-import org.cowboycoders.cyclisimo.R;
+import org.mapsforge.core.graphics.Color;
 
 public class CourseTrackPath extends SingleColorTrackPath {
   
@@ -34,8 +34,8 @@ public class CourseTrackPath extends SingleColorTrackPath {
   }
   
   @Override
-  public int getColor() {
-    return context.getResources().getColor(R.color.course_underlay);
+  public Color getColor() {
+    return Color.BLUE;
   }
 
 }

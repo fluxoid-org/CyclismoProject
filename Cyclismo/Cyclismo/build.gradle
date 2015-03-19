@@ -19,15 +19,14 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: '*.jar')
+    compile fileTree(include: '*.jar', dir: 'libs')
     compile project(':Cyclismo:CyclismoLib')
     compile project(':aFileChooser')
     compile project(':jformica_android')
     compile project(':Location')
     compile project(':jformica_core')
     compile project(':JTurbo')
-    compile project(':google-play-services_lib')
-    androidTestCompile fileTree(dir: 'test_libs', include: '*.jar')
+    androidTestCompile fileTree(include: '*.jar', dir: 'test_libs')
     compile 'com.android.support:support-v4:22.0.0'
 }
 

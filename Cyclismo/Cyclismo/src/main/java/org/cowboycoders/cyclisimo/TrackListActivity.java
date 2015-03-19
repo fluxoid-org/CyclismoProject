@@ -70,8 +70,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils;
 import org.cowboycoders.cyclisimo.content.Track;
@@ -100,6 +98,7 @@ import org.cowboycoders.cyclisimo.util.PreferencesUtils;
 import org.cowboycoders.cyclisimo.util.StringUtils;
 import org.cowboycoders.cyclisimo.util.TrackIconUtils;
 import org.cowboycoders.cyclisimo.util.TrackRecordingServiceConnectionUtils;
+import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 
 import java.util.EnumSet;
 import java.util.concurrent.atomic.AtomicLong;
@@ -113,7 +112,6 @@ public class TrackListActivity extends FragmentActivity implements DeleteOneTrac
 
   private static final String TAG = TrackListActivity.class.getSimpleName();
   private static final String START_GPS_KEY = "start_gps_key";
-  private static final int GOOGLE_PLAY_SERVICES_REQUEST_CODE = 0;
   private static final String[] PROJECTION = new String[] { TracksColumns._ID, TracksColumns.NAME,
       TracksColumns.DESCRIPTION, TracksColumns.CATEGORY, TracksColumns.STARTTIME,
       TracksColumns.TOTALDISTANCE, TracksColumns.TOTALTIME, TracksColumns.ICON };
@@ -367,6 +365,7 @@ public class TrackListActivity extends FragmentActivity implements DeleteOneTrac
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
     setVolumeControlStream(TextToSpeech.Engine.DEFAULT_STREAM);
     setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL);
     setContentView(R.layout.track_list);
@@ -555,9 +554,7 @@ public class TrackListActivity extends FragmentActivity implements DeleteOneTrac
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    if (requestCode == GOOGLE_PLAY_SERVICES_REQUEST_CODE) {
-      checkGooglePlayServices();
-    } else if (requestCode == TrackListActivity.COURSE_SETUP_RESPONSE_CODE) {
+  if (requestCode == TrackListActivity.COURSE_SETUP_RESPONSE_CODE) {
       if (resultCode == Activity.RESULT_CANCELED) {
         stopRecording();
       } else {
@@ -710,7 +707,6 @@ public class TrackListActivity extends FragmentActivity implements DeleteOneTrac
        */
       findViewById(R.id.track_list_empty_view).setVisibility(View.VISIBLE);
 
-      checkGooglePlayServices();
 
       // select user if one is not selected
       getNewUpdateTitleTask().execute(new Object());
@@ -746,23 +742,6 @@ public class TrackListActivity extends FragmentActivity implements DeleteOneTrac
     };
 
     return updateTitle;
-  }
-
-  private void checkGooglePlayServices() {
-    int code = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-    if (code != ConnectionResult.SUCCESS) {
-      Dialog dialog = GooglePlayServicesUtil.getErrorDialog(code, this,
-          GOOGLE_PLAY_SERVICES_REQUEST_CODE, new DialogInterface.OnCancelListener() {
-
-            @Override
-            public void onCancel(DialogInterface dialogInterface) {
-              finish();
-            }
-          });
-      if (dialog != null) {
-        dialog.show();
-      }
-    }
   }
 
   /**

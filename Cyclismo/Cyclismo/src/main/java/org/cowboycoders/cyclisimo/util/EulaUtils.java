@@ -39,10 +39,12 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
 /**
+ * TODO: get rid of this this monstrosity
  * Utilities for EULA.
  * 
  * @author Jimmy Shih
  */
+@Deprecated
 public class EulaUtils {
 
   private static final String EULA_PREFERENCE_FILE = "eula";

@@ -35,12 +35,18 @@
 
 package org.cowboycoders.cyclisimo.maps;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
+
+
+import org.cowboycoders.cyclisimo.util.MapForgeUtils;
+import org.mapsforge.core.graphics.Color;
+import org.mapsforge.core.graphics.Style;
+import org.mapsforge.core.model.LatLong;
+import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
+import org.mapsforge.map.android.view.MapView;
+import org.mapsforge.map.layer.overlay.Polyline;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Various utility functions for track path painting.
@@ -51,6 +57,7 @@ public class TrackPathUtils {
 
   private TrackPathUtils() {}
 
+
   /**
    * Add a path.
    * 
@@ -60,21 +67,22 @@ public class TrackPathUtils {
    * @param color the path color
    * @param append true to append to the last path
    */
-  public static void addPath(GoogleMap googleMap, ArrayList<Polyline> paths,
-      ArrayList<LatLng> points, int color, boolean append) {
+  public static void addPath(MapView googleMap, ArrayList<AugmentedPolyline> paths,
+      ArrayList<LatLong> points, Color color, boolean append) {
     if (points.size() == 0) {
       return;
     }
     if (append && paths.size() != 0) {
-      Polyline lastPolyline = paths.get(paths.size() - 1);
-      ArrayList<LatLng> pathPoints = new ArrayList<LatLng>();
-      pathPoints.addAll(lastPolyline.getPoints());
-      pathPoints.addAll(points);
-      lastPolyline.setPoints(pathPoints);
+      Polyline lastPolyline = paths.get(paths.size() - 1).getPolyLine();
+      lastPolyline.getLatLongs().addAll(points);
     } else {
-      PolylineOptions polylineOptions = new PolylineOptions().addAll(points).width(5).color(color);
-      Polyline polyline = googleMap.addPolyline(polylineOptions);
-      paths.add(polyline);
+        Polyline polyline = new Polyline(MapForgeUtils.createPaint(
+                AndroidGraphicFactory.INSTANCE.createColor(color), 8,
+                Style.STROKE), AndroidGraphicFactory.INSTANCE);
+        List<LatLong> latLongs = polyline.getLatLongs();
+        latLongs.addAll(points);
+      googleMap.getLayerManager().getLayers().add(polyline);
+      paths.add(new AugmentedPolyline(polyline, color));
     }
     points.clear();
   }

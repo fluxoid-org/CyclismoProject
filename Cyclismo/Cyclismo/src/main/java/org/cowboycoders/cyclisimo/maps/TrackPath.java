@@ -35,8 +35,8 @@
 
 package org.cowboycoders.cyclisimo.maps;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.Polyline;
+import org.mapsforge.map.android.view.MapView;
+import org.mapsforge.map.layer.overlay.Polyline;
 
 import org.cowboycoders.cyclisimo.MapOverlay.CachedLocation;
 
@@ -58,6 +58,6 @@ public interface TrackPath {
    * @param startIndex the start index
    * @param points the points
    */
-  public void updatePath(GoogleMap googleMap, ArrayList<Polyline> paths, int startIndex,
+  public void updatePath(MapView googleMap, ArrayList<AugmentedPolyline> paths, int startIndex,
       List<CachedLocation> points);
 }

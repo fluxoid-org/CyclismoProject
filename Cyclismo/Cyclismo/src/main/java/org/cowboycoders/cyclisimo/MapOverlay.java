@@ -38,14 +38,26 @@ package org.cowboycoders.cyclisimo;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.util.Log;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
+import org.cowboycoders.cyclisimo.maps.AugmentedPolyline;
+import org.mapsforge.core.graphics.Bitmap;
+import org.mapsforge.core.graphics.Canvas;
+import org.mapsforge.core.graphics.GraphicFactory;
+import org.mapsforge.core.graphics.Paint;
+import org.mapsforge.core.graphics.Style;
+import org.mapsforge.core.model.BoundingBox;
+import org.mapsforge.core.model.LatLong;
+import org.mapsforge.core.model.Point;
+import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
+import org.mapsforge.map.android.layer.MyLocationOverlay;
+import org.mapsforge.map.layer.Layer;
+import org.mapsforge.map.layer.overlay.Circle;
+import org.mapsforge.map.layer.overlay.Marker;
+import org.mapsforge.map.layer.overlay.Polyline;
+import org.mapsforge.map.android.view.MapView;
 
 import org.cowboycoders.cyclisimo.content.Waypoint;
 import org.cowboycoders.cyclisimo.maps.TrackPath;
@@ -66,7 +78,7 @@ import java.util.concurrent.BlockingQueue;
  */
 public class MapOverlay {
   
-  public static final String TAG = MapOverlay.class.getSimpleName(); 
+  public static final String TAG = MapOverlay.class.getSimpleName();
 
   public static final float WAYPOINT_X_ANCHOR = 13f / 48f;
 
@@ -92,6 +104,8 @@ public class MapOverlay {
   private final List<CachedLocation> locations;
   private final BlockingQueue<CachedLocation> pendingLocations;
   private final List<Waypoint> waypoints;
+  private Layer endMarker;
+  private Layer startMarker;
   
   
 
@@ -150,7 +164,7 @@ public class MapOverlay {
   public static class CachedLocation {
 
     private final boolean valid;
-    private final LatLng latLng;
+    private final LatLong latLng;
     private final int speed;
 
     /**
@@ -167,7 +181,7 @@ public class MapOverlay {
      */
     public CachedLocation(Location location) {
       this.valid = LocationUtils.isValidLocation(location);
-      this.latLng = valid ? new LatLng(location.getLatitude(), location.getLongitude()) : null;
+      this.latLng = valid ? new LatLong(location.getLatitude(), location.getLongitude()) : null;
       this.speed = (int) Math.floor(location.getSpeed() * UnitConversions.MS_TO_KMH);
     }
 
@@ -186,9 +200,9 @@ public class MapOverlay {
     }
 
     /**
-     * Gets the LatLng.
+     * Gets the LatLong.
      */
-    public LatLng getLatLng() {
+    public LatLong getLatLong() {
       return latLng;
     }
   };
@@ -273,7 +287,7 @@ public class MapOverlay {
    * @param paths the paths
    * @param reload true to reload all points
    */
-  public void update(GoogleMap googleMap, ArrayList<Polyline> paths, boolean reload) {
+  public void update(MapView googleMap, ArrayList<AugmentedPolyline> paths, boolean reload) {
     synchronized (locations) {
       // Merge pendingLocations with locations
       @SuppressWarnings("hiding")
@@ -281,7 +295,8 @@ public class MapOverlay {
       int newLocations = pendingLocations.drainTo(locations);
       boolean needReload = reload || trackPath.updateState();
       if (needReload) {
-        googleMap.clear();
+        // clear all layers ?
+        googleMap.getLayerManager().getLayers().clear();
         paths.clear();
         if (underlay != null) {
           updateUnderlay(googleMap);
@@ -299,7 +314,7 @@ public class MapOverlay {
   }
 
   
-  private void updateUnderlay(GoogleMap googleMap) {
+  private void updateUnderlay(MapView googleMap) {
     Log.d(TAG,"updating underlay");
     try {
       underlay.update(googleMap);
@@ -307,21 +322,26 @@ public class MapOverlay {
         Log.d(TAG,"Illegal state exception whilst updating underlay polyline");
       }
   }
+
+
+
   /**
    * Updates the start and end markers.
    * 
    * @param googleMap the google map
    */
-  protected void updateStartAndEndMarkers(GoogleMap googleMap) {
+  protected void updateStartAndEndMarkers(MapView googleMap) {
     // Add the end marker
     if (showEndMarker) {
       for (int i = locations.size() - 1; i >= 0; i--) {
         CachedLocation cachedLocation = locations.get(i);
         if (cachedLocation.valid) {
-          MarkerOptions markerOptions = new MarkerOptions().position(cachedLocation.getLatLng())
-              .anchor(MARKER_X_ANCHOR, MARKER_Y_ANCHOR).draggable(false).visible(true)
-              .icon(BitmapDescriptorFactory.fromResource(R.drawable.red_dot));
-          googleMap.addMarker(markerOptions);
+            //TODO: non-draggable ?
+            Drawable drawable = context.getResources().getDrawable(R.drawable.red_dot);
+            Bitmap bitmap = AndroidGraphicFactory.convertToBitmap(drawable);
+            Marker marker = new Marker(cachedLocation.getLatLong(), bitmap, (int) MARKER_X_ANCHOR, (int) MARKER_Y_ANCHOR);
+            this.endMarker = marker;
+            googleMap.getLayerManager().getLayers().add(this.endMarker);
           break;
         }
       }
@@ -331,10 +351,11 @@ public class MapOverlay {
     for (int i = 0; i < locations.size(); i++) {
       CachedLocation cachedLocation = locations.get(i);
       if (cachedLocation.valid) {
-        MarkerOptions markerOptions = new MarkerOptions().position(cachedLocation.getLatLng())
-            .anchor(MARKER_X_ANCHOR, MARKER_Y_ANCHOR).draggable(false).visible(true)
-            .icon(BitmapDescriptorFactory.fromResource(R.drawable.green_dot));
-        googleMap.addMarker(markerOptions);
+          Drawable drawable = context.getResources().getDrawable(R.drawable.green_dot);
+          Bitmap bitmap = AndroidGraphicFactory.convertToBitmap(drawable);
+          Marker marker = new Marker(cachedLocation.getLatLong(), bitmap, (int) MARKER_X_ANCHOR, (int) MARKER_Y_ANCHOR);
+          this.endMarker = marker;
+          googleMap.getLayerManager().getLayers().add(this.endMarker);
         break;
       }
     }
@@ -345,18 +366,18 @@ public class MapOverlay {
    * 
    * @param googleMap the google map.
    */
-  protected void updateWaypoints(GoogleMap googleMap) {
+  protected void updateWaypoints(MapView googleMap) {
     synchronized (waypoints) {
       for (Waypoint waypoint : waypoints) {
         Location location = waypoint.getLocation();
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        LatLong latLng = new LatLong(location.getLatitude(), location.getLongitude());
         int drawableId = waypoint.getType() == Waypoint.TYPE_STATISTICS ? R.drawable.yellow_pushpin
             : R.drawable.blue_pushpin;
-        MarkerOptions markerOptions = new MarkerOptions().position(latLng)
-            .anchor(WAYPOINT_X_ANCHOR, WAYPOINT_Y_ANCHOR).draggable(false).visible(true)
-            .icon(BitmapDescriptorFactory.fromResource(drawableId))
-            .title(String.valueOf(waypoint.getId()));
-        googleMap.addMarker(markerOptions);
+          // TODO: add tile: String.valueOf(waypoint.getId())
+          Drawable drawable = context.getResources().getDrawable(drawableId);
+          Bitmap bitmap = AndroidGraphicFactory.convertToBitmap(drawable);
+          Marker marker = new Marker(latLng, bitmap, (int) MARKER_X_ANCHOR, (int) MARKER_Y_ANCHOR);
+          googleMap.getLayerManager().getLayers().add(marker);
       }
     }
   }

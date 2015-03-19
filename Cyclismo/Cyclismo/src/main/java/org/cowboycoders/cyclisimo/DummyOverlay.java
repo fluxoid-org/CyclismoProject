@@ -21,8 +21,10 @@ package org.cowboycoders.cyclisimo;
 
 import android.content.Context;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.Polyline;
+
+import org.cowboycoders.cyclisimo.maps.AugmentedPolyline;
+import org.mapsforge.map.android.view.MapView;
+import org.mapsforge.map.layer.overlay.Polyline;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +50,7 @@ public class DummyOverlay extends MapOverlay {
    * @param paths the paths
    * @param reload true to reload all points
    */
-  public void update(GoogleMap googleMap, ArrayList<Polyline> paths, boolean reload) {
+  public void update(MapView googleMap, ArrayList<AugmentedPolyline> paths, boolean reload) {
     List<CachedLocation> locations = getLocations();
     BlockingQueue<CachedLocation> pendingLocations = getPendingLocations();
     synchronized (locations) {

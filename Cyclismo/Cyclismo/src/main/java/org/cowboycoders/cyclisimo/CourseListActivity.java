@@ -65,8 +65,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
+
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
 import org.cowboycoders.cyclisimo.content.CourseTracksColumns;
@@ -450,7 +449,6 @@ public class CourseListActivity extends FragmentActivity implements DeleteOneTra
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     if (requestCode == GOOGLE_PLAY_SERVICES_REQUEST_CODE) {
-      checkGooglePlayServices();
     } else {
       
       switch (requestCode) {
@@ -544,31 +542,14 @@ public class CourseListActivity extends FragmentActivity implements DeleteOneTra
 
       findViewById(R.id.course_list_empty_view).setVisibility(View.VISIBLE);
       
-      checkGooglePlayServices();
+
    
   }
 
-  private void checkGooglePlayServices() {
-    int code = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-    if (code != ConnectionResult.SUCCESS) {
-      Dialog dialog = GooglePlayServicesUtil.getErrorDialog(
-          code, this, GOOGLE_PLAY_SERVICES_REQUEST_CODE, new DialogInterface.OnCancelListener() {
-  
-              @Override
-            public void onCancel(DialogInterface dialogInterface) {
-              doFinish();
-            }
-          });
-      if (dialog != null) {
-        dialog.show();
-      }
-    }
-  }
 
   /**
    * Updates the menu items.
-   * 
-   * @param isRecording true if recording
+   *
    */
   private void updateMenuItems() {
 

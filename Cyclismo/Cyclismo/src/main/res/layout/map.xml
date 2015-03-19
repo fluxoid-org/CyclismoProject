@@ -16,21 +16,24 @@ limitations under the License.
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:id="@+id/map_container"
-  android:layout_height="match_parent"
-  android:layout_width="match_parent" >
-  <TextView
-    android:background="@color/warning_background"
-    android:drawableLeft="@drawable/warning"
-    android:gravity="center"
-    android:id="@+id/map_message"
-    android:layout_alignParentTop="true"
-    android:layout_width="match_parent"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:textColor="@android:color/primary_text_dark"
-    android:visibility="gone"
-    style="@style/TextMedium.WithIcon" />
-  <ImageButton
+    android:layout_height="match_parent"
+    android:layout_width="match_parent" >
+    <org.mapsforge.map.android.view.MapView
+        android:id="@+id/mapView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+    <TextView
+        android:id="@+id/attribution"
+        android:layout_width="fill_parent"
+        android:layout_height="10dip"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="1dip"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="@string/copyright_osm"
+        android:textColor="#000"
+        android:textSize="4pt" />
+    <ImageButton
     android:background="@drawable/my_location"
     android:contentDescription="@string/icon_my_location"
     android:id="@+id/map_my_location"

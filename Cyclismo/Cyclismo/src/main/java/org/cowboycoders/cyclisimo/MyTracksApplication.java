@@ -53,6 +53,7 @@ public class MyTracksApplication extends Application {
     if (BuildConfig.DEBUG) {
       ApiAdapterFactory.getApiAdapter().enableStrictMode();
     }
+
     Intent intent = new Intent(this, RemoveTempFilesService.class);
     startService(intent);
   }

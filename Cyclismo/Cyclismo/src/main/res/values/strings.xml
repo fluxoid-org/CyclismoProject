@@ -3195,5 +3195,6 @@ limitations under the License.
   	<string name="bushido_brake_calibrate_calibration_value">Calibration value: </string>
   	<string name="bushido_brake_calibrate_speed_label">current speed</string>
   	<string name="bushido_brake_calibrate_speed_unknown">unknown</string>
+    <string name="copyright_osm">Map data © OpenStreetMap contributors</string>
   	
 </resources>

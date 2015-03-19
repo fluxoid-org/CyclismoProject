@@ -36,9 +36,12 @@ package org.cowboycoders.cyclisimo.maps;
 
 import android.content.Context;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Polyline;
+import org.mapsforge.core.graphics.Color;
+import org.mapsforge.map.android.view.MapView;
+import org.mapsforge.map.layer.overlay.Polyline;
+import org.mapsforge.core.model.LatLong;
+import org.mapsforge.core.model.BoundingBox;
+import org.mapsforge.map.model.MapViewPosition;
 
 import org.cowboycoders.cyclisimo.MapOverlay.CachedLocation;
 import org.cowboycoders.cyclisimo.R;
@@ -54,15 +57,12 @@ import java.util.List;
  */
 public class MultiColorTrackPath implements TrackPath {
   private final TrackPathDescriptor trackPathDescriptor;
-  private final int slowColor;
-  private final int normalColor;
-  private final int fastColor;
+  private final Color slowColor = Color.BLUE;
+  private final Color normalColor = Color.GREEN;
+  private final Color fastColor = Color.RED;
   
   public MultiColorTrackPath(Context context, TrackPathDescriptor trackPathDescriptor) {
     this.trackPathDescriptor = trackPathDescriptor;
-    slowColor = context.getResources().getColor(R.color.slow_path);
-    normalColor = context.getResources().getColor(R.color.normal_path);
-    fastColor = context.getResources().getColor(R.color.fast_path);
   }
 
   @Override
@@ -71,7 +71,7 @@ public class MultiColorTrackPath implements TrackPath {
   }
 
   @Override
-  public void updatePath(GoogleMap googleMap, ArrayList<Polyline> paths, int startIndex,
+  public void updatePath(MapView googleMap, ArrayList<AugmentedPolyline> paths, int startIndex,
       List<CachedLocation> locations) {
     if (googleMap == null) {
       return;
@@ -81,10 +81,11 @@ public class MultiColorTrackPath implements TrackPath {
     }
     
     boolean newSegment = startIndex == 0 || !locations.get(startIndex - 1).isValid();
-    LatLng lastLatLng = startIndex != 0 ? locations.get(startIndex -1).getLatLng() : null;
+    LatLong lastLatLong = startIndex != 0 ? locations.get(startIndex -1).getLatLong() : null;
     
-    ArrayList<LatLng> lastSegmentPoints = new ArrayList<LatLng>();
-    int lastSegmentColor = paths.size() != 0  ? paths.get(paths.size() - 1).getColor() : slowColor;
+    ArrayList<LatLong> lastSegmentPoints = new ArrayList<LatLong>();
+
+    Color lastSegmentColor = paths.size() != 0  ? paths.get(paths.size() - 1).getColor(): slowColor;
     boolean useLastPolyline = true;
 
     for (int i = startIndex; i < locations.size(); ++i) {
@@ -93,11 +94,11 @@ public class MultiColorTrackPath implements TrackPath {
       // If not valid, start a new segment
       if (!cachedLocation.isValid()) {
         newSegment = true;
-        lastLatLng = null;
+        lastLatLong = null;
         continue;
       }
-      LatLng latLng = cachedLocation.getLatLng();
-      int color = getColor(cachedLocation.getSpeed());
+      LatLong latLng = cachedLocation.getLatLong();
+      Color color = getColor(cachedLocation.getSpeed());
       
       // Either update point or draw a line from the last point
       if (newSegment) {
@@ -111,18 +112,18 @@ public class MultiColorTrackPath implements TrackPath {
       } else {
         TrackPathUtils.addPath(googleMap, paths, lastSegmentPoints, lastSegmentColor, useLastPolyline);
         useLastPolyline = false;
-        if (lastLatLng != null) {
-          lastSegmentPoints.add(lastLatLng);
+        if (lastLatLong != null) {
+          lastSegmentPoints.add(lastLatLong);
         }
         lastSegmentPoints.add(latLng);
         lastSegmentColor = color;
       }
-      lastLatLng = latLng;
+      lastLatLong = latLng;
     }
     TrackPathUtils.addPath(googleMap, paths, lastSegmentPoints, lastSegmentColor, useLastPolyline);
   }
 
-  private int getColor(int speed) {
+  private Color getColor(int speed) {
     if (speed <= trackPathDescriptor.getSlowSpeed()) {
       return slowColor;
     } else if (speed <= trackPathDescriptor.getNormalSpeed()) {
