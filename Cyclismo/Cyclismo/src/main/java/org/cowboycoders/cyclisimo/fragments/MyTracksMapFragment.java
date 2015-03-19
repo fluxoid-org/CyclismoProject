@@ -606,10 +606,10 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
             return;
           }
           boolean myLocationEnabled = true;
-          if (state == LocationState.DISABLED) {
+          //if (state == LocationState.DISABLED) {
             currentLocation = null;
             myLocationEnabled = false;
-          }
+          //}
 
           String message;
           boolean isGpsDisabled;

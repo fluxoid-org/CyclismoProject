@@ -49,11 +49,15 @@ import org.mapsforge.core.graphics.GraphicFactory;
 import org.mapsforge.core.graphics.Paint;
 import org.mapsforge.core.graphics.Style;
 import org.mapsforge.core.model.BoundingBox;
+import org.mapsforge.core.model.Dimension;
 import org.mapsforge.core.model.LatLong;
+import org.mapsforge.core.model.MapPosition;
 import org.mapsforge.core.model.Point;
+import org.mapsforge.core.util.LatLongUtils;
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import org.mapsforge.map.android.layer.MyLocationOverlay;
 import org.mapsforge.map.layer.Layer;
+import org.mapsforge.map.layer.Layers;
 import org.mapsforge.map.layer.overlay.Circle;
 import org.mapsforge.map.layer.overlay.Marker;
 import org.mapsforge.map.layer.overlay.Polyline;
@@ -295,8 +299,11 @@ public class MapOverlay {
       int newLocations = pendingLocations.drainTo(locations);
       boolean needReload = reload || trackPath.updateState();
       if (needReload) {
-        // clear all layers ?
-        //googleMap.getLayerManager().getLayers().clear();
+        Layers layers = googleMap.getLayerManager().getLayers();
+        Layer map = layers.get(0);
+        // clear all layers apart from the map layer
+        layers.clear();
+        layers.add(map);
         paths.clear();
         if (underlay != null) {
           updateUnderlay(googleMap);
@@ -310,8 +317,42 @@ public class MapOverlay {
           trackPath.updatePath(googleMap, paths, numLocations - newLocations, locations);
         }
       }
+        if (startMarker != null && endMarker != null) {
+            double minLat;
+            double maxLat;
+            double minLong;
+            double maxLong;
+
+            if (startMarker.getPosition().latitude < endMarker.getPosition().latitude) {
+                minLat = startMarker.getPosition().latitude;
+                maxLat = endMarker.getPosition().latitude;
+            } else {
+                minLat = endMarker.getPosition().latitude;
+                maxLat = startMarker.getPosition().latitude;
+            }
+
+
+            if (startMarker.getPosition().longitude < endMarker.getPosition().longitude) {
+                minLong = startMarker.getPosition().longitude;
+                maxLong = endMarker.getPosition().longitude;
+            } else {
+                minLong = endMarker.getPosition().longitude;
+                maxLong = startMarker.getPosition().longitude;
+            }
+
+            BoundingBox bb = new BoundingBox(minLat,minLong, maxLat, maxLong);
+            Dimension dimension = googleMap.getModel().mapViewDimension.getDimension();
+            googleMap.getModel().mapViewPosition.setMapPosition(new MapPosition(
+                    bb.getCenterPoint(),
+                    LatLongUtils.zoomForBounds(
+                            dimension,
+                            bb,
+                            googleMap.getModel().displayModel.getTileSize())));
+        }
+
     }
   }
+
 
   
   private void updateUnderlay(MapView googleMap) {
@@ -354,8 +395,8 @@ public class MapOverlay {
           Drawable drawable = context.getResources().getDrawable(R.drawable.green_dot);
           Bitmap bitmap = AndroidGraphicFactory.convertToBitmap(drawable);
           Marker marker = new Marker(cachedLocation.getLatLong(), bitmap, (int) MARKER_X_ANCHOR, (int) MARKER_Y_ANCHOR);
-          this.endMarker = marker;
-          googleMap.getLayerManager().getLayers().add(this.endMarker);
+          this.startMarker = marker;
+          googleMap.getLayerManager().getLayers().add(this.startMarker);
         break;
       }
     }
