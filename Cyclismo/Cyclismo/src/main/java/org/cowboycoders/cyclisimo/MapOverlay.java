@@ -44,23 +44,19 @@ import android.util.Log;
 
 import org.cowboycoders.cyclisimo.maps.AugmentedPolyline;
 import org.mapsforge.core.graphics.Bitmap;
-import org.mapsforge.core.graphics.Canvas;
-import org.mapsforge.core.graphics.GraphicFactory;
-import org.mapsforge.core.graphics.Paint;
-import org.mapsforge.core.graphics.Style;
+
 import org.mapsforge.core.model.BoundingBox;
 import org.mapsforge.core.model.Dimension;
 import org.mapsforge.core.model.LatLong;
 import org.mapsforge.core.model.MapPosition;
-import org.mapsforge.core.model.Point;
+
 import org.mapsforge.core.util.LatLongUtils;
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
-import org.mapsforge.map.android.layer.MyLocationOverlay;
+
 import org.mapsforge.map.layer.Layer;
 import org.mapsforge.map.layer.Layers;
-import org.mapsforge.map.layer.overlay.Circle;
+
 import org.mapsforge.map.layer.overlay.Marker;
-import org.mapsforge.map.layer.overlay.Polyline;
 import org.mapsforge.map.android.view.MapView;
 
 import org.cowboycoders.cyclisimo.content.Waypoint;

@@ -28,7 +28,6 @@ import org.mapsforge.core.graphics.Bitmap;
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import org.mapsforge.map.android.view.MapView;
 import org.mapsforge.map.layer.overlay.Marker;
-import org.mapsforge.map.layer.overlay.Polyline;
 import org.mapsforge.core.model.LatLong;
 
 import org.cowboycoders.cyclisimo.MapOverlay.CachedLocation;
