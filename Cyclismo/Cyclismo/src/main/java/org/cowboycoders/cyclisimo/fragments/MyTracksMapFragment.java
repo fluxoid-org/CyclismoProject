@@ -35,12 +35,9 @@
 
 package org.cowboycoders.cyclisimo.fragments;
 
-import android.content.Context;
-import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -48,12 +45,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 
 //FIXME: maphack
@@ -75,23 +68,18 @@ import android.widget.Toast;
 import org.cowboycoders.cyclisimo.maps.AugmentedPolyline;
 import org.mapsforge.map.android.util.AndroidUtil;
 import org.mapsforge.map.android.view.MapView;
+import org.mapsforge.map.layer.Layer;
 import org.mapsforge.map.layer.LayerManager;
 import org.mapsforge.map.layer.cache.TileCache;
-import org.mapsforge.map.layer.overlay.Polyline;
+import org.mapsforge.map.layer.download.TileDownloadLayer;
+import org.mapsforge.map.layer.download.tilesource.OnlineTileSource;
+import org.mapsforge.map.layer.download.tilesource.OpenStreetMapMapnik;
 import org.mapsforge.core.model.LatLong;
 import org.mapsforge.core.model.BoundingBox;
 import org.mapsforge.map.model.MapViewPosition;
 
 
-import org.mapsforge.map.layer.overlay.Marker;
-import org.mapsforge.core.graphics.Bitmap;
-import org.mapsforge.core.graphics.Color;
-import org.mapsforge.core.graphics.Style;
-import org.mapsforge.core.model.BoundingBox;
 import org.mapsforge.core.model.Dimension;
-import org.mapsforge.core.model.LatLong;
-import org.mapsforge.core.model.MapPosition;
-import org.mapsforge.core.util.LatLongUtils;
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import org.mapsforge.map.layer.Layers;
 //import android.view.Gravity;
@@ -99,7 +87,6 @@ import org.mapsforge.map.layer.Layers;
 
 import org.cowboycoders.cyclisimo.DummyOverlay;
 import org.cowboycoders.cyclisimo.MapOverlay;
-import org.cowboycoders.cyclisimo.MarkerDetailActivity;
 
 import org.cowboycoders.cyclisimo.R;
 import org.cowboycoders.cyclisimo.StaticOverlay;
@@ -115,7 +102,6 @@ import org.cowboycoders.cyclisimo.content.Waypoint;
 import org.cowboycoders.cyclisimo.stats.TripStatistics;
 import org.cowboycoders.cyclisimo.util.ApiAdapterFactory;
 import org.cowboycoders.cyclisimo.util.GoogleLocationUtils;
-import org.cowboycoders.cyclisimo.util.IntentUtils;
 import org.cowboycoders.cyclisimo.util.LocationUtils;
 import org.mapsforge.map.model.Model;
 import org.mapsforge.map.model.common.Observer;
@@ -124,8 +110,10 @@ import org.mapsforge.map.rendertheme.InternalRenderTheme;
 import org.mapsforge.map.util.MapPositionUtil;
 
 import java.io.File;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -178,6 +166,9 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
   // True to zoom to currentLocation when it is available
   private boolean zoomToCurrentLocation;
 
+  private List<TileCache> tileCaches = new ArrayList<TileCache>();
+  private TileDownloadLayer downloadLayer;
+
   //private OnLocationChangedListener onLocationChangedListener;
 
   // For showing a marker
@@ -195,17 +186,18 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
   boolean reloadPaths = true;
 
   // UI elements
-  private MapView googleMap;
+  private MapView mapView;
   private MapViewPosition mapViewPos;
   private MapOverlay mapOverlay;
   private DummyOverlay courseDummyOverlay;
   private StaticOverlay courseOverlay;
-  private View mapView;
+  private View mapContainer;
   private ImageButton myLocationImageButton;
   //private TextView messageTextView;
 
   private boolean mUseCourseProvider;
   private long courseTrackId;
+
   
   private Lock courseLoadLock = new ReentrantLock();
   private Condition courseLoadedChanged = courseLoadLock.newCondition(); // courseOverlay != null
@@ -311,7 +303,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
         getActivity().runOnUiThread(new Runnable() {
 
           public void run() {
-            if (isResumed() && googleMap != null) {
+            if (isResumed() && mapView != null) {
               courseDummyOverlay.update(null, null, true);
             
               if (courseOverlay == null && courseMode) {
@@ -352,7 +344,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
       if (isResumed()) {
         getActivity().runOnUiThread(new Runnable() {
           public void run() {
-            if (isResumed() && googleMap != null) {
+            if (isResumed() && mapView != null) {
               courseDummyOverlay.update(null, null, true);
             }
           }
@@ -379,8 +371,6 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
     }
   };
 
-  private long redrawCourseOverlayTimestamp;
-    private TileCache tileCache;
 
     @Override
   public void onCreate(Bundle bundle) {
@@ -406,10 +396,9 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
   @Override
   public View onCreateView(
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    mapView = super.onCreateView(inflater, container, savedInstanceState);
+    mapContainer = super.onCreateView(inflater, container, savedInstanceState);
     View layout = inflater.inflate(R.layout.map, container, false);
-    googleMap = (MapView) layout.findViewById(R.id.mapView);
-
+    mapView = (MapView) layout.findViewById(R.id.mapView);
     myLocationImageButton = (ImageButton) layout.findViewById(R.id.map_my_location);
     myLocationImageButton.setOnClickListener(new View.OnClickListener() {
         @Override
@@ -420,10 +409,11 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
         updateCurrentLocation();
       }
     });
+
     //messageTextView = (TextView) layout.findViewById(R.id.map_message);
 
 
-//      googleMap.setOnMarkerClickListener(new OnMarkerClickListener() {
+//      mapView.setOnMarkerClickListener(new OnMarkerClickListener() {
 //
 //          @Override
 //        public boolean onMarkerClick(Marker marker) {
@@ -440,7 +430,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
 //          return true;
 //        }
 //      });
-//      googleMap.setLocationSource(new LocationSource() {
+//      mapView.setLocationSource(new LocationSource() {
 //
 //          @Override
 //        public void activate(OnLocationChangedListener listener) {
@@ -452,10 +442,11 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
 //          onLocationChangedListener = null;
 //        }
 //      });
-      Model model = googleMap.getModel();
-      mapViewPos = googleMap.getModel().mapViewPosition;
+      createTileCaches();
+
+      mapViewPos = mapView.getModel().mapViewPosition;
       //TODO: move this to button
-      googleMap.setClickable(true);
+      mapView.setClickable(true);
       mapViewPos.addObserver(new Observer() {
 
           @Override
@@ -467,26 +458,59 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
               }
           }
       });
-      LayerManager layerManager = this.googleMap.getLayerManager();
+
+
+
+      LayerManager layerManager = this.mapView.getLayerManager();
       Layers layers = layerManager.getLayers();
 
+
+//      OnlineTileSource onlineTileSource = new OnlineTileSource(new String[]{
+//              "otile1.mqcdn.com", "otile2.mqcdn.com", "otile3.mqcdn.com",
+//              "otile4.mqcdn.com"}, 80);
+//      onlineTileSource.setName("MapQuest").setAlpha(false)
+//              .setBaseUrl("/tiles/1.0.0/map/").setExtension("png")
+//              .setParallelRequestsLimit(8).setProtocol("http")
+//              .setTileSize(256).setZoomLevelMax((byte) 18)
+//              .setZoomLevelMin((byte) 0);
+
+      this.downloadLayer = new TileDownloadLayer(this.tileCaches.get(0),
+              this.mapView.getModel().mapViewPosition, OpenStreetMapMapnik.INSTANCE,
+              AndroidGraphicFactory.INSTANCE);
+      layers.add(this.downloadLayer);
+
       mapViewPos.setZoomLevel((byte) 16);
-
-      this.tileCache = AndroidUtil.createTileCache(this.getActivity(),
-              "fragments",
-              this.googleMap.getModel().displayModel.getTileSize(), 1.0f,
-              1.5);
-
-      layers.add(AndroidUtil.createTileRendererLayer(this.tileCache,
-              mapViewPos, getMapFile(),
-              InternalRenderTheme.OSMARENDER, false, true));
-
-
       mapViewPos.animateTo(getDefaultLatLong());
 
     return layout;
   }
 
+  @Override
+  public void onDestroyView() {
+      super.onDestroyView();
+      destroyTileCaches();
+      destroyLayers();
+      if (this.mapView != null) {
+          mapView.destroy();
+      }
+      AndroidGraphicFactory.clearResourceMemoryCache();
+   }
+
+    public boolean isInternetAvailable() {
+        try {
+            InetAddress ipAddr = InetAddress.getByName("google.com"); //You can replace it with your name
+
+            if (ipAddr.equals("")) {
+                return false;
+            } else {
+                return true;
+            }
+
+        } catch (Exception e) {
+            return false;
+        }
+
+    }
 
 
   @Override
@@ -498,7 +522,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
       zoomToCurrentLocation = savedInstanceState.getBoolean(ZOOM_TO_CURRENT_LOCATION_KEY, false);
       currentLocation = (Location) savedInstanceState.getParcelable(CURRENT_LOCATION_KEY);
       updateCurrentLocation();
-      if (googleMap != null) {
+      if (mapView != null) {
         // set map type e.g map vs satellite
       }
     }
@@ -507,6 +531,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
   @Override
   public void onResume() {
     super.onResume();
+    if (this.downloadLayer != null) this.downloadLayer.onResume();
     resumeTrackDataHub();
     resumeCourseDataHub();
   }
@@ -519,7 +544,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
     }
     outState.putBoolean(KEEP_CURRENT_LOCATION_VISIBLE_KEY, keepCurrentLocationVisible);
     outState.putBoolean(ZOOM_TO_CURRENT_LOCATION_KEY, zoomToCurrentLocation);
-    if (googleMap != null) {
+    if (mapView != null) {
       // set map type e.g map vs satellite
     }
   }
@@ -527,6 +552,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
   @Override
   public void onPause() {
     super.onPause();
+    if (this.downloadLayer != null) this.downloadLayer.onPause();
     pauseTrackDataHub();
     pauseCourseDataHub();
   }
@@ -534,13 +560,6 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (this.mapView != null) {
-            this.googleMap.destroy();
-        }
-        if (this.tileCache != null) {
-            this.tileCache.destroy();
-        }
-        AndroidGraphicFactory.clearResourceMemoryCache();
     }
 
     protected MapFile getMapFile() {
@@ -583,7 +602,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
 
   @Override
   public void onPrepareOptionsMenu(Menu menu) {
-    if (googleMap != null) {
+    if (mapView != null) {
         // map types
     }
     super.onPrepareOptionsMenu(menu);
@@ -602,7 +621,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
       getActivity().runOnUiThread(new Runnable() {
           @Override
         public void run() {
-          if (!isResumed() || googleMap == null) {
+          if (!isResumed() || mapView == null) {
             return;
           }
           boolean myLocationEnabled = true;
@@ -683,7 +702,31 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
     }
   }
 
-  @Override
+    /**
+     * Hook to destroy layers. By default we destroy every layer that
+     * has been added to the layer manager.
+     */
+    protected void destroyLayers() {
+        for (Layer layer : mapView.getLayerManager().getLayers()) {
+            mapView.getLayerManager().getLayers().remove(layer);
+            layer.onDestroy();
+        }
+    }
+
+    /**
+     * Hook to destroy tile caches.
+     * By default we destroy every tile cache that has been added to the tileCaches list.
+     */
+    protected void destroyTileCaches() {
+        for (TileCache tileCache : tileCaches) {
+            tileCache.destroy();
+        }
+        tileCaches.clear();
+    }
+
+
+
+    @Override
   public void onHeadingChanged(double heading) {
     // We don't care.
   }
@@ -798,10 +841,10 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
       getActivity().runOnUiThread(new Runnable() {
         
         public void run() {
-          if (isResumed() && googleMap != null) {
+          if (isResumed() && mapView != null) {
 
             mapOverlay.addUnderlay(courseOverlay);
-            mapOverlay.update(googleMap, paths, reloadPaths);
+            mapOverlay.update(mapView, paths, reloadPaths);
             //add the overlays
             reloadPaths = false;
             
@@ -832,8 +875,8 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
     if (isResumed()) {
       getActivity().runOnUiThread(new Runnable() {
         public void run() {
-          if (isResumed() && googleMap != null) {
-            mapOverlay.update(googleMap, paths, true);
+          if (isResumed() && mapView != null) {
+            mapOverlay.update(mapView, paths, true);
           }
         }
       });
@@ -859,7 +902,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
   }
   
   private synchronized void redrawCourseOverlay() {
-    if (courseOverlay != null && googleMap != null && courseMode) {
+    if (courseOverlay != null && mapView != null && courseMode) {
 
       Log.d(TAG,"redrawing courseOverlay");
 
@@ -867,7 +910,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
         @Override
       public void run() {
       try {
-      courseOverlay.update(googleMap);
+      courseOverlay.update(mapView);
       } catch (IllegalStateException e) {
         Log.d(TAG,"Illegal state exception whilst updating map polyline");
       }
@@ -948,7 +991,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
   private void updateCurrentLocation() {
     getActivity().runOnUiThread(new Runnable() {
       public void run() {
-        if (!isResumed() || googleMap == null //|| onLocationChangedListener == null
+        if (!isResumed() || mapView == null //|| onLocationChangedListener == null
             || currentLocation == null) {
           return;
         }
@@ -962,6 +1005,42 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
       };
     });
   }
+
+    /**
+     * The persistable ID is used to store settings information, like the center of the last view
+     * and the zoomlevel. By default the simple name of the class is used. The value is not user
+     * visibile.
+     * @return the id that is used to save this mapview.
+     */
+    protected String getPersistableId() {
+        return this.getClass().getSimpleName();
+    }
+
+    /**
+     * Returns the relative size of a map view in relation to the screen size of the device. This
+     * is used for cache size calculations.
+     * By default this returns 1.0, for a full size map view.
+     * @return the screen ratio of the mapview
+     */
+    protected float getScreenRatio() {
+        return 1.0f;
+    }
+
+    protected void createTileCaches() {
+        // see  SampleBaseActivity
+        boolean threaded = true;
+        int queueSize = 4;
+        boolean persistent = true;
+
+        this.tileCaches.add(AndroidUtil.createTileCache(this.getActivity(), getPersistableId(),
+                mapView.getModel().displayModel.getTileSize(), this.getScreenRatio(),
+                mapView.getModel().frameBufferModel.getOverdrawFactor(),
+                threaded, queueSize, persistent
+        ));
+
+    }
+
+
 
   /**
    * Sets the camera over a track.
@@ -977,15 +1056,15 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
           
         @SuppressWarnings("hiding")
         Track currentTrack = track;
-        if (!isResumed() || googleMap == null || currentTrack == null
+        if (!isResumed() || mapView == null || currentTrack == null
             || currentTrack.getNumberOfPoints() < 2) {
           return;
         }
 
         /**
-         * Check that mapView is valid.
+         * Check that mapContainer is valid.
          */
-        if (mapView == null || mapView.getWidth() == 0 || mapView.getHeight() == 0) {
+        if (mapContainer == null || mapContainer.getWidth() == 0 || mapContainer.getHeight() == 0) {
           return;
         }
 
@@ -1003,7 +1082,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
           
 
           mapViewPos.setMapLimit(bounds);
-          zoomForBounds(googleMap.getDimension(), bounds, googleMap.getModel().displayModel.getTileSize());
+          zoomForBounds(mapView.getDimension(), bounds, mapView.getModel().displayModel.getTileSize());
           mapViewPos.animateTo(bounds.getCenterPoint());
         }
         //redrawCourseOverlay();
@@ -1020,7 +1099,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
     getActivity().runOnUiThread(new Runnable() {
         @Override
       public void run() {
-        if (!isResumed() || googleMap == null) {
+        if (!isResumed() || mapView == null) {
           return;
         }
         MyTracksProviderUtils MyTracksProviderUtils = getProvider();
@@ -1064,12 +1143,12 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
    * @param location the location
    */
   private boolean isLocationVisible(Location location) {
-    if (location == null || googleMap == null) {
+    if (location == null || mapView == null) {
       return false;
     }
     LatLong latLong = new LatLong(location.getLatitude(), location.getLongitude());
-    Dimension dimension = googleMap.getModel().mapViewDimension.getDimension();
-    int tileSize = googleMap.getModel().displayModel.getTileSize();
+    Dimension dimension = mapView.getModel().mapViewDimension.getDimension();
+    int tileSize = mapView.getModel().displayModel.getTileSize();
     BoundingBox bounds = MapPositionUtil.getBoundingBox(mapViewPos.getMapPosition(), dimension, tileSize);
     return bounds.contains(latLong);
   }
