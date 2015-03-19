@@ -4801,7 +4801,7 @@ org.cowboycoders.ant.messages.responses.exceptions.MessageLengthException -> org
     long serialVersionUID -> serialVersionUID
 org.cowboycoders.ant.messages.responses.exceptions.TransmissionInScanModeException -> org.cowboycoders.a.c.f.a.j:
     long serialVersionUID -> serialVersionUID
-org.cowboycoders.ant.utils.AbstractFixedSizeQueue -> org.cowboycoders.a.d.a:
+org.cowboycoders.location.AbstractFixedSizeQueue -> org.cowboycoders.a.d.a:
     java.util.LinkedList queue -> a
     int maxSize -> b
     45:46:boolean offer(java.lang.Object) -> offer
@@ -4862,11 +4862,11 @@ org.cowboycoders.ant.utils.EnqueuedMessageSender$1 -> org.cowboycoders.a.d.k:
     java.lang.Runnable val$callback -> b
     org.cowboycoders.ant.messages.ChannelMessage val$msg -> c
     42:63:void run() -> run
-org.cowboycoders.ant.utils.FixedSizeFifo -> org.cowboycoders.a.d.l:
+org.cowboycoders.location.FixedSizeFifo -> org.cowboycoders.a.d.l:
     31:31:java.lang.Object peek() -> peek
     36:36:java.lang.Object poll() -> poll
     41:41:java.util.Iterator iterator() -> iterator
-org.cowboycoders.ant.utils.FixedSizeQueue -> org.cowboycoders.a.d.m:
+org.cowboycoders.location.FixedSizeQueue -> org.cowboycoders.a.d.m:
 org.cowboycoders.ant.utils.ValidationUtils -> org.cowboycoders.a.d.n:
     33:36:void maxMinValidator(int,int,int,org.cowboycoders.ant.utils.ValidationUtils$MaxMinExceptionProducer) -> a
 org.cowboycoders.ant.utils.ValidationUtils$MaxMinExceptionProducer -> org.cowboycoders.a.d.o:
@@ -9471,7 +9471,7 @@ org.cowboycoders.pid.OutputController -> org.cowboycoders.c.d:
     double getMinOutput() -> b
 org.cowboycoders.pid.PidController -> org.cowboycoders.c.e:
     double previousError -> a
-    org.cowboycoders.utils.TrapezoidIntegrator integral -> b
+    org.cowboycoders.location.TrapezoidIntegrator integral -> b
     double proportionalGain -> c
     double integralGain -> d
     double derivativeGain -> e
@@ -9573,7 +9573,7 @@ org.cowboycoders.turbotrainers.PowerModel -> org.cowboycoders.turbotrainers.Powe
     double momentOfInertiaWheels -> j
     double outsideRadiusTire -> k
     boolean negativeVelocityAllowed -> m
-    org.cowboycoders.utils.TrapezoidIntegrator kineticEnergy -> n
+    org.cowboycoders.location.TrapezoidIntegrator kineticEnergy -> n
     boolean $assertionsDisabled -> l
     167:167:double getGradientAsPercentage() -> a
     227:227:double getKineticEnergy() -> b
@@ -9600,8 +9600,8 @@ org.cowboycoders.turbotrainers.TurboBaseModel -> org.cowboycoders.turbotrainers.
     double heartRate -> k
     double power -> l
     double slope -> m
-    org.cowboycoders.utils.TrapezoidIntegrator integralVirtualSpeed -> e
-    org.cowboycoders.utils.TrapezoidIntegrator integralActualSpeed -> f
+    org.cowboycoders.location.TrapezoidIntegrator integralVirtualSpeed -> e
+    org.cowboycoders.location.TrapezoidIntegrator integralActualSpeed -> f
     32:32:double getSlope() -> a
     39:40:void setSlope(double) -> a
     53:54:void setHeartRate(double) -> b
@@ -9638,7 +9638,7 @@ org.cowboycoders.turbotrainers.bushido.BushidoUtils -> org.cowboycoders.turbotra
     31:32:byte[] getDc01Prototype() -> a
     36:38:byte[] getDc02Prototype() -> b
 org.cowboycoders.turbotrainers.bushido.brake.AbstractController -> org.cowboycoders.turbotrainers.bushido.brake.AbstractController:
-    org.cowboycoders.utils.SimpleCsvLogger logger -> b
+    org.cowboycoders.location.SimpleCsvLogger logger -> b
     org.cowboycoders.turbotrainers.bushido.brake.BrakeModel bushidoDataModel -> a
     boolean started -> c
     30:33:void logToCsv(java.lang.String,java.lang.Object) -> a
@@ -9660,7 +9660,7 @@ org.cowboycoders.turbotrainers.bushido.brake.BrakeModel -> org.cowboycoders.turb
     long counter -> n
     double powerLeft -> o
     double powerRight -> p
-    org.cowboycoders.utils.TrapezoidIntegrator speedIntegrator -> g
+    org.cowboycoders.location.TrapezoidIntegrator speedIntegrator -> g
     java.util.List packetProviders -> q
     java.util.Iterator packetProvidersIterator -> r
     org.cowboycoders.turbotrainers.DataPacketProvider resistanceProvider -> h
@@ -9911,7 +9911,7 @@ org.cowboycoders.turbotrainers.bushido.brake.CalibrationState -> org.cowboycoder
     1:1:org.cowboycoders.turbotrainers.bushido.brake.CalibrationState[] values() -> values
     1:1:org.cowboycoders.turbotrainers.bushido.brake.CalibrationState valueOf(java.lang.String) -> valueOf
 org.cowboycoders.turbotrainers.bushido.brake.ConstantResistanceController -> org.cowboycoders.turbotrainers.bushido.brake.ConstantResistanceController:
-    org.cowboycoders.utils.SimpleCsvLogger logger -> b
+    org.cowboycoders.location.SimpleCsvLogger logger -> b
     int resistance -> c
     15:18:double onSpeedChange(double) -> a
     23:28:double onPowerChange(double) -> b
@@ -9923,10 +9923,10 @@ org.cowboycoders.turbotrainers.bushido.brake.PidBrakeController -> org.cowboycod
     java.util.concurrent.locks.Lock speedUpdateLock -> d
     double predictedSpeed -> e
     double actualSpeed -> f
-    org.cowboycoders.utils.SlopeTimeAverager predictedSpeedSlopeAverager -> g
-    org.cowboycoders.utils.SlopeTimeAverager actualSpeedSlopeAverager -> h
-    org.cowboycoders.utils.UpdateCallback powerModelUpdateCallback -> i
-    org.cowboycoders.utils.FixedPeriodUpdater powerModelUpdater -> j
+    org.cowboycoders.location.SlopeTimeAverager predictedSpeedSlopeAverager -> g
+    org.cowboycoders.location.SlopeTimeAverager actualSpeedSlopeAverager -> h
+    org.cowboycoders.location.UpdateCallback powerModelUpdateCallback -> i
+    org.cowboycoders.location.FixedPeriodUpdater powerModelUpdater -> j
     org.cowboycoders.pid.ProcessVariableProvider actualSpeedProvider -> k
     org.cowboycoders.pid.OutputController resistanceOutputController -> l
     org.cowboycoders.pid.GainController resistanceGainController -> m
@@ -9959,8 +9959,8 @@ org.cowboycoders.turbotrainers.bushido.brake.PidBrakeController$4 -> org.cowboyc
     128:129:org.cowboycoders.pid.GainParameters getGain$2d04631a() -> a
 org.cowboycoders.turbotrainers.bushido.brake.SpeedResistanceMapper -> org.cowboycoders.turbotrainers.bushido.brake.SpeedResistanceMapper:
     org.cowboycoders.turbotrainers.PowerModel powerModel -> b
-    org.cowboycoders.utils.UpdateCallback updateVirtualSpeed -> c
-    org.cowboycoders.utils.FixedPeriodUpdater powerModelUpdater -> d
+    org.cowboycoders.location.UpdateCallback updateVirtualSpeed -> c
+    org.cowboycoders.location.FixedPeriodUpdater powerModelUpdater -> d
     64:77:double getBrakeResistanceFromPolynomialFit() -> e
     118:122:double onPowerChange(double) -> b
     127:131:double onSpeedChange(double) -> a
@@ -9976,8 +9976,8 @@ org.cowboycoders.turbotrainers.bushido.brake.SpeedResistanceMapperTest -> org.co
 org.cowboycoders.turbotrainers.bushido.brake.SpeedResistancePowerMapper -> org.cowboycoders.turbotrainers.bushido.brake.SpeedResistancePowerMapper:
     double[] SURF_COEFFS -> b
     org.cowboycoders.turbotrainers.PowerModel powerModel -> c
-    org.cowboycoders.utils.UpdateCallback updateVirtualSpeed -> d
-    org.cowboycoders.utils.FixedPeriodUpdater powerModelUpdater -> e
+    org.cowboycoders.location.UpdateCallback updateVirtualSpeed -> d
+    org.cowboycoders.location.FixedPeriodUpdater powerModelUpdater -> e
     70:101:double getBrakeResistanceFromSurfaceFit() -> e
     141:145:double onPowerChange(double) -> b
     152:154:double onSpeedChange(double) -> a
@@ -10204,13 +10204,13 @@ org.cowboycoders.turbotrainers.bushido.headunit.ButtonPressDispatcher -> org.cow
 org.cowboycoders.turbotrainers.bushido.headunit.ButtonPressDispatcher$1 -> org.cowboycoders.turbotrainers.bushido.headunit.q:
     org.cowboycoders.turbotrainers.bushido.headunit.ButtonPressDispatcher this$0 -> a
     159:167:void run() -> run
-org.cowboycoders.utils.Constants -> org.cowboycoders.d.a:
+org.cowboycoders.location.Constants -> org.cowboycoders.d.a:
     short UNSIGNED_BYTE_MAX_VALUE -> a
-org.cowboycoders.utils.FixedPeriodUpdater -> org.cowboycoders.d.b:
+org.cowboycoders.location.FixedPeriodUpdater -> org.cowboycoders.d.b:
     java.util.logging.Logger LOGGER -> a
     java.util.concurrent.locks.Lock updateLock -> b
     java.lang.Object latestValue -> c
-    org.cowboycoders.utils.UpdateCallback updateCallback -> d
+    org.cowboycoders.location.UpdateCallback updateCallback -> d
     boolean running -> e
     java.util.Timer timer -> f
     long period -> g
@@ -10218,25 +10218,25 @@ org.cowboycoders.utils.FixedPeriodUpdater -> org.cowboycoders.d.b:
     66:71:void update(java.lang.Object) -> a
     74:78:void start() -> b
     81:84:void stop() -> c
-    14:14:java.util.concurrent.locks.Lock access$0(org.cowboycoders.utils.FixedPeriodUpdater) -> a
-    18:18:org.cowboycoders.utils.UpdateCallback access$1(org.cowboycoders.utils.FixedPeriodUpdater) -> b
-org.cowboycoders.utils.FixedPeriodUpdater$UpdaterTimerTask -> org.cowboycoders.d.c:
-    org.cowboycoders.utils.FixedPeriodUpdater this$0 -> a
+    14:14:java.util.concurrent.locks.Lock access$0(org.cowboycoders.location.FixedPeriodUpdater) -> a
+    18:18:org.cowboycoders.location.UpdateCallback access$1(org.cowboycoders.location.FixedPeriodUpdater) -> b
+org.cowboycoders.location.FixedPeriodUpdater$UpdaterTimerTask -> org.cowboycoders.d.c:
+    org.cowboycoders.location.FixedPeriodUpdater this$0 -> a
     53:60:void run() -> run
-org.cowboycoders.utils.IterationOperator -> org.cowboycoders.d.d:
+org.cowboycoders.location.IterationOperator -> org.cowboycoders.d.d:
     void performOperation(java.lang.Object) -> a
-org.cowboycoders.utils.IterationUtils -> org.cowboycoders.d.e:
-    28:31:void operateOnAll(java.lang.Iterable,org.cowboycoders.utils.IterationOperator) -> a
-org.cowboycoders.utils.LoopingListIterator -> org.cowboycoders.d.f:
+org.cowboycoders.location.IterationUtils -> org.cowboycoders.d.e:
+    28:31:void operateOnAll(java.lang.Iterable,org.cowboycoders.location.IterationOperator) -> a
+org.cowboycoders.location.LoopingListIterator -> org.cowboycoders.d.f:
     java.util.List list -> a
     int currentIndex -> b
     50:50:boolean hasNext() -> hasNext
     55:55:java.lang.Object next() -> next
     60:60:void remove() -> remove
-org.cowboycoders.utils.RunningAverager -> org.cowboycoders.d.g:
-    org.cowboycoders.ant.utils.FixedSizeFifo values -> a
+org.cowboycoders.location.RunningAverager -> org.cowboycoders.d.g:
+    org.cowboycoders.location.FixedSizeFifo values -> a
     java.lang.Double lastValue -> b
-org.cowboycoders.utils.SimpleCsvLogger -> org.cowboycoders.d.h:
+org.cowboycoders.location.SimpleCsvLogger -> org.cowboycoders.d.h:
     java.lang.String directoryName -> a
     java.lang.String fileName -> b
     java.util.logging.Logger LOGGER -> c
@@ -10258,23 +10258,23 @@ org.cowboycoders.utils.SimpleCsvLogger -> org.cowboycoders.d.h:
     206:208:void newLog() -> a
     211:220:void write(java.lang.CharSequence[]) -> a
     223:237:void write(java.lang.CharSequence) -> a
-org.cowboycoders.utils.SlopeTimeAverager -> org.cowboycoders.d.i:
+org.cowboycoders.location.SlopeTimeAverager -> org.cowboycoders.d.i:
     int NUMBER_OF_VALUES_TO_AVERAGE -> a
     java.lang.Long timeOffset -> b
     java.lang.Double lastTimeStamp -> c
     double lastValue -> d
     java.lang.Double thresholdMax -> e
     java.lang.Double thresholdMin -> f
-    org.cowboycoders.utils.RunningAverager runningAverager -> g
+    org.cowboycoders.location.RunningAverager runningAverager -> g
     17:35:void add(double) -> a
     53:53:double getAverage() -> a
     57:59:void setThreshold(java.lang.Double,java.lang.Double) -> a
     74:74:boolean isWithinThreshold() -> b
     102:102:int getNumberOfSamples() -> c
-org.cowboycoders.utils.TrapezoidIntegrator -> org.cowboycoders.d.j:
+org.cowboycoders.location.TrapezoidIntegrator -> org.cowboycoders.d.j:
     java.lang.Double lastY -> a
     java.lang.Double lastX -> b
     double integral -> c
     30:38:double add(double,double) -> a
-org.cowboycoders.utils.UpdateCallback -> org.cowboycoders.d.k:
+org.cowboycoders.location.UpdateCallback -> org.cowboycoders.d.k:
     void onUpdate(java.lang.Object) -> a

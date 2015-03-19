@@ -17,25 +17,14 @@
 *    You should have received a copy of the GNU General Public License
 *    along with Cyclismo.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.cowboycoders.utils;
+package org.cowboycoders.location;
 
-import org.cowboycoders.ant.utils.Filter;
 
-public class IterationUtils {
-  private IterationUtils() {}
+/**
+ * perform an operation on each element in an {@code Iterable}
+ */
+public interface IterationOperator <V> {
   
-  public static <V> void operateOnAll(Iterable<V> iterable, IterationOperator<V> operator) {
-    for (V element : iterable) {
-      operator.performOperation(element);
-    }
-  }
-  
-  public static <V> void operateOnAll(Iterable<V> iterable, IterationOperator<V> operator, Filter<V> filter) {
-	    for (V element : iterable) {
-	      if (!filter.isWanted(element)) continue;
-	      operator.performOperation(element);
-	    }
-	  }
-  
+  void performOperation(V v);
 
 }

@@ -16,30 +16,16 @@
  *     You should have received a copy of the GNU General Public License
  *     along with formicidae.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.cowboycoders.ant.utils;
+package org.cowboycoders.location;
 
-import java.util.Iterator;
+/**
+ * Filter elements added to new structures
+ * @author will
+ *
+ * @param <V> to document
+ */
+public interface Filter <V> {
 
-public class FixedSizeLifo<V> extends AbstractFixedSizeQueue<V> implements FixedSizeQueue<V> {
-
-	public FixedSizeLifo(int maxSize) {
-		super(maxSize);
-	}
-
-	@Override
-	public V peek() {
-		return queue.getLast();
-	}
-
-	@Override
-	public V poll() {
-		return queue.removeLast();
-	}
-
-	@Override
-	public Iterator<V> iterator() {
-		return queue.descendingIterator();
-	}
-	
+  boolean isWanted(V value);
 
 }

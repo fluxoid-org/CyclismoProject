@@ -19,7 +19,6 @@
 */
 package org.cowboycoders.location;
 
-import org.cowboycoders.utils.RunningAverager;
 import java.util.List;
 
 /**

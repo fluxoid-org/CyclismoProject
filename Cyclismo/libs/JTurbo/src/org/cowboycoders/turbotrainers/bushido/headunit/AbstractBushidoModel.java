@@ -24,10 +24,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.cowboycoders.turbotrainers.DataPacketProvider;
-import org.cowboycoders.turbotrainers.Parameters.CommonParametersInterface;
 import org.cowboycoders.turbotrainers.TurboBaseModel;
 import org.cowboycoders.turbotrainers.bushido.BushidoUtils;
-import org.cowboycoders.utils.LoopingListIterator;
+import org.cowboycoders.location.LoopingListIterator;
 
 /**
  * Model for current settings

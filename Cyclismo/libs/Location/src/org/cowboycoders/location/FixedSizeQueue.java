@@ -16,29 +16,19 @@
  *     You should have received a copy of the GNU General Public License
  *     along with formicidae.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.cowboycoders.ant.utils;
+package org.cowboycoders.location;
 
-import java.util.Iterator;
+import java.util.Queue;
 
-public class FixedSizeFifo<V> extends AbstractFixedSizeQueue<V>  {
+public interface FixedSizeQueue<V> extends Queue<V>  {
 
-	public FixedSizeFifo(int maxSize) {
-		super(maxSize);
-	}
+	/**
+	 * Displaces and returns HEAD of queue if full, otherwise just adds
+	 * element.
+	 * @param e element to add
+	 * @return the displaced element or null if nothing was displaced
+	 */
+	public abstract V displace(V e);
 
-	@Override
-	public V peek() {
-		return queue.peek();
-	}
-
-	@Override
-	public V poll() {
-		return queue.poll();
-	}
-
-	@Override
-	public Iterator<V> iterator() {
-		return queue.iterator();
-	}
 
 }

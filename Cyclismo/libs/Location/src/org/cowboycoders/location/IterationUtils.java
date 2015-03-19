@@ -17,48 +17,23 @@
 *    You should have received a copy of the GNU General Public License
 *    along with Cyclismo.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.cowboycoders.utils;
-import java.util.Iterator;
-import java.util.List;
+package org.cowboycoders.location;
 
-
-
-public class LoopingListIterator <V> implements Iterator<V>{
+public class IterationUtils {
+  private IterationUtils() {}
   
-  private List<V> list;
-  private int currentIndex = 0;
-  
-  private int getCurrentIndex() {
-    int index = currentIndex;
-    currentIndex++;
-    if (currentIndex >= list.size()) {
-      currentIndex = 0;
+  public static <V> void operateOnAll(Iterable<V> iterable, IterationOperator<V> operator) {
+    for (V element : iterable) {
+      operator.performOperation(element);
     }
-    return index;
   }
   
-  /**
-   * 
-   * @param list to iterate on
-   */
-  public LoopingListIterator(List<V> list) {
-    this.list = list;
-  }
-
-  @Override
-  public boolean hasNext() {
-    return true;
-  }
-
-  @Override
-  public V next() {
-    return list.get(getCurrentIndex());
-  }
-
-  @Override
-  public void remove() {
-    throw new UnsupportedOperationException();
-    
-  }
+  public static <V> void operateOnAll(Iterable<V> iterable, IterationOperator<V> operator, Filter<V> filter) {
+	    for (V element : iterable) {
+	      if (!filter.isWanted(element)) continue;
+	      operator.performOperation(element);
+	    }
+	  }
+  
 
 }

@@ -21,16 +21,12 @@ package org.cowboycoders.ant.temp;
 import java.math.BigInteger;
 import org.cowboycoders.ant.utils.BigIntUtils;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.cowboycoders.turbotrainers.DataPacketProvider;
-import org.cowboycoders.turbotrainers.bushido.BushidoUtils;
 import org.cowboycoders.turbotrainers.bushido.brake.CalibrationState;
-import org.cowboycoders.utils.LoopingListIterator;
-import org.cowboycoders.utils.TrapezoidIntegrator;
+import org.cowboycoders.location.LoopingListIterator;
 
 /**
  * Model for current settings

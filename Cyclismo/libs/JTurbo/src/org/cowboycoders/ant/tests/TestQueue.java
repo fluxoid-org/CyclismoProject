@@ -19,16 +19,11 @@
 */
 package org.cowboycoders.ant.tests;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import org.cowboycoders.ant.utils.FixedSizeFifo;
-import org.cowboycoders.ant.utils.FixedSizeLifo;
+import org.cowboycoders.location.FixedSizeLifo;
 
 class Dave {
   String name;

@@ -4327,7 +4327,7 @@ org.cowboycoders.ant.tests.AnTest$WaitForMessageOpts
 org.cowboycoders.ant.tests.Dave
 org.cowboycoders.ant.tests.TestQueue
 org.cowboycoders.ant.tests.TestQueue$1
-org.cowboycoders.ant.utils.AbstractFixedSizeQueue:
+org.cowboycoders.location.AbstractFixedSizeQueue:
     31:31:protected java.util.LinkedList getQueue()
     35:35:protected int getMaxSize()
 org.cowboycoders.ant.utils.AndroidUtils:
@@ -4375,9 +4375,9 @@ org.cowboycoders.ant.utils.Containable
 org.cowboycoders.ant.utils.EnqueuedMessageSender:
     private static final long DEFAULT_TIMEOUT_DURATION
     69:71:public void sendMessage(org.cowboycoders.ant.messages.ChannelMessage)
-org.cowboycoders.ant.utils.Filter
-org.cowboycoders.ant.utils.FixedSizeLifo
-org.cowboycoders.ant.utils.FixedSizeQueue:
+org.cowboycoders.location.Filter
+org.cowboycoders.location.FixedSizeLifo
+org.cowboycoders.location.FixedSizeQueue:
     public abstract java.lang.Object displace(java.lang.Object)
 org.cowboycoders.ant.utils.IntUtils:
     25:25:private IntUtils()
@@ -5598,10 +5598,10 @@ org.cowboycoders.turbotrainers.bushido.brake.AbstractController:
     protected static final java.lang.String ACTUAL_SPEED_HEADING
     protected static final java.lang.String POWER_HEADING
     protected static final java.lang.String CADENCE_HEADING
-    20:21:protected synchronized void setCsvLogger(org.cowboycoders.utils.SimpleCsvLogger)
+    20:21:protected synchronized void setCsvLogger(org.cowboycoders.location.SimpleCsvLogger)
     47:47:public boolean isStarted()
     111:112:public void enableLogging(java.io.File)
-    120:120:protected org.cowboycoders.utils.SimpleCsvLogger getCsvLogger(java.io.File)
+    120:120:protected org.cowboycoders.location.SimpleCsvLogger getCsvLogger(java.io.File)
 org.cowboycoders.turbotrainers.bushido.brake.BrakeModel:
     private static final byte RESISTANCE_PACKET_IDENTIFER
     private static final int RESISTANCE_PACKET_IDENTIFER_INDEX
@@ -5638,7 +5638,7 @@ org.cowboycoders.turbotrainers.bushido.brake.BushidoBrakeBroadcastDataListener:
     private double powerRight
 org.cowboycoders.turbotrainers.bushido.brake.ConstantResistanceController:
     33:34:public void setAbsoluteResistance(int)
-    43:46:protected org.cowboycoders.utils.SimpleCsvLogger getCsvLogger(java.io.File)
+    43:46:protected org.cowboycoders.location.SimpleCsvLogger getCsvLogger(java.io.File)
 org.cowboycoders.turbotrainers.bushido.brake.PidBrakeController:
     private static final int POWER_MODEL_UPDATE_PERIOD_MS
     private static final double PID_DERIVATIVE_GAIN
@@ -5649,7 +5649,7 @@ org.cowboycoders.turbotrainers.bushido.brake.PidBrakeController:
     private static final double LOW_SPEED_LIMIT
     245:245:public org.cowboycoders.turbotrainers.PowerModelManipulator getPowerModelManipulator()
     249:249:public org.cowboycoders.pid.PidParameterController getPidParameterController()
-    261:265:protected org.cowboycoders.utils.SimpleCsvLogger getCsvLogger(java.io.File)
+    261:265:protected org.cowboycoders.location.SimpleCsvLogger getCsvLogger(java.io.File)
 org.cowboycoders.turbotrainers.bushido.brake.SpeedResistanceMapper:
     private static final int POWER_MODEL_UPDATE_PERIOD_MS
     private static final int INITIAL_BRAKE_RESISTANCE
@@ -5662,7 +5662,7 @@ org.cowboycoders.turbotrainers.bushido.brake.SpeedResistanceMapper:
     private static final double POLY_G
     private static final double POLY_H
     private static final double POLY_I
-    148:151:protected org.cowboycoders.utils.SimpleCsvLogger getCsvLogger(java.io.File)
+    148:151:protected org.cowboycoders.location.SimpleCsvLogger getCsvLogger(java.io.File)
 org.cowboycoders.turbotrainers.bushido.brake.SpeedResistanceMapperTest:
     32:41:public void testGetBrakeResistanceFromSurfaceFit()
 org.cowboycoders.turbotrainers.bushido.brake.SpeedResistancePowerMapper:
@@ -5672,7 +5672,7 @@ org.cowboycoders.turbotrainers.bushido.brake.SpeedResistancePowerMapper:
     private static final int MAXIMUM_BRAKE_RESISTANCE
     private static final int MINIMUM_SIMULATION_SPEED
     private static final int MINIMUM_SIMULATION_SPEED_OVERRIDE_POWER
-    170:174:protected org.cowboycoders.utils.SimpleCsvLogger getCsvLogger(java.io.File)
+    170:174:protected org.cowboycoders.location.SimpleCsvLogger getCsvLogger(java.io.File)
 org.cowboycoders.turbotrainers.bushido.brake.SpeedResistancePowerMapperTest:
     32:51:public void testGetBrakeResistanceFromPolynomialFit()
 org.cowboycoders.turbotrainers.bushido.brake.TargetSlopeModel:
@@ -5719,31 +5719,31 @@ org.cowboycoders.turbotrainers.bushido.headunit.BushidoTargetSlopeModel:
     private static final double SLOPE_MIN
     private static final int WEIGHT_BYTE
     106:106:public double getTarget()
-org.cowboycoders.utils.Averager
-org.cowboycoders.utils.Constants:
+org.cowboycoders.location.Averager
+org.cowboycoders.location.Constants:
     4:6:private Constants()
-org.cowboycoders.utils.Conversions
-org.cowboycoders.utils.FixedPeriodUpdater:
+org.cowboycoders.location.Conversions
+org.cowboycoders.location.FixedPeriodUpdater:
     87:107:public static void main(java.lang.String[])
-org.cowboycoders.utils.FixedPeriodUpdater$1
-org.cowboycoders.utils.IterationUtils:
+org.cowboycoders.location.FixedPeriodUpdater$1
+org.cowboycoders.location.IterationUtils:
     25:25:private IterationUtils()
-    34:38:public static void operateOnAll(java.lang.Iterable,org.cowboycoders.utils.IterationOperator,org.cowboycoders.ant.utils.Filter)
-org.cowboycoders.utils.RunningAverager:
+    34:38:public static void operateOnAll(java.lang.Iterable,org.cowboycoders.location.IterationOperator,org.cowboycoders.location.Filter)
+org.cowboycoders.location.RunningAverager:
     28:28:public java.lang.Double getLastValue()
     45:55:public static void main(java.lang.String[])
-org.cowboycoders.utils.SimpleCsvLogger:
+org.cowboycoders.location.SimpleCsvLogger:
     60:68:public varargs SimpleCsvLogger(java.lang.String,java.lang.String,java.lang.String[])
     71:72:public varargs SimpleCsvLogger(java.io.File,java.lang.String[])
     81:84:public synchronized void append(boolean)
     92:95:public synchronized void addTime(boolean)
     102:103:public synchronized void setComment(java.lang.CharSequence)
     241:250:public static void main(java.lang.String[])
-org.cowboycoders.utils.SlopeTimeAverager:
+org.cowboycoders.location.SlopeTimeAverager:
     48:48:public java.lang.Double getLastValue()
     82:98:public static void main(java.lang.String[])
-org.cowboycoders.utils.SlopeTimeAverager$1
-org.cowboycoders.utils.TrapezoidIntegrator:
+org.cowboycoders.location.SlopeTimeAverager$1
+org.cowboycoders.location.TrapezoidIntegrator:
     61:67:public static void main(java.lang.String[])
 org.teleal.android.util.FixedAndroidHandler
 org.teleal.android.util.FixedAndroidHandler$1

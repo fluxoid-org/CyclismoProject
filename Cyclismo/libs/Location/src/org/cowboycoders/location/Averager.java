@@ -1,4 +1,4 @@
-package org.cowboycoders.utils;
+package org.cowboycoders.location;
 
 public interface Averager {
 

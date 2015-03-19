@@ -1,6 +1,4 @@
-package org.cowboycoders.utils;
-
-import org.cowboycoders.ant.utils.FixedSizeFifo;
+package org.cowboycoders.location;
 
 public class RunningAverager implements Averager {
 	
@@ -12,7 +10,7 @@ public class RunningAverager implements Averager {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.cowboycoders.utils.Averager#add(double)
+	 * @see org.cowboycoders.location.Averager#add(double)
 	 */
 	@Override
 	public void add(double y) {
@@ -21,7 +19,7 @@ public class RunningAverager implements Averager {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.cowboycoders.utils.Averager#getLastValue()
+	 * @see org.cowboycoders.location.Averager#getLastValue()
 	 */
 	@Override
 	public Double getLastValue() throws NullPointerException {
@@ -29,7 +27,7 @@ public class RunningAverager implements Averager {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.cowboycoders.utils.Averager#getAverage()
+	 * @see org.cowboycoders.location.Averager#getAverage()
 	 */
 	@Override
 	public double getAverage() {

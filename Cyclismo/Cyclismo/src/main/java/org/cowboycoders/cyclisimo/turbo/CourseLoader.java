@@ -31,7 +31,6 @@ import org.cowboycoders.cyclisimo.content.Waypoint;
 import org.cowboycoders.location.AltitudeSmoother;
 import org.cowboycoders.location.LatLongAlt;
 import org.cowboycoders.location.LocationUtils;
-import org.cowboycoders.utils.RunningAverager;
 
 import java.util.ArrayList;
 import java.util.EnumSet;

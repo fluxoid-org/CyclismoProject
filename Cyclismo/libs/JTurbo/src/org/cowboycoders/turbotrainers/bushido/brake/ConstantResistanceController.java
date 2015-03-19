@@ -2,7 +2,7 @@ package org.cowboycoders.turbotrainers.bushido.brake;
 
 import java.io.File;
 
-import org.cowboycoders.utils.SimpleCsvLogger;
+import org.cowboycoders.location.SimpleCsvLogger;
 
 public class ConstantResistanceController extends AbstractController {
 

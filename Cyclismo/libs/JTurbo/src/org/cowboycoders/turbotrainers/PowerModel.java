@@ -1,6 +1,6 @@
 package org.cowboycoders.turbotrainers;
 
-import org.cowboycoders.utils.TrapezoidIntegrator;
+import org.cowboycoders.location.TrapezoidIntegrator;
 
 public class PowerModel implements PowerModelManipulator {
 	

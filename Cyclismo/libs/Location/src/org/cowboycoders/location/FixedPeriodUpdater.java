@@ -1,4 +1,4 @@
-package org.cowboycoders.utils;
+package org.cowboycoders.location;
 
 import java.util.Timer;
 import java.util.TimerTask;

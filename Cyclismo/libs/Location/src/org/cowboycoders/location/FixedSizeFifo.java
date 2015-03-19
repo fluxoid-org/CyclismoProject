@@ -16,54 +16,29 @@
  *     You should have received a copy of the GNU General Public License
  *     along with formicidae.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.cowboycoders.ant.utils;
+package org.cowboycoders.location;
 
-import java.util.AbstractQueue;
-import java.util.LinkedList;
+import java.util.Iterator;
 
-public abstract class AbstractFixedSizeQueue<V> extends AbstractQueue<V> implements FixedSizeQueue<V> {
+public class FixedSizeFifo<V> extends AbstractFixedSizeQueue<V>  {
 
-	protected LinkedList<V> queue;
-
-	protected int maxSize;
-	
-	protected LinkedList<V> getQueue() {
-		return queue;
-	}
-
-	protected int getMaxSize() {
-		return maxSize;
-	}
-
-	public AbstractFixedSizeQueue(int maxSize) {
-		this.queue = new LinkedList<V>();
-		this.maxSize = maxSize;
+	public FixedSizeFifo(int maxSize) {
+		super(maxSize);
 	}
 
 	@Override
-	public boolean offer(V e) {
-		displace(e);
-		return true;
+	public V peek() {
+		return queue.peek();
 	}
 
 	@Override
-	public V displace(V e) {
-		V rtn = null;
-		if (queue.size() >= maxSize) {
-			rtn = queue.poll();
-		}
-		queue.add(e);
-		return rtn;
+	public V poll() {
+		return queue.poll();
 	}
 
 	@Override
-	public int size() {
-		return queue.size();
-	}
-
-	@Override
-	public String toString() {
-		return this.getClass().getSimpleName() + " [queue=" + queue + "]";
+	public Iterator<V> iterator() {
+		return queue.iterator();
 	}
 
 }

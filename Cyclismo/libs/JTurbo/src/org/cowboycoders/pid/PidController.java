@@ -3,7 +3,7 @@ package org.cowboycoders.pid;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.cowboycoders.utils.TrapezoidIntegrator;
+import org.cowboycoders.location.TrapezoidIntegrator;
 
 public class PidController implements PidParameterController {
 	
