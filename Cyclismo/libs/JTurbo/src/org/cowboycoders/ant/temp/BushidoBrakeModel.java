@@ -26,7 +26,7 @@ import java.util.List;
 
 import org.cowboycoders.turbotrainers.DataPacketProvider;
 import org.cowboycoders.turbotrainers.bushido.brake.CalibrationState;
-import org.cowboycoders.location.LoopingListIterator;
+import org.fluxoid.utils.LoopingListIterator;
 
 /**
  * Model for current settings

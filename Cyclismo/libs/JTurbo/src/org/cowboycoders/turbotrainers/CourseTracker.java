@@ -24,8 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.cowboycoders.location.LatLongAlt;
-import org.cowboycoders.location.LocationUtils;
+import org.fluxoid.utils.LatLongAlt;
+import org.fluxoid.utils.LocationUtils;
 
 public class CourseTracker {
   
@@ -41,7 +41,7 @@ public class CourseTracker {
     double totalDistance = 0.0;
     distanceLocationMap.put(totalDistance,coursePoints.get(0));
     for (int i=1 ; i< coursePoints.size() ; i++) {
-      double distanceBetweenPoints = org.cowboycoders.location.LocationUtils.gradientCorrectedDistance(coursePoints.get(i-1), coursePoints.get(i));
+      double distanceBetweenPoints = LocationUtils.gradientCorrectedDistance(coursePoints.get(i - 1), coursePoints.get(i));
       if (distanceBetweenPoints < ACCURACY) {
         // assume the same location
         continue;

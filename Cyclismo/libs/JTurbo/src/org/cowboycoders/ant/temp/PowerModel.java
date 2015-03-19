@@ -1,7 +1,7 @@
 package org.cowboycoders.ant.temp;
 
-import org.cowboycoders.location.Conversions;
-import org.cowboycoders.location.TrapezoidIntegrator;
+import org.fluxoid.utils.Conversions;
+import org.fluxoid.utils.TrapezoidIntegrator;
 
 public class PowerModel {
 	

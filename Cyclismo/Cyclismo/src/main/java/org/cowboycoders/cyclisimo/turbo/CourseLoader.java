@@ -28,9 +28,9 @@ import org.cowboycoders.cyclisimo.content.TrackDataHub;
 import org.cowboycoders.cyclisimo.content.TrackDataListener;
 import org.cowboycoders.cyclisimo.content.TrackDataType;
 import org.cowboycoders.cyclisimo.content.Waypoint;
-import org.cowboycoders.location.AltitudeSmoother;
-import org.cowboycoders.location.LatLongAlt;
-import org.cowboycoders.location.LocationUtils;
+import org.fluxoid.utils.AltitudeSmoother;
+import org.fluxoid.utils.LatLongAlt;
+import org.fluxoid.utils.LocationUtils;
 
 import java.util.ArrayList;
 import java.util.EnumSet;

@@ -11,8 +11,8 @@ project(':jformica_android').projectDir = new File('Cyclismo/libs/jformica/jform
 include ':jformica_core'
 project(':jformica_core').projectDir = new File('Cyclismo/libs/jformica/jformica_core')
 
-include ':Location'
-project(':Location').projectDir = new File('Cyclismo/libs/Location')
+include ':FluxUtils'
+project(':FluxUtils').projectDir = new File('Cyclismo/libs/FluxUtils')
 
 include ':JTurbo'
 project(':JTurbo').projectDir = new File('Cyclismo/libs/JTurbo')

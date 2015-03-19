@@ -3,7 +3,7 @@ package org.cowboycoders.turbotrainers.bushido.brake;
 import java.io.File;
 
 import org.cowboycoders.turbotrainers.TurboTrainerDataHooks;
-import org.cowboycoders.location.SimpleCsvLogger;
+import org.fluxoid.utils.SimpleCsvLogger;
 
 public abstract class AbstractController implements TurboTrainerDataHooks {
 	

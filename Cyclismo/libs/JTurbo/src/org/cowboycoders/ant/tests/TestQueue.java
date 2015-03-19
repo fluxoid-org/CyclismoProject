@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import org.cowboycoders.location.FixedSizeLifo;
+import org.fluxoid.utils.FixedSizeLifo;
 
 class Dave {
   String name;

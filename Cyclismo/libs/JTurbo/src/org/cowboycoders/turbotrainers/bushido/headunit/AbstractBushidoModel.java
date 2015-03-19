@@ -26,7 +26,7 @@ import java.util.List;
 import org.cowboycoders.turbotrainers.DataPacketProvider;
 import org.cowboycoders.turbotrainers.TurboBaseModel;
 import org.cowboycoders.turbotrainers.bushido.BushidoUtils;
-import org.cowboycoders.location.LoopingListIterator;
+import org.fluxoid.utils.LoopingListIterator;
 
 /**
  * Model for current settings

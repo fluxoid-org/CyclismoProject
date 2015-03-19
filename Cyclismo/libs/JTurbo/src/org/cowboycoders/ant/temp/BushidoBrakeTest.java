@@ -45,7 +45,7 @@ import org.cowboycoders.turbotrainers.Parameters;
 import org.cowboycoders.turbotrainers.TurboTrainerDataListener;
 import org.cowboycoders.turbotrainers.bushido.brake.CalibrationState;
 import org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit;
-import org.cowboycoders.location.SimpleCsvLogger;
+import org.fluxoid.utils.SimpleCsvLogger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

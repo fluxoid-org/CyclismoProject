@@ -4,8 +4,8 @@ import java.util.logging.Logger;
 
 import org.cowboycoders.turbotrainers.Parameters.CommonParametersInterface;
 import org.cowboycoders.turbotrainers.bushido.headunit.AbstractBushidoModel;
-import org.cowboycoders.location.Constants;
-import org.cowboycoders.location.TrapezoidIntegrator;
+import org.fluxoid.utils.Constants;
+import org.fluxoid.utils.TrapezoidIntegrator;
 
 abstract public class TurboBaseModel {
 

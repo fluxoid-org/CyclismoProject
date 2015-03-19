@@ -52,8 +52,8 @@ import org.cowboycoders.turbotrainers.Parameters.CommonParametersInterface;
 import org.cowboycoders.turbotrainers.Mode;
 import org.cowboycoders.turbotrainers.TooFewAntChannelsAvailableException;
 import org.cowboycoders.turbotrainers.TurboTrainerDataListener;
-import org.cowboycoders.location.IterationOperator;
-import org.cowboycoders.location.IterationUtils;
+import org.fluxoid.utils.IterationOperator;
+import org.fluxoid.utils.IterationUtils;
 
 public class BushidoBrake extends AntTurboTrainer {
 

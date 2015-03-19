@@ -27,8 +27,8 @@ import java.util.List;
 import org.cowboycoders.ant.utils.BigIntUtils;
 import org.cowboycoders.turbotrainers.DataPacketProvider;
 import org.cowboycoders.turbotrainers.TurboBaseModel;
-import org.cowboycoders.location.LoopingListIterator;
-import org.cowboycoders.location.TrapezoidIntegrator;
+import org.fluxoid.utils.LoopingListIterator;
+import org.fluxoid.utils.TrapezoidIntegrator;
 
 /**
  * Model for current settings
