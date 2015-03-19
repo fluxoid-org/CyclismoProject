@@ -59,7 +59,7 @@ import org.cowboycoders.cyclisimo.util.IntentUtils;
 import org.cowboycoders.cyclisimo.util.PreferencesUtils;
 import org.cowboycoders.cyclisimo.util.TrackRecordingServiceConnectionUtils;
 import org.cowboycoders.cyclisimo.util.UnitConversions;
-import org.cowboycoders.location.LatLongAlt;
+import org.fluxoid.utils.LatLongAlt;
 import org.cowboycoders.turbotrainers.CourseTracker;
 import org.cowboycoders.turbotrainers.Mode;
 import org.cowboycoders.turbotrainers.Parameters;
@@ -71,6 +71,7 @@ import org.cowboycoders.turbotrainers.bushido.brake.BushidoBrake;
 import org.cowboycoders.turbotrainers.bushido.brake.PidBrakeController;
 import org.cowboycoders.turbotrainers.bushido.brake.SpeedResistanceMapper;
 import org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit;
+import org.fluxoid.utils.LocationUtils;
 
 import java.util.List;
 import java.util.concurrent.TimeoutException;
@@ -354,8 +355,8 @@ public class TurboService extends Service {
       handleException(e, "Error loading course",true,NOTIFCATION_ID_STARTUP);
     }
 
-    latLongAlts = org.cowboycoders.location.LocationUtils.interpolatePoints(latLongAlts,
-        TARGET_TRACKPOINT_DISTANCE_METRES);
+    latLongAlts = LocationUtils.interpolatePoints(latLongAlts,
+            TARGET_TRACKPOINT_DISTANCE_METRES);
 
     this.courseTracker = new CourseTracker(latLongAlts);
 

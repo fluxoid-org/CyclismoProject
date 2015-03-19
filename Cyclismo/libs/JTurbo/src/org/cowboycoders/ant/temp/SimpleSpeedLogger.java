@@ -26,14 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Formatter;
 import java.util.logging.Logger;
-
-import org.cowboycoders.ant.AntLogger;
-import org.cowboycoders.pid.PidParameterController;
-import org.cowboycoders.pid.PidUpdateListener;
-import org.cowboycoders.utils.Conversions;
-
 
 
 public class SimpleSpeedLogger {

@@ -28,23 +28,28 @@ import org.cowboycoders.cyclisimo.content.TrackDataHub;
 import org.cowboycoders.cyclisimo.content.TrackDataListener;
 import org.cowboycoders.cyclisimo.content.TrackDataType;
 import org.cowboycoders.cyclisimo.content.Waypoint;
-import org.cowboycoders.location.LatLongAlt;
+import org.fluxoid.utils.AltitudeSmoother;
+import org.fluxoid.utils.LatLongAlt;
+import org.fluxoid.utils.LocationUtils;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-public class CourseLoader{
-  
+public class CourseLoader {
+
+  // Remove any track points separated by less than this
+  public static final double MINIMUM_TRACK_POINT_SPACING_M = 5.0;
+
   public static String TAG = CourseLoader.class.getSimpleName();
   
   private TrackDataHub courseDataHub;
-  private ArrayList<LatLongAlt> latLongAlts = new ArrayList<LatLongAlt>();
+  private List<LatLongAlt> latLongAlts = new ArrayList<LatLongAlt>();
   private boolean finished = false;
   private Track currentTrack;
   private final long expectedId;
-  
-  
+  private LatLongAlt lastAddedPoint = null;
+
   CourseLoader(Context context, long trackId) {
     courseDataHub = TrackDataHub.newInstance(context,true);
     expectedId = trackId;
@@ -100,19 +105,32 @@ public class CourseLoader{
 
     @Override
     public synchronized void onSampledInTrackPoint(Location location) {
-      if (!finished) {
-      Log.i(TAG,"new track point");
-      double lat = location.getLatitude();
-      double lng = location.getLongitude();
-      double alt = location.getAltitude();
-      Log.d(TAG,"alt: " + alt);
-      Log.d(TAG,"lat: " + lat);
-      Log.d(TAG,"long: " + lng);
-      LatLongAlt latLngAlt = new LatLongAlt(lat,lng,alt);
-      latLongAlts.add(latLngAlt);
+      if (finished)
+          return;
+
+      LatLongAlt point = new LatLongAlt(
+              location.getLatitude(),
+              location.getLongitude(),
+              location.getAltitude());
+      Log.d(TAG, point.toString());
+
+      if (lastAddedPoint == null) {
+          lastAddedPoint = point;
+          Log.d(TAG, "first track point");
+          latLongAlts.add(point);
+          return;
       }
-      // TODO Auto-generated method stub
-      
+
+      double pointSep = LocationUtils.getDistance(lastAddedPoint, point);
+
+      if (pointSep >  MINIMUM_TRACK_POINT_SPACING_M) {
+          Log.d(TAG,"added track point, spacing " + LocationUtils.getDistance(lastAddedPoint, point));
+          lastAddedPoint = point;
+          latLongAlts.add(point);
+      } else {
+          Log.d(TAG,"filtered track point");
+      }
+
     }
 
     @Override
@@ -132,6 +150,10 @@ public class CourseLoader{
       Log.i(TAG, "track points done");
       if (currentTrack != null && currentTrack.getId() == expectedId ) {
         finished = true;
+        AltitudeSmoother smoother = new AltitudeSmoother();
+        smoother.setAveragingSweeps(50).setMinTrackPointSpacing(7.0);
+        smoother.smoothTrackPointAltitudes(latLongAlts);
+        gradientsToLog();
         courseDataHub.stop();
         courseDataHub.unregisterTrackDataListener(this);
         this.notifyAll();
@@ -178,23 +200,32 @@ public class CourseLoader{
   };
   
   public List<LatLongAlt> getLatLongAlts() throws InterruptedException {
-    
-    //Thread.sleep(1000);
-    
+
     synchronized (trackDataListener) {
       while (!finished) {
         trackDataListener.wait();
       }
     }
-    
+
     Log.i(TAG,"lat long length: " + latLongAlts.size());
-    
-    //courseDataHub.stop();
-    //courseDataHub.unregisterTrackDataListener(trackDataListener);
-    
+
     return latLongAlts;
   }
 
-
+  /**
+  * Log gradients for course points array.
+  */
+  public void gradientsToLog() {
+    Log.d(TAG, "gradient log start");
+    for (int i = 1; i < latLongAlts.size(); ++i){
+      Log.d(TAG,
+              "gradient: " +
+                      LocationUtils.getLocalisedGradient(latLongAlts.get(i - 1), latLongAlts.get(i))
+                      + " point: "
+                      + latLongAlts.get(i).toString()
+      );
+    }
+    Log.d(TAG, "gradient log stop");
+  }
 
 }

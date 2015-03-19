@@ -13,12 +13,11 @@ import org.cowboycoders.pid.PidParameterController;
 import org.cowboycoders.pid.ProcessVariableProvider;
 import org.cowboycoders.turbotrainers.PowerModel;
 import org.cowboycoders.turbotrainers.PowerModelManipulator;
-import org.cowboycoders.turbotrainers.TurboTrainerDataListener;
-import org.cowboycoders.utils.Conversions;
-import org.cowboycoders.utils.FixedPeriodUpdater;
-import org.cowboycoders.utils.SimpleCsvLogger;
-import org.cowboycoders.utils.SlopeTimeAverager;
-import org.cowboycoders.utils.UpdateCallback;
+import org.fluxoid.utils.Conversions;
+import org.fluxoid.utils.FixedPeriodUpdater;
+import org.fluxoid.utils.SimpleCsvLogger;
+import org.fluxoid.utils.SlopeTimeAverager;
+import org.fluxoid.utils.UpdateCallback;
 
 public class PidBrakeController extends AbstractController {
 	

@@ -3,10 +3,10 @@ package org.cowboycoders.turbotrainers.bushido.brake;
 import java.io.File;
 
 import org.cowboycoders.turbotrainers.PowerModel;
-import org.cowboycoders.utils.Conversions;
-import org.cowboycoders.utils.FixedPeriodUpdater;
-import org.cowboycoders.utils.SimpleCsvLogger;
-import org.cowboycoders.utils.UpdateCallback;
+import org.fluxoid.utils.Conversions;
+import org.fluxoid.utils.FixedPeriodUpdater;
+import org.fluxoid.utils.SimpleCsvLogger;
+import org.fluxoid.utils.UpdateCallback;
 
 /**
  * @author www.cowboycoders.org

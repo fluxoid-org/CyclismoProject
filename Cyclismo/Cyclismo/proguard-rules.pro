@@ -117,7 +117,7 @@
 -dontwarn net.vidageek.mirror.**
 -dontwarn org.codehaus.jackson.**
 -dontwarn org.cowboycoders.ant.interfaces.AntTransceiver
--dontwarn org.cowboycoders.location.DrivingDirectionsUtils
+-dontwarn org.fluxoid.utils.DrivingDirectionsUtils
 -dontwarn android.test.*
 -dontwarn org.cowboycoders.ant.utils.UsbUtils
 -dontwarn android.test.suitebuilder.*

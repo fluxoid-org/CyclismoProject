@@ -18,7 +18,7 @@ dependencies {
     testCompile fileTree(dir: 'java_lib', include: '*.jar')
     testRuntime fileTree(dir: 'config', include: '*.properties')
     testRuntime project(':jformica_core')
-    compile project(':Location')
+    compile project(':FluxUtils')
     compile project(':jformica_core')
     compile project(':jformica_jsr80')
 }
