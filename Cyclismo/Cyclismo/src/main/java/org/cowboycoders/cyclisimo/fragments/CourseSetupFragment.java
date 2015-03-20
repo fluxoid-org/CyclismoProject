@@ -46,10 +46,7 @@ public class CourseSetupFragment extends AbstractSettingsFragment {
     private final static String TAG = "CourseSetupFragment";
     
     public static final int PICK_COURSE_REQUEST = 1567;
-    
-    //private Long trackId = null;
-    //private String mode = null;
-    //private OnPreferenceChangeListener listener;
+
     private OnSharedPreferenceChangeListener sharedListener;
     private SharedPreferences sharedPreferences;
     private UpdateSummaryCaller updateTrackIdSummarryCaller;

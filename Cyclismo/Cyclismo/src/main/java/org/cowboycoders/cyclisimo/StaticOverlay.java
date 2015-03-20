@@ -233,7 +233,7 @@ public class StaticOverlay {
           // TODO: title
           Drawable drawable = context.getResources().getDrawable(drawableId);
           Bitmap bitmap = AndroidGraphicFactory.convertToBitmap(drawable);
-          Marker marker = new Marker(latLng, bitmap, (int) MARKER_X_ANCHOR, (int) MARKER_Y_ANCHOR);
+          Marker marker = new Marker(latLng, bitmap, (int) WAYPOINT_X_ANCHOR, (int) WAYPOINT_Y_ANCHOR);
           googleMap.getLayerManager().getLayers().add(marker);
       }
     }

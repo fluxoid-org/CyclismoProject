@@ -72,7 +72,7 @@ import org.mapsforge.map.layer.Layer;
 import org.mapsforge.map.layer.LayerManager;
 import org.mapsforge.map.layer.cache.TileCache;
 import org.mapsforge.map.layer.download.TileDownloadLayer;
-import org.mapsforge.map.layer.download.tilesource.OnlineTileSource;
+
 import org.mapsforge.map.layer.download.tilesource.OpenStreetMapMapnik;
 import org.mapsforge.core.model.LatLong;
 import org.mapsforge.core.model.BoundingBox;
@@ -82,8 +82,6 @@ import org.mapsforge.map.model.MapViewPosition;
 import org.mapsforge.core.model.Dimension;
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import org.mapsforge.map.layer.Layers;
-//import android.view.Gravity;
-//import android.widget.TextView;
 
 import org.cowboycoders.cyclisimo.DummyOverlay;
 import org.cowboycoders.cyclisimo.MapOverlay;
@@ -103,10 +101,10 @@ import org.cowboycoders.cyclisimo.stats.TripStatistics;
 import org.cowboycoders.cyclisimo.util.ApiAdapterFactory;
 import org.cowboycoders.cyclisimo.util.GoogleLocationUtils;
 import org.cowboycoders.cyclisimo.util.LocationUtils;
-import org.mapsforge.map.model.Model;
+
 import org.mapsforge.map.model.common.Observer;
 import org.mapsforge.map.reader.MapFile;
-import org.mapsforge.map.rendertheme.InternalRenderTheme;
+
 import org.mapsforge.map.util.MapPositionUtil;
 
 import java.io.File;
@@ -474,16 +472,16 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
 //              .setTileSize(256).setZoomLevelMax((byte) 18)
 //              .setZoomLevelMin((byte) 0);
 
-      this.downloadLayer = new TileDownloadLayer(this.tileCaches.get(0),
-              this.mapView.getModel().mapViewPosition, OpenStreetMapMapnik.INSTANCE,
-              AndroidGraphicFactory.INSTANCE);
-      layers.add(this.downloadLayer);
+
+      layers.add(makeMapLayer());
 
       mapViewPos.setZoomLevel((byte) 16);
       mapViewPos.animateTo(getDefaultLatLong());
 
     return layout;
   }
+
+
 
   @Override
   public void onDestroyView() {
@@ -562,14 +560,15 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
         super.onDestroy();
     }
 
-    protected MapFile getMapFile() {
-        return new MapFile(new File(Environment.getExternalStorageDirectory(),
-                this.getMapFileName()));
-    }
-
-    protected String getMapFileName() {
-        return "germany.map";
-    }
+    //TODO: override online maps with a local offline map
+//    protected MapFile getMapFile() {
+//        return new MapFile(new File(Environment.getExternalStorageDirectory(),
+//                this.getMapFileName()));
+//    }
+//
+//    protected String getMapFileName() {
+//        return "germany.map";
+//    }
 
 
   /**
@@ -706,7 +705,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
      * Hook to destroy layers. By default we destroy every layer that
      * has been added to the layer manager.
      */
-    protected void destroyLayers() {
+    public void destroyLayers() {
         for (Layer layer : mapView.getLayerManager().getLayers()) {
             mapView.getLayerManager().getLayers().remove(layer);
             layer.onDestroy();
@@ -1152,4 +1151,11 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
     BoundingBox bounds = MapPositionUtil.getBoundingBox(mapViewPos.getMapPosition(), dimension, tileSize);
     return bounds.contains(latLong);
   }
+
+    public Layer makeMapLayer() {
+        this.downloadLayer = new TileDownloadLayer(this.tileCaches.get(0),
+                this.mapView.getModel().mapViewPosition, OpenStreetMapMapnik.INSTANCE,
+                AndroidGraphicFactory.INSTANCE);
+        return this.downloadLayer;
+    }
 }

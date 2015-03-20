@@ -24,7 +24,6 @@ import android.content.Context;
 
 import org.cowboycoders.cyclisimo.maps.AugmentedPolyline;
 import org.mapsforge.map.android.view.MapView;
-import org.mapsforge.map.layer.overlay.Polyline;
 
 import java.util.ArrayList;
 import java.util.List;

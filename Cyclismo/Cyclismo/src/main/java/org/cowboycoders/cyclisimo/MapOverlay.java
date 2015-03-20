@@ -43,6 +43,7 @@ import android.location.Location;
 import android.util.Log;
 
 import org.cowboycoders.cyclisimo.maps.AugmentedPolyline;
+
 import org.mapsforge.core.graphics.Bitmap;
 
 import org.mapsforge.core.model.BoundingBox;
@@ -296,10 +297,11 @@ public class MapOverlay {
       boolean needReload = reload || trackPath.updateState();
       if (needReload) {
         Layers layers = googleMap.getLayerManager().getLayers();
-        Layer map = layers.get(0);
-        // clear all layers apart from the map layer
-        layers.clear();
-        layers.add(map);
+
+        for (int i= 1; i< layers.size() ; i++){
+            Layer layer = layers.remove(i);
+            layer.onDestroy();
+        }
         paths.clear();
         if (underlay != null) {
           updateUnderlay(googleMap);
@@ -346,12 +348,13 @@ public class MapOverlay {
                             googleMap.getModel().displayModel.getTileSize())));
         }
 
+
     }
   }
 
 
-  
-  private void updateUnderlay(MapView googleMap) {
+
+    private void updateUnderlay(MapView googleMap) {
     Log.d(TAG,"updating underlay");
     try {
       underlay.update(googleMap);
@@ -413,7 +416,7 @@ public class MapOverlay {
           // TODO: add tile: String.valueOf(waypoint.getId())
           Drawable drawable = context.getResources().getDrawable(drawableId);
           Bitmap bitmap = AndroidGraphicFactory.convertToBitmap(drawable);
-          Marker marker = new Marker(latLng, bitmap, (int) MARKER_X_ANCHOR, (int) MARKER_Y_ANCHOR);
+          Marker marker = new Marker(latLng, bitmap, (int) WAYPOINT_X_ANCHOR, (int) WAYPOINT_Y_ANCHOR);
           googleMap.getLayerManager().getLayers().add(marker);
       }
     }
