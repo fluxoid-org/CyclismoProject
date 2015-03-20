@@ -103,11 +103,9 @@ import org.cowboycoders.cyclisimo.util.GoogleLocationUtils;
 import org.cowboycoders.cyclisimo.util.LocationUtils;
 
 import org.mapsforge.map.model.common.Observer;
-import org.mapsforge.map.reader.MapFile;
 
 import org.mapsforge.map.util.MapPositionUtil;
 
-import java.io.File;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -167,7 +165,6 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
   private List<TileCache> tileCaches = new ArrayList<TileCache>();
   private TileDownloadLayer downloadLayer;
 
-  //private OnLocationChangedListener onLocationChangedListener;
 
   // For showing a marker
   private long markerTrackId = -1L;
@@ -315,8 +312,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
                   courseLoadLock.unlock();
                 }
               }
-              
-              //reloadPaths = false;
+
             }
           }
         });
@@ -410,7 +406,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
 
     //messageTextView = (TextView) layout.findViewById(R.id.map_message);
 
-
+        //TODO: reimplement this with mapforge (see Marker#onTap)
 //      mapView.setOnMarkerClickListener(new OnMarkerClickListener() {
 //
 //          @Override
@@ -493,22 +489,6 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
       }
       AndroidGraphicFactory.clearResourceMemoryCache();
    }
-
-    public boolean isInternetAvailable() {
-        try {
-            InetAddress ipAddr = InetAddress.getByName("google.com"); //You can replace it with your name
-
-            if (ipAddr.equals("")) {
-                return false;
-            } else {
-                return true;
-            }
-
-        } catch (Exception e) {
-            return false;
-        }
-
-    }
 
 
   @Override
@@ -615,77 +595,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
 
   @Override
   public void onLocationStateChanged(final LocationState state) {
-    if (isResumed()) {
-      Log.v(TAG,"onLocationStateChanged");
-      getActivity().runOnUiThread(new Runnable() {
-          @Override
-        public void run() {
-          if (!isResumed() || mapView == null) {
-            return;
-          }
-          boolean myLocationEnabled = true;
-          //if (state == LocationState.DISABLED) {
-            currentLocation = null;
-            myLocationEnabled = false;
-          //}
-
-          String message;
-          boolean isGpsDisabled;
-          if (!isSelectedTrackRecording()) {
-            message = null;
-            isGpsDisabled = false;
-          } else {
-            switch (state) {
-              case DISABLED:
-                String setting = getString(GoogleLocationUtils.isAvailable(getActivity())
-                    ? R.string.gps_google_location_settings
-                    : R.string.gps_location_access);
-                message = getString(R.string.gps_disabled, setting);
-                isGpsDisabled = true;
-                break;
-              case NO_FIX:
-                message = getString(R.string.gps_wait_for_signal);
-                isGpsDisabled = false;
-                break;
-              case BAD_FIX:
-                message = getString(R.string.gps_wait_for_better_signal);
-                isGpsDisabled = false;
-                break;
-              case GOOD_FIX:
-                message = null;
-                isGpsDisabled = false;
-                break;
-              default:
-                throw new IllegalArgumentException("Unexpected state: " + state);
-            }
-          }
-//          if (message == null) {
-//            messageTextView.setVisibility(View.GONE);
-//            return;
-//          }
-//          messageTextView.setText(message);
-//          messageTextView.setVisibility(View.VISIBLE);
-//          if (isGpsDisabled) {
-//            Toast.makeText(getActivity(), R.string.gps_not_found, Toast.LENGTH_LONG).show();
-//
-//            // Click to show the location source settings
-//            messageTextView.setOnClickListener(new OnClickListener() {
-//
-//                @Override
-//              public void onClick(View v) {
-//                Intent intent = GoogleLocationUtils.isAvailable(getActivity()) ? new Intent(
-//                    GoogleLocationUtils.ACTION_GOOGLE_LOCATION_SETTINGS)
-//                    : new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                startActivity(intent);
-//              }
-//            });
-//          } else {
-//            messageTextView.setOnClickListener(null);
-//          }
-        }
-      });
-    }
+    // we don't care
   }
 
   @Override
@@ -990,11 +900,11 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
   private void updateCurrentLocation() {
     getActivity().runOnUiThread(new Runnable() {
       public void run() {
-        if (!isResumed() || mapView == null //|| onLocationChangedListener == null
+        if (!isResumed() || mapView == null
             || currentLocation == null) {
           return;
         }
-        //onLocationChangedListener.onLocationChanged(currentLocation);
+
         if (zoomToCurrentLocation
             || (keepCurrentLocationVisible && !isLocationVisible(currentLocation))) {
           LatLong LatLong = new LatLong(currentLocation.getLatitude(), currentLocation.getLongitude());
@@ -1084,7 +994,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
           zoomForBounds(mapView.getDimension(), bounds, mapView.getModel().displayModel.getTileSize());
           mapViewPos.animateTo(bounds.getCenterPoint());
         }
-        //redrawCourseOverlay();
+
       }
     });
   }
@@ -1110,7 +1020,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
           zoomToCurrentLocation = false;
           mapViewPos.animateTo(latLong);
         }
-        //redrawCourseOverlay();
+
       }
 
     });
