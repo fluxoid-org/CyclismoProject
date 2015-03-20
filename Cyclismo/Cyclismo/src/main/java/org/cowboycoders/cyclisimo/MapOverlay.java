@@ -104,8 +104,7 @@ public class MapOverlay implements MarkerSource {
   private final List<CachedLocation> locations;
   private final BlockingQueue<CachedLocation> pendingLocations;
   private final List<Waypoint> waypoints;
-  private Layer endMarker;
-  private Layer startMarker;
+
   private final MapMarkerUpdater mapMarkerUpdater = new MapMarkerUpdater(this);
 
     @Override
@@ -359,6 +358,8 @@ public class MapOverlay implements MarkerSource {
           trackPath.updatePath(googleMap, paths, numLocations - newLocations, locations);
         }
       }
+        Layer startMarker = mapMarkerUpdater.getStartMarker();
+        Layer endMarker = mapMarkerUpdater.getEndMarker();
         if (startMarker != null && endMarker != null) {
             double minLat;
             double maxLat;
