@@ -35,6 +35,7 @@
 
 package org.cowboycoders.cyclisimo.fragments;
 
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Environment;
@@ -66,6 +67,7 @@ import android.widget.ImageButton;
 
 
 import org.cowboycoders.cyclisimo.maps.AugmentedPolyline;
+import org.mapsforge.core.graphics.Bitmap;
 import org.mapsforge.map.android.util.AndroidUtil;
 import org.mapsforge.map.android.view.MapView;
 import org.mapsforge.map.layer.Layer;
@@ -76,6 +78,7 @@ import org.mapsforge.map.layer.download.TileDownloadLayer;
 import org.mapsforge.map.layer.download.tilesource.OpenStreetMapMapnik;
 import org.mapsforge.core.model.LatLong;
 import org.mapsforge.core.model.BoundingBox;
+import org.mapsforge.map.layer.overlay.Marker;
 import org.mapsforge.map.model.MapViewPosition;
 
 
@@ -99,14 +102,13 @@ import org.cowboycoders.cyclisimo.content.TrackDataType;
 import org.cowboycoders.cyclisimo.content.Waypoint;
 import org.cowboycoders.cyclisimo.stats.TripStatistics;
 import org.cowboycoders.cyclisimo.util.ApiAdapterFactory;
-import org.cowboycoders.cyclisimo.util.GoogleLocationUtils;
 import org.cowboycoders.cyclisimo.util.LocationUtils;
 
 import org.mapsforge.map.model.common.Observer;
 
 import org.mapsforge.map.util.MapPositionUtil;
 
-import java.net.InetAddress;
+
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -192,10 +194,13 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
 
   private boolean mUseCourseProvider;
   private long courseTrackId;
+  private Marker currentPosMarker;
 
   
   private Lock courseLoadLock = new ReentrantLock();
   private Condition courseLoadedChanged = courseLoadLock.newCondition(); // courseOverlay != null
+  private static float CURRENT_LOC_ANCHOR_X = 48f / 96f;
+  private static float CURRENT_LOC_ANCHOR_Y = 92f / 96f;
   
   
 //  private boolean loadCompleted = false;
@@ -364,6 +369,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
       return false;
     }
   };
+    private float locationYAnchor;
 
 
     @Override
@@ -387,24 +393,24 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
     Log.d(TAG,"courseTrackId in bundle : " + courseTrackId);
   }
 
-  @Override
-  public View onCreateView(
-      LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    mapContainer = super.onCreateView(inflater, container, savedInstanceState);
-    View layout = inflater.inflate(R.layout.map, container, false);
-    mapView = (MapView) layout.findViewById(R.id.mapView);
-    myLocationImageButton = (ImageButton) layout.findViewById(R.id.map_my_location);
-    myLocationImageButton.setOnClickListener(new View.OnClickListener() {
-        @Override
-      public void onClick(View v) {
-        forceUpdateLocation();
-        keepCurrentLocationVisible = true;
-        zoomToCurrentLocation = true;
-        updateCurrentLocation();
-      }
-    });
+    @Override
+    public View onCreateView(
+            LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mapContainer = super.onCreateView(inflater, container, savedInstanceState);
+        View layout = inflater.inflate(R.layout.map, container, false);
+        mapView = (MapView) layout.findViewById(R.id.mapView);
+        myLocationImageButton = (ImageButton) layout.findViewById(R.id.map_my_location);
+        myLocationImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                forceUpdateLocation();
+                keepCurrentLocationVisible = true;
+                zoomToCurrentLocation = true;
+                updateCurrentLocation();
+            }
+        });
 
-    //messageTextView = (TextView) layout.findViewById(R.id.map_message);
+        //messageTextView = (TextView) layout.findViewById(R.id.map_message);
 
         //TODO: reimplement this with mapforge (see Marker#onTap)
 //      mapView.setOnMarkerClickListener(new OnMarkerClickListener() {
@@ -436,27 +442,26 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
 //          onLocationChangedListener = null;
 //        }
 //      });
-      createTileCaches();
+        createTileCaches();
 
-      mapViewPos = mapView.getModel().mapViewPosition;
-      //TODO: move this to button
-      mapView.setClickable(true);
-      mapViewPos.addObserver(new Observer() {
+        mapViewPos = mapView.getModel().mapViewPosition;
+        //TODO: move this to button
+        mapView.setClickable(true);
+        mapViewPos.addObserver(new Observer() {
 
-          @Override
-          public void onChange() {
-              if (isResumed() && keepCurrentLocationVisible && currentLocation != null
-                      && !isLocationVisible(currentLocation)) {
-                  keepCurrentLocationVisible = false;
-                  zoomToCurrentLocation = false;
-              }
-          }
-      });
+            @Override
+            public void onChange() {
+                if (isResumed() && keepCurrentLocationVisible && currentLocation != null
+                        && !isLocationVisible(currentLocation)) {
+                    keepCurrentLocationVisible = false;
+                    zoomToCurrentLocation = false;
+                }
+            }
+        });
 
 
-
-      LayerManager layerManager = this.mapView.getLayerManager();
-      Layers layers = layerManager.getLayers();
+        LayerManager layerManager = this.mapView.getLayerManager();
+        Layers layers = layerManager.getLayers();
 
 
 //      OnlineTileSource onlineTileSource = new OnlineTileSource(new String[]{
@@ -469,13 +474,26 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
 //              .setZoomLevelMin((byte) 0);
 
 
-      layers.add(makeMapLayer());
+        layers.add(makeMapLayer());
+        Drawable currenPosDrawable = this.getActivity().getResources().getDrawable(R.drawable.location_marker);
+        Bitmap currentPosBitmap = AndroidGraphicFactory.convertToBitmap(currenPosDrawable);
+        currentPosMarker = new Marker(getDefaultLatLong(), currentPosBitmap,
+                (int) ((currentPosBitmap.getWidth() / 2) - getLocationXAnchor() * currentPosBitmap.getWidth()),
+                (int) ((currentPosBitmap.getWidth() / 2) - getLocationYAnchor() * currentPosBitmap.getWidth()));
 
-      mapViewPos.setZoomLevel((byte) 16);
-      mapViewPos.animateTo(getDefaultLatLong());
+        currentPosMarker.setVisible(false);
+        if (currentLocation != null) {
+            currentPosMarker.setLatLong(new LatLong(currentLocation.getLongitude(),
+                    currentLocation.getLongitude()));
+            currentPosMarker.setVisible(true);
+        }
+        layers.add(currentPosMarker);
 
-    return layout;
-  }
+        mapViewPos.setZoomLevel((byte) 16);
+        mapViewPos.animateTo(getDefaultLatLong());
+
+        return layout;
+    }
 
 
 
@@ -907,8 +925,11 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
 
         if (zoomToCurrentLocation
             || (keepCurrentLocationVisible && !isLocationVisible(currentLocation))) {
-          LatLong LatLong = new LatLong(currentLocation.getLatitude(), currentLocation.getLongitude());
-          mapViewPos.animateTo(LatLong);
+          LatLong latLong = new LatLong(currentLocation.getLatitude(), currentLocation.getLongitude());
+
+          mapViewPos.animateTo(latLong);
+          currentPosMarker.setLatLong(latLong);
+          currentPosMarker.setVisible(true);
           zoomToCurrentLocation = false;
         }
       };
@@ -1067,5 +1088,13 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
                 this.mapView.getModel().mapViewPosition, OpenStreetMapMapnik.INSTANCE,
                 AndroidGraphicFactory.INSTANCE);
         return this.downloadLayer;
+    }
+
+    public float getLocationYAnchor() {
+        return CURRENT_LOC_ANCHOR_Y;
+    }
+
+    public float getLocationXAnchor() {
+        return CURRENT_LOC_ANCHOR_X;
     }
 }
