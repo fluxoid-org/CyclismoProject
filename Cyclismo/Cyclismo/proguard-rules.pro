@@ -102,9 +102,7 @@
 # My Tracks specific proguard settings.
 #
 
-# Add the libraries, but ignore warnings about them
--libraryjars libs
--libraryjars ../CyclismoLib/libs
+# *Probably* ok to ignore
 -dontwarn com.android.common.**
 -dontwarn com.google.android.googleapps.**
 -dontwarn com.google.android.gsf.**
@@ -135,3 +133,9 @@
 -keep public class com.dsi.ant.IServiceSettings
 
 -keep public class org.cowboycoders.turbotrainers.**
+
+# Only rendering is used for Mapsforge
+# See here: https://groups.google.com/forum/#!topic/mapsforge-dev/m6oHx78FPLU
+-dontwarn com.caverock.androidsvg.SVGImageView
+
+-dontwarn org.xmlpull.v1.**
