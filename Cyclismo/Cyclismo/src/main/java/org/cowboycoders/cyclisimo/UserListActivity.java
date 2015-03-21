@@ -98,7 +98,7 @@ public class UserListActivity extends FragmentActivity {
     @Override
     public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
       if (key != null) {
-        if (key == getString(R.string.settings_select_user_current_selection_key)) {
+        if (key.equals(getString(R.string.settings_select_user_current_selection_key))) {
           Log.i(TAG," current user changed");
           updateCancelButton();
         }
