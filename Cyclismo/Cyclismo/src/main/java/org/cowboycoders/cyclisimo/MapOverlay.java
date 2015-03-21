@@ -351,7 +351,12 @@ public class MapOverlay implements MarkerSource {
           updateUnderlay(googleMap);
         }
         trackPath.updatePath(googleMap, paths, 0, locations);
-        updateStartAndEndMarkers(googleMap);
+
+        // we will already have start/stop markers from underlay
+        if (underlay == null) {
+            updateStartAndEndMarkers(googleMap);
+        }
+
         updateWaypoints(googleMap);
       } else {
         if (newLocations != 0) {
