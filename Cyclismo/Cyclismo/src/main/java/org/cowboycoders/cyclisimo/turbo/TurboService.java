@@ -447,9 +447,7 @@ public class TurboService extends Service {
             // TrackRecordingServiceConnectionUtils.resumeTrack(trackRecordingServiceConnection);
             // }
             // notify receivers that we have started up
-            Intent intent = new Intent().setAction(TurboService.this
-                .getString(R.string.turbo_service_action_course_start));
-            sendBroadcast(intent);
+            unpauseRecording();
             updateLocation(courseTracker.getNearestLocation(0.0));
           } catch (Exception e) {
             handleException(e, "Error initiliasing turbo trainer",true,NOTIFCATION_ID_STARTUP);
@@ -466,6 +464,12 @@ public class TurboService extends Service {
     }
 
   };
+
+    private void unpauseRecording() {
+        Intent intent = new Intent().setAction(this
+            .getString(R.string.turbo_service_action_course_start));
+        sendBroadcast(intent);
+    }
 
     private void initAntWireless(AntHubService.LocalBinder binder) {
         if (antNode != null) return;
@@ -591,6 +595,7 @@ public class TurboService extends Service {
         if (locationJellyBeanFixMethod != null) {
           locationJellyBeanFixMethod.invoke(loc);
         }
+        unpauseRecording(); // automatically resume on location updates
         locationManager.setTestProviderLocation(MOCK_LOCATION_PROVIDER, loc);
         Log.e(TAG, "updated location");
       } catch (SecurityException e) {
