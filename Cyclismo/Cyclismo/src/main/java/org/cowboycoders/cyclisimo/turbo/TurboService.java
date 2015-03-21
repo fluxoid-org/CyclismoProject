@@ -309,10 +309,9 @@ public class TurboService extends Service {
     preferences.registerOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
     
     syncScaleFactor();
-    
-    this.selectedTurboTrainer = preferences.getString(context.getString(R.string.turbotrainer_selected), context.getString(R.string.turbotrainer_tacx_bushido_headunit_value));
-    
-    Log.d(TAG,selectedTurboTrainer);
+
+    this.selectedTurboTrainer = preferences.getString(this.getApplication().getString(R.string.turbotrainer_selected),
+          this.getApplication().getString(R.string.turbotrainer_tacx_bushido_headunit_value));
     
     
     // accessing database so should be put into a task
@@ -493,18 +492,20 @@ public class TurboService extends Service {
   }
 
   protected TurboTrainerInterface getTurboTrainer(AntHubService.LocalBinder binder) {
-    if (selectedTurboTrainer == getString(R.string.turbotrainer_tacx_bushido_headunit_value)) {
+
+      Log.d(TAG,selectedTurboTrainer);
+    if (selectedTurboTrainer.equals(getString(R.string.turbotrainer_tacx_bushido_headunit_value))) {
         initAntWireless(binder);
         return new BushidoHeadunit(antNode);
-    } else if (selectedTurboTrainer == getString(R.string.turbotrainer_tacx_bushido_brake_headunit_simulation_value)) {
+    } else if (selectedTurboTrainer.equals(getString(R.string.turbotrainer_tacx_bushido_brake_headunit_simulation_value))) {
         SpeedResistanceMapper mapper = new SpeedResistanceMapper();
         initAntWireless(binder);
       return new BushidoBrake(antNode,mapper);
-    } else if (selectedTurboTrainer == getString(R.string.turbotrainer_tacx_bushido_brake_pid_control_value)) {
+    } else if (selectedTurboTrainer.equals(getString(R.string.turbotrainer_tacx_bushido_brake_pid_control_value))) {
         initAntWireless(binder);
         PidBrakeController pid = new PidBrakeController();
         return new BushidoBrake(antNode, pid);
-    }  else if (selectedTurboTrainer == getString(R.string.turbotrainer_dummy_value)) {
+    }  else if (selectedTurboTrainer.equals(getString(R.string.turbotrainer_dummy_value))) {
         return new DummyTrainer();
     }
 
