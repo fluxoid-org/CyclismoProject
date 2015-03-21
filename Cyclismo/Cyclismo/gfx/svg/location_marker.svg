@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg2"
+   sodipodi:docname="location_marker.svg"
+   inkscape:export-filename="/home/soeb/arrows_bg.png"
+   viewBox="0 0 32 32"
+   sodipodi:version="0.32"
+   inkscape:export-xdpi="91.836731"
+   version="1.0"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-ydpi="91.836731"
+   inkscape:version="0.91 r13725">
+  <defs
+     id="defs8" />
+  <sodipodi:namedview
+     id="base"
+     bordercolor="#666666"
+     inkscape:pageshadow="2"
+     guidetolerance="10"
+     pagecolor="#ffffff"
+     gridtolerance="10000"
+     inkscape:window-height="1134"
+     inkscape:zoom="11.313708"
+     objecttolerance="10"
+     showgrid="true"
+     borderopacity="1.0"
+     inkscape:current-layer="layer1"
+     inkscape:cx="-1.5414765"
+     inkscape:cy="11.687445"
+     inkscape:window-y="27"
+     inkscape:window-x="0"
+     inkscape:window-width="1920"
+     inkscape:pageopacity="0.0"
+     inkscape:document-units="px"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid3338" />
+  </sodipodi:namedview>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     transform="translate(-136 -244.36)">
+    <path
+       style="fill:#ff9854;stroke:none;stroke-opacity:0.69318183;fill-opacity:1"
+       d="m 144.55553,260.28401 c -2.45505,-4.93568 -4.94518,-9.85464 -7.34369,-14.81798 4.93033,2.15538 9.85873,4.31517 14.78801,6.47297 4.93704,-2.15459 9.86294,-4.33514 14.81334,-6.45877 -4.91371,9.89763 -9.85251,19.78308 -14.81607,29.6558 -2.49221,-4.94478 -4.96283,-9.90048 -7.44159,-14.85202 z"
+       id="path3346"
+       inkscape:connector-curvature="0" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path4176"
+       d="m 144.92838,260.28486 c -2.3323,-4.68889 -4.69792,-9.36191 -6.97651,-14.07708 4.68382,2.04761 9.3658,4.09941 14.04861,6.14932 4.69019,-2.04686 9.3698,-4.11838 14.07268,-6.13583 -4.66803,9.40275 -9.35989,18.79393 -14.07527,28.17301 -2.3676,-4.69754 -4.71469,-9.40546 -7.06951,-14.10942 z"
+       style="fill:#ff6600;stroke:none;stroke-opacity:0.69318183" />
+  </g>
+  <metadata
+     id="metadata6">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/publicdomain/" />
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title></dc:title>
+        <dc:date>2006-12-26T00:00:00</dc:date>
+        <dc:description />
+        <dc:source>https://openclipart.org/detail/26525/-by--26525</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Soeb</dc:title>
+          </cc:Agent>
+        </dc:creator>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/publicdomain/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>
