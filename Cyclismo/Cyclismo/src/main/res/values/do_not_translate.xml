@@ -112,6 +112,7 @@ Google은 이용자에 대한 위치정보의 이용∙제공사실을 위치정
   <string name="turbotrainer_tacx_bushido_headunit_value">TACX_BUSHIDO_HEADUNIT</string>
   <string name="turbotrainer_tacx_bushido_brake_headunit_simulation_value">TACX_BUSHIDO_BRAKE_RESISTANCE</string>
   <string name="turbotrainer_tacx_bushido_brake_pid_control_value">TACX_BUSHIDO_BRAKE_PID</string>
+  <string name="turbotrainer_dummy_value">DUMMY_TURBO</string>
   
   
 </resources>

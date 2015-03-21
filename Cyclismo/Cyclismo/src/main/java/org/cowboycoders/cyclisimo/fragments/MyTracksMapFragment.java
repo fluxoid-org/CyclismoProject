@@ -370,6 +370,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
     }
   };
     private float locationYAnchor;
+    private Bitmap currentPosBitmap;
 
 
     @Override
@@ -476,7 +477,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
 
         layers.add(makeMapLayer());
         Drawable currenPosDrawable = this.getActivity().getResources().getDrawable(R.drawable.location_marker);
-        Bitmap currentPosBitmap = AndroidGraphicFactory.convertToBitmap(currenPosDrawable);
+        currentPosBitmap = AndroidGraphicFactory.convertToBitmap(currenPosDrawable);
         currentPosMarker = new Marker(getDefaultLatLong(), currentPosBitmap,
                 (int) ((currentPosBitmap.getWidth() / 2) - getLocationXAnchor() * currentPosBitmap.getWidth()),
                 (int) ((currentPosBitmap.getWidth() / 2) - getLocationYAnchor() * currentPosBitmap.getWidth()));
@@ -638,6 +639,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
             mapView.getLayerManager().getLayers().remove(layer);
             layer.onDestroy();
         }
+        currentPosMarker = null;
     }
 
     /**
@@ -919,7 +921,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
     getActivity().runOnUiThread(new Runnable() {
       public void run() {
         if (!isResumed() || mapView == null
-            || currentLocation == null) {
+            || currentLocation == null || currentPosMarker == null) {
           return;
         }
 
@@ -927,9 +929,10 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
             || (keepCurrentLocationVisible && !isLocationVisible(currentLocation))) {
           LatLong latLong = new LatLong(currentLocation.getLatitude(), currentLocation.getLongitude());
 
-          mapViewPos.animateTo(latLong);
           currentPosMarker.setLatLong(latLong);
           currentPosMarker.setVisible(true);
+          mapView.getLayerManager().redrawLayers(); // is this needed?
+          mapViewPos.animateTo(latLong);
           zoomToCurrentLocation = false;
         }
       };

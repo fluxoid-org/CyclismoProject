@@ -341,7 +341,8 @@ public class MapOverlay implements MarkerSource {
       if (needReload) {
         Layers layers = googleMap.getLayerManager().getLayers();
 
-        for (int i= 1; i< layers.size() ; i++){
+        //leave map and current location marker: index 0, 1
+        for (int i= 2; i< layers.size() ; i++){
             Layer layer = layers.remove(i);
             layer.onDestroy();
         }

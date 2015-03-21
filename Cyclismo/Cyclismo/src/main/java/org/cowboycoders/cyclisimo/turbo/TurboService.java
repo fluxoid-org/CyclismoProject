@@ -59,6 +59,7 @@ import org.cowboycoders.cyclisimo.util.IntentUtils;
 import org.cowboycoders.cyclisimo.util.PreferencesUtils;
 import org.cowboycoders.cyclisimo.util.TrackRecordingServiceConnectionUtils;
 import org.cowboycoders.cyclisimo.util.UnitConversions;
+import org.cowboycoders.turbotrainers.DummyTrainer;
 import org.fluxoid.utils.LatLongAlt;
 import org.cowboycoders.turbotrainers.CourseTracker;
 import org.cowboycoders.turbotrainers.Mode;
@@ -73,6 +74,8 @@ import org.cowboycoders.turbotrainers.bushido.brake.SpeedResistanceMapper;
 import org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit;
 import org.fluxoid.utils.LocationUtils;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.Lock;
@@ -420,14 +423,14 @@ public class TurboService extends Service {
   private ServiceConnection mConnection = new ServiceConnection() {
 
     public void onServiceConnected(ComponentName className, IBinder binder) {
-      AntHubService s = ((AntHubService.LocalBinder) binder).getService();
-      antNode = s.getNode();
-      if (attachAntLogger) {
-        antLogger = new AntLoggerImpl(TurboService.this);
-        antNode.registerAntLogger(antLogger);
+
+      TurboService.this.turboTrainer =  getTurboTrainer((AntHubService.LocalBinder) binder);
+      if ( turboTrainer == null ) {
+          Toast.makeText(TurboService.this,
+                  "Please select/reselect your turbo from the settings menu and try again",
+                  Toast.LENGTH_SHORT).show();
+          return;
       }
-      transceiver = s.getTransceiver();
-      TurboService.this.turboTrainer =  getTurboTrainer();
 
       new Thread() {
         public void run() {
@@ -464,7 +467,18 @@ public class TurboService extends Service {
 
   };
 
-  private TrackRecordingServiceConnection trackRecordingServiceConnection;
+    private void initAntWireless(AntHubService.LocalBinder binder) {
+        if (antNode != null) return;
+        AntHubService s = ((AntHubService.LocalBinder) binder).getService();
+        antNode = s.getNode();
+        if (attachAntLogger) {
+          antLogger = new AntLoggerImpl(this);
+          antNode.registerAntLogger(antLogger);
+        }
+        transceiver = s.getTransceiver();
+    }
+
+    private TrackRecordingServiceConnection trackRecordingServiceConnection;
 
   private boolean networkProviderEnabled;
 
@@ -474,17 +488,22 @@ public class TurboService extends Service {
     mIsBound = true;
   }
 
-  protected TurboTrainerInterface getTurboTrainer() {
+  protected TurboTrainerInterface getTurboTrainer(AntHubService.LocalBinder binder) {
     if (selectedTurboTrainer == getString(R.string.turbotrainer_tacx_bushido_headunit_value)) {
-      return new BushidoHeadunit(antNode);
+        initAntWireless(binder);
+        return new BushidoHeadunit(antNode);
     } else if (selectedTurboTrainer == getString(R.string.turbotrainer_tacx_bushido_brake_headunit_simulation_value)) {
-      SpeedResistanceMapper mapper = new SpeedResistanceMapper();
+        SpeedResistanceMapper mapper = new SpeedResistanceMapper();
+        initAntWireless(binder);
       return new BushidoBrake(antNode,mapper);
     } else if (selectedTurboTrainer == getString(R.string.turbotrainer_tacx_bushido_brake_pid_control_value)) {
-      PidBrakeController pid = new PidBrakeController();
+        initAntWireless(binder);
+        PidBrakeController pid = new PidBrakeController();
+        return new BushidoBrake(antNode, pid);
+    }  else if (selectedTurboTrainer == getString(R.string.turbotrainer_dummy_value)) {
+        return new DummyTrainer();
+    }
 
-      return new BushidoBrake(antNode,pid);
-  }
     return null;
   }
 
@@ -563,13 +582,26 @@ public class TurboService extends Service {
         loc.setTime(timestamp);
         loc.setSpeed(locSpeed);
         loc.setAccuracy(GPS_ACCURACY);
+        Method locationJellyBeanFixMethod = null;
+        try {
+          locationJellyBeanFixMethod = Location.class.getMethod("makeComplete");
+        } catch (NoSuchMethodException e) {
+            // ignore
+        }
+        if (locationJellyBeanFixMethod != null) {
+          locationJellyBeanFixMethod.invoke(loc);
+        }
         locationManager.setTestProviderLocation(MOCK_LOCATION_PROVIDER, loc);
         Log.e(TAG, "updated location");
       } catch (SecurityException e) {
         handleException(e,"Error updating location",true,NOTIFCATION_ID_STARTUP);
+      } catch (InvocationTargetException e) {
+          e.printStackTrace();
+      } catch (IllegalAccessException e) {
+          e.printStackTrace();
       }
 
-      return;
+        return;
     }
     Log.e(TAG, "no gps provider");
 
