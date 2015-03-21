@@ -30,7 +30,7 @@ public class LocationUtils {
     
   }
   
-  public static int EARTH_RADIUS = 6371000; //m
+  public static final int EARTH_RADIUS_M = 6371000;
   
   public static LatLong midPoint(LatLong point1, LatLong point2){
     double lat1 = point1.getLatitude();
@@ -83,7 +83,7 @@ public class LocationUtils {
     double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
             Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(srcLat) * Math.cos(dstLat);
     double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-    double d = EARTH_RADIUS  * c;
+    double d = EARTH_RADIUS_M * c;
     return d;
   }
   

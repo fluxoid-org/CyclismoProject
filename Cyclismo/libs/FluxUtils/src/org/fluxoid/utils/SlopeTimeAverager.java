@@ -2,7 +2,7 @@ package org.fluxoid.utils;
 
 public class SlopeTimeAverager implements Averager {
 	
-	public static int NUMBER_OF_VALUES_TO_AVERAGE = 10;
+	public static final int NUMBER_OF_VALUES_TO_AVERAGE = 10;
 	Long timeOffset;
 	Double lastTimeStamp;
 	double lastValue;
