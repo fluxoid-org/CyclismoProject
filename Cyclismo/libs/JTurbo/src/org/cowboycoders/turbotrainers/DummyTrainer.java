@@ -26,7 +26,7 @@ public class DummyTrainer extends GenericTurboTrainer {
                 listener.onCadenceChange(75);
                 listener.onPowerChange(250);
                 listener.onHeartRateChange(132);
-                listener.onSpeedChange(6.7056);
+                listener.onSpeedChange(24.14);
                 distance += 6.7056;
                 listener.onDistanceChange(distance);
             }
@@ -71,7 +71,7 @@ public class DummyTrainer extends GenericTurboTrainer {
     public void start() throws TurboCommunicationException, InterruptedException, TimeoutException, IllegalStateException {
         dataTimer =  new Timer(true);
         // spoof some data every second
-        dataTimer.scheduleAtFixedRate(new DataSpoofer(), 2000, 1000);
+        dataTimer.scheduleAtFixedRate(new DataSpoofer(), 5000, 1000);
     }
 
     @Override

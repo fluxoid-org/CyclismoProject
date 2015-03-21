@@ -20,15 +20,33 @@
 package org.cowboycoders.turbotrainers;
 
 public interface TurboTrainerDataListener {
-
+    /**
+     *
+     * @param speed in km/h
+     */
   public abstract void onSpeedChange(double speed);
 
+    /**
+     *
+     * @param power in watts
+     */
   public abstract void onPowerChange(double power);
 
+    /**
+     *
+     * @param cadence in rpm
+     */
   public abstract void onCadenceChange(double cadence);
 
+    /**
+     *
+     * @param distance in m
+     */
   public abstract void onDistanceChange(double distance);
 
+    /**
+     * @param heartRate in bpm
+     */
   public abstract void onHeartRateChange(double heartRate);
 
 }

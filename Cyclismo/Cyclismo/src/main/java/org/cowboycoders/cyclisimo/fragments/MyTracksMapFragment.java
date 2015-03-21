@@ -41,10 +41,12 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -448,15 +450,18 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
         mapViewPos = mapView.getModel().mapViewPosition;
         //TODO: move this to button
         mapView.setClickable(true);
-        mapViewPos.addObserver(new Observer() {
+
+
+        mapView.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
-            public void onChange() {
+            public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (isResumed() && keepCurrentLocationVisible && currentLocation != null
                         && !isLocationVisible(currentLocation)) {
                     keepCurrentLocationVisible = false;
                     zoomToCurrentLocation = false;
                 }
+                return false;
             }
         });
 
@@ -478,6 +483,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
         layers.add(makeMapLayer());
         Drawable currenPosDrawable = this.getActivity().getResources().getDrawable(R.drawable.location_marker);
         currentPosBitmap = AndroidGraphicFactory.convertToBitmap(currenPosDrawable);
+        currentPosBitmap.incrementRefCount(); // keep the bitmap alive
         currentPosMarker = new Marker(getDefaultLatLong(), currentPosBitmap,
                 (int) ((currentPosBitmap.getWidth() / 2) - getLocationXAnchor() * currentPosBitmap.getWidth()),
                 (int) ((currentPosBitmap.getWidth() / 2) - getLocationYAnchor() * currentPosBitmap.getWidth()));
@@ -505,6 +511,10 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
       destroyLayers();
       if (this.mapView != null) {
           mapView.destroy();
+      }
+      if (currentPosBitmap != null) {
+          currentPosBitmap.decrementRefCount();
+          currentPosBitmap = null;
       }
       AndroidGraphicFactory.clearResourceMemoryCache();
    }
@@ -924,14 +934,14 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
             || currentLocation == null || currentPosMarker == null) {
           return;
         }
+          LatLong latLong = new LatLong(currentLocation.getLatitude(), currentLocation.getLongitude());
+          Log.d(TAG,"redrawing currentPositionMarker");
+          currentPosMarker.setLatLong(latLong);
+          currentPosMarker.setVisible(true);
+          currentPosMarker.requestRedraw();
 
         if (zoomToCurrentLocation
             || (keepCurrentLocationVisible && !isLocationVisible(currentLocation))) {
-          LatLong latLong = new LatLong(currentLocation.getLatitude(), currentLocation.getLongitude());
-
-          currentPosMarker.setLatLong(latLong);
-          currentPosMarker.setVisible(true);
-          mapView.getLayerManager().redrawLayers(); // is this needed?
           mapViewPos.animateTo(latLong);
           zoomToCurrentLocation = false;
         }
