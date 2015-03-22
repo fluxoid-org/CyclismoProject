@@ -69,9 +69,12 @@ import android.widget.Toast;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
 import org.cowboycoders.cyclisimo.content.CourseTracksColumns;
+import org.cowboycoders.cyclisimo.content.CyclismoProviderUtils;
 import org.cowboycoders.cyclisimo.content.MyTracksCourseProviderUtils;
+import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils;
 import org.cowboycoders.cyclisimo.content.Track;
 import org.cowboycoders.cyclisimo.content.TrackDataListener;
+import org.cowboycoders.cyclisimo.content.User;
 import org.cowboycoders.cyclisimo.content.Waypoint;
 import org.cowboycoders.cyclisimo.fragments.DeleteAllTrackDialogFragment;
 import org.cowboycoders.cyclisimo.fragments.DeleteOneTrackDialogFragment;
@@ -479,7 +482,10 @@ public class CourseListActivity extends FragmentActivity implements DeleteOneTra
   
   private void importGpx(InputStream fileStream) {
     try {
-    GpxImporter.importGPXFile(fileStream,new MyTracksCourseProviderUtils(this.getContentResolver()),PreferencesUtils.MIN_RECORDING_DISTANCE_DEFAULT);
+    CyclismoProviderUtils providerUtils = MyTracksProviderUtils.Factory.getCyclimso(this);
+    User currentUser = providerUtils.getUser(PreferencesUtils.getLong(this, R.string.settings_select_user_current_selection_key));
+    GpxImporter.importGPXFile(fileStream,new MyTracksCourseProviderUtils(this.getContentResolver()),
+            PreferencesUtils.MIN_RECORDING_DISTANCE_DEFAULT, currentUser);
     } catch (ParserConfigurationException e) {
       final String msg = "error parsing gpx file";
       Log.e(TAG,msg);

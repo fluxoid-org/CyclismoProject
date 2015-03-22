@@ -39,7 +39,9 @@ import android.os.AsyncTask;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
 
+import org.cowboycoders.cyclisimo.content.CyclismoProviderUtils;
 import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils;
+import org.cowboycoders.cyclisimo.content.User;
 import org.cowboycoders.cyclisimo.io.file.GpxImporter;
 import org.cowboycoders.cyclisimo.util.FileUtils;
 import org.cowboycoders.cyclisimo.util.PreferencesUtils;
@@ -151,8 +153,10 @@ public class ImportAsyncTask extends AsyncTask<Void, Integer, Boolean> {
           // If cancelled, return true to show the number of files imported
           return true;
         }
+        CyclismoProviderUtils providerUtils = MyTracksProviderUtils.Factory.getCyclimso(importActivity);
+        User currentUser = providerUtils.getUser(PreferencesUtils.getLong(importActivity, R.string.settings_select_user_current_selection_key));
         File file = files.get(i);
-        if (importFile(file)) {
+        if (importFile(file, currentUser)) {
           successCount++;
         }
         publishProgress(i + 1, totalCount);
@@ -187,12 +191,12 @@ public class ImportAsyncTask extends AsyncTask<Void, Integer, Boolean> {
    *
    * @param file the file
    */
-  private boolean importFile(final File file) {
+  private boolean importFile(final File file, User user) {
     try {
       int minRecordingDistance = PreferencesUtils.getInt(importActivity,
           R.string.min_recording_distance_key, PreferencesUtils.MIN_RECORDING_DISTANCE_DEFAULT);
       long trackIds[] = GpxImporter.importGPXFile(
-          new FileInputStream(file), myTracksProviderUtils, minRecordingDistance);
+          new FileInputStream(file), myTracksProviderUtils, minRecordingDistance, user);
       int length = trackIds.length;
       if (length > 0) {
         trackId = trackIds[length - 1];

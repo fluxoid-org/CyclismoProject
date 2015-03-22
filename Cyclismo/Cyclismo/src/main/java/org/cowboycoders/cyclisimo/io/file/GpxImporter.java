@@ -42,6 +42,7 @@ import android.util.Log;
 import org.cowboycoders.cyclisimo.Constants;
 import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils;
 import org.cowboycoders.cyclisimo.content.Track;
+import org.cowboycoders.cyclisimo.content.User;
 import org.cowboycoders.cyclisimo.services.TrackRecordingService;
 import org.cowboycoders.cyclisimo.stats.TripStatisticsUpdater;
 import org.cowboycoders.cyclisimo.util.LocationUtils;
@@ -106,6 +107,9 @@ public class GpxImporter extends DefaultHandler {
   // The current track
   private Track track;
 
+  // the id of the owner
+  private User trackOwner = null;
+
   // True if the current track parsing is finished
   private boolean isCurrentTrackFinished = true;
 
@@ -146,11 +150,11 @@ public class GpxImporter extends DefaultHandler {
    * @return long[] array of track ids written to the database.
    */
   public static long[] importGPXFile(InputStream inputStream,
-      MyTracksProviderUtils myTracksProviderUtils, int minRecordingDistance)
+      MyTracksProviderUtils myTracksProviderUtils, int minRecordingDistance, User trackOwner)
       throws ParserConfigurationException, SAXException, IOException {
     SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
     SAXParser saxParser = saxParserFactory.newSAXParser();
-    GpxImporter gpxImporter = new GpxImporter(myTracksProviderUtils, minRecordingDistance);
+    GpxImporter gpxImporter = new GpxImporter(myTracksProviderUtils, minRecordingDistance, trackOwner);
     long[] trackIds = new long[0];
 
     try {
@@ -172,10 +176,11 @@ public class GpxImporter extends DefaultHandler {
     return trackIds;
   }
 
-  public GpxImporter(MyTracksProviderUtils myTracksProviderUtils, int minRecordingDistance) {
+  public GpxImporter(MyTracksProviderUtils myTracksProviderUtils, int minRecordingDistance, User trackOwner) {
     this.myTracksProviderUtils = myTracksProviderUtils;
     this.minRecordingDistance = minRecordingDistance;
     tracksIds = new ArrayList<Long>();
+    this.trackOwner = trackOwner;
   }
 
   @Override
@@ -268,6 +273,9 @@ public class GpxImporter extends DefaultHandler {
    */
   private void onTrackElementStart() {
     track = new Track();
+    if (trackOwner != null) {
+        track.setOwner(trackOwner.getId());
+    }
     Uri uri = myTracksProviderUtils.insertTrack(track);
     track.setId(Long.parseLong(uri.getLastPathSegment()));
     isCurrentTrackFinished = false;
