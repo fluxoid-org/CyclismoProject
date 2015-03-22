@@ -788,8 +788,8 @@ private TrackDataListener courseTrackDataListener = new TrackDataListener() {
         elevation *= UnitConversions.M_TO_FT;
       }
 
-      //speed = tripStatisticsUpdaterIn.getSmoothedSpeed() * UnitConversions.MS_TO_KMH;
-      speed = tripStatisticsUpdaterIn.getSpeed() * UnitConversions.MS_TO_KMH;
+      speed = tripStatisticsUpdaterIn.getSmoothedSpeed() * UnitConversions.MS_TO_KMH;
+      //speed = tripStatisticsUpdaterIn.getSpeed() * UnitConversions.MS_TO_KMH;
       if (!metricUnits) {
         speed *= UnitConversions.KM_TO_MI;
       }

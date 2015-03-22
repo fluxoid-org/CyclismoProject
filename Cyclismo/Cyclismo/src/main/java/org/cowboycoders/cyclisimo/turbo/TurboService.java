@@ -764,7 +764,7 @@ public class TurboService extends Service {
       StringBuilder message = new StringBuilder();
       Throwable cause = e.getCause();
       message.append("Exception: " + e.getMessage());
-      if (exceptionMessage != "") {
+      if (!exceptionMessage.equals("")) {
         message.append("\n" + "Message : " + exceptionMessage );
       }
       if (cause != null) {
@@ -802,13 +802,15 @@ public class TurboService extends Service {
    * Note that sharedPreferenceChangeListenr cannot be an anonymous inner class.
    * Anonymous inner class will get garbage collected.
    */
-  private final OnSharedPreferenceChangeListener sharedPreferenceChangeListener = new OnSharedPreferenceChangeListener() {
+  private final OnSharedPreferenceChangeListener sharedPreferenceChangeListener =
+          new OnSharedPreferenceChangeListener() {
     @Override
     public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
-      if (key == getString(R.string.settings_turbotrainer_generic_scale_factor_key)) {
+      if (key.equals(getString(R.string.settings_turbotrainer_generic_scale_factor_key))) {
         syncScaleFactor();
-      } else if (key == getString(R.string.turbotrainer_selected)) {
-        selectedTurboTrainer = preferences.getString(getString(R.string.turbotrainer_selected),getString(R.string.turbotrainer_tacx_bushido_headunit_value));
+      } else if (key.equals(getString(R.string.turbotrainer_selected))) {
+        selectedTurboTrainer =
+                preferences.getString(getString(R.string.turbotrainer_selected),getString(R.string.turbotrainer_tacx_bushido_headunit_value));
       }
       
     }
@@ -818,18 +820,5 @@ public class TurboService extends Service {
   private void syncScaleFactor() {
     scaleFactor = Float.parseFloat(preferences.getString(getString(R.string.settings_turbotrainer_generic_scale_factor_key), "1.0"));
   }
- 
-
-  // if
-  // (context.getString(R.string.track_paused_broadcast_action).equals(action)
-  // ||
-  // context.getString(R.string.track_resumed_broadcast_action).equals(action)
-  // ||
-  // context.getString(R.string.track_started_broadcast_action).equals(action)
-  // ||
-  // context.getString(R.string.track_stopped_broadcast_action).equals(action)
-  // ||
-  // context.getString(R.string.track_update_broadcast_action).equals(action))
-  //
 
 }

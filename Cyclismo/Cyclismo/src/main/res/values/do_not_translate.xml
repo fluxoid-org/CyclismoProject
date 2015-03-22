@@ -77,7 +77,7 @@ Google은 이용자에 대한 위치정보의 이용∙제공사실을 위치정
   <string name="my_tracks_privacy_url">www.google.com/policies/privacy/</string>
   <string name="my_tracks_recording_service_name">Cyclisimo Recording Service</string>
   <string name="my_tracks_support_url">groups.google.com/a/googleproductforums.com/forum/#!categories/maps/mytracks</string>
-  <string name="my_tracks_web_url">www.google.com/mobile/mytracks</string>
+  <string name="my_tracks_web_url">www.fluxoid.org</string>
   <string name="permission_notification_value">org.cowboycoders.cyclisimo.MYTRACKS_NOTIFICATIONS</string>
   <string name="send_google_docs_url">docs.google.com</string>
   <string name="send_google_fusion_tables_url">google.com/fusiontables</string>

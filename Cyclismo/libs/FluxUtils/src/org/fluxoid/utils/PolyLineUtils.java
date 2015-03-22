@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 
 public class PolyLineUtils {
 	
-	public static Logger logger = Logger.getLogger(PolyLineUtils.class.toString());
+	public static final Logger logger = Logger.getLogger(PolyLineUtils.class.toString());
 	
 	/**
 	 * Utility class
@@ -39,8 +39,8 @@ public class PolyLineUtils {
 		
 	}
 	
-	public static int CHUNK_SIZE = 5;
-	public static int ASCII_OFFSET = 63;
+	public static final int CHUNK_SIZE = 5;
+	public static final int ASCII_OFFSET = 63;
 	
 	/**
 	 * @param polyLine

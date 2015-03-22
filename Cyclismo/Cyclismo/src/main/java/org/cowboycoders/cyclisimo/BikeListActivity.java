@@ -97,10 +97,10 @@ public class BikeListActivity extends FragmentActivity {
     @Override
     public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
       if (key != null) {
-        if (key == getString(R.string.settings_select_bike_current_selection_key)) {
+        if (key.contentEquals(getString(R.string.settings_select_bike_current_selection_key))) {
           Log.i(TAG," current bike changed");
         }
-        else if (key == getString(R.string.settings_select_user_current_selection_key)) {
+        else if (key.equals(getString(R.string.settings_select_user_current_selection_key))) {
           resourceCursorAdapter.notifyDataSetChanged();
         }
         runOnUiThread(new Runnable() {

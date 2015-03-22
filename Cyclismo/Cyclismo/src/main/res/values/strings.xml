@@ -1321,35 +1321,35 @@ limitations under the License.
   <!-- Permission -->
   <string name="permission_notification_description"
     translation_description="The permission description the Google Play Store shows during app
-      installation when the app wants to receive Google Cyclisimo notifications.">
-    Allows the application to receive notifications when Google Cyclisimo starts or stops a
+      installation when the app wants to receive Cyclismo notifications.">
+    Allows the application to receive notifications when Cyclismo starts or stops a
     recording.
   </string>
   <string name="permission_notification_label"
     translation_description="The permission label the Google Play Store shows during app
-      installation when the app wants to receive Google Cyclisimo notifications.">
-    receive Google Cyclisimo notifications
+      installation when the app wants to receive Cyclismo notifications.">
+    receive Cyclismo notifications
   </string>
   <string name="permission_read_description"
     translation_description="The permission description the Google Play Store shows during app
-      installation when the app wants to read Google Cyclisimo data.">
-    Allows the application to read Google Cyclisimo data.
+      installation when the app wants to read Cyclismo data.">
+    Allows the application to read Cyclismo data.
   </string>
   <string name="permission_read_label"
     translation_description="The permission label the Google Play Store shows during app
       installation when the app wants to read Cyclisimo data.">
-    read Google Cyclisimo data
+    read Cyclismo data
   </string>
   <string name="permission_write_description"
     translation_description="The permission description the Google Play Store shows during app
       installation when the app wants to write data to Cyclisimo.">
-    Allows the application to write data to Google Cyclisimo and start/stop Google Cyclisimo
+    Allows the application to write data to Cyclismo and start/stop Cyclismo
     recording.
   </string>
   <string name="permission_write_label"
     translation_description="The permission label the Google Play Store shows during app
       installation when the app wants to write data to Cyclisimo.">
-    write data to Google Cyclisimo and start/stop Google Cyclisimo recording
+    write data to Cyclismo and start/stop Cyclismo recording
   </string>
 
   <!-- Search -->
@@ -1378,13 +1378,13 @@ limitations under the License.
   <!-- Send Google -->
   <string name="send_google_by_my_tracks"
     translation_description="When sending a track to Google, a note indicating it is created by
-      Google Cyclisimo on Android.
+      Cyclismo on Android.
 
       %1$s: the html anchor opening tag. Place this placeholder before the app name,
-      'Google Cyclisimo'.
+      'Cyclismo'.
       %2$s: the html anchor closing tag. Place this placeholder after the app name,
-      'Google Cyclisimo'.">
-    Created by %1$sGoogle Cyclisimo%2$s on Android.
+      'Cyclismo'.">
+    Created by %1$sCyclismo%2$s on Android.
   </string>
   <string name="send_google_choose_account_title"
     translation_description="When sending to Google, the dialog title to choose a Google account.">

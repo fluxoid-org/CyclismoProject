@@ -179,11 +179,11 @@ public class CourseSetupFragment extends AbstractSettingsFragment {
 
           @Override
           public void onSharedPreferenceChanged(SharedPreferences sharedPreferencesIn, String key) {
-            if (key == PreferencesUtils.getKey(getActivity(), R.string.course_track_id)) {
+            if (key.equals(PreferencesUtils.getKey(getActivity(), R.string.course_track_id))) {
               Long newValue = sharedPreferences.getLong(key, -1l);
               Log.i(TAG,"detected new track: " + newValue);
               updateUiByCourseTrackId(newValue);
-            } else if ( key == PreferencesUtils.getKey(getActivity(), R.string.settings_select_bike_current_selection_key)) {
+            } else if (key.equals(PreferencesUtils.getKey(getActivity(), R.string.settings_select_bike_current_selection_key))) {
               Long newValue = sharedPreferences.getLong(key, -1l);
               Log.i(TAG,"detected new bike: " + newValue);
               updateUiByBikeSelect(newValue);
