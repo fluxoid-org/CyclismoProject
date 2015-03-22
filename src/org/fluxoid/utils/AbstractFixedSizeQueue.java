@@ -16,9 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with formicidae.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.cowboycoders.location;
-
-import org.fluxoid.utils.FixedSizeQueue;
+package org.fluxoid.utils;
 
 import java.util.AbstractQueue;
 import java.util.LinkedList;

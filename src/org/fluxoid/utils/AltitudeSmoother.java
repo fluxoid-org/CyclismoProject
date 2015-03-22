@@ -60,10 +60,10 @@ public class AltitudeSmoother {
 
     /**
      * Smooth the track point altitudes.
-     *
-     * > Interpolate points to uniform spacing
-     * > Run a moving average over the interpolated points
-     *
+     *  <ul>
+     *  <li>Interpolate points to uniform spacing<li>
+     *  <li>Run a moving average over the interpolated points</li>
+     *  </ul>
      * This is necessary because even a +/- 1m error in GPS altitude can cause large
      * apparent gradients. To avoid the rider hitting a 'brick wall' some filtering /smoothing /
      * interpolation of the gradient is required.

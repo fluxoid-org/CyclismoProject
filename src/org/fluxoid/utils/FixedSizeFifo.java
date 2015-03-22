@@ -18,8 +18,6 @@
  */
 package org.fluxoid.utils;
 
-import org.cowboycoders.location.AbstractFixedSizeQueue;
-
 import java.util.Iterator;
 
 public class FixedSizeFifo<V> extends AbstractFixedSizeQueue<V> {

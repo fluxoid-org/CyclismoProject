@@ -75,7 +75,6 @@ public class SimpleCsvLogger {
 	/**
 	 * @param append append to file or delete and recreate
 	 * Must be called before first update. Default false.
-	 * @param addTime
 	 */
 	public synchronized void append(boolean append) {
 		if (started)
