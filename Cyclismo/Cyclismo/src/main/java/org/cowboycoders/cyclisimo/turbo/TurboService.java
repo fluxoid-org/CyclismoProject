@@ -470,6 +470,13 @@ public class TurboService extends Service {
         sendBroadcast(intent);
     }
 
+    private void broadcastLocation(Location loc) {
+        Intent intent = new Intent().setAction(this
+                .getString(R.string.turbo_service_action_location_update));
+        intent.putExtra(getString(R.string.turbo_service_data_location_update), loc);
+        sendBroadcast(intent);
+    }
+
     private void initAntWireless(AntHubService.LocalBinder binder) {
         if (antNode != null) return;
         AntHubService s = ((AntHubService.LocalBinder) binder).getService();
@@ -570,9 +577,6 @@ public class TurboService extends Service {
   }
 
   private synchronized void updateLocation(LatLongAlt pos) {
-    LocationManager locationManager = (LocationManager) getApplicationContext().getSystemService(
-        Context.LOCATION_SERVICE);
-    if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
       try {
         float locSpeed = (float) (lastRecordedSpeed / UnitConversions.MS_TO_KMH);
         final long timestamp = System.currentTimeMillis();
@@ -597,20 +601,14 @@ public class TurboService extends Service {
           locationJellyBeanFixMethod.invoke(loc);
         }
         unpauseRecording(); // automatically resume on location updates
-        locationManager.setTestProviderLocation(MOCK_LOCATION_PROVIDER, loc);
+        broadcastLocation(loc);
         Log.e(TAG, "updated location");
       } catch (SecurityException e) {
+        // is this possible now we aren't using mock locations?
         handleException(e,"Error updating location",true,NOTIFCATION_ID_STARTUP);
-      } catch (InvocationTargetException e) {
-          e.printStackTrace();
-      } catch (IllegalAccessException e) {
+      } catch (InvocationTargetException | IllegalAccessException e) {
           e.printStackTrace();
       }
-
-        return;
-    }
-    Log.e(TAG, "no gps provider");
-
   }
 
   @Override

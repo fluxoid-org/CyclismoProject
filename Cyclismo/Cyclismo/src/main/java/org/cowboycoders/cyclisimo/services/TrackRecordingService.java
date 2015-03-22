@@ -253,7 +253,7 @@ public class TrackRecordingService extends Service {
       @Override
     public void onLocationChanged(final Location location) {
       if (myTracksLocationManager == null || executorService == null
-          || !myTracksLocationManager.isAllowed() || executorService.isShutdown()
+          || executorService.isShutdown()
           || executorService.isTerminated()) {
         return;
       }
@@ -977,7 +977,7 @@ public class TrackRecordingService extends Service {
     }
     try {
       long interval = locationListenerPolicy.getDesiredPollingInterval();
-      myTracksLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, interval,
+      myTracksLocationManager.requestLocationUpdates(SimulatedLocationProvider.NAME, interval,
           locationListenerPolicy.getMinDistance(), locationListener);
       currentRecordingInterval = interval;
     } catch (RuntimeException e) {

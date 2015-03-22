@@ -126,9 +126,6 @@ public class DataSourceManager {
 
     @Override
     public void onLocationChanged(Location location) {
-      if (!dataSource.isAllowed()) {
-        return;
-      }
       dataSourceListener.notifyLocationChanged(location);
     }
 
@@ -282,7 +279,7 @@ public class DataSourceManager {
         // Do nothing. SAMPLED_OUT_POINT_UPDATES is mapped to POINT_UPDATES.
         break;
       case LOCATION:
-        dataSource.registerLocationListener(currentLocationListener);
+        dataSource.registerSimulatedLocationListener(currentLocationListener);
         break;
       case HEADING:
         dataSource.registerHeadingListener(headingListener);

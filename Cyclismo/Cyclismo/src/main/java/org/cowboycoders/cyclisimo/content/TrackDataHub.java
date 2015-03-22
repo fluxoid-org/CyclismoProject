@@ -266,7 +266,7 @@ public class TrackDataHub implements DataSourceListener {
    * Forces update location and reports to all listeners.
    */
   public void forceUpdateLocation() {
-    final Location location = dataSource.getLastKnownLocation();
+    final Location location = dataSource.getLastKnownSimulatedLocation();
     runInHanderThread(new Runnable() {
         @Override
       public void run() {

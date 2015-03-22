@@ -94,7 +94,8 @@ public class MyTracksLocationManager {
    * Closes the {@link MyTracksLocationManager}.
    */
   public void close() {
-    contentResolver.unregisterContentObserver(observer);
+      simulatedLocManager.close();
+      contentResolver.unregisterContentObserver(observer);
   }
 
   /**

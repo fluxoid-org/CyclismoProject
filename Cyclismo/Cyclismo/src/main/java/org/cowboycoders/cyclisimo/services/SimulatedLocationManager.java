@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
 import android.location.LocationListener;
+import android.util.Log;
 
 import org.cowboycoders.cyclisimo.R;
 
@@ -16,13 +17,14 @@ import java.util.HashSet;
  * Created by fluxoid on 22/03/15.
  */
 public class SimulatedLocationManager {
-
+    private static final String TAG = SimulatedLocationManager.class.getSimpleName();
     private final SimulatedLocationProvider provider;
 
     private final String TURBO_SERVICE_LOCATION_UPDATE;
     private final String TURBO_SERVICE_LOCATION_UPDATE_DATA;
     private HashSet<LocationListener> listeners = new HashSet<LocationListener>();
     private Location lastLocation = null;
+    private Context context;
 
     private final BroadcastReceiver turboServiceReceiver = new BroadcastReceiver() {
         @Override
@@ -47,6 +49,7 @@ public class SimulatedLocationManager {
         IntentFilter filter = new IntentFilter();
         filter.addAction(TURBO_SERVICE_LOCATION_UPDATE);
         context.registerReceiver(turboServiceReceiver, filter);
+        this.context = context;
     }
 
 
@@ -87,5 +90,9 @@ public class SimulatedLocationManager {
      */
     public void removeUpdates(LocationListener listener) {
         listeners.remove(listener);
+    }
+
+    public void close() {
+        context.unregisterReceiver(turboServiceReceiver);
     }
 }

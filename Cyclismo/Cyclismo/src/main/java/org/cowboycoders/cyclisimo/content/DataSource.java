@@ -53,6 +53,7 @@ import android.widget.Toast;
 import org.cowboycoders.cyclisimo.Constants;
 import org.cowboycoders.cyclisimo.R;
 import org.cowboycoders.cyclisimo.services.MyTracksLocationManager;
+import org.cowboycoders.cyclisimo.services.SimulatedLocationProvider;
 import org.cowboycoders.cyclisimo.util.GoogleLocationUtils;
 
 import static org.cowboycoders.cyclisimo.Constants.MAX_LOCATION_AGE_MS;
@@ -85,6 +86,9 @@ public class DataSource {
     myTracksLocationManager.close();
   }
 
+    /**
+     * @return Has the user the user allowed us to use the their real location
+     */
   public boolean isAllowed() {
     return myTracksLocationManager.isAllowed();
   }
@@ -113,36 +117,44 @@ public class DataSource {
   }
 
   /**
-   * Registers a location listener.
+   * Registers a listener for simulated locations;.
    * 
    * @param listener the listener
    */
-  public void registerLocationListener(LocationListener listener) {
-    // Check if the GPS provider exists
-    if (myTracksLocationManager.getProvider(LocationManager.GPS_PROVIDER) == null) {
-      listener.onProviderDisabled(LocationManager.GPS_PROVIDER);
-      unregisterLocationListener(listener);
-      return;
-    }
+  public void registerSimulatedLocationListener(LocationListener listener) {
+    myTracksLocationManager.requestLocationUpdates(SimulatedLocationProvider.NAME, 0, 0, listener);
+  }
 
-    // Listen for GPS location
-    myTracksLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, listener);
+    /**
+     * Registers a listener for real locations
+     * @param listener
+     */
+  public void registerRealLocationListener(LocationListener listener) {
+      // Check if the GPS provider exists
+      if (myTracksLocationManager.getProvider(LocationManager.GPS_PROVIDER) == null) {
+          listener.onProviderDisabled(LocationManager.GPS_PROVIDER);
+          unregisterLocationListener(listener);
+          return;
+      }
 
-    // Update the listener with the current provider state
-    if (myTracksLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-      listener.onProviderEnabled(LocationManager.GPS_PROVIDER);
-    } else {
-      listener.onProviderDisabled(LocationManager.GPS_PROVIDER);
-    }
+      // Listen for GPS location
+      myTracksLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, listener);
 
-    // Listen for network location
-    try {
-      myTracksLocationManager.requestLocationUpdates(
-          LocationManager.NETWORK_PROVIDER, NETWORK_PROVIDER_MIN_TIME, 0, listener);
-    } catch (RuntimeException e) {
-      // Network location is optional, so just log the exception
-      Log.w(TAG, "Could not register for network location.", e);
-    }
+      // Update the listener with the current provider state
+      if (myTracksLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+          listener.onProviderEnabled(LocationManager.GPS_PROVIDER);
+      } else {
+          listener.onProviderDisabled(LocationManager.GPS_PROVIDER);
+      }
+
+      // Listen for network location
+      try {
+          myTracksLocationManager.requestLocationUpdates(
+                  LocationManager.NETWORK_PROVIDER, NETWORK_PROVIDER_MIN_TIME, 0, listener);
+      } catch (RuntimeException e) {
+          // Network location is optional, so just log the exception
+          Log.w(TAG, "Could not register for network location.", e);
+      }
   }
 
   /**
@@ -154,10 +166,12 @@ public class DataSource {
     myTracksLocationManager.removeUpdates(listener);
   }
 
+
+
   /**
-   * Gets the last known location.
+   * Gets the last known real location.
    */
-  public Location getLastKnownLocation() {
+  public Location getLastKnownRealLocation() {
     Location location = myTracksLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
     if (!isLocationRecent(location)) {
       // Try network location
@@ -175,6 +189,14 @@ public class DataSource {
     }
     return location;
   }
+
+    /**
+     * Gets the last known real location.
+     */
+    public Location getLastKnownSimulatedLocation() {
+        Location location = myTracksLocationManager.getLastKnownLocation(SimulatedLocationProvider.NAME);
+        return location;
+    }
 
   /**
    * Returns true if the location is recent.
