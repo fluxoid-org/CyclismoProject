@@ -693,9 +693,9 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
     }
   };
   
-  private static String TURBO_SERVICE_EXCEPTION_THROWN_ACTION;
+  private String TURBO_SERVICE_EXCEPTION_THROWN_ACTION;
 
-  private static String TURBO_SERVICE_COURSE_STARTED_ACTION;
+  private String TURBO_SERVICE_COURSE_STARTED_ACTION;
 
   public void registerTurboServiceReceiver() {
     if (isCourseMode()) {

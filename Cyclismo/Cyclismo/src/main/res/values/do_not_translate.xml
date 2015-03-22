@@ -105,14 +105,16 @@ Google은 이용자에 대한 위치정보의 이용∙제공사실을 위치정
   <string name="sensor_data_speed_kmh">org.cowboycoders.cyclisimo.SENSOR_DATA_SPEED_KMH</string>
   <string name="sensor_data_heart_rate">org.cowboycoders.cyclisimo.SENSOR_DATA_HEART_RATE</string>
   <string name="sensor_data_double_value">org.cowboycoders.cyclisimo.SENSOR_DATA_DOUBLE_VALUE</string>
-  <string name="turbo_service_action_course_start">org.cowboycoders.cyclisimo.TURBO_SERVICE_COURSE_START</string>
-  <string name="turbo_service_action_exception_thrown">org.cowboycoders.cyclisimo.TURBO_SERVICE_EXCEPTION_THROWN</string>
   <string name="settings_bushido_antlog_filename">antlog</string>
   
   <string name="turbotrainer_tacx_bushido_headunit_value">TACX_BUSHIDO_HEADUNIT</string>
   <string name="turbotrainer_tacx_bushido_brake_headunit_simulation_value">TACX_BUSHIDO_BRAKE_RESISTANCE</string>
   <string name="turbotrainer_tacx_bushido_brake_pid_control_value">TACX_BUSHIDO_BRAKE_PID</string>
   <string name="turbotrainer_dummy_value">DUMMY_TURBO</string>
-  
+
+  <string name="turbo_service_action_location_update">org.cowboycoders.cyclisimo.TURBO_SERVICE_LOCATION_UPDATE_ACTION</string>
+  <string name="turbo_service_action_course_start">org.cowboycoders.cyclisimo.TURBO_SERVICE_COURSE_START</string>
+  <string name="turbo_service_action_exception_thrown">org.cowboycoders.cyclisimo.TURBO_SERVICE_EXCEPTION_THROWN</string>
+  <string name="turbo_service_data_location_update">org.cowboycoders.cyclisimo.TURBO_SERVICE_LOCATION_UPDATE</string>
   
 </resources>
