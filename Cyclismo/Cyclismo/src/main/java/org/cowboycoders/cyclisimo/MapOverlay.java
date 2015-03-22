@@ -444,4 +444,10 @@ public class MapOverlay implements MarkerSource {
     this.underlay = underlay;
     
   }
+
+  public void destroy() {
+      Log.d(TAG, "map overlay destroyed");
+      if (underlay != null) underlay.destroy();
+      mapMarkerUpdater.destroy();
+  }
 }

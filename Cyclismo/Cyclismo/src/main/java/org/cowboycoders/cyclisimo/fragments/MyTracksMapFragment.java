@@ -508,6 +508,8 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
   public void onDestroyView() {
       super.onDestroyView();
       destroyTileCaches();
+      // clean up markers in map overlay before destroy layers
+      mapOverlay.destroy();
       destroyLayers();
       if (this.mapView != null) {
           mapView.destroy();

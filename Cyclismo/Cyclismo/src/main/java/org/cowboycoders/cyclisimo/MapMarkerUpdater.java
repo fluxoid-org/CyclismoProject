@@ -2,7 +2,6 @@ package org.cowboycoders.cyclisimo;
 
 import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.util.Log;
 
 import org.cowboycoders.cyclisimo.content.Waypoint;
 import org.mapsforge.core.graphics.Bitmap;
@@ -12,11 +11,13 @@ import org.mapsforge.map.android.view.MapView;
 import org.mapsforge.map.layer.Layer;
 import org.mapsforge.map.layer.overlay.Marker;
 
+import java.util.HashMap;
+
 public class MapMarkerUpdater {
     private final MarkerSource markerSource;
-    private Layer endMarker;
-    private Layer startMarker;
-
+    private Marker endMarker;
+    private Marker startMarker;
+    private HashMap<Drawable, Bitmap> cache = new HashMap<Drawable, Bitmap>();
 
     public MapMarkerUpdater(MarkerSource staticOverlay) {
         this.markerSource = staticOverlay;
@@ -34,7 +35,7 @@ public class MapMarkerUpdater {
                 MapOverlay.CachedLocation cachedLocation = markerSource.getLocations().get(i);
                 if (cachedLocation.isValid()) {
                     Drawable drawable = markerSource.getStopMarker();
-                    Bitmap bitmap = AndroidGraphicFactory.convertToBitmap(drawable);
+                    Bitmap bitmap = getBitMap(drawable);
                     Marker marker = new Marker(cachedLocation.getLatLong(),
                             bitmap,
                             (int) ((bitmap.getWidth() / 2) - markerSource.getMarkerXAnchor() * bitmap.getWidth()),
@@ -51,7 +52,7 @@ public class MapMarkerUpdater {
             MapOverlay.CachedLocation cachedLocation = markerSource.getLocations().get(i);
             if (cachedLocation.isValid()) {
                 Drawable drawable = markerSource.getStartMarker();
-                Bitmap bitmap = AndroidGraphicFactory.convertToBitmap(drawable);
+                Bitmap bitmap = getBitMap(drawable);
                 Marker marker = new Marker(cachedLocation.getLatLong(), bitmap,
                         (int) ((bitmap.getWidth() / 2) - markerSource.getMarkerXAnchor() * bitmap.getWidth()),
                         (int) ((bitmap.getHeight() / 2) - markerSource.getMarkerYAnchor() * bitmap.getHeight()));
@@ -74,7 +75,7 @@ public class MapMarkerUpdater {
                 LatLong latLng = new LatLong(location.getLatitude(), location.getLongitude());
                 // TODO: title
                 Drawable drawable = markerSource.getWaypoint(waypoint);
-                Bitmap bitmap = AndroidGraphicFactory.convertToBitmap(drawable);
+                Bitmap bitmap = getBitMap(drawable);
                 Marker marker = new Marker(latLng, bitmap,
                         (int) ((bitmap.getWidth() / 2) - markerSource.getWaypointXAnchor() * bitmap.getWidth()),
                         (int) ((bitmap.getHeight() / 2) - markerSource.getWaypointYAnchor() * bitmap.getHeight()));
@@ -89,5 +90,24 @@ public class MapMarkerUpdater {
 
     public Layer getStartMarker() {
         return startMarker;
+    }
+
+    public Bitmap getBitMap(Drawable drawable) {
+        Bitmap result = cache.get(drawable);
+        if (result != null) {
+            return result;
+        }
+        result = AndroidGraphicFactory.convertToBitmap(drawable);
+        result.incrementRefCount();
+        cache.put(drawable, result);
+        return result;
+    }
+
+    public void destroy() {
+        // FIXME: incrementing ref counts of bitmaps seems to help with internal mapsforge null pointer
+        // errors, but not eliminate the problem. We might be doing something unsafe somewhere!
+        for (Bitmap bm : cache.values()) {
+            bm.decrementRefCount();
+        }
     }
 }

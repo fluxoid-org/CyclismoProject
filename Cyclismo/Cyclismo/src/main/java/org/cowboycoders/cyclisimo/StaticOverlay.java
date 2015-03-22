@@ -244,4 +244,10 @@ public class StaticOverlay implements MarkerSource {
     protected Context getContext() {
         return context;
     }
+
+    public void destroy() {
+        this.mapMarkerUpdater.destroy();
+    }
 }
+
+
