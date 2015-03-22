@@ -33,7 +33,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.location.Location;
 import android.location.LocationManager;
-import android.location.LocationProvider;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
@@ -104,7 +103,9 @@ public class TurboService extends Service {
   
   protected AntLoggerImpl antLogger;
 
-  private final static String MOCK_LOCATION_PROVIDER = LocationManager.GPS_PROVIDER;// LocationManager.NETWORK_PROVIDER;
+  // FIXME: Something must be checking for GPS_PROVIDER only?
+  // we want to use SimulatedLocationProvider.NAME
+  private final static String MOCK_LOCATION_PROVIDER = LocationManager.GPS_PROVIDER;
 
   private static int GPS_ACCURACY = 5; // m
 
@@ -364,8 +365,6 @@ public class TurboService extends Service {
 
     Log.d(TAG, "latlong length: " + latLongAlts.size());
 
-    enableMockLocations();
-
     // start in background as otherwise it is destroyed in onDestory() before we
     // can disconnect
     startServiceInBackround();
@@ -524,57 +523,7 @@ public class TurboService extends Service {
     this.startService(intent);
   }
   
-  private boolean enableLocationProvider(String provider) {
-    LocationManager locationManager = (LocationManager) getApplicationContext().getSystemService(
-        Context.LOCATION_SERVICE);
-    if (locationManager.isProviderEnabled(provider)) {
-      try {
-        locationManager.addTestProvider(provider, "requiresNetwork" == "",
-            "requiresSatellite" == "", "requiresCell" == "", "hasMonetaryCost" == "",
-            "supportsAltitude" == "", "supportsSpeed" == "", "supportsBearing" == "",
-            android.location.Criteria.POWER_LOW, android.location.Criteria.ACCURACY_FINE);
 
-        locationManager.setTestProviderEnabled(provider, true);
-        locationManager.setTestProviderStatus(provider, LocationProvider.AVAILABLE,
-            null, System.currentTimeMillis());
-      } catch (SecurityException e) {
-        handleException(e, "Error enabling location provider",true,NOTIFCATION_ID_STARTUP);
-        return false;
-      }
-    } else {
-      return false;
-    }
-    
-    return true;
-  }
-
-  private void enableMockLocations() {
-    enableLocationProvider(MOCK_LOCATION_PROVIDER);
-    // enable any alternatives otherwise : could provide a last known location
-    networkProviderEnabled = enableLocationProvider(LocationManager.NETWORK_PROVIDER);
-  }
-
-  private void disableMockLocations() {
-    disableLocationProvider(MOCK_LOCATION_PROVIDER);
-    if (networkProviderEnabled) disableLocationProvider(LocationManager.NETWORK_PROVIDER);
-  }
-  
-  private void disableLocationProvider(String provider) {
-    LocationManager locationManager = (LocationManager) getApplicationContext().getSystemService(
-        Context.LOCATION_SERVICE);
-    if (locationManager.isProviderEnabled(provider)) {
-      try {
-        // is this the same as the below? probably
-        locationManager.setTestProviderEnabled(provider, false);
-        locationManager.clearTestProviderEnabled(provider);
-        locationManager.clearTestProviderLocation(provider);
-        locationManager.clearTestProviderStatus(provider);
-        locationManager.removeTestProvider(provider);
-      } catch (SecurityException e) {
-        // ignore 
-      }
-    }
-  }
 
   private synchronized void updateLocation(LatLongAlt pos) {
       try {
@@ -614,7 +563,6 @@ public class TurboService extends Service {
   @Override
   public synchronized void onDestroy() {
     unregisterRecordingReceiver();
-    disableMockLocations();
     running = false;
 
     new Thread() {
