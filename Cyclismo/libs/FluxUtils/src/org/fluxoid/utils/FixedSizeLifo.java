@@ -18,7 +18,6 @@
  */
 package org.fluxoid.utils;
 
-import org.cowboycoders.location.AbstractFixedSizeQueue;
 
 import java.util.Iterator;
 
