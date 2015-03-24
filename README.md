@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/dougszumski/CyclismoProject.svg?branch=gradle_build)](https://travis-ci.org/dougszumski/CyclismoProject)
+[![Build Status](https://travis-ci.org/fluxoid-org/CyclismoProject.svg?branch=devel)](https://travis-ci.org/fluxoid-org/CyclismoProject)
 
 Build instructions
 ------------------
