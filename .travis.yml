@@ -17,8 +17,3 @@ android:
     - extra-android-m2repository
 
 script:  sh update_android.sh && ./gradlew clean build
-
-# whitelist
-branches:
-  only:
-    - gradle_build
