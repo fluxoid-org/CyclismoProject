@@ -3191,11 +3191,16 @@ limitations under the License.
   	<string name="turbotrainer_select_summary">Choose a turbo trainer to use</string>
   	<string name="bushido_brake_calibrate_status_message">Status message</string>
   	<string name="bushido_brake_calibrate_start">Speed up to 40km/h</string>
+    <string name="bushido_brake_calibrate_failed">calibration failed</string>
   	<string name="bushido_brake_calibrate_stop">Stop pedalling</string>
   	<string name="bushido_brake_calibrate_resume">Resume pedalling</string>
   	<string name="bushido_brake_calibrate_calibration_value">Calibration value: </string>
   	<string name="bushido_brake_calibrate_speed_label">current speed</string>
   	<string name="bushido_brake_calibrate_speed_unknown">unknown</string>
     <string name="copyright_osm">Map data © OpenStreetMap contributors</string>
-  	
+    <string name="title_activity_bushido_brake_calibrate">BushidoBrakeCalibrate</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="settings_turbotrainer_calibrate_bushido">Calibrate Tacx Bushido</string>
+
 </resources>

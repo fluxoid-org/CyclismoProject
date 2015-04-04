@@ -115,7 +115,7 @@ limitations under the License.
   <string name="bike_select_request_code">bikeSelectRequestCode</string>
   
   <string name="turbotrainer_selected">turboTrainerSelected</string>
- 
- 
- 
+    <string name="settings_turbotrainer_bushido_calibrate_key">settingsTurboCalibrateBushidoKey</string>
+
+
 </resources>
