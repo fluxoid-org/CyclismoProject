@@ -23,11 +23,11 @@ public class DummyTrainer extends GenericTurboTrainer {
         @Override
         public void run() {
             for (TurboTrainerDataListener listener: getDataChangeListeners()) {
-                listener.onCadenceChange(75);
-                listener.onPowerChange(250);
-                listener.onHeartRateChange(132);
-                listener.onSpeedChange(24.14);
-                distance += 6.7056;
+                listener.onCadenceChange(75.0*Math.random());
+                listener.onPowerChange(500.0*Math.random());
+                listener.onHeartRateChange(200.0*Math.random());
+                listener.onSpeedChange(5.00*Math.random());
+                distance += 5 * Math.random();
                 listener.onDistanceChange(distance);
             }
 
