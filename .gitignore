@@ -51,3 +51,6 @@ bin
 #Android studio
 *.iml
 .idea
+
+#Python
+*.pyc
