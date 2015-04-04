@@ -20,6 +20,8 @@ import org.cowboycoders.cyclisimo.turbo.TurboService;
 import org.cowboycoders.turbotrainers.TurboTrainerDataListener;
 import org.cowboycoders.turbotrainers.bushido.brake.BushidoBrake;
 
+import java.text.DecimalFormat;
+
 
 public class BushidoBrakeCalibrate extends Activity {
 
@@ -48,6 +50,7 @@ public class BushidoBrakeCalibrate extends Activity {
      */
     @Override
     public void onReachedCalibrationSpeed() {
+      //produce a beep to signal that the user should slow down
       ToneGenerator toneGen = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
       toneGen.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 500);
       runOnUiThread(new Runnable() {
@@ -131,7 +134,8 @@ public class BushidoBrakeCalibrate extends Activity {
       runOnUiThread(new Runnable() {
         @Override
         public void run() {
-          speedView.setText(speed + " km/h");
+          DecimalFormat df = new DecimalFormat("#.00");
+          speedView.setText(df.format(speed) + " km/h");
         }
       });
     }
