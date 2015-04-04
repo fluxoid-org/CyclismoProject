@@ -134,41 +134,40 @@ public class ChartFragment extends Fragment implements TrackDataListener {
 
   private TrackDataHub courseDataHub;
 
+  // would need to zoom in to relevant section to use
+  // (as is stretches scale too much and zoom limit prevents from seeing new data)
+  // also x-axis should be restricted to distance
+  private TrackDataListener courseTrackDataListener = new TrackDataListener() {
   
-// would need to zoom in to relevant section to use 
-// (as is stretches scale too much and zoom limit prevents from seeing new data)
-// also x-axis should be restricted to distance
-private TrackDataListener courseTrackDataListener = new TrackDataListener() {
-  
-  private Track currentCourse;
-  private boolean overlayAdded = false;
+    private Track currentCourse;
+    private boolean overlayAdded = false;
 
-  @Override
-  public void onLocationStateChanged(LocationState state) {
-    // We don't care.
-  }
+    @Override
+    public void onLocationStateChanged(LocationState state) {
+      // We don't care.
+    }
 
-  @Override
-  public void onLocationChanged(Location loc) {
-    // We don't care.
-  }
+    @Override
+    public void onLocationChanged(Location loc) {
+      // We don't care.
+    }
 
-  @Override
-  public void onHeadingChanged(double heading) {
-    // We don't care.
-  }
+    @Override
+    public void onHeadingChanged(double heading) {
+      // We don't care.
+    }
 
-  @Override
-  public void onSelectedTrackChanged(Track track) {
-    // We don't care.
-  }
+    @Override
+    public void onSelectedTrackChanged(Track track) {
+      // We don't care.
+    }
 
-  @Override
-  public void onTrackUpdated(Track track) {
-    if (isResumed()) {
-      Log.d(TAG,"course updated");
-      currentCourse = track;
-   }
+    @Override
+    public void onTrackUpdated(Track track) {
+      if (isResumed()) {
+        Log.d(TAG,"course updated");
+        currentCourse = track;
+     }
   }
 
   @Override
@@ -326,9 +325,6 @@ private TrackDataListener courseTrackDataListener = new TrackDataListener() {
 //    
   }
   };
-
-
- 
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -488,14 +484,18 @@ private TrackDataListener courseTrackDataListener = new TrackDataListener() {
   @Override
   public void onSampledOutTrackPoint(Location location) {
     if (isResumed()) {
-      fillDataPoint(location, null,tripStatisticsUpdater);
+      // FIXME: Whats' the point of this
+      tripStatisticsUpdater.addLocation(location, minRecordingDistance);
+      //fillDataPoint(location, null,tripStatisticsUpdater);
     }
   }
 
   @Override
   public void onSegmentSplit(Location location) {
     if (isResumed()) {
-      fillDataPoint(location, null,tripStatisticsUpdater);
+      // FIXME: Whats' the point of this
+      tripStatisticsUpdater.addLocation(location, minRecordingDistance);
+      //fillDataPoint(location, null,tripStatisticsUpdater);
     }
   }
 

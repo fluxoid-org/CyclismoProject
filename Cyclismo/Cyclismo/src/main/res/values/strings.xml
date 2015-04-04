@@ -490,6 +490,20 @@ limitations under the License.
       %1$d grade in percentage">
     Min grade: %1$d %%
   </string>
+  <string name="description_inst_power"
+    translation_description="Instantaneous power description. %% is the escape sequence for the
+     percent symbol.
+
+      %1$d power in Watts">
+    Inst. power: %1$d %%
+  </string>
+  <string name="description_avg_power"
+    translation_description="Average power description. %% is the escape sequence for the percent
+      symbol.
+
+      %1$d power in Watts">
+    Avg. power: %1$d %%
+  </string>
   <string name="description_moving_time"
     translation_description="Moving time description.
 
@@ -2084,6 +2098,13 @@ limitations under the License.
       Character limit: ~23 (1 line)">
     Grade
   </string>
+  <string name="settings_stats_power"
+    translation_description="In the 'Stats settings, the option to show power. Power is the number
+      of Joules generated per second by the rider, at the wheel.
+
+      Character limit: ~23 (1 line)">
+    Power
+  </string>
   <string name="settings_stats_rate_title"
     translation_description="In the 'Stats' settings, the option to change the preferred rate,
       either speed (mi/hr) or pace (hr/mi).
@@ -2220,6 +2241,14 @@ limitations under the License.
   <string name="stats_min_grade"
     translation_description="In the 'Stats' page, the minimum grade.">
     Min grade
+  </string>
+  <string name="stats_inst_power"
+    translation_description="In the 'Stats' page, the instantaneous power.">
+    Inst. power
+  </string>
+  <string name="stats_avg_power"
+    translation_description="In the 'Stats' page, the average power.">
+    Avg. power
   </string>
   <string name="stats_moving_time"
     translation_description="In the 'Stats' page, the moving time.">
@@ -2445,6 +2474,13 @@ limitations under the License.
 
       %1$d: an integer value. E.g., '2'">
     %1$d ft
+  </string>
+  <string name="value_integer_power"
+      translation_description="In a setting picker, the string format to display an integer value in
+      power (W).
+
+      %1$d: an integer value. E.g., '2'">
+    %1$d W
   </string>
   <string name="value_integer_feet_excellent_gps"
     translation_description="In a setting picker, the string format to display an integer value in

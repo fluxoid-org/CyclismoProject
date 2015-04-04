@@ -137,4 +137,23 @@ limitations under the License.
       android:id="@+id/stats_max_grade_value"
       style="@style/StatsValue" />
   </TableRow>
+  <!-- Instantaneous and average power -->
+  <TableRow android:id="@+id/stats_power_label_table_row" >
+    <TextView
+      style="@style/StatsLabel"
+      android:text="@string/stats_inst_power" />
+    <TextView
+      style="@style/StatsLabel"
+      android:layout_column="2"
+      android:text="@string/stats_avg_power" />
+  </TableRow>
+  <TableRow android:id="@+id/stats_power_value_table_row" >
+    <TextView
+      android:id="@+id/stats_inst_power_value"
+      style="@style/StatsValue" />
+    <TextView style="@style/StatsSpacer" />
+    <TextView
+      android:id="@+id/stats_avg_power_value"
+      style="@style/StatsValue" />
+  </TableRow>
 </merge>

@@ -46,6 +46,7 @@ import android.view.ViewGroup;
 
 import org.cowboycoders.cyclisimo.R;
 import org.cowboycoders.cyclisimo.TrackDetailActivity;
+import org.cowboycoders.cyclisimo.content.MyTracksLocation;
 import org.cowboycoders.cyclisimo.content.Track;
 import org.cowboycoders.cyclisimo.content.TrackDataHub;
 import org.cowboycoders.cyclisimo.content.TrackDataListener;
@@ -66,7 +67,7 @@ public class StatsFragment extends Fragment implements TrackDataListener {
 
   public static final String STATS_FRAGMENT_TAG = "statsFragment";
 
-  private static final int ONE_SECOND = 1000;
+  private static final int ONE_SECOND_MS = 1000;
   
   private TrackDataHub trackDataHub;
   private Handler handler;
@@ -82,7 +83,7 @@ public class StatsFragment extends Fragment implements TrackDataListener {
           StatsUtils.setTotalTimeValue(getActivity(), System.currentTimeMillis()
               - lastTripStatistics.getStopTime() + lastTripStatistics.getTotalTime());
         }
-        handler.postDelayed(this, ONE_SECOND);
+        handler.postDelayed(this, ONE_SECOND_MS);
       }
     }
   };
@@ -187,7 +188,17 @@ public class StatsFragment extends Fragment implements TrackDataListener {
 
   @Override
   public void onSampledInTrackPoint(Location location) {
-    // We don't care.
+    if (isResumed() && location instanceof MyTracksLocation) {
+      final MyTracksLocation myTracksLocation = (MyTracksLocation) location;
+      getActivity().runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+          if (isResumed()) {
+            StatsUtils.setSensorDataValues(getActivity(), myTracksLocation);
+          }
+        }
+      });
+    }
   }
 
   @Override
@@ -262,8 +273,9 @@ public class StatsFragment extends Fragment implements TrackDataListener {
    */
   private synchronized void resumeTrackDataHub() {
     trackDataHub = ((TrackDetailActivity) getActivity()).getTrackDataHub();
-    trackDataHub.registerTrackDataListener(this, EnumSet.of(TrackDataType.SELECTED_TRACK,
-        TrackDataType.TRACKS_TABLE, TrackDataType.LOCATION, TrackDataType.PREFERENCE));
+     trackDataHub.registerTrackDataListener(this, EnumSet.of(TrackDataType.SELECTED_TRACK,
+        TrackDataType.TRACKS_TABLE, TrackDataType.LOCATION, TrackDataType.PREFERENCE,
+             TrackDataType.SAMPLED_IN_TRACK_POINTS_TABLE));
   }
 
   /**

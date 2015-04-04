@@ -44,6 +44,8 @@ import junit.framework.TestCase;
  */
 public class TripStatisticsTest extends TestCase {
 
+  private static final double DELTA = 1e-15;
+
   private TripStatistics statistics;
 
   @Override
@@ -86,6 +88,8 @@ public class TripStatisticsTest extends TestCase {
     statistics.setMinGrade(-25.0);  // Resulting min grade
     statistics2.setMaxGrade(35.0);  // Resulting max grade
     statistics2.setMinGrade(0.0);
+    statistics.setAverageMovingPower(300.0);
+    statistics2.setAverageMovingPower(456.0); // Sir Wiggo
 
     // Resulting bounds: -10000, 35000, 30000, -40000
     statistics.setBounds(-10000, 20000, 30000, -40000);
@@ -97,28 +101,29 @@ public class TripStatisticsTest extends TestCase {
     assertEquals(4000L, statistics.getStopTime());
     assertEquals(2500L, statistics.getTotalTime());
     assertEquals(1300L, statistics.getMovingTime());
-    assertEquals(1100.0, statistics.getTotalDistance());
-    assertEquals(900.0, statistics.getTotalElevationGain());
-    assertEquals(60.0, statistics.getMaxSpeed());
+    assertEquals(1100.0, statistics.getTotalDistance(), DELTA);
+    assertEquals(900.0, statistics.getTotalElevationGain(), DELTA);
+    assertEquals(60.0, statistics.getMaxSpeed(), DELTA);
     assertEquals(-10000, statistics.getLeft());
     assertEquals(30000, statistics.getRight());
     assertEquals(35000, statistics.getTop());
     assertEquals(-40000, statistics.getBottom());
-    assertEquals(1200.0, statistics.getMinElevation());
-    assertEquals(3575.0, statistics.getMaxElevation());
-    assertEquals(-25.0, statistics.getMinGrade());
-    assertEquals(35.0, statistics.getMaxGrade());
+    assertEquals(1200.0, statistics.getMinElevation(), DELTA);
+    assertEquals(3575.0, statistics.getMaxElevation(), DELTA);
+    assertEquals(-25.0, statistics.getMinGrade(), DELTA);
+    assertEquals(35.0, statistics.getMaxGrade(), DELTA);
+    assertEquals(372.0, statistics.getAverageMovingPower(), DELTA);
   }
 
   public void testGetAverageSpeed() {
     statistics.setTotalDistance(1000.0);
     statistics.setTotalTime(50000);  // in milliseconds
-    assertEquals(20.0, statistics.getAverageSpeed());
+    assertEquals(20.0, statistics.getAverageSpeed(), DELTA);
   }
 
   public void testGetAverageMovingSpeed() {
     statistics.setTotalDistance(1000.0);
     statistics.setMovingTime(20000);  // in milliseconds
-    assertEquals(50.0, statistics.getAverageMovingSpeed());
+    assertEquals(50.0, statistics.getAverageMovingSpeed(), DELTA);
   }
 }

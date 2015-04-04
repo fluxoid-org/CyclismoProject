@@ -37,10 +37,13 @@ package org.cowboycoders.cyclisimo.util;
 
 import android.app.Activity;
 import android.location.Location;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import org.cowboycoders.cyclisimo.R;
+import org.cowboycoders.cyclisimo.content.MyTracksLocation;
+import org.cowboycoders.cyclisimo.content.Sensor;
 import org.cowboycoders.cyclisimo.stats.TripStatistics;
 
 /**
@@ -50,7 +53,49 @@ import org.cowboycoders.cyclisimo.stats.TripStatistics;
  */
 public class StatsUtils {
 
+  public static final String TAG = "StatsUtils";
+
   private StatsUtils() {}
+
+  /**
+   *  Set sensor data values
+   *
+   * @param activity the activity
+   * @param location the location containing the sensor data
+   */
+  public static void setSensorDataValues(Activity activity, MyTracksLocation location) {
+    // Try and get sensor data
+    Sensor.SensorDataSet sensorDataSet;
+    if (location.getSensorDataSet() != null) {
+      sensorDataSet = location.getSensorDataSet();
+    } else {
+      Log.d(TAG, "Failed to get sensor data");
+      return;
+    }
+
+    // Set instantaneous power
+    boolean showPower = PreferencesUtils.getBoolean(
+            activity, R.string.stats_show_power_key, PreferencesUtils.STATS_SHOW_POWER_DEFAULT);
+    View powerLabelTableRow = activity.findViewById(R.id.stats_power_label_table_row);
+    View powerValueTableRow = activity.findViewById(R.id.stats_power_value_table_row);
+    if (powerLabelTableRow == null || powerValueTableRow == null) {
+      return;
+    }
+    powerLabelTableRow.setVisibility(showPower ? View.VISIBLE : View.GONE);
+    powerValueTableRow.setVisibility(showPower ? View.VISIBLE : View.GONE);
+
+    double instPower = Double.NaN;
+    if (showPower && sensorDataSet!= null) {
+      if (sensorDataSet.hasPower()
+              && sensorDataSet.getPower().getState() == Sensor.SensorState.SENDING
+              && sensorDataSet.getPower().hasValue()) {
+        instPower = sensorDataSet.getPower().getValue();
+      }
+    }
+    setPowerValue(activity, R.id.stats_inst_power_value, instPower);
+    //TODO: double avgPower = tripStatistics == null ? Double.NaN : tripStatistics.getAverageMovingPower();
+    //setPowerValue(activity, R.id.stats_avg_power_value, avgPower);
+  }
 
   /**
    * Sets the location values.
@@ -343,6 +388,27 @@ public class StatsUtils {
       value = activity.getString(R.string.value_unknown);
     } else {
       value = activity.getString(R.string.value_integer_percent, Math.round(grade * 100));
+    }
+    textView.setText(value);
+  }
+
+  /**
+   * Sets a power value.
+   *
+   * @param activity the activity
+   * @param id the grade value resource id
+   * @param power the power in watts
+   */
+  private static void setPowerValue(Activity activity, int id, double power) {
+    TextView textView = (TextView) activity.findViewById(id);
+    if (textView == null) {
+      return;
+    }
+    String value;
+    if (Double.isNaN(power) || Double.isInfinite(power)) {
+      value = activity.getString(R.string.value_unknown);
+    } else {
+      value = activity.getString(R.string.value_integer_power, Math.round(power));
     }
     textView.setText(value);
   }

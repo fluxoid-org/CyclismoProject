@@ -81,6 +81,9 @@ public class TripStatistics implements Parcelable {
   // The min and max grade seen on this trip.
   private final ExtremityMonitor gradeExtremities = new ExtremityMonitor();
 
+  // The average cycling power over the session duration (W)
+  private double averageMovingPower;
+
   /**
    * Default constructor.
    */
@@ -106,15 +109,22 @@ public class TripStatistics implements Parcelable {
         other.elevationExtremities.getMin(), other.elevationExtremities.getMax());
     this.totalElevationGain = other.totalElevationGain;
     this.gradeExtremities.set(other.gradeExtremities.getMin(), other.gradeExtremities.getMax());
+    this.averageMovingPower = other.averageMovingPower;
   }
 
   /**
    * Combines these statistics with those from another object. This assumes that
    * the time periods covered by each do not intersect.
+   *
+   * FIXME: If the times aren't set they default to -1. This messes up the merge.
    * 
    * @param other another statistics data object
    */
   public void merge(TripStatistics other) {
+    // Merge power before times
+    double weight = (double) this.getMovingTime() / (this.getMovingTime() + other.getMovingTime());
+    this.setAverageMovingPower(weight * this.getAverageMovingPower()
+            + (1.0 - weight) * other.getAverageMovingPower());
     startTime = Math.min(startTime, other.startTime);
     stopTime = Math.max(stopTime, other.stopTime);
     totalDistance += other.totalDistance;
@@ -324,6 +334,11 @@ public class TripStatistics implements Parcelable {
   }
 
   /**
+   * Gets the average cycling power over the session duration (W).
+   */
+  public double getAverageMovingPower() { return this.averageMovingPower; }
+
+  /**
    * Sets the trip start time.
    * 
    * @param startTime the trip start time in milliseconds since the epoch
@@ -491,6 +506,13 @@ public class TripStatistics implements Parcelable {
   }
 
   /**
+   * Sets the average cycling power.
+   *
+   * @param averagePower the average cycling power over the session duration (W).
+   */
+  public void setAverageMovingPower(double averagePower) { this.averageMovingPower = averagePower; }
+
+  /**
    * Updates a new grade value.
    * 
    * @param grade the grade value as a fraction
@@ -509,7 +531,8 @@ public class TripStatistics implements Parcelable {
         + "; Max Elevation: " + getMaxElevation() + "; Max Speed: " + getMaxSpeed()
         + "; Min Elevation: " + getMinElevation() + "; Max Elevation: " + getMaxElevation()
         + "; Elevation Gain: " + getTotalElevationGain() + "; Min Grade: " + getMinGrade()
-        + "; Max Grade: " + getMaxGrade() + "}";
+        + "; Max Grade: " + getMaxGrade()  + "; Average Moving Power: " + getAverageMovingPower()
+        + "}";
   }
 
   /**
@@ -526,6 +549,7 @@ public class TripStatistics implements Parcelable {
       data.totalDistance = source.readDouble();
       data.totalTime = source.readLong();
       data.movingTime = source.readLong();
+      data.averageMovingPower = source.readDouble();
 
       double minLat = source.readDouble();
       double maxLat = source.readDouble();
@@ -572,6 +596,7 @@ public class TripStatistics implements Parcelable {
     dest.writeDouble(totalDistance);
     dest.writeLong(totalTime);
     dest.writeLong(movingTime);
+    dest.writeDouble(averageMovingPower);
     dest.writeDouble(latitudeExtremities.getMin());
     dest.writeDouble(latitudeExtremities.getMax());
     dest.writeDouble(longitudeExtremities.getMin());

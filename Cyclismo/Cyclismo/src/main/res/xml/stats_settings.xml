@@ -32,6 +32,10 @@ limitations under the License.
       android:key="@string/stats_show_moving_time_key"
       android:title="@string/stats_moving_time" />
     <CheckBoxPreference
+      android:defaultValue="true"
+      android:key="@string/stats_show_power_key"
+      android:title="@string/settings_stats_power" />
+    <CheckBoxPreference
       android:defaultValue="false"
       android:key="@string/stats_show_elevation_key"
       android:title="@string/stats_elevation" />

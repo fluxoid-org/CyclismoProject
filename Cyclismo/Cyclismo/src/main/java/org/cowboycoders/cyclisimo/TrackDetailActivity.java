@@ -279,27 +279,34 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
 
     courseDataHub = TrackDataHub.newInstance(this, true);
 
-    Bundle extras = new Bundle();
-
-    extras.putLong(TrackDetailActivity.EXTRA_COURSE_TRACK_ID, getCourseTrackId());
-
     tabHost = (TabHost) findViewById(android.R.id.tabhost);
     tabHost.setup();
     tabManager = new TabManager(this, tabHost, R.id.realtabcontent);
+
+    Bundle extras = new Bundle();
+    extras.putLong(TrackDetailActivity.EXTRA_COURSE_TRACK_ID, getCourseTrackId());
+
+    // Map tab
     TabSpec mapTabSpec = tabHost.newTabSpec(MyTracksMapFragment.MAP_FRAGMENT_TAG).setIndicator(
         getString(R.string.track_detail_map_tab), getResources().getDrawable(R.drawable.tab_map));
     tabManager.addTab(mapTabSpec, MyTracksMapFragment.class, extras);
+
+    // Chart tab
     TabSpec chartTabSpec = tabHost.newTabSpec(ChartFragment.CHART_FRAGMENT_TAG).setIndicator(
         getString(R.string.track_detail_chart_tab),
         getResources().getDrawable(R.drawable.tab_chart));
     tabManager.addTab(chartTabSpec, ChartFragment.class, extras);
+
+    // Stats tab
     TabSpec statsTabSpec = tabHost.newTabSpec(StatsFragment.STATS_FRAGMENT_TAG).setIndicator(
         getString(R.string.track_detail_stats_tab),
         getResources().getDrawable(R.drawable.tab_stats));
     tabManager.addTab(statsTabSpec, StatsFragment.class, null);
+
     if (savedInstanceState != null) {
       tabHost.setCurrentTabByTag(savedInstanceState.getString(CURRENT_TAB_TAG_KEY));
     }
+
     trackController = new TrackController(this, trackRecordingServiceConnection, false,
         recordListener, stopListener);
     showMarker();
