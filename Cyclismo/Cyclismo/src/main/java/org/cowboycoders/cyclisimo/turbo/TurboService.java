@@ -108,7 +108,7 @@ public class TurboService extends Service {
   // we want to use SimulatedLocationProvider.NAME
   private final static String MOCK_LOCATION_PROVIDER = LocationManager.GPS_PROVIDER;
 
-  private static int GPS_ACCURACY = 5; // m
+  private int gpsAccuracy = 5; // m
 
   // private List<LatLongAlt> latLongAlts;
 
@@ -615,7 +615,7 @@ public class TurboService extends Service {
         loc.setAltitude(pos.getAltitude());
         loc.setTime(timestamp);
         loc.setSpeed(locSpeed);
-        loc.setAccuracy(GPS_ACCURACY);
+        loc.setAccuracy(gpsAccuracy);
         Method locationJellyBeanFixMethod = null;
         try {
           locationJellyBeanFixMethod = Location.class.getMethod("makeComplete");
@@ -707,6 +707,7 @@ public class TurboService extends Service {
     trackRecordingServiceConnection = new TrackRecordingServiceConnection(this, bindChangedCallback);
     // trackRecordingServiceConnection.startAndBind();
     PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+    this.gpsAccuracy = getApplicationContext().getResources().getInteger(R.integer.SIMULATED_LOCATION_ACCURACY);
     this.wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, TurboService.WAKE_LOCK);
   }
 

@@ -2251,6 +2251,10 @@ limitations under the License.
     translation_description="In the track detail page, the title of the tab showing the chart.">
     Chart
   </string>
+    <string name="track_detail_altitude_tab"
+            translation_description="In the track detail page, the title of the tab showing the altitude profile.">
+    Profile
+  </string>
   <string name="track_detail_delete_confirm_message"
     translation_description="When deleting a track, the confirmation message informing the user that
       the track and its markers will be permanently deleted from the device.">

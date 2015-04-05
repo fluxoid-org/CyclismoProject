@@ -61,6 +61,7 @@ import org.cowboycoders.cyclisimo.content.Track;
 import org.cowboycoders.cyclisimo.content.TrackDataHub;
 import org.cowboycoders.cyclisimo.content.Waypoint;
 import org.cowboycoders.cyclisimo.content.WaypointCreationRequest;
+import org.cowboycoders.cyclisimo.fragments.AltitudeProfileFragment;
 import org.cowboycoders.cyclisimo.fragments.ChartFragment;
 import org.cowboycoders.cyclisimo.fragments.ChooseActivityDialogFragment;
 import org.cowboycoders.cyclisimo.fragments.ChooseUploadServiceDialogFragment;
@@ -289,10 +290,6 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
     TabSpec mapTabSpec = tabHost.newTabSpec(MyTracksMapFragment.MAP_FRAGMENT_TAG).setIndicator(
         getString(R.string.track_detail_map_tab), getResources().getDrawable(R.drawable.tab_map));
     tabManager.addTab(mapTabSpec, MyTracksMapFragment.class, extras);
-    TabSpec chartTabSpec = tabHost.newTabSpec(ChartFragment.CHART_FRAGMENT_TAG).setIndicator(
-        getString(R.string.track_detail_chart_tab),
-        getResources().getDrawable(R.drawable.tab_chart));
-    tabManager.addTab(chartTabSpec, ChartFragment.class, extras);
     TabSpec statsTabSpec = tabHost.newTabSpec(StatsFragment.STATS_FRAGMENT_TAG).setIndicator(
         getString(R.string.track_detail_stats_tab),
         getResources().getDrawable(R.drawable.tab_stats));
@@ -300,6 +297,14 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
     if (savedInstanceState != null) {
       tabHost.setCurrentTabByTag(savedInstanceState.getString(CURRENT_TAB_TAG_KEY));
     }
+    TabSpec altitudeTabSpec = tabHost.newTabSpec(AltitudeProfileFragment.CHART_FRAGMENT_TAG).setIndicator(
+            getString(R.string.track_detail_altitude_tab),
+            getResources().getDrawable(R.drawable.tab_chart));
+    tabManager.addTab(altitudeTabSpec, AltitudeProfileFragment.class, extras);
+    TabSpec chartTabSpec = tabHost.newTabSpec(ChartFragment.CHART_FRAGMENT_TAG).setIndicator(
+            getString(R.string.track_detail_chart_tab),
+            getResources().getDrawable(R.drawable.tab_chart));
+    tabManager.addTab(chartTabSpec, ChartFragment.class, extras);
     trackController = new TrackController(this, trackRecordingServiceConnection, false,
         recordListener, stopListener);
     showMarker();
