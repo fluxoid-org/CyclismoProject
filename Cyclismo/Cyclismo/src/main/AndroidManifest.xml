@@ -21,6 +21,10 @@ limitations under the License.
     android:versionCode="65"
     android:versionName="0.0.5" >
 
+    <uses-sdk
+        android:minSdkVersion="14"
+        tools:overrideLibrary="org.cowboycoders.jformica" />
+
     <uses-permission android:name="android.permission.GET_TASKS" />
     <!-- Permission to initialize services -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -89,10 +93,6 @@ limitations under the License.
         android:protectionLevel="signature" />
 
     <uses-permission android:name="org.cowboycoders.cyclisimo.permission.MAPS_RECEIVE" />
-
-    <uses-sdk
-        tools:overrideLibrary="org.cowboycoders.jformica"
-        android:minSdkVersion="14" />
     <!-- Required features -->
     <uses-feature
         android:glEsVersion="0x00020000"
@@ -136,16 +136,19 @@ limitations under the License.
         android:smallScreens="true"
         android:xlargeScreens="true" />
 
+    <android:uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
+
     <application
-        tools:replace="android:icon, android:label"
-        android:name="org.cowboycoders.cyclisimo.MyTracksApplication"
-        android:backupAgent="org.cowboycoders.cyclisimo.io.backup.MyTracksBackupAgent"
+        android:name=".MyTracksApplication"
+        android:backupAgent=".io.backup.MyTracksBackupAgent"
         android:hardwareAccelerated="true"
         android:icon="@drawable/track_bike"
         android:label="@string/my_tracks_app_name"
         android:largeHeap="true"
-        android:theme="@style/ThemeSelector" >
-
+        android:theme="@style/ThemeSelector"
+        tools:replace="android:icon, android:label" >
 
         <!-- For data backup -->
         <meta-data
@@ -157,12 +160,12 @@ limitations under the License.
             android:value="AIzaSyAVGdR_2AVfAItl_MIhaOooRq7m-Pr9jqg" />
         <!-- Activities -->
         <activity
-            android:name="org.cowboycoders.cyclisimo.AggregatedStatsActivity"
+            android:name=".AggregatedStatsActivity"
             android:label="@string/menu_aggregated_statistics" />
         <activity
-            android:name="org.cowboycoders.cyclisimo.HelpActivity"
+            android:name=".HelpActivity"
             android:label="@string/menu_help" />
-        <activity android:name="org.cowboycoders.cyclisimo.ImportActivity" >
+        <activity android:name=".ImportActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.ATTACH_DATA" />
                 <action android:name="android.intent.action.VIEW" />
@@ -177,15 +180,15 @@ limitations under the License.
                 <data android:scheme="file" />
             </intent-filter>
         </activity>
-        <activity android:name="org.cowboycoders.cyclisimo.MarkerEditActivity" />
-        <activity android:name="org.cowboycoders.cyclisimo.MarkerDetailActivity" />
-        <activity android:name="org.cowboycoders.cyclisimo.MarkerListActivity" >
+        <activity android:name=".MarkerEditActivity" />
+        <activity android:name=".MarkerDetailActivity" />
+        <activity android:name=".MarkerListActivity" >
             <meta-data
                 android:name="android.app.default_searchable"
                 android:value="org.cowboycoders.cyclisimo.SearchListActivity" />
         </activity>
         <activity
-            android:name="org.cowboycoders.cyclisimo.SearchListActivity"
+            android:name=".SearchListActivity"
             android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -196,27 +199,28 @@ limitations under the License.
                 android:resource="@xml/search" />
         </activity>
         <activity
-            android:name="org.cowboycoders.cyclisimo.SensorStateActivity"
+            android:name=".SensorStateActivity"
             android:label="@string/menu_sensor_state" />
         <activity
-            android:name="org.cowboycoders.cyclisimo.TrackDetailActivity"
+            android:name=".TrackDetailActivity"
             android:launchMode="singleTask" />
-        <activity android:name="org.cowboycoders.cyclisimo.TrackEditActivity" />
-        <activity android:name="org.cowboycoders.cyclisimo.CourseListActivity" >
+        <activity android:name=".TrackEditActivity" />
+        <activity android:name=".CourseListActivity" >
         </activity>
         <activity
-            android:name="org.cowboycoders.cyclisimo.TrackListActivity"
+            android:name=".TrackListActivity"
             android:launchMode="singleTask" >
             <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
             <meta-data
-            android:name="android.app.default_searchable"
-            android:value="org.cowboycoders.cyclisimo.SearchListActivity" />
+                android:name="android.app.default_searchable"
+                android:value="org.cowboycoders.cyclisimo.SearchListActivity" />
         </activity>
         <activity
-            android:name="org.cowboycoders.cyclisimo.CourseSetupActivity"
+            android:name=".CourseSetupActivity"
             android:launchMode="singleTop" >
 
             <!-- <intent-filter> -->
@@ -228,53 +232,53 @@ limitations under the License.
             <!-- android:value="org.cowboycoders.cyclisimo.SearchListActivity" /> -->
         </activity>
         <activity
-            android:name="org.cowboycoders.cyclisimo.UserListActivity"
+            android:name=".UserListActivity"
             android:launchMode="singleTop" >
         </activity>
-        <activity android:name="org.cowboycoders.cyclisimo.UserEditActivity" />
-        <activity
-            android:name="org.cowboycoders.cyclisimo.BikeListActivity">
+        <activity android:name=".UserEditActivity" />
+        <activity android:name=".BikeListActivity" >
         </activity>
-        <activity android:name="org.cowboycoders.cyclisimo.BikeEditActivity" />
-        
-<!--                 <activity -->
-<!--             android:name="org.cowboycoders.cyclisimo.TurboTrainerListActivity" -->
-<!--             android:launchMode="singleTop" > -->
+        <activity android:name=".BikeEditActivity" />
 
-<!--             <intent-filter> -->
-<!--             <action android:name="android.intent.action.MAIN" /> -->
-<!--             <category android:name="android.intent.category.LAUNCHER" /> -->
-<!--             </intent-filter> -->
-<!--             <meta-data -->
-<!--             android:name="android.app.default_searchable" -->
-<!--             android:value="org.cowboycoders.cyclisimo.SearchListActivity" /> -->
-<!--         </activity> -->
-        
-        <activity android:name="org.cowboycoders.cyclisimo.io.backup.BackupActivity" />
-        <activity android:name="org.cowboycoders.cyclisimo.io.backup.RestoreActivity" />
-        <activity android:name="org.cowboycoders.cyclisimo.io.backup.RestoreChooserActivity" />
-        <activity android:name="org.cowboycoders.cyclisimo.io.docs.SendDocsActivity" />
-        <activity android:name="org.cowboycoders.cyclisimo.io.file.SaveActivity" />
-        <activity android:name="org.cowboycoders.cyclisimo.io.fusiontables.SendFusionTablesActivity" />
+        <!-- <activity -->
+        <!-- android:name="org.cowboycoders.cyclisimo.TurboTrainerListActivity" -->
+        <!-- android:launchMode="singleTop" > -->
+
+
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.intent.action.MAIN" /> -->
+        <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+        <!-- </intent-filter> -->
+        <!-- <meta-data -->
+        <!-- android:name="android.app.default_searchable" -->
+        <!-- android:value="org.cowboycoders.cyclisimo.SearchListActivity" /> -->
+        <!-- </activity> -->
+
+        <activity android:name=".io.backup.BackupActivity" />
+        <activity android:name=".io.backup.RestoreActivity" />
+        <activity android:name=".io.backup.RestoreChooserActivity" />
+        <activity android:name=".io.docs.SendDocsActivity" />
+        <activity android:name=".io.file.SaveActivity" />
+        <activity android:name=".io.fusiontables.SendFusionTablesActivity" />
         <activity
-            android:name="org.cowboycoders.cyclisimo.io.maps.ChooseMapActivity"
+            android:name=".io.maps.ChooseMapActivity"
             android:label="@string/maps_list_title" />
-        <activity android:name="org.cowboycoders.cyclisimo.io.maps.SendMapsActivity" />
-        <activity android:name="org.cowboycoders.cyclisimo.io.sendtogoogle.AccountChooserActivity" />
-        <activity android:name="org.cowboycoders.cyclisimo.io.sendtogoogle.ConfirmSharingActivity" />
-        <activity android:name="org.cowboycoders.cyclisimo.io.sendtogoogle.UploadResultActivity" />
-        <activity android:name="org.cowboycoders.cyclisimo.settings.BackupSettingsActivity" />
-        <activity android:name="org.cowboycoders.cyclisimo.settings.ChartSettingsActivity" />
-        <activity android:name="org.cowboycoders.cyclisimo.settings.MapSettingsActivity" />
-        <activity android:name="org.cowboycoders.cyclisimo.settings.RecordingSettingsActivity" />
-        <activity android:name="org.cowboycoders.cyclisimo.settings.SensorSettingsActivity" />
-        <activity android:name="org.cowboycoders.cyclisimo.settings.AntSettingsActivity" />
-        <activity android:name="org.cowboycoders.cyclisimo.settings.SettingsActivity" />
-        <activity android:name="org.cowboycoders.cyclisimo.settings.SharingSettingsActivity" />
-        <activity android:name="org.cowboycoders.cyclisimo.settings.StatsSettingsActivity" />
-        <activity android:name="org.cowboycoders.cyclisimo.settings.TurboSettingsActivity" />
+        <activity android:name=".io.maps.SendMapsActivity" />
+        <activity android:name=".io.sendtogoogle.AccountChooserActivity" />
+        <activity android:name=".io.sendtogoogle.ConfirmSharingActivity" />
+        <activity android:name=".io.sendtogoogle.UploadResultActivity" />
+        <activity android:name=".settings.BackupSettingsActivity" />
+        <activity android:name=".settings.ChartSettingsActivity" />
+        <activity android:name=".settings.MapSettingsActivity" />
+        <activity android:name=".settings.RecordingSettingsActivity" />
+        <activity android:name=".settings.SensorSettingsActivity" />
+        <activity android:name=".settings.AntSettingsActivity" />
+        <activity android:name=".settings.SettingsActivity" />
+        <activity android:name=".settings.SharingSettingsActivity" />
+        <activity android:name=".settings.StatsSettingsActivity" />
+        <activity android:name=".settings.TurboSettingsActivity" />
         <activity
-            android:name="org.cowboycoders.cyclisimo.widgets.TrackWidgetConfigActivity"
+            android:name=".widgets.TrackWidgetConfigActivity"
             android:label="@string/track_widget_config_title" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
@@ -297,27 +301,27 @@ limitations under the License.
         </activity>
         <!-- Services -->
         <service
-            android:name="org.cowboycoders.cyclisimo.turbo.TurboService"
+            android:name=".turbo.TurboService"
             android:exported="false" />
         <service
-            android:name="org.cowboycoders.cyclisimo.services.ControlRecordingService"
+            android:name=".services.ControlRecordingService"
             android:exported="false" />
-        <service android:name="org.cowboycoders.cyclisimo.services.RemoveTempFilesService" />
-        <service android:name="org.cowboycoders.cyclisimo.turbo.AntHubService" />
+        <service android:name=".services.RemoveTempFilesService" />
+        <service android:name=".turbo.AntHubService" />
         <service
-            android:name="org.cowboycoders.cyclisimo.services.TrackRecordingService"
+            android:name=".services.TrackRecordingService"
             android:enabled="true"
             android:exported="true"
             android:icon="@drawable/arrow_320"
             android:label="@string/my_tracks_recording_service"
             android:permission="org.cowboycoders.cyclisimo.WRITE_TRACK_DATA" />
         <!-- Receivers -->
-        <receiver android:name="org.cowboycoders.cyclisimo.BootReceiver" >
+        <receiver android:name=".BootReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <receiver android:name="org.cowboycoders.cyclisimo.widgets.TrackWidgetProvider" >
+        <receiver android:name=".widgets.TrackWidgetProvider" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="org.cowboycoders.cyclisimo.TRACK_PAUSED" />
@@ -334,22 +338,27 @@ limitations under the License.
         <!-- Providers -->
         <!-- Cyclisimo data provider -->
         <provider
-            android:name="org.cowboycoders.cyclisimo.content.MyTracksProvider"
+            android:name=".content.MyTracksProvider"
             android:authorities="org.cowboycoders.cyclisimo"
             android:exported="true"
             android:readPermission="org.cowboycoders.cyclisimo.READ_TRACK_DATA"
             android:writePermission="org.cowboycoders.cyclisimo.WRITE_TRACK_DATA" />
         <provider
-            android:name="org.cowboycoders.cyclisimo.content.MyTracksCourseProvider"
+            android:name=".content.MyTracksCourseProvider"
             android:authorities="org.cowboycoders.cyclisimo.courses"
             android:exported="true"
             android:readPermission="org.cowboycoders.cyclisimo.READ_TRACK_DATA"
             android:writePermission="org.cowboycoders.cyclisimo.WRITE_TRACK_DATA" />
         <!-- Search suggestion provider -->
         <provider
-            android:name="org.cowboycoders.cyclisimo.content.SearchEngineProvider"
+            android:name=".content.SearchEngineProvider"
             android:authorities="org.cowboycoders.cyclisimo.search"
             android:exported="false" />
+
+        <activity
+            android:name=".BushidoBrakeCalibrate"
+            android:label="@string/title_activity_bushido_brake_calibrate" >
+        </activity>
     </application>
 
 </manifest>

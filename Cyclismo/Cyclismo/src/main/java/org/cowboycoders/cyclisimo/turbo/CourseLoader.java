@@ -23,12 +23,14 @@ import android.content.Context;
 import android.location.Location;
 import android.util.Log;
 
+import org.cowboycoders.cyclisimo.R;
 import org.cowboycoders.cyclisimo.content.Track;
 import org.cowboycoders.cyclisimo.content.TrackDataHub;
 import org.cowboycoders.cyclisimo.content.TrackDataListener;
 import org.cowboycoders.cyclisimo.content.TrackDataType;
 import org.cowboycoders.cyclisimo.content.Waypoint;
-import org.fluxoid.utils.AltitudeSmoother;
+import org.cowboycoders.cyclisimo.stats.TripStatistics;
+import org.cowboycoders.cyclisimo.stats.TripStatisticsUpdater;
 import org.fluxoid.utils.LatLongAlt;
 import org.fluxoid.utils.LocationUtils;
 
@@ -39,7 +41,7 @@ import java.util.List;
 public class CourseLoader {
 
   // Remove any track points separated by less than this
-  public static final double MINIMUM_TRACK_POINT_SPACING_M = 5.0;
+  public final double minimumTrackPointSpacingM;
 
   public static String TAG = CourseLoader.class.getSimpleName();
   
@@ -52,6 +54,7 @@ public class CourseLoader {
 
   CourseLoader(Context context, long trackId) {
     courseDataHub = TrackDataHub.newInstance(context,true);
+    minimumTrackPointSpacingM = context.getResources().getInteger(R.integer.SIMULATED_LOCATION_ACCURACY);
     expectedId = trackId;
     courseDataHub.start();
     courseDataHub.registerTrackDataListener(trackDataListener, EnumSet.of(TrackDataType.TRACKS_TABLE,
@@ -64,7 +67,10 @@ public class CourseLoader {
     courseDataHub.loadTrack(trackId);
     courseDataHub.reloadDataForListener(trackDataListener);
   }
-  
+
+  private TripStatisticsUpdater tripStatisticsUpdater;
+  private long startTime = -1L;
+
   private TrackDataListener trackDataListener = new TrackDataListener() {
     @Override
     public void onLocationStateChanged(LocationState locationState) {
@@ -94,24 +100,28 @@ public class CourseLoader {
     public void onTrackUpdated(Track track) {
       Log.d(TAG,"track updated");
       currentTrack = track;
-      
+      if (track == null || track.getTripStatistics() == null) {
+        startTime = -1L;
+        return;
+      }
+      startTime = track.getTripStatistics().getStartTime();
     }
 
     @Override
     public void clearTrackPoints() {
-      // TODO Auto-generated method stub
-      
+      tripStatisticsUpdater = startTime != -1L ? new TripStatisticsUpdater(startTime) : null;
     }
 
     @Override
     public synchronized void onSampledInTrackPoint(Location location) {
       if (finished)
           return;
-
+      tripStatisticsUpdater.addLocation(location, (int) minimumTrackPointSpacingM);
+      double elevation = tripStatisticsUpdater.getSmoothedElevation();
       LatLongAlt point = new LatLongAlt(
               location.getLatitude(),
               location.getLongitude(),
-              location.getAltitude());
+              elevation);
       Log.d(TAG, point.toString());
 
       if (lastAddedPoint == null) {
@@ -123,7 +133,7 @@ public class CourseLoader {
 
       double pointSep = LocationUtils.getDistance(lastAddedPoint, point);
 
-      if (pointSep >  MINIMUM_TRACK_POINT_SPACING_M) {
+      if (pointSep > minimumTrackPointSpacingM) {
           Log.d(TAG,"added track point, spacing " + LocationUtils.getDistance(lastAddedPoint, point));
           lastAddedPoint = point;
           latLongAlts.add(point);
@@ -150,9 +160,10 @@ public class CourseLoader {
       Log.i(TAG, "track points done");
       if (currentTrack != null && currentTrack.getId() == expectedId ) {
         finished = true;
-        AltitudeSmoother smoother = new AltitudeSmoother();
-        smoother.setAveragingSweeps(50).setMinTrackPointSpacing(7.0);
-        smoother.smoothTrackPointAltitudes(latLongAlts);
+        // FIXME: move smoothing function to TripStatistics updater?
+        //AltitudeSmoother smoother = new AltitudeSmoother();
+        //smoother.setAveragingSweeps(50).setMinTrackPointSpacing(7.0);
+        //smoother.smoothTrackPointAltitudes(latLongAlts);
         gradientsToLog();
         courseDataHub.stop();
         courseDataHub.unregisterTrackDataListener(this);

@@ -1099,7 +1099,7 @@ public class BushidoBrake extends AntTurboTrainer {
 
 /**
 	 * Asynchronously calibrates the brake.
-	 * @param callback various calibration hooks {@link BushidoBrake.CalibrationCallback)
+	 * @param callback various calibration hooks {@link BushidoBrake.CallibrationCallback)
 	 * @param timeout timeout for calibration to complete (in seconds)
 	 * @return new calibration value (as would be displayed on headunit)
 	 */

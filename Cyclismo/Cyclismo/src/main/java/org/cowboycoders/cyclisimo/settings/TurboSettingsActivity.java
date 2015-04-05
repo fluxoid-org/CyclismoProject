@@ -37,6 +37,7 @@ package org.cowboycoders.cyclisimo.settings;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -45,7 +46,9 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import org.cowboycoders.cyclisimo.BushidoBrakeCalibrate;
 import org.cowboycoders.cyclisimo.R;
+import org.cowboycoders.cyclisimo.util.IntentUtils;
 
 /**
  * An activity for accessing turbo trainer settings.
@@ -63,6 +66,16 @@ public class TurboSettingsActivity extends AbstractSettingsActivity {
   protected void onCreate(Bundle bundle) {
     super.onCreate(bundle);
     addPreferencesFromResource(R.xml.turbotrainer_generic_settings);
+
+    Preference calibrateBushido = findPreference(getString(R.string.settings_turbotrainer_bushido_calibrate_key));
+    calibrateBushido.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+      @Override
+      public boolean onPreferenceClick(Preference preference) {
+        Intent intent = IntentUtils.newIntent(TurboSettingsActivity.this, BushidoBrakeCalibrate.class);
+        startActivity(intent);
+        return true;
+      }
+    });
 
     scaleFactor = (EditTextPreference) findPreference(getString(R.string.settings_turbotrainer_generic_scale_factor_key));
     scaleFactor.setSummary(getString(R.string.settings_turbotrainer_generic_scale_factor_summary));

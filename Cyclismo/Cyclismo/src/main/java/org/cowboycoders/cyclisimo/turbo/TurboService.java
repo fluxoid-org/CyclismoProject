@@ -59,6 +59,7 @@ import org.cowboycoders.cyclisimo.util.PreferencesUtils;
 import org.cowboycoders.cyclisimo.util.TrackRecordingServiceConnectionUtils;
 import org.cowboycoders.cyclisimo.util.UnitConversions;
 import org.cowboycoders.turbotrainers.DummyTrainer;
+import org.cowboycoders.turbotrainers.bushido.brake.ConstantResistanceController;
 import org.fluxoid.utils.LatLongAlt;
 import org.cowboycoders.turbotrainers.CourseTracker;
 import org.cowboycoders.turbotrainers.Mode;
@@ -107,11 +108,13 @@ public class TurboService extends Service {
   // we want to use SimulatedLocationProvider.NAME
   private final static String MOCK_LOCATION_PROVIDER = LocationManager.GPS_PROVIDER;
 
-  private static int GPS_ACCURACY = 5; // m
+  private int gpsAccuracy = 5; // m
 
   // private List<LatLongAlt> latLongAlts;
 
   private boolean running = false;
+
+  private ServiceConnection mConnection; // ant service connection
   
   private float scaleFactor = 1.0f; //multiply positive gradients by this value
   
@@ -141,7 +144,7 @@ public class TurboService extends Service {
   private Lock parameterBuilderLock = new ReentrantLock();
   
   private Parameters.Builder parameterBuilder;
-  
+
   public void setParameterBuilder(Parameters.Builder builder) {
     try {
       parameterBuilderLock.lock();
@@ -285,6 +288,7 @@ public class TurboService extends Service {
   void doUnbindService() {
     if (mIsBound) {
       unbindService(mConnection);
+      mConnection = null;
       mIsBound = false;
     }
   }
@@ -298,6 +302,8 @@ public class TurboService extends Service {
     super.onStartCommand(intent, flags, startId);
     return START_STICKY;
   }
+
+
 
   public synchronized void start(final long trackId, final Context context) {
     if (running) {
@@ -373,22 +379,35 @@ public class TurboService extends Service {
 
     registerRecordingReceiver();
 
-    Intent notificationIntent = new Intent(this, TurboService.class);
-    PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-
-    Notification noti = new NotificationCompat.Builder(this)
-        .setContentTitle(getString(R.string.turbo_mode_service_running_notification_title))
-        .setContentText(getString(R.string.turbo_mode_service_running_notification_text))
-        .setSmallIcon(R.drawable.track_bike).setContentIntent(pendingIntent).setOngoing(true)
-        .build(); // build api 16 only ;/
-
-    startForeground(ONGOING_NOTIFICATION, noti);
+    showStartNotification();
     
     // currentLatLongIndex = latLongAlts.size() -3; puts in near end so we can
     // test ending
 
   }
-  
+
+    private void showStartNotification() {
+        Intent notificationIntent = new Intent(this, TurboService.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+        Notification noti = new NotificationCompat.Builder(this)
+            .setContentTitle(getString(R.string.turbo_mode_service_running_notification_title))
+            .setContentText(getString(R.string.turbo_mode_service_running_notification_text))
+            .setSmallIcon(R.drawable.track_bike).setContentIntent(pendingIntent).setOngoing(true)
+            .build(); // build api 16 only ;/
+
+        startForeground(ONGOING_NOTIFICATION, noti);
+    }
+
+    public synchronized void startBushidoCalibrate(BushidoBrake.CallibrationCallback callback,
+                                                   TurboTrainerDataListener listener) {
+      startServiceInBackround();
+
+      this.doBindForBushidoCalibrate(callback, listener);
+
+
+     showStartNotification();
+  }
   private static interface ErrorProneCall {
     void call() throws Exception;
   }
@@ -416,45 +435,56 @@ public class TurboService extends Service {
     
   };
 
+  private ErrorProneCall startBushidoBrake= new ErrorProneCall() {
 
+    @Override
+    public void call() throws TurboCommunicationException, InterruptedException, TimeoutException {
+      ((BushidoBrake)turboTrainer).startConnection();
+    }
 
-  private ServiceConnection mConnection = new ServiceConnection() {
+  };
+
+  private class BushidoCalibrateConnection implements ServiceConnection {
+
+    private TurboTrainerDataListener dataListener;
+
+    private BushidoBrake.CallibrationCallback calibrationListener;
+
+    private BushidoCalibrateConnection(BushidoBrake.CallibrationCallback calibrationListener, TurboTrainerDataListener dataListener) {
+      this.calibrationListener = calibrationListener;
+      this.dataListener = dataListener;
+    }
 
     public void onServiceConnected(ComponentName className, IBinder binder) {
 
-      TurboService.this.turboTrainer =  getTurboTrainer((AntHubService.LocalBinder) binder);
-      if ( turboTrainer == null ) {
-          Toast.makeText(TurboService.this,
-                  "Please select/reselect your turbo from the settings menu and try again",
-                  Toast.LENGTH_SHORT).show();
-          return;
-      }
+        ConstantResistanceController mapper = new ConstantResistanceController();
+        mapper.setAbsoluteResistance(100);
+
+        initAntWireless((AntHubService.LocalBinder) binder);
+        final BushidoBrake bushidoBrake =  new BushidoBrake(antNode,mapper);
+        bushidoBrake.setMode(Mode.TARGET_SLOPE);
+
+        TurboService.this.turboTrainer = bushidoBrake;
+
 
       new Thread() {
         public void run() {
           try {
-            turboTrainer.setMode(Mode.TARGET_SLOPE);
-            // slight hack to get around timeout errors on my tablet 
-            retryErrorProneCall(startTurbo,10);
-            turboTrainer.registerDataListener(dataListener);
-            //turboTrainer.start();
-            //turboTrainer.registerDataListener(dataListener);
-            // if
-            // (TrackRecordingServiceConnectionUtils.isRecordingServiceRunning(TurboService.this))
-            // {
-            // TrackRecordingServiceConnectionUtils.resumeTrack(trackRecordingServiceConnection);
-            // }
-            // notify receivers that we have started up
-            unpauseRecording();
-            updateLocation(courseTracker.getNearestLocation(0.0));
+
+            retryErrorProneCall(startBushidoBrake, 10);
+            bushidoBrake.registerDataListener(dataListener);
+            bushidoBrake.calibrate(calibrationListener, 120);
+
           } catch (Exception e) {
-            handleException(e, "Error initiliasing turbo trainer",true,NOTIFCATION_ID_STARTUP);
-          }
+              handleException(e, "Error trying to calibrate your turbo trainer",true,NOTIFCATION_ID_STARTUP);
+            }
         }
       }.start();
 
       Toast.makeText(TurboService.this, "Connected to AntHub service", Toast.LENGTH_SHORT).show();
     }
+
+
 
     public void onServiceDisconnected(ComponentName className) {
       Toast.makeText(TurboService.this, "Disconnected from AntHub service", Toast.LENGTH_SHORT)
@@ -462,6 +492,45 @@ public class TurboService extends Service {
     }
 
   };
+
+    private class TurboConnection implements ServiceConnection {
+
+        public void onServiceConnected(ComponentName className, IBinder binder) {
+
+            TurboService.this.turboTrainer =  getTurboTrainer((AntHubService.LocalBinder) binder);
+            if ( turboTrainer == null ) {
+                Toast.makeText(TurboService.this,
+                        "Please select/reselect your turbo from the settings menu and try again",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            new Thread() {
+                public void run() {
+                    try {
+                        turboTrainer.setMode(Mode.TARGET_SLOPE);
+                        // slight hack to get around timeout errors on my tablet
+                        retryErrorProneCall(startTurbo, 10);
+                        turboTrainer.registerDataListener(dataListener);
+                        unpauseRecording();
+                        updateLocation(courseTracker.getNearestLocation(0.0));
+                    } catch (Exception e) {
+                        handleException(e, "Error initiliasing turbo trainer",true,NOTIFCATION_ID_STARTUP);
+                    }
+                }
+            }.start();
+
+            Toast.makeText(TurboService.this, "Connected to AntHub service", Toast.LENGTH_SHORT).show();
+        }
+
+
+
+        public void onServiceDisconnected(ComponentName className) {
+            Toast.makeText(TurboService.this, "Disconnected from AntHub service", Toast.LENGTH_SHORT)
+                    .show();
+        }
+
+    };
 
     private void unpauseRecording() {
         Intent intent = new Intent().setAction(this
@@ -489,12 +558,19 @@ public class TurboService extends Service {
 
     private TrackRecordingServiceConnection trackRecordingServiceConnection;
 
-  private boolean networkProviderEnabled;
-
 
   void doBindService() {
+    assert mConnection == null: "expecting mConnection to be null";
+    mConnection = new TurboConnection();
     bindService(new Intent(this, AntHubService.class), mConnection, Context.BIND_AUTO_CREATE);
     mIsBound = true;
+  }
+
+  void doBindForBushidoCalibrate(BushidoBrake.CallibrationCallback calibrationCallback, TurboTrainerDataListener listener) {
+      assert mConnection == null: "expecting mConnection to be null";
+      mConnection = new BushidoCalibrateConnection(calibrationCallback, listener);
+      bindService(new Intent(this, AntHubService.class), mConnection, Context.BIND_AUTO_CREATE);
+      mIsBound = true;
   }
 
   protected TurboTrainerInterface getTurboTrainer(AntHubService.LocalBinder binder) {
@@ -539,7 +615,7 @@ public class TurboService extends Service {
         loc.setAltitude(pos.getAltitude());
         loc.setTime(timestamp);
         loc.setSpeed(locSpeed);
-        loc.setAccuracy(GPS_ACCURACY);
+        loc.setAccuracy(gpsAccuracy);
         Method locationJellyBeanFixMethod = null;
         try {
           locationJellyBeanFixMethod = Location.class.getMethod("makeComplete");
@@ -631,6 +707,7 @@ public class TurboService extends Service {
     trackRecordingServiceConnection = new TrackRecordingServiceConnection(this, bindChangedCallback);
     // trackRecordingServiceConnection.startAndBind();
     PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+    this.gpsAccuracy = getApplicationContext().getResources().getInteger(R.integer.SIMULATED_LOCATION_ACCURACY);
     this.wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, TurboService.WAKE_LOCK);
   }
 

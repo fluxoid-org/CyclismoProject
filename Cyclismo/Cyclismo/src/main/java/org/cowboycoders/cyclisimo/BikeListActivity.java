@@ -412,7 +412,6 @@ public static final class DeleteAllBikesCallback implements DialogCallback,Parce
 
     updateUI();
     this.contextMenu = (ContextMenu) findViewById(R.menu.user_list_context_menu);
-    
 
   }
 
@@ -547,7 +546,6 @@ public static final class DeleteAllBikesCallback implements DialogCallback,Parce
    * Handles a context item selection.
    * 
    * @param itemId the menu item id
-   * @param trackId the track id
    * @return true if handled.
    */
   private boolean handleContextItem(int itemId, int position) {
