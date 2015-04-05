@@ -61,6 +61,10 @@ public interface PowerModelManipulator {
 
 	public abstract void setOutsideRadiusTire(double outsideRadiusTire);
 
+  /**
+   *
+   * @return velocity in m/s
+   */
 	public abstract double getVelocity();
 
 	public abstract double getAirVelocity();

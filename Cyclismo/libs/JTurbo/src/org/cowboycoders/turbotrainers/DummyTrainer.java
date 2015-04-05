@@ -1,5 +1,8 @@
 package org.cowboycoders.turbotrainers;
 
+import org.fluxoid.utils.Conversions;
+import org.fluxoid.utils.TrapezoidIntegrator;
+
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeoutException;
@@ -9,6 +12,18 @@ import java.util.concurrent.TimeoutException;
  */
 public class DummyTrainer extends GenericTurboTrainer {
 
+    private static final double MAX_HR_CHANGE = 10;
+    private static final double MAX_CADENCE_CHANGE = 10;
+    private static final double MAX_POWER_CHANGE = 10;
+    private TrapezoidIntegrator distanceIntegrator = new TrapezoidIntegrator();
+
+    private volatile double hr = 165;
+    private volatile double power = 250;
+    private volatile double cadence = 90;
+    private volatile double speed = 0;
+    private volatile double distance = 0;
+    private volatile double slope = 0.0;
+
     public static final Mode [] SUPPORTED_MODES = new Mode [] {
             Mode.TARGET_SLOPE
     };
@@ -17,22 +32,54 @@ public class DummyTrainer extends GenericTurboTrainer {
         setSupportedModes(SUPPORTED_MODES);
     }
 
-    private double distance = 0.0;
+    private PowerModel pm = new PowerModel();
+
+    private double plusOrMinus(double curVal, double maxChange) {
+      double result;
+      if (Math.random() < 0.5) {
+        result =  curVal + Math.random() * maxChange;
+      } else {
+        result =  curVal - Math.random() * maxChange;
+      }
+      // negative values make no sense for us
+      if (result < 0.0) return 0.0;
+      return result;
+    }
+
+  private final class PowerModelUpdater extends TimerTask {
+    @Override
+    public void run() {
+        power = plusOrMinus(power, MAX_POWER_CHANGE);
+        pm.updatePower(power);
+        speed = pm.getVelocity() * Conversions.METRES_PER_SECOND_TO_KM_PER_HOUR;
+        distanceIntegrator.add(getTimestamp(), pm.getVelocity());
+        distance = distanceIntegrator.getIntegral();
+
+    }
+  };
 
     private final class DataSpoofer extends TimerTask {
         @Override
         public void run() {
+          //change these at lower frequency
+          hr = plusOrMinus(hr, MAX_HR_CHANGE);
+          cadence = plusOrMinus(cadence, MAX_CADENCE_CHANGE);
             for (TurboTrainerDataListener listener: getDataChangeListeners()) {
-                listener.onCadenceChange(75.0*Math.random());
-                listener.onPowerChange(500.0*Math.random());
-                listener.onHeartRateChange(200.0*Math.random());
-                listener.onSpeedChange(5.00*Math.random());
-                distance += 5 * Math.random();
+                listener.onCadenceChange(cadence);
+                listener.onPowerChange(power);
+                listener.onHeartRateChange(hr);
+                listener.onSpeedChange(speed);
                 listener.onDistanceChange(distance);
             }
 
         }
     };
+
+
+
+  protected double getTimestamp() {
+    return System.nanoTime() / Math.pow(10, 9);
+  }
 
     private Timer dataTimer =  null;
 
@@ -59,17 +106,34 @@ public class DummyTrainer extends GenericTurboTrainer {
 
     @Override
     public void setParameters(Parameters.CommonParametersInterface parameters) throws IllegalArgumentException {
-
+      if (!(parameters instanceof Parameters.TargetSlope)) {
+        throw new IllegalArgumentException("this class only supports target-slope");
+      }
+      Parameters.TargetSlope tp = (Parameters.TargetSlope) parameters;
+      slope = tp.getSlope();
+      pm.setAirDensity(parameters.getAirDensity());
+      pm.setCoefficentRollingResistance(parameters.getCoefficentRollingResistance());
+      pm.setCurrentBearing(parameters.getCurrentBearing());
+      pm.setDragArea(parameters.getDragArea());
+      pm.setTotalMass(parameters.getTotalWeight());
+      pm.setGradientAsPercentage(slope);
+      pm.setMomentOfInertiaWheels(parameters.getMomentOfInertiaWheels());
+      pm.setOutsideRadiusTire(parameters.getOutsideRadiusTire());
+      pm.setWindDirectionDegrees(parameters.getWindDirectionDegrees());
+      pm.setWindSpeed(parameters.getWindSpeed());
+      pm.setIncrementalDragAreaSpokes(parameters.getIncrementalDragAreaSpokes());
     }
 
     @Override
     public double getTarget() {
-        return 0;
+        return slope;
     }
 
     @Override
     public void start() throws TurboCommunicationException, InterruptedException, TimeoutException, IllegalStateException {
         dataTimer =  new Timer(true);
+        // update power model at high frequency
+        dataTimer.scheduleAtFixedRate(new PowerModelUpdater(), 5000, 50);
         // spoof some data every second
         dataTimer.scheduleAtFixedRate(new DataSpoofer(), 5000, 1000);
     }
