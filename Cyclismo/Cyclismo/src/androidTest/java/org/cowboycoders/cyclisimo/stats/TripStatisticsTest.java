@@ -88,8 +88,8 @@ public class TripStatisticsTest extends TestCase {
     statistics.setMinGrade(-25.0);  // Resulting min grade
     statistics2.setMaxGrade(35.0);  // Resulting max grade
     statistics2.setMinGrade(0.0);
-    statistics.setAverageMovingPower(300.0);
-    statistics2.setAverageMovingPower(456.0); // Sir Wiggo
+    statistics.setUsefulWorkDone(350.0);
+    statistics2.setUsefulWorkDone(300.0);
 
     // Resulting bounds: -10000, 35000, 30000, -40000
     statistics.setBounds(-10000, 20000, 30000, -40000);
@@ -112,7 +112,7 @@ public class TripStatisticsTest extends TestCase {
     assertEquals(3575.0, statistics.getMaxElevation(), DELTA);
     assertEquals(-25.0, statistics.getMinGrade(), DELTA);
     assertEquals(35.0, statistics.getMaxGrade(), DELTA);
-    assertEquals(372.0, statistics.getAverageMovingPower(), DELTA);
+    assertEquals(500.0, statistics.getAverageMovingPower(), DELTA);
   }
 
   public void testGetAverageSpeed() {
@@ -125,5 +125,11 @@ public class TripStatisticsTest extends TestCase {
     statistics.setTotalDistance(1000.0);
     statistics.setMovingTime(20000);  // in milliseconds
     assertEquals(50.0, statistics.getAverageMovingSpeed(), DELTA);
+  }
+
+  public void testGetAverageMovingPower() {
+    statistics.setMovingTime(1000);
+    statistics.setUsefulWorkDone(350);
+    assertEquals(350.0, statistics.getAverageMovingPower(), DELTA);
   }
 }

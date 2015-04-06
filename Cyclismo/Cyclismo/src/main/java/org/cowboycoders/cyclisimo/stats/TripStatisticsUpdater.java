@@ -41,6 +41,8 @@ import android.util.Log;
 import com.google.common.annotations.VisibleForTesting;
 
 import org.cowboycoders.cyclisimo.Constants;
+import org.cowboycoders.cyclisimo.content.MyTracksLocation;
+import org.cowboycoders.cyclisimo.lib.CyclismoLibConstants;
 import org.cowboycoders.cyclisimo.services.TrackRecordingService;
 import org.cowboycoders.cyclisimo.util.LocationUtils;
 
@@ -154,14 +156,39 @@ public class TripStatisticsUpdater {
       lastLocation = location;
       return;
     }
+    updateUsefulWorkDone(lastLocation, movingTime);
     currentSegment.addTotalDistance(movingDistance);
     currentSegment.addMovingTime(movingTime);
     updateSpeed(
         location.getTime(), location.getSpeed(), lastLocation.getTime(), lastLocation.getSpeed());
     updateGrade(lastLocation.distanceTo(location), elevationDifference);
     updateTime(location.getTime());
+
     lastLocation = location;
     lastMovingLocation = location;
+  }
+
+  /**
+   * Adds to the running total of useful work done. Useful means used to propel the bike. This is
+   * used to work out the average power.
+   *
+   * @param lastLocation the location previous to the present one.
+   * @param timeDelta the time in ms that elapsed when travelling from the previous location to the
+   *                  present location.
+   */
+  void updateUsefulWorkDone(Location lastLocation, long timeDelta) {
+    if ( ! (lastLocation instanceof MyTracksLocation) ) {
+      // No sensor data
+      return;
+    }
+
+    MyTracksLocation mtLastLocation = (MyTracksLocation) lastLocation;
+    if (mtLastLocation.getSensorDataSet() != null && mtLastLocation.getSensorDataSet().hasPower()) {
+      double workDone = mtLastLocation.getSensorDataSet().getPower().getValue()
+              * timeDelta / CyclismoLibConstants.MILLISEC_IN_SEC;
+      currentSegment.addUsefulWorkDone(workDone);
+      Log.d(TAG, "Added work done (J): " + workDone);
+    }
   }
 
   /**

@@ -219,7 +219,7 @@ public class TripStatisticsUpdaterTest extends TestCase {
    * Tests {@link TripStatisticsUpdater#updateSpeed(long, double, long, double)}
    * with a large speed change. The speed should get ignored.
    */
-  public void testUpdateSpeedIngoreLargeAcceleration() {
+  public void testUpdateSpeedIgnoreLargeAcceleration() {
     long time = 12344000;
     tripStatisticsUpdater.updateSpeed(time + ONE_SECOND, 100.0, time, 1.0);
     assertEquals(0.0, tripStatisticsUpdater.getTripStatistics().getMaxSpeed());

@@ -37,6 +37,9 @@ package org.cowboycoders.cyclisimo.stats;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
+
+import org.cowboycoders.cyclisimo.lib.CyclismoLibConstants;
 
 /**
  * Statistical data about a trip. The data in this class should be filled out by
@@ -47,6 +50,8 @@ import android.os.Parcelable;
  * @author Rodrigo Damazio
  */
 public class TripStatistics implements Parcelable {
+
+  public static final String TAG = "TripStatistics";
 
   // The trip start time. This is the system time, might not match the GPs time.
   private long startTime = -1L;
@@ -81,13 +86,13 @@ public class TripStatistics implements Parcelable {
   // The min and max grade seen on this trip.
   private final ExtremityMonitor gradeExtremities = new ExtremityMonitor();
 
-  // The average cycling power over the session duration (W)
-  private double averageMovingPower;
+  // Useful work done over the session duration (J). Used for power calculations.
+  private double usefulWorkDone;
 
   /**
    * Default constructor.
    */
-  public TripStatistics() {}
+  public TripStatistics() { }
 
   /**
    * Copy constructor.
@@ -109,7 +114,7 @@ public class TripStatistics implements Parcelable {
         other.elevationExtremities.getMin(), other.elevationExtremities.getMax());
     this.totalElevationGain = other.totalElevationGain;
     this.gradeExtremities.set(other.gradeExtremities.getMin(), other.gradeExtremities.getMax());
-    this.averageMovingPower = other.averageMovingPower;
+    this.usefulWorkDone = other.usefulWorkDone;
   }
 
   /**
@@ -121,10 +126,6 @@ public class TripStatistics implements Parcelable {
    * @param other another statistics data object
    */
   public void merge(TripStatistics other) {
-    // Merge power before times
-    double weight = (double) this.getMovingTime() / (this.getMovingTime() + other.getMovingTime());
-    this.setAverageMovingPower(weight * this.getAverageMovingPower()
-            + (1.0 - weight) * other.getAverageMovingPower());
     startTime = Math.min(startTime, other.startTime);
     stopTime = Math.max(stopTime, other.stopTime);
     totalDistance += other.totalDistance;
@@ -138,6 +139,7 @@ public class TripStatistics implements Parcelable {
       longitudeExtremities.update(other.longitudeExtremities.getMin());
       longitudeExtremities.update(other.longitudeExtremities.getMax());
     }
+    usefulWorkDone += other.usefulWorkDone;
     maxSpeed = Math.max(maxSpeed, other.maxSpeed);
     if (other.elevationExtremities.hasData()) {
       elevationExtremities.update(other.elevationExtremities.getMin());
@@ -275,7 +277,7 @@ public class TripStatistics implements Parcelable {
     if (totalTime == 0L) {
       return 0.0;
     }
-    return totalDistance / ((double) totalTime / 1000.0);
+    return totalDistance / ((double) totalTime / CyclismoLibConstants.MILLISEC_IN_SEC);
   }
 
   /**
@@ -285,7 +287,7 @@ public class TripStatistics implements Parcelable {
     if (movingTime == 0L) {
       return 0.0;
     }
-    return totalDistance / ((double) movingTime / 1000.0);
+    return totalDistance / ((double) movingTime / CyclismoLibConstants.MILLISEC_IN_SEC);
   }
 
   /**
@@ -336,7 +338,9 @@ public class TripStatistics implements Parcelable {
   /**
    * Gets the average cycling power over the session duration (W).
    */
-  public double getAverageMovingPower() { return this.averageMovingPower; }
+  public double getAverageMovingPower() {
+    return usefulWorkDone / ( movingTime / CyclismoLibConstants.MILLISEC_IN_SEC ) ;
+  }
 
   /**
    * Sets the trip start time.
@@ -404,7 +408,7 @@ public class TripStatistics implements Parcelable {
   /**
    * Sets the bounding box for this trip. The unit for all parameters is signed
    * millions of degree (degrees * 1E6).
-   * 
+   *
    * @param leftE6 the leftmost longitude reached
    * @param topE6 the topmost latitude reached
    * @param rightE6 the rightmost longitude reached
@@ -506,11 +510,22 @@ public class TripStatistics implements Parcelable {
   }
 
   /**
-   * Sets the average cycling power.
+   * Adds to the useful work done. Used for power calculations.
    *
-   * @param averagePower the average cycling power over the session duration (W).
+   * @param joules the work done in J.
    */
-  public void setAverageMovingPower(double averagePower) { this.averageMovingPower = averagePower; }
+  public void addUsefulWorkDone(double joules) {
+    usefulWorkDone += joules;
+    Log.d(TAG, "Useful work done: " + usefulWorkDone);
+  }
+
+  public void setUsefulWorkDone(double joules) {
+    usefulWorkDone = joules;
+  }
+
+  public double getUsefulWorkDone( ) {
+    return usefulWorkDone;
+  }
 
   /**
    * Updates a new grade value.
@@ -531,7 +546,7 @@ public class TripStatistics implements Parcelable {
         + "; Max Elevation: " + getMaxElevation() + "; Max Speed: " + getMaxSpeed()
         + "; Min Elevation: " + getMinElevation() + "; Max Elevation: " + getMaxElevation()
         + "; Elevation Gain: " + getTotalElevationGain() + "; Min Grade: " + getMinGrade()
-        + "; Max Grade: " + getMaxGrade()  + "; Average Moving Power: " + getAverageMovingPower()
+        + "; Max Grade: " + getMaxGrade()  + "; Useful work done: " + getUsefulWorkDone()
         + "}";
   }
 
@@ -549,7 +564,6 @@ public class TripStatistics implements Parcelable {
       data.totalDistance = source.readDouble();
       data.totalTime = source.readLong();
       data.movingTime = source.readLong();
-      data.averageMovingPower = source.readDouble();
 
       double minLat = source.readDouble();
       double maxLat = source.readDouble();
@@ -558,6 +572,8 @@ public class TripStatistics implements Parcelable {
       double minLong = source.readDouble();
       double maxLong = source.readDouble();
       data.longitudeExtremities.set(minLong, maxLong);
+
+      data.usefulWorkDone = source.readDouble();
 
       data.maxSpeed = source.readDouble();
 
@@ -596,11 +612,11 @@ public class TripStatistics implements Parcelable {
     dest.writeDouble(totalDistance);
     dest.writeLong(totalTime);
     dest.writeLong(movingTime);
-    dest.writeDouble(averageMovingPower);
     dest.writeDouble(latitudeExtremities.getMin());
     dest.writeDouble(latitudeExtremities.getMax());
     dest.writeDouble(longitudeExtremities.getMin());
     dest.writeDouble(longitudeExtremities.getMax());
+    dest.writeDouble(usefulWorkDone);
     dest.writeDouble(maxSpeed);
     dest.writeDouble(elevationExtremities.getMin());
     dest.writeDouble(elevationExtremities.getMax());

@@ -35,8 +35,6 @@
 
 package org.cowboycoders.cyclisimo.content;
 
-import com.google.protobuf.InvalidProtocolBufferException;
-
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -45,12 +43,14 @@ import android.location.Location;
 import android.net.Uri;
 import android.util.Log;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import com.google.protobuf.InvalidProtocolBufferException;
 
 import org.cowboycoders.cyclisimo.content.Sensor.SensorDataSet;
 import org.cowboycoders.cyclisimo.stats.TripStatistics;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * {@link MyTracksProviderUtils} implementation.
@@ -100,6 +100,7 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
     int maxLatIndex = cursor.getColumnIndexOrThrow(CourseTracksColumns.MAXLAT);
     int minLonIndex = cursor.getColumnIndexOrThrow(CourseTracksColumns.MINLON);
     int maxLonIndex = cursor.getColumnIndexOrThrow(CourseTracksColumns.MAXLON);
+    int usefulWorkDoneIndex = cursor.getColumnIndexOrThrow(CourseTracksColumns.USEFULWORKDONE);
     int maxSpeedIndex = cursor.getColumnIndexOrThrow(CourseTracksColumns.MAXSPEED);
     int minElevationIndex = cursor.getColumnIndexOrThrow(CourseTracksColumns.MINELEVATION);
     int maxElevationIndex = cursor.getColumnIndexOrThrow(CourseTracksColumns.MAXELEVATION);
@@ -155,6 +156,9 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
       int left = cursor.getInt(minLonIndex);
       int right = cursor.getInt(maxLonIndex);
       tripStatistics.setBounds(left, top, right, bottom);
+    }
+    if (!cursor.isNull(usefulWorkDoneIndex)) {
+      tripStatistics.setUsefulWorkDone(cursor.getFloat(usefulWorkDoneIndex));
     }
     if (!cursor.isNull(maxSpeedIndex)) {
       tripStatistics.setMaxSpeed(cursor.getFloat(maxSpeedIndex));
@@ -305,6 +309,7 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
     values.put(CourseTracksColumns.MAXLON, tripStatistics.getRight());
     values.put(CourseTracksColumns.AVGSPEED, tripStatistics.getAverageSpeed());
     values.put(CourseTracksColumns.AVGMOVINGSPEED, tripStatistics.getAverageMovingSpeed());
+    values.put(CourseTracksColumns.USEFULWORKDONE, tripStatistics.getUsefulWorkDone());
     values.put(CourseTracksColumns.MAXSPEED, tripStatistics.getMaxSpeed());
     values.put(CourseTracksColumns.MINELEVATION, tripStatistics.getMinElevation());
     values.put(CourseTracksColumns.MAXELEVATION, tripStatistics.getMaxElevation());
@@ -355,6 +360,7 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
     int totalDistanceIndex = cursor.getColumnIndexOrThrow(CourseWaypointsColumns.TOTALDISTANCE);
     int totalTimeIndex = cursor.getColumnIndexOrThrow(CourseWaypointsColumns.TOTALTIME);
     int movingTimeIndex = cursor.getColumnIndexOrThrow(CourseWaypointsColumns.MOVINGTIME);
+    int usefulWorkDoneIndex = cursor.getColumnIndexOrThrow(CourseWaypointsColumns.USEFULWORKDONE);
     int maxSpeedIndex = cursor.getColumnIndexOrThrow(CourseWaypointsColumns.MAXSPEED);
     int minElevationIndex = cursor.getColumnIndexOrThrow(CourseWaypointsColumns.MINELEVATION);
     int maxElevationIndex = cursor.getColumnIndexOrThrow(CourseWaypointsColumns.MAXELEVATION);
@@ -436,6 +442,10 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
     }
     if (!cursor.isNull(movingTimeIndex)) {
       tripStatistics.setMovingTime(cursor.getLong(movingTimeIndex));
+      hasTripStatistics = true;
+    }
+    if (!cursor.isNull(usefulWorkDoneIndex)) {
+      tripStatistics.setUsefulWorkDone(cursor.getFloat(usefulWorkDoneIndex));
       hasTripStatistics = true;
     }
     if (!cursor.isNull(maxSpeedIndex)) {
@@ -662,6 +672,7 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
       values.put(CourseWaypointsColumns.MOVINGTIME, tripStatistics.getMovingTime());
       values.put(CourseWaypointsColumns.AVGSPEED, tripStatistics.getAverageSpeed());
       values.put(CourseWaypointsColumns.AVGMOVINGSPEED, tripStatistics.getAverageMovingSpeed());
+      values.put(CourseWaypointsColumns.USEFULWORKDONE, tripStatistics.getUsefulWorkDone());
       values.put(CourseWaypointsColumns.MAXSPEED, tripStatistics.getMaxSpeed());
       values.put(CourseWaypointsColumns.MINELEVATION, tripStatistics.getMinElevation());
       values.put(CourseWaypointsColumns.MAXELEVATION, tripStatistics.getMaxElevation());

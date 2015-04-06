@@ -93,8 +93,6 @@ public class StatsUtils {
       }
     }
     setPowerValue(activity, R.id.stats_inst_power_value, instPower);
-    //TODO: double avgPower = tripStatistics == null ? Double.NaN : tripStatistics.getAverageMovingPower();
-    //setPowerValue(activity, R.id.stats_avg_power_value, avgPower);
   }
 
   /**
@@ -205,6 +203,10 @@ public class StatsUtils {
       setSpeedValue(activity, R.id.stats_average_moving_speed_value, averageMovingSpeed,
           metricUnits, reportSpeed);
     }
+
+    // TODO: Hide when power field is off
+    double avgPower = tripStatistics == null ? Double.NaN : tripStatistics.getAverageMovingPower();
+    setPowerValue(activity, R.id.stats_avg_power_value, avgPower);
 
     // Set max speed
     setSpeedLabel(activity, R.id.stats_max_speed_label, R.string.stats_max_speed,

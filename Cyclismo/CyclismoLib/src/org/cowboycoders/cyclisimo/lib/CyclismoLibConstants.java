@@ -35,13 +35,15 @@
 package org.cowboycoders.cyclisimo.lib;
 
 /**
- * Constants for the My Tracks common library.
+ * Constants for the Cyclismo common library.
  * These constants should ideally not be used by third-party applications.
  *
  * @author Rodrigo Damazio
  */
-public class MyTracksLibConstants {
-  public static final String TAG = "MyTracksLib";
+public class CyclismoLibConstants {
+  public static final String TAG = "CyclismoLib";
 
-  private MyTracksLibConstants() {}
+  public static final double MILLISEC_IN_SEC = 1000.0;
+
+  private CyclismoLibConstants() {}
 }

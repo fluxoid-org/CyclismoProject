@@ -35,13 +35,13 @@
 
 package org.cowboycoders.cyclisimo.content;
 
+import android.net.Uri;
+import android.provider.BaseColumns;
+
 import static org.cowboycoders.cyclisimo.content.ContentTypeIds.FLOAT_TYPE_ID;
 import static org.cowboycoders.cyclisimo.content.ContentTypeIds.INT_TYPE_ID;
 import static org.cowboycoders.cyclisimo.content.ContentTypeIds.LONG_TYPE_ID;
 import static org.cowboycoders.cyclisimo.content.ContentTypeIds.STRING_TYPE_ID;
-
-import android.net.Uri;
-import android.provider.BaseColumns;
 
 /**
  * Constants for waypoints table.
@@ -83,6 +83,7 @@ public interface CourseWaypointsColumns extends BaseColumns {
   public static final String MOVINGTIME = "movingtime"; // moving time
   public static final String AVGSPEED = "avgspeed"; // average speed
   public static final String AVGMOVINGSPEED = "avgmovingspeed"; // average moving speed
+  public static final String USEFULWORKDONE = "usefulworkdone"; // useful work done
   public static final String MAXSPEED = "maxspeed"; // max speed
   public static final String MINELEVATION = "minelevation"; // min elevation
   public static final String MAXELEVATION = "maxelevation"; // max elevation
@@ -115,6 +116,7 @@ public interface CourseWaypointsColumns extends BaseColumns {
       + MOVINGTIME + " INTEGER, "
       + AVGSPEED + " FLOAT, "
       + AVGMOVINGSPEED + " FLOAT, "
+      + USEFULWORKDONE + " FLOAT, "
       + MAXSPEED + " FLOAT, "
       + MINELEVATION + " FLOAT, "
       + MAXELEVATION + " FLOAT, "
@@ -148,6 +150,7 @@ public interface CourseWaypointsColumns extends BaseColumns {
       MOVINGTIME,
       AVGSPEED,
       AVGMOVINGSPEED,
+      USEFULWORKDONE,
       MAXSPEED,
       MINELEVATION,
       MAXELEVATION,
@@ -181,6 +184,7 @@ public interface CourseWaypointsColumns extends BaseColumns {
       LONG_TYPE_ID, // moving time
       FLOAT_TYPE_ID, // average speed
       FLOAT_TYPE_ID, // average moving speed
+      FLOAT_TYPE_ID, // useful work done
       FLOAT_TYPE_ID, // max speed
       FLOAT_TYPE_ID, // min elevation
       FLOAT_TYPE_ID, // max elevation
