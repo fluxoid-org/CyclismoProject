@@ -12,12 +12,12 @@ import java.util.concurrent.TimeoutException;
  */
 public class DummyTrainer extends GenericTurboTrainer {
 
-    private static final double MAX_HR_CHANGE = 5;
     private static final double MAX_CADENCE_CHANGE = 2;
     private static final double MAX_POWER_CHANGE = 5;
+    private static final double HR_STEP = 2; // heart rate step size
     private TrapezoidIntegrator distanceIntegrator = new TrapezoidIntegrator();
 
-    private volatile double hr = 165;
+    private volatile double hr = 60;
     private volatile double power = 250;
     private volatile double cadence = 90;
     private volatile double speed = 0;
@@ -30,6 +30,30 @@ public class DummyTrainer extends GenericTurboTrainer {
 
     {
         setSupportedModes(SUPPORTED_MODES);
+    }
+
+  /**
+   * Crude HR model derived from curve fit
+   * @param power riders current power output
+   * @param heartRate previous heart rate measurement
+   */
+    private static int getModelHR(double power, double heartRate) {
+      double targetHR;
+      if (power <= 100) {
+        targetHR = 60 + 0.3 * power;
+      } else {
+        targetHR = 56.07 * Math.log(power) - 162.43;
+      }
+      if (targetHR < 60) {
+        targetHR = 60;
+      }
+      double diff = Math.abs(targetHR - heartRate);
+      if (heartRate < targetHR) {
+        heartRate += Math.min(diff, HR_STEP);
+      } else if (heartRate > targetHR) {
+        heartRate -= Math.min(diff, HR_STEP);
+      }
+      return (int) heartRate;
     }
 
     private PowerModel pm = new PowerModel();
@@ -62,7 +86,7 @@ public class DummyTrainer extends GenericTurboTrainer {
         @Override
         public void run() {
           //change these at lower frequency
-          hr = plusOrMinus(hr, MAX_HR_CHANGE);
+          hr = getModelHR(power, hr);
           cadence = plusOrMinus(cadence, MAX_CADENCE_CHANGE);
             for (TurboTrainerDataListener listener: getDataChangeListeners()) {
                 listener.onCadenceChange(cadence);

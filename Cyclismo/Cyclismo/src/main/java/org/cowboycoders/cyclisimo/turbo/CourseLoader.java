@@ -166,7 +166,8 @@ public class CourseLoader {
         //smoother.smoothTrackPointAltitudes(latLongAlts);
         gradientsToLog();
         courseDataHub.stop();
-        courseDataHub.unregisterTrackDataListener(this);
+        // can't unregister this here
+        //courseDataHub.unregisterTrackDataListener(this);
         this.notifyAll();
       } else if (!finished) {
         latLongAlts.clear();
