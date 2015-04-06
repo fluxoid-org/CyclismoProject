@@ -12,9 +12,9 @@ import java.util.concurrent.TimeoutException;
  */
 public class DummyTrainer extends GenericTurboTrainer {
 
-    private static final double MAX_HR_CHANGE = 10;
-    private static final double MAX_CADENCE_CHANGE = 10;
-    private static final double MAX_POWER_CHANGE = 10;
+    private static final double MAX_HR_CHANGE = 5;
+    private static final double MAX_CADENCE_CHANGE = 2;
+    private static final double MAX_POWER_CHANGE = 5;
     private TrapezoidIntegrator distanceIntegrator = new TrapezoidIntegrator();
 
     private volatile double hr = 165;
@@ -34,7 +34,7 @@ public class DummyTrainer extends GenericTurboTrainer {
 
     private PowerModel pm = new PowerModel();
 
-    private double plusOrMinus(double curVal, double maxChange) {
+    private static double plusOrMinus(double curVal, double maxChange) {
       double result;
       if (Math.random() < 0.5) {
         result =  curVal + Math.random() * maxChange;
@@ -56,7 +56,7 @@ public class DummyTrainer extends GenericTurboTrainer {
         distance = distanceIntegrator.getIntegral();
 
     }
-  };
+  }
 
     private final class DataSpoofer extends TimerTask {
         @Override
@@ -73,11 +73,11 @@ public class DummyTrainer extends GenericTurboTrainer {
             }
 
         }
-    };
+    }
 
 
 
-  protected double getTimestamp() {
+  protected static double getTimestamp() {
     return System.nanoTime() / Math.pow(10, 9);
   }
 
