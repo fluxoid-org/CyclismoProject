@@ -522,7 +522,6 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
     currentPosMarker = null;
     if (currentPosBitmap != null) {
       currentPosBitmap.decrementRefCount();
-      currentPosBitmap = null;
     }
     Log.d(TAG, "onStop");
   }
@@ -534,10 +533,6 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
       destroyTileCaches();
       if (this.mapView != null) {
           mapView.destroy();
-      }
-      if (currentPosBitmap != null) {
-          currentPosBitmap.decrementRefCount();
-          currentPosBitmap = null;
       }
       AndroidGraphicFactory.clearResourceMemoryCache();
    }
