@@ -378,7 +378,6 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
     @Override
   public void onCreate(Bundle bundle) {
     super.onCreate(bundle);
-    AndroidGraphicFactory.createInstance(this.getActivity().getApplication());
     //courseTrackId = bundle.getLong(TrackDetailActivity.EXTRA_COURSE_TRACK_ID);
     setHasOptionsMenu(true);
     ApiAdapterFactory.getApiAdapter().invalidMenu(getActivity());
@@ -389,8 +388,6 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
       
     }
     courseMode = ((TrackDetailActivity) getActivity()).isCourseMode();
-    mapOverlay = new MapOverlay(getActivity());
-    courseDummyOverlay = new DummyOverlay(getActivity());
     
     Log.d(TAG,"courseMode : " + courseMode);
     Log.d(TAG,"courseTrackId in bundle : " + courseTrackId);
@@ -399,6 +396,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        AndroidGraphicFactory.createInstance(this.getActivity().getApplication());
         mapContainer = super.onCreateView(inflater, container, savedInstanceState);
         View layout = inflater.inflate(R.layout.map, container, false);
         mapView = (MapView) layout.findViewById(R.id.mapView);
@@ -447,7 +445,6 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
 //      });
         createTileCaches();
 
-        mapViewPos = mapView.getModel().mapViewPosition;
         //TODO: move this to button
         mapView.setClickable(true);
 
@@ -466,8 +463,28 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
         });
 
 
-        LayerManager layerManager = this.mapView.getLayerManager();
-        Layers layers = layerManager.getLayers();
+        Drawable currenPosDrawable = this.getActivity().getResources().getDrawable(R.drawable.location_marker);
+        currentPosBitmap = AndroidGraphicFactory.convertToBitmap(currenPosDrawable);
+        currentPosBitmap.incrementRefCount(); // keep the bitmap alive
+
+
+        return layout;
+    }
+
+  /**
+   * Called when the Fragment is visible to the user.  This is generally
+   * tied to {@link android.app.Activity#onStart() Activity.onStart} of the containing
+   * Activity's lifecycle.
+   */
+  @Override
+  public void onStart() {
+    super.onStart();
+    mapOverlay = new MapOverlay(getActivity());
+
+    mapViewPos = mapView.getModel().mapViewPosition;
+
+    LayerManager layerManager = this.mapView.getLayerManager();
+    Layers layers = layerManager.getLayers();
 
 
 //      OnlineTileSource onlineTileSource = new OnlineTileSource(new String[]{
@@ -479,38 +496,42 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
 //              .setTileSize(256).setZoomLevelMax((byte) 18)
 //              .setZoomLevelMin((byte) 0);
 
+    mapViewPos.setZoomLevel((byte) 16);
+    mapViewPos.animateTo(getDefaultLatLong());
 
-        layers.add(makeMapLayer());
-        Drawable currenPosDrawable = this.getActivity().getResources().getDrawable(R.drawable.location_marker);
-        currentPosBitmap = AndroidGraphicFactory.convertToBitmap(currenPosDrawable);
-        currentPosBitmap.incrementRefCount(); // keep the bitmap alive
-        currentPosMarker = new Marker(getDefaultLatLong(), currentPosBitmap,
-                (int) ((currentPosBitmap.getWidth() / 2) - getLocationXAnchor() * currentPosBitmap.getWidth()),
-                (int) ((currentPosBitmap.getWidth() / 2) - getLocationYAnchor() * currentPosBitmap.getWidth()));
+    layers.add(makeMapLayer());
+    currentPosMarker = new Marker(getDefaultLatLong(), currentPosBitmap,
+            (int) ((currentPosBitmap.getWidth() / 2) - getLocationXAnchor() * currentPosBitmap.getWidth()),
+            (int) ((currentPosBitmap.getWidth() / 2) - getLocationYAnchor() * currentPosBitmap.getWidth()));
 
-        currentPosMarker.setVisible(false);
-        if (currentLocation != null) {
-            currentPosMarker.setLatLong(new LatLong(currentLocation.getLongitude(),
-                    currentLocation.getLongitude()));
-            currentPosMarker.setVisible(true);
-        }
-        layers.add(currentPosMarker);
-
-        mapViewPos.setZoomLevel((byte) 16);
-        mapViewPos.animateTo(getDefaultLatLong());
-
-        return layout;
+    currentPosMarker.setVisible(false);
+    if (currentLocation != null) {
+      currentPosMarker.setLatLong(new LatLong(currentLocation.getLongitude(),
+              currentLocation.getLongitude()));
+      currentPosMarker.setVisible(true);
     }
+    layers.add(currentPosMarker);
+  }
 
-
+  /**
+   * Called when the Fragment is no longer started.  This is generally
+   * tied to {@link android.app.Activity#onStop() Activity.onStop} of the containing
+   * Activity's lifecycle.
+   */
+  @Override
+  public void onStop() {
+    super.onStop();
+    // clean up markers in map overlay before destroy layers
+    mapOverlay.destroy();
+    destroyLayers();
+    Log.d(TAG, "onStop");
+  }
 
   @Override
   public void onDestroyView() {
       super.onDestroyView();
+      Log.d(TAG, "destroying MapFragment");
       destroyTileCaches();
-      // clean up markers in map overlay before destroy layers
-      mapOverlay.destroy();
-      destroyLayers();
       if (this.mapView != null) {
           mapView.destroy();
       }
@@ -541,6 +562,8 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
   public void onResume() {
     super.onResume();
     if (this.downloadLayer != null) this.downloadLayer.onResume();
+    courseDummyOverlay = new DummyOverlay(getActivity());
+    this.reloadCourse();
     resumeTrackDataHub();
     resumeCourseDataHub();
   }
@@ -562,6 +585,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
   public void onPause() {
     super.onPause();
     if (this.downloadLayer != null) this.downloadLayer.onPause();
+    courseOverlay = null;
     pauseTrackDataHub();
     pauseCourseDataHub();
   }
