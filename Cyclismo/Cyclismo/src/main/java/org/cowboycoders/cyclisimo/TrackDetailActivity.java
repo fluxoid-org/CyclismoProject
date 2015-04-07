@@ -95,6 +95,8 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
 
   public static final String EXTRA_TRACK_ID = "track_id";
   public static final String EXTRA_MARKER_ID = "marker_id";
+
+  // show course instead of a track
   public static final String EXTRA_USE_COURSE_PROVIDER = "use_course_provider";
   public static final String EXTRA_COURSE_TRACK_ID = "course_track_id";
 

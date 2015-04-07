@@ -397,7 +397,6 @@ public class TrackListActivity extends FragmentActivity implements DeleteOneTrac
                   R.string.recording_course_track_id_key);
           intent.putExtra(TrackDetailActivity.EXTRA_COURSE_TRACK_ID, recordingCourseId)
                 .putExtra(TrackDetailActivity.EXTRA_USE_COURSE_PROVIDER, false);
-         // EXTRA_USE_COURSE_PROVIDER: false copied from CourseSetupActivity, but very weird...
         }
         intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
