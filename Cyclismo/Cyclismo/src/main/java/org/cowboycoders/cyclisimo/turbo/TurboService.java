@@ -627,7 +627,7 @@ public class TurboService extends Service {
         }
         unpauseRecording(); // automatically resume on location updates
         broadcastLocation(loc);
-        Log.e(TAG, "updated location");
+        Log.d(TAG, "updated location");
       } catch (SecurityException e) {
         // is this possible now we aren't using mock locations?
         handleException(e,"Error updating location",true,NOTIFCATION_ID_STARTUP);
