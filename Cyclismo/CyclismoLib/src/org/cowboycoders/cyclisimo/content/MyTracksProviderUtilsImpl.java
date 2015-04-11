@@ -88,7 +88,9 @@ public class MyTracksProviderUtilsImpl implements MyTracksProviderUtils {
     int maxLatIndex = cursor.getColumnIndexOrThrow(TracksColumns.MAXLAT);
     int minLonIndex = cursor.getColumnIndexOrThrow(TracksColumns.MINLON);
     int maxLonIndex = cursor.getColumnIndexOrThrow(TracksColumns.MAXLON);
-    int usefulWorkDoneIndex = cursor.getColumnIndexOrThrow(TracksColumns.USEFULWORKDONE);
+    int totalWorkDoneIndex = cursor.getColumnIndexOrThrow(TracksColumns.TOTALWORKDONE);
+    int totalCrankRevsIndex = cursor.getColumnIndexOrThrow(TracksColumns.TOTALCRANKROTATIONS);
+    int totalHeartBeatsIndex = cursor.getColumnIndexOrThrow(TracksColumns.TOTALHEARTBEATS);
     int maxSpeedIndex = cursor.getColumnIndexOrThrow(TracksColumns.MAXSPEED);
     int minElevationIndex = cursor.getColumnIndexOrThrow(TracksColumns.MINELEVATION);
     int maxElevationIndex = cursor.getColumnIndexOrThrow(TracksColumns.MAXELEVATION);
@@ -146,8 +148,14 @@ public class MyTracksProviderUtilsImpl implements MyTracksProviderUtils {
       int right = cursor.getInt(maxLonIndex);
       tripStatistics.setBounds(left, top, right, bottom);
     }
-    if (checkCursor(cursor,usefulWorkDoneIndex)) {
-      tripStatistics.setUsefulWorkDone(cursor.getFloat(usefulWorkDoneIndex));
+    if (checkCursor(cursor,totalWorkDoneIndex)) {
+      tripStatistics.setTotalWorkDone(cursor.getFloat(totalWorkDoneIndex));
+    }
+    if (checkCursor(cursor,totalCrankRevsIndex)) {
+      tripStatistics.setTotalCrankRotations(cursor.getFloat(totalCrankRevsIndex));
+    }
+    if (checkCursor(cursor,totalHeartBeatsIndex)) {
+      tripStatistics.setTotalHeartBeats(cursor.getFloat(totalHeartBeatsIndex));
     }
     if (checkCursor(cursor,maxSpeedIndex)) {
       tripStatistics.setMaxSpeed(cursor.getFloat(maxSpeedIndex));
@@ -203,7 +211,9 @@ public class MyTracksProviderUtilsImpl implements MyTracksProviderUtils {
     int maxLatIndex;
     int minLonIndex;
     int maxLonIndex;
-    int usefulWorkDoneIndex;
+    int totalWorkDoneIndex;
+    int totalCrankRotationsIndex;
+    int totalHeartBeatsIndex;
     int maxSpeedIndex;
     int minElevationIndex;
     int maxElevationIndex;
@@ -231,7 +241,9 @@ public class MyTracksProviderUtilsImpl implements MyTracksProviderUtils {
       maxLatIndex = cursor.getColumnIndexOrThrow(TracksColumns.MAXLAT);
       minLonIndex = cursor.getColumnIndexOrThrow(TracksColumns.MINLON);
       maxLonIndex = cursor.getColumnIndexOrThrow(TracksColumns.MAXLON);
-      usefulWorkDoneIndex = cursor.getColumnIndexOrThrow(TracksColumns.USEFULWORKDONE);
+      totalWorkDoneIndex = cursor.getColumnIndexOrThrow(TracksColumns.TOTALWORKDONE);
+      totalCrankRotationsIndex = cursor.getColumnIndexOrThrow(TracksColumns.TOTALCRANKROTATIONS);
+      totalHeartBeatsIndex = cursor.getColumnIndexOrThrow(TracksColumns.TOTALHEARTBEATS);
       maxSpeedIndex = cursor.getColumnIndexOrThrow(TracksColumns.MAXSPEED);
       minElevationIndex = cursor.getColumnIndexOrThrow(TracksColumns.MINELEVATION);
       maxElevationIndex = cursor.getColumnIndexOrThrow(TracksColumns.MAXELEVATION);
@@ -258,7 +270,9 @@ public class MyTracksProviderUtilsImpl implements MyTracksProviderUtils {
       maxLatIndex = cursor.getColumnIndex(TracksColumns.MAXLAT);
       minLonIndex = cursor.getColumnIndex(TracksColumns.MINLON);
       maxLonIndex = cursor.getColumnIndex(TracksColumns.MAXLON);
-      usefulWorkDoneIndex =  cursor.getColumnIndex(TracksColumns.USEFULWORKDONE);
+      totalWorkDoneIndex =  cursor.getColumnIndex(TracksColumns.TOTALWORKDONE);
+      totalCrankRotationsIndex = cursor.getColumnIndex(TracksColumns.TOTALCRANKROTATIONS);
+      totalHeartBeatsIndex = cursor.getColumnIndex(TracksColumns.TOTALHEARTBEATS);
       maxSpeedIndex = cursor.getColumnIndex(TracksColumns.MAXSPEED);
       minElevationIndex = cursor.getColumnIndex(TracksColumns.MINELEVATION);
       maxElevationIndex = cursor.getColumnIndex(TracksColumns.MAXELEVATION);
@@ -318,8 +332,14 @@ public class MyTracksProviderUtilsImpl implements MyTracksProviderUtils {
       int right = cursor.getInt(maxLonIndex);
       tripStatistics.setBounds(left, top, right, bottom);
     }
-    if (checkCursor(cursor, usefulWorkDoneIndex)) {
-      tripStatistics.setUsefulWorkDone(cursor.getFloat(usefulWorkDoneIndex));
+    if (checkCursor(cursor,totalWorkDoneIndex)) {
+      tripStatistics.setTotalWorkDone(cursor.getFloat(totalWorkDoneIndex));
+    }
+    if (checkCursor(cursor,totalCrankRotationsIndex)) {
+      tripStatistics.setTotalCrankRotations(cursor.getFloat(totalCrankRotationsIndex));
+    }
+    if (checkCursor(cursor,totalHeartBeatsIndex)) {
+      tripStatistics.setTotalHeartBeats(cursor.getFloat(totalHeartBeatsIndex));
     }
     if (checkCursor(cursor,maxSpeedIndex)) {
       tripStatistics.setMaxSpeed(cursor.getFloat(maxSpeedIndex));
@@ -495,7 +515,9 @@ public class MyTracksProviderUtilsImpl implements MyTracksProviderUtils {
     values.put(TracksColumns.MAXLON, tripStatistics.getRight());
     values.put(TracksColumns.AVGSPEED, tripStatistics.getAverageSpeed());
     values.put(TracksColumns.AVGMOVINGSPEED, tripStatistics.getAverageMovingSpeed());
-    values.put(TracksColumns.USEFULWORKDONE, tripStatistics.getUsefulWorkDone());
+    values.put(TracksColumns.TOTALWORKDONE, tripStatistics.getTotalWorkDone());
+    values.put(TracksColumns.TOTALCRANKROTATIONS, tripStatistics.getTotalCrankRotations());
+    values.put(TracksColumns.TOTALHEARTBEATS, tripStatistics.getTotalHeartBeats());
     values.put(TracksColumns.MAXSPEED, tripStatistics.getMaxSpeed());
     values.put(TracksColumns.MINELEVATION, tripStatistics.getMinElevation());
     values.put(TracksColumns.MAXELEVATION, tripStatistics.getMaxElevation());
@@ -547,7 +569,9 @@ public class MyTracksProviderUtilsImpl implements MyTracksProviderUtils {
     int totalDistanceIndex = cursor.getColumnIndexOrThrow(WaypointsColumns.TOTALDISTANCE);
     int totalTimeIndex = cursor.getColumnIndexOrThrow(WaypointsColumns.TOTALTIME);
     int movingTimeIndex = cursor.getColumnIndexOrThrow(WaypointsColumns.MOVINGTIME);
-    int usefulWorkDoneIndex = cursor.getColumnIndexOrThrow(WaypointsColumns.USEFULWORKDONE);
+    int totalWorkDoneIndex = cursor.getColumnIndexOrThrow(WaypointsColumns.TOTALWORKDONE);
+    int totalCrankRotationsIndex = cursor.getColumnIndexOrThrow(WaypointsColumns.TOTALCRANKROTATIONS);
+    int totalHeartRateIndex = cursor.getColumnIndexOrThrow(WaypointsColumns.TOTALHEARTBEATS);
     int maxSpeedIndex = cursor.getColumnIndexOrThrow(WaypointsColumns.MAXSPEED);
     int minElevationIndex = cursor.getColumnIndexOrThrow(WaypointsColumns.MINELEVATION);
     int maxElevationIndex = cursor.getColumnIndexOrThrow(WaypointsColumns.MAXELEVATION);
@@ -631,8 +655,16 @@ public class MyTracksProviderUtilsImpl implements MyTracksProviderUtils {
       tripStatistics.setMovingTime(cursor.getLong(movingTimeIndex));
       hasTripStatistics = true;
     }
-    if (!cursor.isNull(usefulWorkDoneIndex)) {
-      tripStatistics.setUsefulWorkDone(cursor.getFloat(usefulWorkDoneIndex));
+    if (!cursor.isNull(totalWorkDoneIndex)) {
+      tripStatistics.setTotalWorkDone(cursor.getFloat(totalWorkDoneIndex));
+      hasTripStatistics = true;
+    }
+    if (!cursor.isNull(totalCrankRotationsIndex)) {
+      tripStatistics.setTotalCrankRotations(cursor.getFloat(totalCrankRotationsIndex));
+      hasTripStatistics = true;
+    }
+    if (!cursor.isNull(totalHeartRateIndex)) {
+      tripStatistics.setTotalHeartBeats(cursor.getFloat(totalHeartRateIndex));
       hasTripStatistics = true;
     }
     if (!cursor.isNull(maxSpeedIndex)) {
@@ -859,7 +891,9 @@ public class MyTracksProviderUtilsImpl implements MyTracksProviderUtils {
       values.put(WaypointsColumns.MOVINGTIME, tripStatistics.getMovingTime());
       values.put(WaypointsColumns.AVGSPEED, tripStatistics.getAverageSpeed());
       values.put(WaypointsColumns.AVGMOVINGSPEED, tripStatistics.getAverageMovingSpeed());
-      values.put(WaypointsColumns.USEFULWORKDONE, tripStatistics.getUsefulWorkDone());
+      values.put(WaypointsColumns.TOTALWORKDONE, tripStatistics.getTotalWorkDone());
+      values.put(WaypointsColumns.TOTALCRANKROTATIONS, tripStatistics.getTotalCrankRotations());
+      values.put(WaypointsColumns.TOTALHEARTBEATS, tripStatistics.getTotalHeartBeats());
       values.put(WaypointsColumns.MAXSPEED, tripStatistics.getMaxSpeed());
       values.put(WaypointsColumns.MINELEVATION, tripStatistics.getMinElevation());
       values.put(WaypointsColumns.MAXELEVATION, tripStatistics.getMaxElevation());

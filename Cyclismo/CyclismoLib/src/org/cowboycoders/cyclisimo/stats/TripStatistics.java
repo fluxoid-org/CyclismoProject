@@ -86,8 +86,15 @@ public class TripStatistics implements Parcelable {
   // The min and max grade seen on this trip.
   private final ExtremityMonitor gradeExtremities = new ExtremityMonitor();
 
-  // Useful work done over the session duration (J). Used for power calculations.
-  private double usefulWorkDone;
+  // Total useful (as in used to propel the bike) work done over the session duration (J). Used for
+  // power calculations.
+  private double totalWorkDone;
+
+  // Total number of heart beats, used for calculating BPM.
+  private double totalHeartBeats;
+
+  // Total number of crank rotations, used for calculating cadence.
+  private double totalCrankRotations;
 
   /**
    * Default constructor.
@@ -114,7 +121,9 @@ public class TripStatistics implements Parcelable {
         other.elevationExtremities.getMin(), other.elevationExtremities.getMax());
     this.totalElevationGain = other.totalElevationGain;
     this.gradeExtremities.set(other.gradeExtremities.getMin(), other.gradeExtremities.getMax());
-    this.usefulWorkDone = other.usefulWorkDone;
+    this.totalWorkDone = other.totalWorkDone;
+    this.totalHeartBeats = other.totalHeartBeats;
+    this.totalCrankRotations = other.totalCrankRotations;
   }
 
   /**
@@ -139,7 +148,6 @@ public class TripStatistics implements Parcelable {
       longitudeExtremities.update(other.longitudeExtremities.getMin());
       longitudeExtremities.update(other.longitudeExtremities.getMax());
     }
-    usefulWorkDone += other.usefulWorkDone;
     maxSpeed = Math.max(maxSpeed, other.maxSpeed);
     if (other.elevationExtremities.hasData()) {
       elevationExtremities.update(other.elevationExtremities.getMin());
@@ -150,6 +158,9 @@ public class TripStatistics implements Parcelable {
       gradeExtremities.update(other.gradeExtremities.getMin());
       gradeExtremities.update(other.gradeExtremities.getMax());
     }
+    totalWorkDone += other.totalWorkDone;
+    totalCrankRotations += other.totalCrankRotations;
+    totalHeartBeats += other.totalHeartBeats;
   }
 
   /**
@@ -189,6 +200,12 @@ public class TripStatistics implements Parcelable {
   public long getMovingTime() {
     return movingTime;
   }
+
+  public double getMovingTimeSeconds() {
+    return movingTime / CyclismoLibConstants.MILLISEC_IN_SEC;
+  }
+
+  public double getMovingTimeMinutes() { return movingTime / CyclismoLibConstants.MILLISEC_IN_MIN; }
 
   /**
    * Gets the topmost position (highest latitude) of the track, in signed
@@ -277,7 +294,7 @@ public class TripStatistics implements Parcelable {
     if (totalTime == 0L) {
       return 0.0;
     }
-    return totalDistance / ((double) totalTime / CyclismoLibConstants.MILLISEC_IN_SEC);
+    return totalDistance / getMovingTimeSeconds();
   }
 
   /**
@@ -287,7 +304,7 @@ public class TripStatistics implements Parcelable {
     if (movingTime == 0L) {
       return 0.0;
     }
-    return totalDistance / ((double) movingTime / CyclismoLibConstants.MILLISEC_IN_SEC);
+    return totalDistance / getMovingTimeSeconds();
   }
 
   /**
@@ -339,7 +356,7 @@ public class TripStatistics implements Parcelable {
    * Gets the average cycling power over the session duration (W).
    */
   public double getAverageMovingPower() {
-    return usefulWorkDone / ( movingTime / CyclismoLibConstants.MILLISEC_IN_SEC ) ;
+    return totalWorkDone / getMovingTimeSeconds() ;
   }
 
   /**
@@ -510,21 +527,69 @@ public class TripStatistics implements Parcelable {
   }
 
   /**
-   * Adds to the useful work done. Used for power calculations.
+   * Adds to the total useful work done. Used for power calculations.
    *
-   * @param joules the work done in J.
+   * @param joules the additional work done.
    */
-  public void addUsefulWorkDone(double joules) {
-    usefulWorkDone += joules;
-    Log.d(TAG, "Useful work done: " + usefulWorkDone);
+  public void addWorkDone(double joules) {
+    totalWorkDone += joules;
+    Log.d(TAG, "Useful work done: " + totalWorkDone);
   }
 
-  public void setUsefulWorkDone(double joules) {
-    usefulWorkDone = joules;
+  public void setTotalWorkDone(double joules) {
+    totalWorkDone = joules;
   }
 
-  public double getUsefulWorkDone( ) {
-    return usefulWorkDone;
+  public double getTotalWorkDone() {
+    return totalWorkDone;
+  }
+
+  /**
+   * Add heart beats to the running total. Used for working out average heart rate.
+   *
+   * @param heartBeats to add to the total.
+   */
+  public void addHeartBeats(double heartBeats) {
+    totalHeartBeats += heartBeats;
+  }
+
+  public double getTotalHeartBeats() {
+    return totalHeartBeats;
+  }
+
+  /**
+   * @return average moving heart rate in beats per minute to the nearest whole number.
+   */
+  public int getAverageMovingHeartRate() {
+    return (int) Math.round( totalHeartBeats / getMovingTimeMinutes() );
+  }
+
+  public void setTotalHeartBeats(double totalHeartBeats) {
+    this.totalHeartBeats = totalHeartBeats;
+  }
+
+  /**
+   * Add crank revolutions. Used for working out average cadence.
+   *
+   * @param crankRotations to add to the total.
+   */
+  public void addCrankRotations(double crankRotations) {
+    totalCrankRotations += crankRotations;
+  }
+
+  public double getTotalCrankRotations() {
+    return totalCrankRotations;
+  }
+
+  /**
+   * @return average moving cadence to the nearest whole number in revs/minute.
+   */
+  public int getAverageMovingCadence() {
+    return (int) Math.round( totalCrankRotations / getMovingTimeMinutes() );
+  }
+
+  public void setTotalCrankRotations(double totalCrankRotations) {
+    this.totalCrankRotations = totalCrankRotations;
   }
 
   /**
@@ -546,7 +611,9 @@ public class TripStatistics implements Parcelable {
         + "; Max Elevation: " + getMaxElevation() + "; Max Speed: " + getMaxSpeed()
         + "; Min Elevation: " + getMinElevation() + "; Max Elevation: " + getMaxElevation()
         + "; Elevation Gain: " + getTotalElevationGain() + "; Min Grade: " + getMinGrade()
-        + "; Max Grade: " + getMaxGrade()  + "; Useful work done: " + getUsefulWorkDone()
+        + "; Max Grade: " + getMaxGrade()  + "; Total work done: " + getTotalWorkDone()
+        + "; Total heart beats: " + getTotalHeartBeats()
+        + "; Total crank rotations: " + getTotalCrankRotations()
         + "}";
   }
 
@@ -573,7 +640,9 @@ public class TripStatistics implements Parcelable {
       double maxLong = source.readDouble();
       data.longitudeExtremities.set(minLong, maxLong);
 
-      data.usefulWorkDone = source.readDouble();
+      data.totalWorkDone = source.readDouble();
+      data.totalHeartBeats = source.readDouble();
+      data.totalCrankRotations = source.readDouble();
 
       data.maxSpeed = source.readDouble();
 
@@ -616,7 +685,9 @@ public class TripStatistics implements Parcelable {
     dest.writeDouble(latitudeExtremities.getMax());
     dest.writeDouble(longitudeExtremities.getMin());
     dest.writeDouble(longitudeExtremities.getMax());
-    dest.writeDouble(usefulWorkDone);
+    dest.writeDouble(totalWorkDone);
+    dest.writeDouble(totalHeartBeats);
+    dest.writeDouble(totalCrankRotations);
     dest.writeDouble(maxSpeed);
     dest.writeDouble(elevationExtremities.getMin());
     dest.writeDouble(elevationExtremities.getMax());

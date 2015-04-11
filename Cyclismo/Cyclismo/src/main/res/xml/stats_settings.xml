@@ -35,6 +35,14 @@ limitations under the License.
       android:defaultValue="true"
       android:key="@string/stats_show_power_key"
       android:title="@string/settings_stats_power" />
+      <CheckBoxPreference
+      android:defaultValue="true"
+      android:key="@string/stats_show_cadence_key"
+      android:title="@string/settings_stats_cadence" />
+      <CheckBoxPreference
+      android:defaultValue="true"
+      android:key="@string/stats_show_heartrate_key"
+      android:title="@string/settings_stats_heartrate" />
     <CheckBoxPreference
       android:defaultValue="false"
       android:key="@string/stats_show_elevation_key"

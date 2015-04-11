@@ -88,8 +88,12 @@ public class TripStatisticsTest extends TestCase {
     statistics.setMinGrade(-25.0);  // Resulting min grade
     statistics2.setMaxGrade(35.0);  // Resulting max grade
     statistics2.setMinGrade(0.0);
-    statistics.setUsefulWorkDone(350.0);
-    statistics2.setUsefulWorkDone(300.0);
+    statistics.setTotalWorkDone(350.0);
+    statistics2.setTotalWorkDone(300.0);
+    statistics.setTotalCrankRotations(14.0);
+    statistics2.setTotalCrankRotations(12.0);
+    statistics.setTotalHeartBeats(7.0);
+    statistics2.setTotalHeartBeats(6.0);
 
     // Resulting bounds: -10000, 35000, 30000, -40000
     statistics.setBounds(-10000, 20000, 30000, -40000);
@@ -112,13 +116,29 @@ public class TripStatisticsTest extends TestCase {
     assertEquals(3575.0, statistics.getMaxElevation(), DELTA);
     assertEquals(-25.0, statistics.getMinGrade(), DELTA);
     assertEquals(35.0, statistics.getMaxGrade(), DELTA);
-    assertEquals(500.0, statistics.getAverageMovingPower(), DELTA);
+    assertEquals(650.0, statistics.getTotalWorkDone(), DELTA);
+    assertEquals(13.0, statistics.getTotalHeartBeats(), DELTA);
+    assertEquals(26.0, statistics.getTotalCrankRotations(), DELTA);
+  }
+
+  public void testGetMovingTimeSeconds() {
+    statistics.setMovingTime(1000L);
+    assertEquals(1.0, statistics.getMovingTimeSeconds());
+  }
+
+  public void testGetMovingTimeMinutes() {
+    statistics.setMovingTime(120 * 1000L);
+    assertEquals(2.0, statistics.getMovingTimeMinutes());
   }
 
   public void testGetAverageSpeed() {
     statistics.setTotalDistance(1000.0);
-    statistics.setTotalTime(50000);  // in milliseconds
-    assertEquals(20.0, statistics.getAverageSpeed(), DELTA);
+    statistics.setTotalTime(1L); // Average is calculated only for finite total times
+    statistics.setMovingTime(1000L); // in milliseconds
+    assertEquals(1000.0, statistics.getAverageSpeed(), DELTA);
+
+    statistics.setTotalTime(0L);
+    assertEquals(0.0, statistics.getAverageSpeed(), DELTA);
   }
 
   public void testGetAverageMovingSpeed() {
@@ -129,7 +149,19 @@ public class TripStatisticsTest extends TestCase {
 
   public void testGetAverageMovingPower() {
     statistics.setMovingTime(1000);
-    statistics.setUsefulWorkDone(350);
+    statistics.setTotalWorkDone(350);
     assertEquals(350.0, statistics.getAverageMovingPower(), DELTA);
+  }
+
+  public void testGetAverageMovingCadence() {
+    statistics.setMovingTime(1000);
+    statistics.setTotalCrankRotations(1.2);
+    assertEquals(72.0, statistics.getAverageMovingCadence(), DELTA);
+  }
+
+  public void testGetAverageMovingHeartRate() {
+    statistics.setMovingTime(1000);
+    statistics.setTotalHeartBeats(3.0);
+    assertEquals(180.0, statistics.getAverageMovingHeartRate(), DELTA);
   }
 }

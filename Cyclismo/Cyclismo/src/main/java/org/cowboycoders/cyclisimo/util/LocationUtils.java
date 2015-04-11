@@ -38,6 +38,8 @@ import android.location.Location;
 import android.util.Log;
 
 import org.cowboycoders.cyclisimo.Constants;
+import org.cowboycoders.cyclisimo.content.MyTracksLocation;
+import org.cowboycoders.cyclisimo.content.Sensor;
 import org.cowboycoders.cyclisimo.content.Track;
 
 import java.util.ArrayList;
@@ -177,6 +179,20 @@ public class LocationUtils {
   public static boolean isValidLocation(Location location) {
     return location != null && Math.abs(location.getLatitude()) <= 90
         && Math.abs(location.getLongitude()) <= 180;
+  }
+
+  /**
+   * Attempts to return a sensor data set from the specified location. Returns null if no sensor
+   * data is available.
+   *
+   * @param location the location which may contain a sensor data set.
+   * @return Sensor data set, or null if none available.
+   */
+  public static Sensor.SensorDataSet getSensorDataSet(Location location) {
+    if ( ! (location instanceof MyTracksLocation) ) {
+      return null;
+    }
+    return ((MyTracksLocation) location).getSensorDataSet();
   }
   
 

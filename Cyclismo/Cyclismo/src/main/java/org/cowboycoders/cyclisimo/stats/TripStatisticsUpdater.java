@@ -41,7 +41,7 @@ import android.util.Log;
 import com.google.common.annotations.VisibleForTesting;
 
 import org.cowboycoders.cyclisimo.Constants;
-import org.cowboycoders.cyclisimo.content.MyTracksLocation;
+import org.cowboycoders.cyclisimo.content.Sensor.SensorDataSet;
 import org.cowboycoders.cyclisimo.lib.CyclismoLibConstants;
 import org.cowboycoders.cyclisimo.services.TrackRecordingService;
 import org.cowboycoders.cyclisimo.util.LocationUtils;
@@ -156,7 +156,8 @@ public class TripStatisticsUpdater {
       lastLocation = location;
       return;
     }
-    updateUsefulWorkDone(lastLocation, movingTime);
+    updateSensorData(lastLocation, movingTime);
+
     currentSegment.addTotalDistance(movingDistance);
     currentSegment.addMovingTime(movingTime);
     updateSpeed(
@@ -169,25 +170,42 @@ public class TripStatisticsUpdater {
   }
 
   /**
-   * Adds to the running total of useful work done. Useful means used to propel the bike. This is
-   * used to work out the average power.
+   * Updates the running sensor data totals. Eg. total work done, total heart beats.
+   *
+   * The time delta should be kept small (~1000ms) to maintain accurate counts.
    *
    * @param lastLocation the location previous to the present one.
    * @param timeDelta the time in ms that elapsed when travelling from the previous location to the
    *                  present location.
    */
-  void updateUsefulWorkDone(Location lastLocation, long timeDelta) {
-    if ( ! (lastLocation instanceof MyTracksLocation) ) {
-      // No sensor data
+  @VisibleForTesting
+  private void updateSensorData(Location lastLocation, long timeDelta) {
+    SensorDataSet sensorDataSet = LocationUtils.getSensorDataSet(lastLocation);
+    if ( sensorDataSet == null ) {
+      Log.d(TAG, "No sensor data");
       return;
     }
 
-    MyTracksLocation mtLastLocation = (MyTracksLocation) lastLocation;
-    if (mtLastLocation.getSensorDataSet() != null && mtLastLocation.getSensorDataSet().hasPower()) {
-      double workDone = mtLastLocation.getSensorDataSet().getPower().getValue()
-              * timeDelta / CyclismoLibConstants.MILLISEC_IN_SEC;
-      currentSegment.addUsefulWorkDone(workDone);
-      Log.d(TAG, "Added work done (J): " + workDone);
+    double timeDeltaSeconds = timeDelta / CyclismoLibConstants.MILLISEC_IN_SEC;
+
+    if (sensorDataSet.hasPower()) {
+      double work = sensorDataSet.getPower().getValue() * timeDeltaSeconds;
+      currentSegment.addWorkDone(work);
+      Log.d(TAG, "Added work done (J): " + work);
+    }
+
+    if (sensorDataSet.hasCadence()) {
+      double revs = sensorDataSet.getCadence().getValue()
+              * timeDeltaSeconds / CyclismoLibConstants.SEC_IN_MIN;
+      currentSegment.addCrankRotations(revs);
+      Log.d(TAG, "Added crank revolutions: " + revs);
+    }
+
+    if (sensorDataSet.hasHeartRate()) {
+      double beats = sensorDataSet.getHeartRate().getValue()
+              * timeDeltaSeconds / CyclismoLibConstants.SEC_IN_MIN;;
+      currentSegment.addHeartBeats(beats);
+      Log.d(TAG, "Added heart beats: " + beats);
     }
   }
 

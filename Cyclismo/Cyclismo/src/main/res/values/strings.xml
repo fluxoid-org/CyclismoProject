@@ -2105,6 +2105,20 @@ limitations under the License.
       Character limit: ~23 (1 line)">
     Power
   </string>
+  <string name="settings_stats_cadence"
+    translation_description="In the 'Stats settings, the option to show power. Cadence is
+      the number of crank revolutions per minute.
+
+      Character limit: ~23 (1 line)">
+    Cadence
+  </string>
+  <string name="settings_stats_heartrate"
+    translation_description="In the 'Stats settings, the option to show power. Heart rate is
+     the number of heart beats per minute.
+
+      Character limit: ~23 (1 line)">
+    Heart rate
+  </string>
   <string name="settings_stats_rate_title"
     translation_description="In the 'Stats' settings, the option to change the preferred rate,
       either speed (mi/hr) or pace (hr/mi).
@@ -2244,11 +2258,27 @@ limitations under the License.
   </string>
   <string name="stats_inst_power"
     translation_description="In the 'Stats' page, the instantaneous power.">
-    Inst. power
+    Power
   </string>
   <string name="stats_avg_power"
     translation_description="In the 'Stats' page, the average power.">
     Avg. power
+  </string>
+  <string name="stats_inst_cadence"
+    translation_description="In the 'Stats' page, the instantaneous cadence in RPM.">
+    Cadence
+  </string>
+  <string name="stats_avg_cadence"
+    translation_description="In the 'Stats' page, the average cadence in RPM.">
+    Avg. cadence
+  </string>
+   <string name="stats_inst_heartrate"
+    translation_description="In the 'Stats' page, the instantaneous heart rate in BPM.">
+    Heart rate
+  </string>
+  <string name="stats_avg_heartrate"
+    translation_description="In the 'Stats' page, the average heart rate in BPM.">
+    Avg. heart rate
   </string>
   <string name="stats_moving_time"
     translation_description="In the 'Stats' page, the moving time.">
@@ -2485,6 +2515,20 @@ limitations under the License.
 
       %1$d: an integer value. E.g., '2'">
     %1$d W
+  </string>
+  <string name="value_integer_cadence"
+    translation_description="In a setting picker, the string format to display an integer value in
+      revolutions per minute (RPM).
+
+      %1$d: an integer value. E.g., '2'">
+    %1$d RPM
+  </string>
+  <string name="value_integer_heartrate"
+    translation_description="In a setting picker, the string format to display an integer value in
+      beats per minute (BPM).
+
+      %1$d: an integer value. E.g., '2'">
+    %1$d BPM
   </string>
   <string name="value_integer_feet_excellent_gps"
     translation_description="In a setting picker, the string format to display an integer value in

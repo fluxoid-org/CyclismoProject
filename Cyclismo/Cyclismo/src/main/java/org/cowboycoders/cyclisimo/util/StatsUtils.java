@@ -92,7 +92,49 @@ public class StatsUtils {
         instPower = sensorDataSet.getPower().getValue();
       }
     }
-    setPowerValue(activity, R.id.stats_inst_power_value, instPower);
+    setSensorValue(activity, R.id.stats_inst_power_value, instPower, R.string.value_integer_power);
+
+    // Set instantaneous cadence
+    boolean showCadence = PreferencesUtils.getBoolean(
+            activity, R.string.stats_show_cadence_key, PreferencesUtils.STATS_SHOW_CADENCE_DEFAULT);
+    View cadenceLabelTableRow = activity.findViewById(R.id.stats_cadence_label_table_row);
+    View cadenceValueTableRow = activity.findViewById(R.id.stats_cadence_value_table_row);
+    if (cadenceLabelTableRow == null || cadenceValueTableRow == null) {
+      return;
+    }
+    cadenceLabelTableRow.setVisibility(showCadence ? View.VISIBLE : View.GONE);
+    cadenceValueTableRow.setVisibility(showCadence ? View.VISIBLE : View.GONE);
+
+    double instCadence = Double.NaN;
+    if (showCadence && sensorDataSet!= null) {
+      if (sensorDataSet.hasCadence()
+              && sensorDataSet.getCadence().getState() == Sensor.SensorState.SENDING
+              && sensorDataSet.getCadence().hasValue()) {
+        instCadence = sensorDataSet.getCadence().getValue();
+      }
+    }
+    setSensorValue(activity, R.id.stats_inst_cadence_value, instCadence, R.string.value_integer_cadence);
+
+    // Set instantaneous heart rate
+    boolean showHeartRate = PreferencesUtils.getBoolean(
+            activity, R.string.stats_show_heartrate_key, PreferencesUtils.STATS_SHOW_HEARTRATE_DEFAULT);
+    View heartRateLabelTableRow = activity.findViewById(R.id.stats_heartrate_label_table_row);
+    View heartRateValueTableRow = activity.findViewById(R.id.stats_heartrate_value_table_row);
+    if (heartRateLabelTableRow == null || heartRateValueTableRow == null) {
+      return;
+    }
+    heartRateLabelTableRow.setVisibility(showHeartRate ? View.VISIBLE : View.GONE);
+    heartRateValueTableRow.setVisibility(showHeartRate ? View.VISIBLE : View.GONE);
+
+    double instHeartRate = Double.NaN;
+    if (showHeartRate && sensorDataSet!= null) {
+      if (sensorDataSet.hasHeartRate()
+              && sensorDataSet.getHeartRate().getState() == Sensor.SensorState.SENDING
+              && sensorDataSet.getHeartRate().hasValue()) {
+        instHeartRate = sensorDataSet.getHeartRate().getValue();
+      }
+    }
+    setSensorValue(activity, R.id.stats_inst_heartrate_value, instHeartRate, R.string.value_integer_heartrate);
   }
 
   /**
@@ -204,9 +246,13 @@ public class StatsUtils {
           metricUnits, reportSpeed);
     }
 
-    // TODO: Hide when power field is off
+    // TODO: Hide these fields when off in stats menu
     double avgPower = tripStatistics == null ? Double.NaN : tripStatistics.getAverageMovingPower();
-    setPowerValue(activity, R.id.stats_avg_power_value, avgPower);
+    setSensorValue(activity, R.id.stats_avg_power_value, avgPower, R.string.value_integer_power);
+    double avgCadence = tripStatistics == null ? Double.NaN : tripStatistics.getAverageMovingCadence();
+    setSensorValue(activity, R.id.stats_avg_cadence_value, avgCadence, R.string.value_integer_cadence);
+    double avgHeartRate = tripStatistics == null ? Double.NaN : tripStatistics.getAverageMovingHeartRate();
+    setSensorValue(activity, R.id.stats_avg_heartrate_value, avgHeartRate, R.string.value_integer_heartrate);
 
     // Set max speed
     setSpeedLabel(activity, R.id.stats_max_speed_label, R.string.stats_max_speed,
@@ -395,22 +441,22 @@ public class StatsUtils {
   }
 
   /**
-   * Sets a power value.
+   * Sets a sensor value.
    *
    * @param activity the activity
-   * @param id the grade value resource id
-   * @param power the power in watts
+   * @param id the value resource id
+   * @param sensorValue the sensor value
    */
-  private static void setPowerValue(Activity activity, int id, double power) {
+  private static void setSensorValue(Activity activity, int id, double sensorValue, int format) {
     TextView textView = (TextView) activity.findViewById(id);
     if (textView == null) {
       return;
     }
     String value;
-    if (Double.isNaN(power) || Double.isInfinite(power)) {
+    if (Double.isNaN(sensorValue) || Double.isInfinite(sensorValue)) {
       value = activity.getString(R.string.value_unknown);
     } else {
-      value = activity.getString(R.string.value_integer_power, Math.round(power));
+      value = activity.getString(format, Math.round(sensorValue));
     }
     textView.setText(value);
   }

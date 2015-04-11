@@ -238,4 +238,9 @@ public class TripStatisticsUpdaterTest extends TestCase {
       }
     }
   }
+
+  public void testUpdateSensorData() {
+    // TODO
+    assertTrue(false);
+  }
 }
