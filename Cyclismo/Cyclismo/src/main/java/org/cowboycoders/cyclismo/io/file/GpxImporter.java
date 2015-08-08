@@ -39,7 +39,6 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.util.Log;
 
-import org.cowboycoders.cyclismo.Constants;
 import org.cowboycoders.cyclismo.content.MyTracksProviderUtils;
 import org.cowboycoders.cyclismo.content.Track;
 import org.cowboycoders.cyclismo.content.User;
@@ -70,6 +69,8 @@ import javax.xml.parsers.SAXParserFactory;
  * @author Rodrigo Damazio
  */
 public class GpxImporter extends DefaultHandler {
+
+  private static final String TAG = GpxImporter.class.getSimpleName();
 
   // GPX tag names and attributes
   private static final String TAG_ALTITUDE = "ele";
@@ -163,7 +164,7 @@ public class GpxImporter extends DefaultHandler {
       saxParser.parse(inputStream, gpxImporter);
 
       long end = System.currentTimeMillis();
-      Log.d(Constants.TAG, "Total import time: " + (end - start) + "ms");
+      Log.d(TAG, "Total import time: " + (end - start) + "ms");
 
       trackIds = gpxImporter.getImportedTrackIds();
       if (trackIds.length == 0) {
@@ -438,7 +439,7 @@ public class GpxImporter extends DefaultHandler {
 
       // check for negative time change
       if (timeDifference <= 0) {
-        Log.w(Constants.TAG, "Time difference not postive.");
+        Log.w(TAG, "Time difference not postive.");
       } else {
 
         /*

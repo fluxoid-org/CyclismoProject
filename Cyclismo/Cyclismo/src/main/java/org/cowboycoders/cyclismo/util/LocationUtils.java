@@ -37,7 +37,6 @@ package org.cowboycoders.cyclismo.util;
 import android.location.Location;
 import android.util.Log;
 
-import org.cowboycoders.cyclismo.Constants;
 import org.cowboycoders.cyclismo.content.MyTracksLocation;
 import org.cowboycoders.cyclismo.content.Sensor;
 import org.cowboycoders.cyclismo.content.Track;
@@ -51,6 +50,8 @@ import java.util.Stack;
  * @author Leif Hendrik Wilden
  */
 public class LocationUtils {
+
+  private static final String TAG = "LocationUtils";
 
   private LocationUtils() {}
 
@@ -152,7 +153,7 @@ public class LocationUtils {
       }
       idx++;
     }
-    Log.d(Constants.TAG, "Decimating " + n + " points to " + i + " w/ tolerance = " + tolerance);
+    Log.d(TAG, "Decimating " + n + " points to " + i + " w/ tolerance = " + tolerance);
   }
 
   /**

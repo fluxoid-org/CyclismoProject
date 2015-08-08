@@ -46,7 +46,6 @@ import org.cowboycoders.cyclismo.lib.CyclismoLibConstants;
 import org.cowboycoders.cyclismo.services.TrackRecordingService;
 import org.cowboycoders.cyclismo.util.LocationUtils;
 
-import static org.cowboycoders.cyclismo.Constants.TAG;
 
 /**
  * Updater for {@link TripStatistics}. For updating track trip statistics as new
@@ -57,6 +56,8 @@ import static org.cowboycoders.cyclismo.Constants.TAG;
  * @author Rodrigo Damazio
  */
 public class TripStatisticsUpdater {
+
+  private static final String TAG = "TripStatisticsUpdater";
 
   // The track's trip statistics
   private final TripStatistics tripStatistics;

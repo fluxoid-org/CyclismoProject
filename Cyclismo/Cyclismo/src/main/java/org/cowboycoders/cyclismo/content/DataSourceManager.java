@@ -54,8 +54,6 @@ import com.google.common.annotations.VisibleForTesting;
 import java.util.EnumSet;
 import java.util.Set;
 
-import static org.cowboycoders.cyclismo.Constants.TAG;
-
 /**
  * Data source manager. Creates observers/listeners and manages their
  * registration with {@link DataSource}. The observers/listeners calls
@@ -64,6 +62,8 @@ import static org.cowboycoders.cyclismo.Constants.TAG;
  * @author Rodrigo Damazio
  */
 public class DataSourceManager {
+
+  private static final String TAG = DataSourceManager.class.getSimpleName();
 
   /**
    * Observer when the tracks table is updated.

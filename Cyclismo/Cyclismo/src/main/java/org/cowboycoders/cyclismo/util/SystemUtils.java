@@ -53,6 +53,8 @@ import org.cowboycoders.cyclismo.Constants;
  */
 public class SystemUtils {
 
+  private static final String TAG = "SystemUtils";
+
   /**
    * Get the My Tracks version from the manifest.
    *
@@ -65,7 +67,7 @@ public class SystemUtils {
           PackageManager.GET_META_DATA);
       return pi.versionName;
     } catch (NameNotFoundException e)  {
-      Log.w(Constants.TAG, "Failed to get version info.", e);
+      Log.w(TAG, "Failed to get version info.", e);
       return "";
     }
   }
@@ -75,33 +77,29 @@ public class SystemUtils {
    * and gives up trying in case the wake lock cannot be acquired.
    */
   public static WakeLock acquireWakeLock(Activity activity, WakeLock wakeLock) {
-    Log.i(Constants.TAG, "LocationUtils: Acquiring wake lock.");
+    Log.i(TAG, "Acquiring wake lock.");
     try {
       PowerManager pm = (PowerManager) activity
           .getSystemService(Context.POWER_SERVICE);
       if (pm == null) {
-        Log.e(Constants.TAG, "LocationUtils: Power manager not found!");
+        Log.e(TAG, "Power manager not found!");
         return wakeLock;
       }
       if (wakeLock == null) {
-        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-            Constants.TAG);
+        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
         if (wakeLock == null) {
-          Log.e(Constants.TAG,
-              "LocationUtils: Could not create wake lock (null).");
+          Log.e(TAG, "Could not create wake lock (null).");
         }
         return wakeLock;
       }
       if (!wakeLock.isHeld()) {
         wakeLock.acquire();
         if (!wakeLock.isHeld()) {
-          Log.e(Constants.TAG,
-              "LocationUtils: Could not acquire wake lock.");
+          Log.e(TAG, "Could not acquire wake lock.");
         }
       }
     } catch (RuntimeException e) {
-      Log.e(Constants.TAG,
-          "LocationUtils: Caught unexpected exception: " + e.getMessage(), e);
+      Log.e(TAG, "Caught unexpected exception: " + e.getMessage(), e);
     }
     return wakeLock;
   }

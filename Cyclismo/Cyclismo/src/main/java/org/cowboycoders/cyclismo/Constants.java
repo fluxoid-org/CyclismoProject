@@ -40,12 +40,6 @@ package org.cowboycoders.cyclismo;
  * @author Leif Hendrik Wilden
  */
 public abstract class Constants {
-
-  /**
-   * Should be used by all log statements
-   */
-  public static final String TAG = "Cyclismo";
-
   /**
    * Name of the top-level directory inside the SD card where our files will
    * be read from/written to.

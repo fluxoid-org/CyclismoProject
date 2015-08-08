@@ -40,7 +40,6 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
-import org.cowboycoders.cyclismo.Constants;
 import org.cowboycoders.cyclismo.services.sensors.BluetoothConnectionManager;
 
 import java.io.IOException;
@@ -53,13 +52,15 @@ import java.io.IOException;
 @TargetApi(10)
 public class Api10Adapter extends Api9Adapter {
 
+  private static final String TAG = "Api10Adapter";
+
   @Override
   public BluetoothSocket getBluetoothSocket(BluetoothDevice bluetoothDevice) throws IOException {
     try {
       return bluetoothDevice.createInsecureRfcommSocketToServiceRecord(
           BluetoothConnectionManager.MY_TRACKS_UUID);
     } catch (IOException e) {
-      Log.d(Constants.TAG, "Unable to create insecure connection", e);
+      Log.d(TAG, "Unable to create insecure connection", e);
     }
     return bluetoothDevice.createRfcommSocketToServiceRecord(BluetoothConnectionManager.MY_TRACKS_UUID);
   };
