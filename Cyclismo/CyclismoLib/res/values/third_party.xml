@@ -17,17 +17,17 @@ limitations under the License.
 <resources>
   <!-- Do not translate -->
   <!-- Permissions, need to be in sync with the permissions in AndroidManifest.xml -->
-  <string name="broadcast_notifications_permission">org.cowboycoders.cyclisimo.TRACK_NOTIFICATIONS</string>
-  <string name="read_track_data_permission">org.cowboycoders.cyclisimo.READ_TRACK_DATA</string>
-  <string name="write_track_data_permission">org.cowboycoders.cyclisimo.WRITE_TRACK_DATA</string>
+  <string name="broadcast_notifications_permission">org.cowboycoders.cyclismo.TRACK_NOTIFICATIONS</string>
+  <string name="read_track_data_permission">org.cowboycoders.cyclismo.READ_TRACK_DATA</string>
+  <string name="write_track_data_permission">org.cowboycoders.cyclismo.WRITE_TRACK_DATA</string>
   <!-- Broadcast -->
-  <string name="track_id_broadcast_extra">org.cowboycoders.cyclisimo.TRACK_ID</string>
-  <string name="track_paused_broadcast_action">org.cowboycoders.cyclisimo.TRACK_PAUSED</string>
-  <string name="track_resumed_broadcast_action">org.cowboycoders.cyclisimo.TRACK_RESUMED</string>
-  <string name="track_started_broadcast_action">org.cowboycoders.cyclisimo.TRACK_STARTED</string>
-  <string name="track_stopped_broadcast_action">org.cowboycoders.cyclisimo.TRACK_STOPPED</string>
-  <string name="track_update_broadcast_action">org.cowboycoders.cyclisimo.TRACK_UPDATE</string>
-  <!-- Cyclisimo service -->
-  <string name="mytracks_service_class">org.cowboycoders.cyclisimo.services.TrackRecordingService</string>
-  <string name="mytracks_service_package">org.cowboycoders.cyclisimo</string>
+  <string name="track_id_broadcast_extra">org.cowboycoders.cyclismo.TRACK_ID</string>
+  <string name="track_paused_broadcast_action">org.cowboycoders.cyclismo.TRACK_PAUSED</string>
+  <string name="track_resumed_broadcast_action">org.cowboycoders.cyclismo.TRACK_RESUMED</string>
+  <string name="track_started_broadcast_action">org.cowboycoders.cyclismo.TRACK_STARTED</string>
+  <string name="track_stopped_broadcast_action">org.cowboycoders.cyclismo.TRACK_STOPPED</string>
+  <string name="track_update_broadcast_action">org.cowboycoders.cyclismo.TRACK_UPDATE</string>
+  <!-- Cyclismo service -->
+  <string name="mytracks_service_class">org.cowboycoders.cyclismo.services.TrackRecordingService</string>
+  <string name="mytracks_service_package">org.cowboycoders.cyclismo</string>
 </resources>

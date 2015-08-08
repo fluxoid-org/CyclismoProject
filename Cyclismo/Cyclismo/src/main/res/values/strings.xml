@@ -18,26 +18,26 @@ limitations under the License.
 
   <!-- About Page -->
   <string name="about_copyright_notice"
-    translation_description="In the 'About Cyclisimo' page, the copyright notice.">
+    translation_description="In the 'About Cyclismo' page, the copyright notice.">
     Copyright 2009 Google Inc.
   </string>
   <string name="about_license"
-    translation_description="In the 'About Cyclisimo' page, the button on the bottom to open the
+    translation_description="In the 'About Cyclismo' page, the button on the bottom to open the
       'Terms of service' dialog.">
     License
   </string>
   <string name="about_privacy"
-    translation_description="In the 'About Cyclisimo' page, label for the privacy link. E.g.,
+    translation_description="In the 'About Cyclismo' page, label for the privacy link. E.g.,
       'Privacy: m.google.com/privacy'.">
     Privacy:
   </string>
   <string name="about_support"
-    translation_description="In the 'About Cyclisimo' page, label for the support link. E.g.,
+    translation_description="In the 'About Cyclismo' page, label for the support link. E.g.,
       'Support: mytracks.appspot.com'.">
     Support:
   </string>
   <string name="about_version"
-    translation_description="In the 'About Cyclisimo' page, label for the version number. E.g.,
+    translation_description="In the 'About Cyclismo' page, label for the version number. E.g.,
       'Version: 1.1.11'.">
     Version:
   </string>
@@ -774,12 +774,12 @@ limitations under the License.
     Stopping GPS.
   </string>
   <string name="gps_wait_for_better_signal"
-    translation_description="In the main view, the message on the top indicating Cyclisimo is
+    translation_description="In the main view, the message on the top indicating Cyclismo is
       waiting for a better GPS signal.">
     Waiting for a better GPS signal.
   </string>
   <string name="gps_wait_for_signal"
-    translation_description="In the main view, the message on the top indicating Cyclisimo is
+    translation_description="In the main view, the message on the top indicating Cyclismo is
       waiting for GPS signal.">
     Waiting for GPS signal.
   </string>
@@ -788,7 +788,7 @@ limitations under the License.
   <string name="help_about"
     translation_description="In the 'Help' page, the button on the bottom to open the 'About My
       Tracks' dialog.">
-    About Cyclisimo
+    About Cyclismo
   </string>
   <string name="help_battery_life_answer"
     translation_description="In the 'Help' page, the answer on battery life.">
@@ -811,7 +811,7 @@ limitations under the License.
   </string>
   <string name="help_data_connection_question"
     translation_description="In the 'Help' page, the question on data connection.">
-    Do I need cell signal and data connection to use Cyclisimo?
+    Do I need cell signal and data connection to use Cyclismo?
   </string>
   <string name="help_delete_tracks_answer"
     translation_description="In the 'Help' page, the answer on delete tracks.">
@@ -828,7 +828,7 @@ limitations under the License.
   </string>
   <string name="help_edit_tracks_answer"
     translation_description="In the 'Help' page, the answer on edit tracks.">
-    Currently, you can\'t with Cyclisimo. But you can upload your tracks to Google or save them to
+    Currently, you can\'t with Cyclismo. But you can upload your tracks to Google or save them to
     the external storage to modify them there.
   </string>
   <string name="help_edit_tracks_question"
@@ -857,7 +857,7 @@ limitations under the License.
   </string>
   <string name="help_gps_signal_answer"
     translation_description="In the 'Help' page, the answer on the GPS signal message.">
-    For Cyclisimo to work, your device needs to be in line-of-sight contact with the GPS satellites.
+    For Cyclismo to work, your device needs to be in line-of-sight contact with the GPS satellites.
     If the line-of-sight is obstructed by trees, buildings or canyon walls, you may not get an
     accurate signal. If you see the message, wait a minute or two. If your device still does not
     find a signal, move to an area clear of obstructions and try again.
@@ -896,15 +896,15 @@ limitations under the License.
     What are markers?
   </string>
   <string name="help_my_tracks_answer"
-    translation_description="In the 'Help' page, the answer on what is Cyclisimo.">
-    Cyclisimo allows you to record GPS tracks and visualize your walking, running, biking or any
-    other activity while watching live performance statistics. Cyclisimo makes it easy to archive
+    translation_description="In the 'Help' page, the answer on what is Cyclismo.">
+    Cyclismo allows you to record GPS tracks and visualize your walking, running, biking or any
+    other activity while watching live performance statistics. Cyclismo makes it easy to archive
     your training history with Google Maps, Google Fusion Tables, and Google Docs, and share your
     activities with friends and the world.
   </string>
   <string name="help_my_tracks_question"
-    translation_description="In the 'Help' page, the question on what is Cyclisimo.">
-    What is Cyclisimo?
+    translation_description="In the 'Help' page, the question on what is Cyclismo.">
+    What is Cyclismo?
   </string>
   <string name="help_saved_files_answer"
     translation_description="In the 'Help' page, the answer on saved files.">
@@ -1319,10 +1319,10 @@ limitations under the License.
     %1$s &amp; make sure the sky is visible. Try again later.
   </string>
 
-  <!-- Cyclisimo -->
+  <!-- Cyclismo -->
   <string name="my_tracks_app_name"
-    translation_description="The Cyclisimo application name.">
-      Cyclisimo
+    translation_description="The Cyclismo application name.">
+      Cyclismo
   </string>
   <string name="my_tracks_recording_service"
     translation_description="When viewing the 'Running services' on Android, the name of the My
@@ -1351,24 +1351,24 @@ limitations under the License.
   </string>
   <string name="permission_read_label"
     translation_description="The permission label the Google Play Store shows during app
-      installation when the app wants to read Cyclisimo data.">
+      installation when the app wants to read Cyclismo data.">
     read Cyclismo data
   </string>
   <string name="permission_write_description"
     translation_description="The permission description the Google Play Store shows during app
-      installation when the app wants to write data to Cyclisimo.">
+      installation when the app wants to write data to Cyclismo.">
     Allows the application to write data to Cyclismo and start/stop Cyclismo
     recording.
   </string>
   <string name="permission_write_label"
     translation_description="The permission label the Google Play Store shows during app
-      installation when the app wants to write data to Cyclisimo.">
+      installation when the app wants to write data to Cyclismo.">
     write data to Cyclismo and start/stop Cyclismo recording
   </string>
 
   <!-- Search -->
   <string name="search_global_description"
-    translation_description="Description of what is searched in Cyclisimo, to be displayed in the
+    translation_description="Description of what is searched in Cyclismo, to be displayed in the
       global system search settings.">
     Tracks and markers
   </string>
@@ -1616,7 +1616,7 @@ limitations under the License.
   </string>
   <string name="settings_backup_restore_progress_message"
     translation_description="In the 'Backup' settings, after pressing the 'Restore now' option, the
-      progress message informing that Cyclisimo is reading all tracks and settings from the backup
+      progress message informing that Cyclismo is reading all tracks and settings from the backup
       on the external storage.">
     Reading all tracks and settings&#8230;
   </string>
@@ -1739,7 +1739,7 @@ limitations under the License.
   <string name="settings_recording_auto_resume_track_timeout_summary"
     translation_description="In the 'Recording' settings, the summary for the 'Auto-resume' setting.
       Occasionaly, phones will reboot due to crashes or users would need to change battery during a
-      long recording. Cyclisimo will resume a recording after reboot if it was recording beforehand
+      long recording. Cyclismo will resume a recording after reboot if it was recording beforehand
       and that the last recorded time is recent, within certain minutes.">
     Recording is resumed after reboot if the last recorded time is within this.
   </string>
@@ -2024,7 +2024,7 @@ limitations under the License.
   </string>
   <string name="settings_sharing_allow_access"
     translation_description="In the 'Sharing' settings, the checkbox option to allow third party
-      apps access to the Cyclisimo data.
+      apps access to the Cyclismo data.
 
       Character limit: ~23 (1 line)">
     Allow access
@@ -2032,22 +2032,22 @@ limitations under the License.
   <string name="settings_sharing_allow_access_confirm_message"
     translation_description="In the 'Sharing' settings, after checking the 'Allow access' checkbox,
       the confirmation dialog message informing the user that other apps, including apps installed
-      in the future, will be able to control and access Cyclisimo data. In addition, no further
+      in the future, will be able to control and access Cyclismo data. In addition, no further
       notification of third party app access will be shown.">
-    Other apps, including future apps, will be able to control and access Cyclisimo data. There will
+    Other apps, including future apps, will be able to control and access Cyclismo data. There will
     be no further notification.
   </string>
   <string name="settings_sharing_allow_access_summary_off"
     translation_description="In the 'Sharing' settings, the summary for the 'Allow access' checkbox
       option when it is unchecked explaining that other apps cannot read, write, start/stop
-      recording Cyclisimo data.">
-    Other apps cannot read, write, start/stop recording Cyclisimo data.
+      recording Cyclismo data.">
+    Other apps cannot read, write, start/stop recording Cyclismo data.
   </string>
   <string name="settings_sharing_allow_access_summary_on"
     translation_description="In the 'Sharing' settings, the summary for the 'Allow access' checkbox
       option when it is checked explaining that other apps can read, write, start/stop recording My
       Tracks data.">
-    Other apps can read, write, start/stop recording Cyclisimo data.
+    Other apps can read, write, start/stop recording Cyclismo data.
   </string>
   <string name="settings_sharing_new_map_public"
     translation_description="In the 'Sharing' settings, the checkbox option to make new maps created
@@ -2383,14 +2383,14 @@ limitations under the License.
     Track %1$d
   </string>
   <string name="track_record_notification"
-    translation_description="When recording a track, the message on the Cyclisimo notification
-      informing the user that Cyclisimo is actively recording his track.">
+    translation_description="When recording a track, the message on the Cyclismo notification
+      informing the user that Cyclismo is actively recording his track.">
     Recording your track&#8230;
   </string>
 
   <!-- Track Widget -->
   <string name="track_widget_config_title"
-    translation_description="Title of the page to configure the Cyclisimo widget items.">
+    translation_description="Title of the page to configure the Cyclismo widget items.">
     Configure Widget Items
   </string>
 
@@ -2810,7 +2810,7 @@ limitations under the License.
       %2$s: time string. E.g., '1 hour and 30 minutes' or '20 minutes 1 second'
       %3$s: speed/pace string. For speed, e.g., '2.2 miles per hour', '1 kilometer per hour'. For
       pace, e.g., '2 hours 1 minute per mile', '30 minutes 1 second per kilometer'.">
-    Cyclisimo %1$s in %2$s at %3$s.
+    Cyclismo %1$s in %2$s at %3$s.
   </string>
   <string name="voice_total_distance_kilometers_few"
     translation_description="For voice announcement, to say total distance 'few' kilometers.
@@ -2878,7 +2878,7 @@ limitations under the License.
   <string name="voice_total_distance_zero"
     translation_description="For the voice announcement, the announcement when the current track's
       total distance is zero.">
-    Cyclisimo total distance zero.
+    Cyclismo total distance zero.
   </string>
 
   <!-- Waypoint Type -->
@@ -3142,12 +3142,12 @@ limitations under the License.
   <string name="welcome_message"
     translation_description="The message of the welcome dialog. Note that \n is the newline
       character.">
-    Welcome to Cyclisimo. Use this app to record your GPS tracks, aggregate your stats over time,
-    and share your paths with friends.\n\nHappy Exploring,\nThe Cyclisimo Team
+    Welcome to Cyclismo. Use this app to record your GPS tracks, aggregate your stats over time,
+    and share your paths with friends.\n\nHappy Exploring,\nThe Cyclismo Team
   </string>
   <string name="welcome_title"
     translation_description="The title of the welcome dialog.">
-    Welcome to Cyclisimo
+    Welcome to Cyclismo
   </string>
   
     <!-- Turbo trainer courses -->
