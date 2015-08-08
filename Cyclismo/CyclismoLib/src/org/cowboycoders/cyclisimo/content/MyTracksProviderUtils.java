@@ -56,7 +56,7 @@ public interface MyTracksProviderUtils {
    * provider believes it should be set. Auxiliary providers are likely
    * to return false for keys associated with the primary provider.
    * 
-   * @param keyid for preference
+   * @param keyId for preference
    * @return
    */
   public boolean shouldSetPreference(int keyId);

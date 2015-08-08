@@ -51,6 +51,8 @@ limitations under the License.
   <string name="stats_show_grade_key">statsShowGrade</string>
   <string name="stats_show_moving_time_key">statsShowMovingTime</string>
   <string name="stats_show_power_key">statsShowPower</string>
+  <string name="stats_show_cadence_key">statsShowCadence</string>
+  <string name="stats_show_heartrate_key">statsShowHeartRate</string>
   <string name="track_color_mode_medium_key">trackColorModeMedium</string>
   <string name="track_color_mode_percentage_key">trackColorModePercentage</string>
   <string name="track_color_mode_slow_key">trackColorModeSlow</string>

@@ -104,6 +104,8 @@ public class PreferencesUtils {
   public static final boolean STATS_SHOW_ELEVATION_DEFAULT = false;
   public static final boolean STATS_SHOW_GRADE_DEFAULT = false;
   public static final boolean STATS_SHOW_POWER_DEFAULT = true;
+  public static final boolean STATS_SHOW_CADENCE_DEFAULT = true;
+  public static final boolean STATS_SHOW_HEARTRATE_DEFAULT = true;
   public static final boolean STATS_SHOW_MOVING_TIME_DEFAULT = false;
 
   public static final String TRACK_COLOR_MODE_DEFAULT = "SINGLE";

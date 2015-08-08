@@ -43,7 +43,10 @@ package org.cowboycoders.cyclisimo.lib;
 public class CyclismoLibConstants {
   public static final String TAG = "CyclismoLib";
 
+  public static final double SEC_IN_MIN = 60;
+
   public static final double MILLISEC_IN_SEC = 1000.0;
+  public static final double MILLISEC_IN_MIN = SEC_IN_MIN  * MILLISEC_IN_SEC;
 
   private CyclismoLibConstants() {}
 }

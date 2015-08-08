@@ -86,7 +86,9 @@ public interface TracksColumns extends BaseColumns {
   public static final String MAXLON = "maxlon"; // maximum longitude
   public static final String AVGSPEED = "avgspeed"; // average speed
   public static final String AVGMOVINGSPEED = "avgmovingspeed"; // average moving speed
-  public static final String USEFULWORKDONE = "usefulworkdone"; // useful work done
+  public static final String TOTALWORKDONE = "totalworkdone";
+  public static final String TOTALCRANKROTATIONS = "totalcrankrotations";
+  public static final String TOTALHEARTBEATS = "totalheartbeats";
   public static final String MAXSPEED = "maxspeed"; // maximum speed
   public static final String MINELEVATION = "minelevation"; // minimum elevation
   public static final String MAXELEVATION = "maxelevation"; // maximum elevation
@@ -117,7 +119,9 @@ public interface TracksColumns extends BaseColumns {
       + MAXLON + " INTEGER, " 
       + AVGSPEED + " FLOAT, "
       + AVGMOVINGSPEED + " FLOAT, " 
-      + USEFULWORKDONE + " FLOAT, "
+      + TOTALWORKDONE + " FLOAT, "
+      + TOTALCRANKROTATIONS + " FLOAT, "
+      + TOTALHEARTBEATS + " FLOAT, "
       + MAXSPEED + " FLOAT, " 
       + MINELEVATION + " FLOAT, "
       + MAXELEVATION + " FLOAT, " 
@@ -149,7 +153,9 @@ public interface TracksColumns extends BaseColumns {
       MAXLON,
       AVGSPEED,
       AVGMOVINGSPEED,
-      USEFULWORKDONE,
+      TOTALWORKDONE,
+      TOTALCRANKROTATIONS,
+      TOTALHEARTBEATS,
       MAXSPEED,
       MINELEVATION,
       MAXELEVATION,
@@ -181,7 +187,9 @@ public interface TracksColumns extends BaseColumns {
       ContentTypeIds.INT_TYPE_ID, // max longitude
       ContentTypeIds.FLOAT_TYPE_ID, // average speed
       ContentTypeIds.FLOAT_TYPE_ID, // average moving speed
-      ContentTypeIds.FLOAT_TYPE_ID, // useful work done
+      ContentTypeIds.FLOAT_TYPE_ID, // total useful work done
+      ContentTypeIds.FLOAT_TYPE_ID, // total crank revolutions
+      ContentTypeIds.FLOAT_TYPE_ID, // total heart beats
       ContentTypeIds.FLOAT_TYPE_ID, // max speed
       ContentTypeIds.FLOAT_TYPE_ID, // min elevation
       ContentTypeIds.FLOAT_TYPE_ID, // max elevation
