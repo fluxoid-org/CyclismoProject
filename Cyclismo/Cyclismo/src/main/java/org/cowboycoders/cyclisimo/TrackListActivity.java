@@ -168,9 +168,9 @@ public class TrackListActivity extends FragmentActivity implements DeleteOneTrac
   };
 
   /*
-   * Note that sharedPreferenceChangeListenr cannot be an anonymous inner class.
-   * Anonymous inner class will get garbage collected.
-   */
+     * Note that sharedPreferenceChangeListenr cannot be an anonymous inner class.
+     * Anonymous inner class will get garbage collected.
+     */
   private final OnSharedPreferenceChangeListener sharedPreferenceChangeListener = new OnSharedPreferenceChangeListener() {
     @Override
     public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
@@ -190,6 +190,8 @@ public class TrackListActivity extends FragmentActivity implements DeleteOneTrac
               R.string.recording_track_id_key))) {
         recordingTrackId = PreferencesUtils.getLong(TrackListActivity.this,
             R.string.recording_track_id_key);
+        recordingCourseId = PreferencesUtils.getLong(TrackListActivity.this,
+                R.string.recording_course_track_id_key);
         if (key != null && recordingTrackId != PreferencesUtils.RECORDING_TRACK_ID_DEFAULT) {
           trackRecordingServiceConnection.startAndBind();
         }
@@ -204,7 +206,7 @@ public class TrackListActivity extends FragmentActivity implements DeleteOneTrac
         runOnUiThread(new Runnable() {
           @Override
           public void run() {
-            boolean isRecording = recordingTrackId != PreferencesUtils.RECORDING_TRACK_ID_DEFAULT;
+            boolean isRecording = isRecording();
             updateMenuItems(isRecording);
             resourceCursorAdapter.notifyDataSetChanged();
             trackController.update(isRecording, recordingTrackPaused);
@@ -213,6 +215,10 @@ public class TrackListActivity extends FragmentActivity implements DeleteOneTrac
       }
     }
   };
+
+  private boolean isRecording() {
+    return recordingTrackId != PreferencesUtils.RECORDING_TRACK_ID_DEFAULT;
+  }
 
   // Callback when an item is selected in the contextual action mode
   private final ContextualActionModeCallback contextualActionModeCallback = new ContextualActionModeCallback() {
@@ -350,6 +356,7 @@ public class TrackListActivity extends FragmentActivity implements DeleteOneTrac
   // Preferences
   private boolean metricUnits = PreferencesUtils.METRIC_UNITS_DEFAULT;
   private long recordingTrackId = PreferencesUtils.RECORDING_TRACK_ID_DEFAULT;
+  private long recordingCourseId = PreferencesUtils.RECORDING_COURSE_ID_DEFAULT;
   private boolean recordingTrackPaused = PreferencesUtils.RECORDING_TRACK_PAUSED_DEFAULT;
 
   // Menu items
@@ -384,6 +391,13 @@ public class TrackListActivity extends FragmentActivity implements DeleteOneTrac
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent intent = IntentUtils.newIntent(TrackListActivity.this, TrackDetailActivity.class)
             .putExtra(TrackDetailActivity.EXTRA_TRACK_ID, id);
+        if (isRecording() && id == recordingTrackId) {
+          Log.d(TAG, "recordingTrackId: " + recordingTrackId);
+          recordingCourseId = PreferencesUtils.getLong(TrackListActivity.this,
+                  R.string.recording_course_track_id_key);
+          intent.putExtra(TrackDetailActivity.EXTRA_COURSE_TRACK_ID, recordingCourseId)
+                .putExtra(TrackDetailActivity.EXTRA_USE_COURSE_PROVIDER, false);
+        }
         intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

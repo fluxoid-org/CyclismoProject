@@ -40,6 +40,7 @@ import org.cowboycoders.cyclisimo.services.ITrackRecordingService;
 import org.cowboycoders.cyclisimo.services.TrackRecordingServiceConnection;
 import org.cowboycoders.cyclisimo.turbo.TurboService;
 import org.cowboycoders.cyclisimo.util.IntentUtils;
+import org.cowboycoders.cyclisimo.util.PreferencesUtils;
 
 
 public class CourseSetupActivity extends Activity {
@@ -91,6 +92,8 @@ public class CourseSetupActivity extends Activity {
 
     public void onServiceConnected(ComponentName className, IBinder binder) {
       TurboService s = ((TurboService.TurboBinder) binder).getService();
+      PreferencesUtils.setLong(CourseSetupActivity.this.getApplicationContext(),
+              R.string.recording_course_track_id_key, getTrackId());
       s.start(getTrackId(),CourseSetupActivity.this);
       Toast.makeText(CourseSetupActivity.this, "Connected to turbo service",
           Toast.LENGTH_SHORT).show();
@@ -134,7 +137,7 @@ public class CourseSetupActivity extends Activity {
     public void run() {
       
       boolean success = true;
-      
+
       if (!startNewRecording) {
         return;
       }
