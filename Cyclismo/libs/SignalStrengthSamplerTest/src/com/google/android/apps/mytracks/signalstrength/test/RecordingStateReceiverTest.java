@@ -32,10 +32,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.cowboycoders.cyclisimo.signalstrength.test;
+package org.cowboycoders.cyclismo.signalstrength.test;
 
-import org.cowboycoders.cyclisimo.signalstrength.R;
-import org.cowboycoders.cyclisimo.signalstrength.RecordingStateReceiver;
+import org.cowboycoders.cyclismo.signalstrength.R;
+import org.cowboycoders.cyclismo.signalstrength.RecordingStateReceiver;
 
 import android.content.Context;
 import android.content.Intent;

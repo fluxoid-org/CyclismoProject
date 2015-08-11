@@ -32,9 +32,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.cowboycoders.cyclisimo.signalstrength;
+package org.cowboycoders.cyclismo.signalstrength;
 
-import static org.cowboycoders.cyclisimo.signalstrength.SignalStrengthConstants.TAG;
+import static org.cowboycoders.cyclismo.signalstrength.SignalStrengthConstants.TAG;
 
 import android.content.ContentResolver;
 import android.content.Context;

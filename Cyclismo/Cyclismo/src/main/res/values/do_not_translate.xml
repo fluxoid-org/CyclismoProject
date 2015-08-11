@@ -75,10 +75,10 @@ Google은 이용자에 대한 위치정보의 이용∙제공사실을 위치정
   <string name="marker_statistics_icon_url">http://maps.google.com/mapfiles/ms/micons/ylw-pushpin.png</string>
   <string name="marker_waypoint_icon_url">http://maps.google.com/mapfiles/ms/micons/blue-pushpin.png</string>
   <string name="my_tracks_privacy_url">www.google.com/policies/privacy/</string>
-  <string name="my_tracks_recording_service_name">Cyclisimo Recording Service</string>
+  <string name="my_tracks_recording_service_name">Cyclismo Recording Service</string>
   <string name="my_tracks_support_url">groups.google.com/a/googleproductforums.com/forum/#!categories/maps/mytracks</string>
   <string name="my_tracks_web_url">www.fluxoid.org</string>
-  <string name="permission_notification_value">org.cowboycoders.cyclisimo.MYTRACKS_NOTIFICATIONS</string>
+  <string name="permission_notification_value">org.cowboycoders.cyclismo.MYTRACKS_NOTIFICATIONS</string>
   <string name="send_google_docs_url">docs.google.com</string>
   <string name="send_google_fusion_tables_url">google.com/fusiontables</string>
   <string name="send_google_maps_url">maps.google.com</string>
@@ -93,18 +93,18 @@ Google은 이용자에 대한 위치정보의 이용∙제공사실을 위치정
   <string name="settings_recording_track_name_date_local_value">DATE_LOCAL</string>
   <string name="settings_recording_track_name_location_value">LOCATION</string>
   <string name="settings_recording_track_name_number_value">NUMBER</string>
-  <string name="track_action_end">org.cowboycoders.cyclisimo.END_CURRENT_TRACK</string>
-  <string name="track_action_pause">org.cowboycoders.cyclisimo.PAUSE_CURRENT_TRACK</string>
-  <string name="track_action_resume">org.cowboycoders.cyclisimo.RESUME_CURRENT_TRACK</string>
-  <string name="track_action_start">org.cowboycoders.cyclisimo.START_NEW_TRACK</string>
+  <string name="track_action_end">org.cowboycoders.cyclismo.END_CURRENT_TRACK</string>
+  <string name="track_action_pause">org.cowboycoders.cyclismo.PAUSE_CURRENT_TRACK</string>
+  <string name="track_action_resume">org.cowboycoders.cyclismo.RESUME_CURRENT_TRACK</string>
+  <string name="track_action_start">org.cowboycoders.cyclismo.START_NEW_TRACK</string>
   <string name="value_unknown">-</string>
   <string name="settings_courses_mode_simulation_value">SIMULATION</string>
-  <string name="anthub_action_shutdown">org.cowboycoders.cyclisimo.SHUTDOWN_ANT</string>
-  <string name="sensor_data_cadence">org.cowboycoders.cyclisimo.SENSOR_DATA_CADENCE</string>
-  <string name="sensor_data_power">org.cowboycoders.cyclisimo.SENSOR_DATA_POWER</string>
-  <string name="sensor_data_speed_kmh">org.cowboycoders.cyclisimo.SENSOR_DATA_SPEED_KMH</string>
-  <string name="sensor_data_heart_rate">org.cowboycoders.cyclisimo.SENSOR_DATA_HEART_RATE</string>
-  <string name="sensor_data_double_value">org.cowboycoders.cyclisimo.SENSOR_DATA_DOUBLE_VALUE</string>
+  <string name="anthub_action_shutdown">org.cowboycoders.cyclismo.SHUTDOWN_ANT</string>
+  <string name="sensor_data_cadence">org.cowboycoders.cyclismo.SENSOR_DATA_CADENCE</string>
+  <string name="sensor_data_power">org.cowboycoders.cyclismo.SENSOR_DATA_POWER</string>
+  <string name="sensor_data_speed_kmh">org.cowboycoders.cyclismo.SENSOR_DATA_SPEED_KMH</string>
+  <string name="sensor_data_heart_rate">org.cowboycoders.cyclismo.SENSOR_DATA_HEART_RATE</string>
+  <string name="sensor_data_double_value">org.cowboycoders.cyclismo.SENSOR_DATA_DOUBLE_VALUE</string>
   <string name="settings_bushido_antlog_filename">antlog</string>
   
   <string name="turbotrainer_tacx_bushido_headunit_value">TACX_BUSHIDO_HEADUNIT</string>
@@ -112,9 +112,9 @@ Google은 이용자에 대한 위치정보의 이용∙제공사실을 위치정
   <string name="turbotrainer_tacx_bushido_brake_pid_control_value">TACX_BUSHIDO_BRAKE_PID</string>
   <string name="turbotrainer_dummy_value">DUMMY_TURBO</string>
 
-  <string name="turbo_service_action_location_update">org.cowboycoders.cyclisimo.TURBO_SERVICE_LOCATION_UPDATE_ACTION</string>
-  <string name="turbo_service_action_course_start">org.cowboycoders.cyclisimo.TURBO_SERVICE_COURSE_START</string>
-  <string name="turbo_service_action_exception_thrown">org.cowboycoders.cyclisimo.TURBO_SERVICE_EXCEPTION_THROWN</string>
-  <string name="turbo_service_data_location_update">org.cowboycoders.cyclisimo.TURBO_SERVICE_LOCATION_UPDATE</string>
+  <string name="turbo_service_action_location_update">org.cowboycoders.cyclismo.TURBO_SERVICE_LOCATION_UPDATE_ACTION</string>
+  <string name="turbo_service_action_course_start">org.cowboycoders.cyclismo.TURBO_SERVICE_COURSE_START</string>
+  <string name="turbo_service_action_exception_thrown">org.cowboycoders.cyclismo.TURBO_SERVICE_EXCEPTION_THROWN</string>
+  <string name="turbo_service_data_location_update">org.cowboycoders.cyclismo.TURBO_SERVICE_LOCATION_UPDATE</string>
   
 </resources>

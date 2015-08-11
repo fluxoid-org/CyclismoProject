@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="org.cowboycoders.cyclisimo.samples.api"
+      package="org.cowboycoders.cyclismo.samples.api"
       android:versionCode="1"
       android:versionName="1.0">
     <uses-sdk android:minSdkVersion="7"/>
@@ -17,15 +17,15 @@
         <receiver android:exported="true"
                   android:name=".MyTracksReceiver">
             <intent-filter>
-                <action android:name="org.cowboycoders.cyclisimo.TRACK_STARTED" />
+                <action android:name="org.cowboycoders.cyclismo.TRACK_STARTED" />
             </intent-filter>
             <intent-filter>
-                <action android:name="org.cowboycoders.cyclisimo.TRACK_STOPPED" />
+                <action android:name="org.cowboycoders.cyclismo.TRACK_STOPPED" />
             </intent-filter>        
         </receiver>
     </application>
     
-    <uses-permission android:name="org.cowboycoders.cyclisimo.READ_TRACK_DATA" />
-    <uses-permission android:name="org.cowboycoders.cyclisimo.WRITE_TRACK_DATA" />
-    <uses-permission android:name="org.cowboycoders.cyclisimo.TRACK_NOTIFICATIONS" />
+    <uses-permission android:name="org.cowboycoders.cyclismo.READ_TRACK_DATA" />
+    <uses-permission android:name="org.cowboycoders.cyclismo.WRITE_TRACK_DATA" />
+    <uses-permission android:name="org.cowboycoders.cyclismo.TRACK_NOTIFICATIONS" />
 </manifest>

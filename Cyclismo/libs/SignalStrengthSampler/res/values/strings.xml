@@ -15,21 +15,21 @@
   limitations under the License.
 -->
 <resources>
-  <string name="app_name">Signal strength sampler for Cyclisimo</string>
+  <string name="app_name">Signal strength sampler for Cyclismo</string>
 
   <string name="settings_sampling">Sampling settings</string>
   <string name="settings_auto_start">Automatic start</string>
-  <string name="settings_auto_start_summary_on">Automatically start inserting signal strength waypoints whenever Cyclisimo starts recording a track.</string>
+  <string name="settings_auto_start_summary_on">Automatically start inserting signal strength waypoints whenever Cyclismo starts recording a track.</string>
   <string name="settings_auto_start_summary_off">You will need to manually start signal sampling using the controls below.</string>
   <string name="settings_auto_stop">Automatic stop</string>
-  <string name="settings_auto_stop_summary_on">Automatically stop inserting signal strength waypoints whenever Cyclisimo stops recording a track.</string>
+  <string name="settings_auto_stop_summary_on">Automatically stop inserting signal strength waypoints whenever Cyclismo stops recording a track.</string>
   <string name="settings_auto_stop_summary_off">You will need to manually stop signal sampling using the controls below.</string>
   <string name="settings_min_signal_sampling_period">Min. sampling period</string>
   <string name="settings_min_signal_sampling_period_summary">Minimum time between two recordings of the phone\'s signal strength</string>
 
   <string name="settings_control">Sampling control</string>
   <string name="settings_control_start">Start sampling</string>
-  <string name="settings_control_start_summary">Starts sampling signal strength immediately, if Cyclisimo is recording. Sampling will stop once Cyclisimo stops recording.</string>
+  <string name="settings_control_start_summary">Starts sampling signal strength immediately, if Cyclismo is recording. Sampling will stop once Cyclismo stops recording.</string>
   <string name="settings_control_stop">Stop sampling</string>
   <string name="settings_control_stop_summary">Stops sampling signal strength if sampling is currently active.</string>
 

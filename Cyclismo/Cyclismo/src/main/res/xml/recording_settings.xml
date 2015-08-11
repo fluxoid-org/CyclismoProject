@@ -16,11 +16,11 @@ limitations under the License.
 -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
   android:title="@string/settings_recording" >
-  <org.cowboycoders.cyclisimo.IntegerListPreference
+  <org.cowboycoders.cyclismo.IntegerListPreference
     android:defaultValue="0"
     android:key="@string/voice_frequency_key"
     android:title="@string/menu_voice_frequency" />
-  <org.cowboycoders.cyclisimo.IntegerListPreference
+  <org.cowboycoders.cyclismo.IntegerListPreference
     android:defaultValue="0"
     android:key="@string/split_frequency_key"
     android:title="@string/menu_split_frequency" />
@@ -28,28 +28,28 @@ limitations under the License.
     android:defaultValue="@string/settings_recording_track_name_location_value"
     android:key="@string/track_name_key"
     android:title="@string/settings_recording_track_name_title" />
-  <org.cowboycoders.cyclisimo.AutoCompleteTextPreference
+  <org.cowboycoders.cyclismo.AutoCompleteTextPreference
     android:defaultValue=""
     android:hint="@string/track_edit_activity_type_hint"
     android:key="@string/default_activity_key"
     android:title="@string/settings_recording_default_activity_title" />
-  <org.cowboycoders.cyclisimo.IntegerListPreference
+  <org.cowboycoders.cyclismo.IntegerListPreference
     android:defaultValue="0"
     android:key="@string/min_recording_interval_key"
     android:title="@string/settings_recording_min_recording_interval_title" />
-  <org.cowboycoders.cyclisimo.IntegerListPreference
+  <org.cowboycoders.cyclismo.IntegerListPreference
     android:defaultValue="0"
     android:key="@string/min_recording_distance_key"
     android:title="@string/settings_recording_min_recording_distance_title" />
-  <org.cowboycoders.cyclisimo.IntegerListPreference
+  <org.cowboycoders.cyclismo.IntegerListPreference
     android:defaultValue="200"
     android:key="@string/max_recording_distance_key"
     android:title="@string/settings_recording_max_recording_distance_title" />
-  <org.cowboycoders.cyclisimo.IntegerListPreference
+  <org.cowboycoders.cyclismo.IntegerListPreference
     android:defaultValue="200"
     android:key="@string/min_required_accuracy_key"
     android:title="@string/settings_recording_min_required_accuracy_title" />
-  <org.cowboycoders.cyclisimo.IntegerListPreference
+  <org.cowboycoders.cyclismo.IntegerListPreference
     android:defaultValue="10"
     android:key="@string/auto_resume_track_timeout_key"
     android:title="@string/settings_recording_auto_resume_track_timeout_title" />

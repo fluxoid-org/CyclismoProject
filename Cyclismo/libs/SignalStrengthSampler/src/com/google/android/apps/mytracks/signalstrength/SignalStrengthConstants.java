@@ -32,7 +32,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.cowboycoders.cyclisimo.signalstrength;
+package org.cowboycoders.cyclismo.signalstrength;
 
 import android.os.Build;
 
@@ -43,9 +43,9 @@ import android.os.Build;
  */
 public class SignalStrengthConstants {
   public static final String START_SAMPLING =
-      "org.cowboycoders.cyclisimo.signalstrength.START";
+      "org.cowboycoders.cyclismo.signalstrength.START";
   public static final String STOP_SAMPLING =
-    "org.cowboycoders.cyclisimo.signalstrength.STOP";
+    "org.cowboycoders.cyclismo.signalstrength.STOP";
 
   public static final int ANDROID_API_LEVEL = Integer.parseInt(
       Build.VERSION.SDK);

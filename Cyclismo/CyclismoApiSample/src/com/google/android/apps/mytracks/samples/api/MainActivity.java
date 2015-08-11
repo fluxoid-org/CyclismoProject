@@ -32,12 +32,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.cowboycoders.cyclisimo.samples.api;
+package org.cowboycoders.cyclismo.samples.api;
 
-import org.cowboycoders.cyclisimo.content.MyTracksProviderUtils;
-import org.cowboycoders.cyclisimo.content.Track;
-import org.cowboycoders.cyclisimo.content.Waypoint;
-import org.cowboycoders.cyclisimo.services.ITrackRecordingService;
+import org.cowboycoders.cyclismo.content.MyTracksProviderUtils;
+import org.cowboycoders.cyclismo.content.Track;
+import org.cowboycoders.cyclismo.content.Waypoint;
+import org.cowboycoders.cyclismo.services.ITrackRecordingService;
 
 import android.app.Activity;
 import android.content.ComponentName;
