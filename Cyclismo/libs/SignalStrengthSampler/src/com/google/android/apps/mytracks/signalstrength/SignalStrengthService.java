@@ -32,15 +32,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.cowboycoders.cyclisimo.signalstrength;
+package org.cowboycoders.cyclismo.signalstrength;
 
-import static org.cowboycoders.cyclisimo.signalstrength.SignalStrengthConstants.START_SAMPLING;
-import static org.cowboycoders.cyclisimo.signalstrength.SignalStrengthConstants.STOP_SAMPLING;
-import static org.cowboycoders.cyclisimo.signalstrength.SignalStrengthConstants.TAG;
+import static org.cowboycoders.cyclismo.signalstrength.SignalStrengthConstants.START_SAMPLING;
+import static org.cowboycoders.cyclismo.signalstrength.SignalStrengthConstants.STOP_SAMPLING;
+import static org.cowboycoders.cyclismo.signalstrength.SignalStrengthConstants.TAG;
 
-import org.cowboycoders.cyclisimo.content.WaypointCreationRequest;
-import org.cowboycoders.cyclisimo.services.ITrackRecordingService;
-import org.cowboycoders.cyclisimo.signalstrength.SignalStrengthListener.SignalStrengthCallback;
+import org.cowboycoders.cyclismo.content.WaypointCreationRequest;
+import org.cowboycoders.cyclismo.services.ITrackRecordingService;
+import org.cowboycoders.cyclismo.signalstrength.SignalStrengthListener.SignalStrengthCallback;
 
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;

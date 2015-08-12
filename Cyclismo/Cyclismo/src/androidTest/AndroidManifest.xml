@@ -16,25 +16,25 @@ limitations under the License.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:tools="http://schemas.android.com/tools"
-  package="org.cowboycoders.cyclisimo.test"
+  package="org.cowboycoders.cyclismo.test"
   android:versionCode="1"
   android:versionName="1.0" >
 
   <instrumentation
     tools:replace="android:targetPackage"
     android:name="android.test.InstrumentationTestRunner"
-    android:targetPackage="org.cowboycoders.cyclisimo" />
+    android:targetPackage="org.cowboycoders.cyclismo" />
 
   <instrumentation
-    android:name="org.cowboycoders.cyclisimo.endtoendtest.EndToEndTestRunner"
-    android:targetPackage="org.cowboycoders.cyclisimo" />
+    android:name="org.cowboycoders.cyclismo.endtoendtest.EndToEndTestRunner"
+    android:targetPackage="org.cowboycoders.cyclismo" />
 
   <uses-sdk
     android:minSdkVersion="14"/>
 
   <application
     tools:replace="android:label"
-    android:label="Cyclisimo Tests" >
+    android:label="Cyclismo Tests" >
     <uses-library android:name="android.test.runner" />
   </application>
 

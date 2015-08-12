@@ -32,13 +32,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.cowboycoders.cyclisimo.signalstrength.test;
+package org.cowboycoders.cyclismo.signalstrength.test;
 
-import org.cowboycoders.cyclisimo.signalstrength.SignalStrengthListener;
-import org.cowboycoders.cyclisimo.signalstrength.SignalStrengthListener.SignalStrengthCallback;
-import org.cowboycoders.cyclisimo.signalstrength.SignalStrengthListenerCupcake;
-import org.cowboycoders.cyclisimo.signalstrength.SignalStrengthListenerEclair;
-import org.cowboycoders.cyclisimo.signalstrength.SignalStrengthListenerFactory;
+import org.cowboycoders.cyclismo.signalstrength.SignalStrengthListener;
+import org.cowboycoders.cyclismo.signalstrength.SignalStrengthListener.SignalStrengthCallback;
+import org.cowboycoders.cyclismo.signalstrength.SignalStrengthListenerCupcake;
+import org.cowboycoders.cyclismo.signalstrength.SignalStrengthListenerEclair;
+import org.cowboycoders.cyclismo.signalstrength.SignalStrengthListenerFactory;
 import com.google.android.testing.mocking.AndroidMock;
 
 import android.test.AndroidTestCase;

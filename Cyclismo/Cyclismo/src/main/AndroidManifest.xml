@@ -16,7 +16,7 @@ limitations under the License.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="org.cowboycoders.cyclisimo"
+    package="org.cowboycoders.cyclismo"
     android:installLocation="auto"
     android:versionCode="65"
     android:versionName="0.0.5" >
@@ -54,45 +54,45 @@ limitations under the License.
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <!-- Permission to write to SD card -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!-- Permissions to access Cyclisimo data -->
-    <uses-permission android:name="org.cowboycoders.cyclisimo.MYTRACKS_NOTIFICATIONS" />
-    <uses-permission android:name="org.cowboycoders.cyclisimo.READ_TRACK_DATA" />
-    <uses-permission android:name="org.cowboycoders.cyclisimo.WRITE_TRACK_DATA" />
+    <!-- Permissions to access Cyclismo data -->
+    <uses-permission android:name="org.cowboycoders.cyclismo.MYTRACKS_NOTIFICATIONS" />
+    <uses-permission android:name="org.cowboycoders.cyclismo.READ_TRACK_DATA" />
+    <uses-permission android:name="org.cowboycoders.cyclismo.WRITE_TRACK_DATA" />
 
-    <!-- Permission to receive Cyclisimo internal broadcasts -->
+    <!-- Permission to receive Cyclismo internal broadcasts -->
     <permission
-        android:name="org.cowboycoders.cyclisimo.MYTRACKS_NOTIFICATIONS"
+        android:name="org.cowboycoders.cyclismo.MYTRACKS_NOTIFICATIONS"
         android:description="@string/permission_notification_label"
         android:label="@string/permission_notification_label"
         android:permissionGroup="android.permission-group.LOCATION"
         android:protectionLevel="signature" />
     <!-- Permission to read track data -->
     <permission
-        android:name="org.cowboycoders.cyclisimo.READ_TRACK_DATA"
+        android:name="org.cowboycoders.cyclismo.READ_TRACK_DATA"
         android:description="@string/permission_read_description"
         android:label="@string/permission_read_label"
         android:permissionGroup="android.permission-group.LOCATION"
         android:protectionLevel="dangerous" />
     <!-- Permission to receive track start/end broadcasts -->
     <permission
-        android:name="org.cowboycoders.cyclisimo.TRACK_NOTIFICATIONS"
+        android:name="org.cowboycoders.cyclismo.TRACK_NOTIFICATIONS"
         android:description="@string/permission_notification_description"
         android:label="@string/permission_notification_label"
         android:permissionGroup="android.permission-group.LOCATION"
         android:protectionLevel="dangerous" />
     <!-- Permission to write track data, either directly or through service calls -->
     <permission
-        android:name="org.cowboycoders.cyclisimo.WRITE_TRACK_DATA"
+        android:name="org.cowboycoders.cyclismo.WRITE_TRACK_DATA"
         android:description="@string/permission_write_description"
         android:label="@string/permission_write_label"
         android:permissionGroup="android.permission-group.LOCATION"
         android:protectionLevel="dangerous" />
     <!-- Permission for map view v2. Note the prefix must be the application package name -->
     <permission
-        android:name="org.cowboycoders.cyclisimo.permission.MAPS_RECEIVE"
+        android:name="org.cowboycoders.cyclismo.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
 
-    <uses-permission android:name="org.cowboycoders.cyclisimo.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="org.cowboycoders.cyclismo.permission.MAPS_RECEIVE" />
     <!-- Required features -->
     <uses-feature
         android:glEsVersion="0x00020000"
@@ -185,7 +185,7 @@ limitations under the License.
         <activity android:name=".MarkerListActivity" >
             <meta-data
                 android:name="android.app.default_searchable"
-                android:value="org.cowboycoders.cyclisimo.SearchListActivity" />
+                android:value="org.cowboycoders.cyclismo.SearchListActivity" />
         </activity>
         <activity
             android:name=".SearchListActivity"
@@ -217,7 +217,7 @@ limitations under the License.
 
             <meta-data
                 android:name="android.app.default_searchable"
-                android:value="org.cowboycoders.cyclisimo.SearchListActivity" />
+                android:value="org.cowboycoders.cyclismo.SearchListActivity" />
         </activity>
         <activity
             android:name=".CourseSetupActivity"
@@ -229,7 +229,7 @@ limitations under the License.
             <!-- </intent-filter> -->
             <!-- <meta-data -->
             <!-- android:name="android.app.default_searchable" -->
-            <!-- android:value="org.cowboycoders.cyclisimo.SearchListActivity" /> -->
+            <!-- android:value="org.cowboycoders.cyclismo.SearchListActivity" /> -->
         </activity>
         <activity
             android:name=".UserListActivity"
@@ -241,7 +241,7 @@ limitations under the License.
         <activity android:name=".BikeEditActivity" />
 
         <!-- <activity -->
-        <!-- android:name="org.cowboycoders.cyclisimo.TurboTrainerListActivity" -->
+        <!-- android:name="org.cowboycoders.cyclismo.TurboTrainerListActivity" -->
         <!-- android:launchMode="singleTop" > -->
 
 
@@ -251,7 +251,7 @@ limitations under the License.
         <!-- </intent-filter> -->
         <!-- <meta-data -->
         <!-- android:name="android.app.default_searchable" -->
-        <!-- android:value="org.cowboycoders.cyclisimo.SearchListActivity" /> -->
+        <!-- android:value="org.cowboycoders.cyclismo.SearchListActivity" /> -->
         <!-- </activity> -->
 
         <activity android:name=".io.backup.BackupActivity" />
@@ -314,7 +314,7 @@ limitations under the License.
             android:exported="true"
             android:icon="@drawable/arrow_320"
             android:label="@string/my_tracks_recording_service"
-            android:permission="org.cowboycoders.cyclisimo.WRITE_TRACK_DATA" />
+            android:permission="org.cowboycoders.cyclismo.WRITE_TRACK_DATA" />
         <!-- Receivers -->
         <receiver android:name=".BootReceiver" >
             <intent-filter>
@@ -324,11 +324,11 @@ limitations under the License.
         <receiver android:name=".widgets.TrackWidgetProvider" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="org.cowboycoders.cyclisimo.TRACK_PAUSED" />
-                <action android:name="org.cowboycoders.cyclisimo.TRACK_RESUMED" />
-                <action android:name="org.cowboycoders.cyclisimo.TRACK_STARTED" />
-                <action android:name="org.cowboycoders.cyclisimo.TRACK_STOPPED" />
-                <action android:name="org.cowboycoders.cyclisimo.TRACK_UPDATE" />
+                <action android:name="org.cowboycoders.cyclismo.TRACK_PAUSED" />
+                <action android:name="org.cowboycoders.cyclismo.TRACK_RESUMED" />
+                <action android:name="org.cowboycoders.cyclismo.TRACK_STARTED" />
+                <action android:name="org.cowboycoders.cyclismo.TRACK_STOPPED" />
+                <action android:name="org.cowboycoders.cyclismo.TRACK_UPDATE" />
             </intent-filter>
 
             <meta-data
@@ -336,23 +336,23 @@ limitations under the License.
                 android:resource="@xml/track_widget_info" />
         </receiver>
         <!-- Providers -->
-        <!-- Cyclisimo data provider -->
+        <!-- Cyclismo data provider -->
         <provider
             android:name=".content.MyTracksProvider"
-            android:authorities="org.cowboycoders.cyclisimo"
+            android:authorities="org.cowboycoders.cyclismo"
             android:exported="true"
-            android:readPermission="org.cowboycoders.cyclisimo.READ_TRACK_DATA"
-            android:writePermission="org.cowboycoders.cyclisimo.WRITE_TRACK_DATA" />
+            android:readPermission="org.cowboycoders.cyclismo.READ_TRACK_DATA"
+            android:writePermission="org.cowboycoders.cyclismo.WRITE_TRACK_DATA" />
         <provider
             android:name=".content.MyTracksCourseProvider"
-            android:authorities="org.cowboycoders.cyclisimo.courses"
+            android:authorities="org.cowboycoders.cyclismo.courses"
             android:exported="true"
-            android:readPermission="org.cowboycoders.cyclisimo.READ_TRACK_DATA"
-            android:writePermission="org.cowboycoders.cyclisimo.WRITE_TRACK_DATA" />
+            android:readPermission="org.cowboycoders.cyclismo.READ_TRACK_DATA"
+            android:writePermission="org.cowboycoders.cyclismo.WRITE_TRACK_DATA" />
         <!-- Search suggestion provider -->
         <provider
             android:name=".content.SearchEngineProvider"
-            android:authorities="org.cowboycoders.cyclisimo.search"
+            android:authorities="org.cowboycoders.cyclismo.search"
             android:exported="false" />
 
         <activity
