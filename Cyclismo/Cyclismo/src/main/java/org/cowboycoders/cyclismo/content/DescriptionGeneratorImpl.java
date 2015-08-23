@@ -148,6 +148,18 @@ public class DescriptionGeneratorImpl implements DescriptionGenerator {
     Pair<Double, Double> maxSpeed = writeSpeed(
         stats.getMaxSpeed(), builder, R.string.description_max_speed, lineBreak);
 
+    // Average heart rate
+    writeHeartRate(
+        stats.getAverageMovingHeartRate(), builder, R.string.description_avg_heart_rate, lineBreak);
+
+    // Average power
+    writePower(
+        stats.getAverageMovingPower(), builder, R.string.description_avg_power, lineBreak);
+
+    // Average cadence
+    writeCadence(
+        stats.getAverageMovingCadence(), builder, R.string.description_avg_cadence, lineBreak);
+
     // Average pace
     writePace(averageSpeed, builder, R.string.description_average_pace, lineBreak);
 
@@ -215,7 +227,7 @@ public class DescriptionGeneratorImpl implements DescriptionGenerator {
   /**
    * Writes speed.
    *
-   * @param speed speed in meters per second
+   * @param speed in meters per second
    * @param builder StringBuilder to append speed
    * @param resId resource id of speed string
    * @param lineBreak line break string
@@ -230,6 +242,49 @@ public class DescriptionGeneratorImpl implements DescriptionGenerator {
     builder.append(context.getString(resId, speedInKmHr, speedInMiHr));
     builder.append(lineBreak);
     return Pair.create(speedInKmHr, speedInMiHr);
+  }
+
+
+  /**
+   * Writes power to specified string builder.
+   *
+   * @param power in Watts
+   * @param builder StringBuilder to append power
+   * @param resId resource id of time string
+   * @param lineBreak line break string
+   */
+  @VisibleForTesting
+  void writePower(double power, StringBuilder builder, int resId, String lineBreak) {
+    builder.append(context.getString(resId, Math.round(power)));
+    builder.append(lineBreak);
+  }
+
+  /**
+   * Writes cadence to specified string builder.
+   *
+   * @param cadence in RPM
+   * @param builder StringBuilder to append cadence
+   * @param resId resource id of time string
+   * @param lineBreak line break string
+   */
+  @VisibleForTesting
+  void writeCadence(int cadence, StringBuilder builder, int resId, String lineBreak) {
+    builder.append(context.getString(resId, cadence));
+    builder.append(lineBreak);
+  }
+
+  /**
+   * Writes heart rate to specified string builder.
+   *
+   * @param heartRate in BPM
+   * @param builder StringBuilder to heart rate
+   * @param resId resource id of time string
+   * @param lineBreak line break string
+   */
+  @VisibleForTesting
+  void writeHeartRate(int heartRate, StringBuilder builder, int resId, String lineBreak) {
+    builder.append(context.getString(resId, heartRate));
+    builder.append(lineBreak);
   }
 
   /**
