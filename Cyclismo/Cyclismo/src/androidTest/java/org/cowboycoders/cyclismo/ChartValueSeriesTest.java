@@ -64,8 +64,7 @@ public class ChartValueSeriesTest extends AndroidTestCase {
   }
 
   public void testEnabled() {
-    // FIXME: Fails on purpose (set to false)
-    series.setEnabled(true);
+    series.setEnabled(false);
     assertFalse(series.isEnabled());
   }
 
