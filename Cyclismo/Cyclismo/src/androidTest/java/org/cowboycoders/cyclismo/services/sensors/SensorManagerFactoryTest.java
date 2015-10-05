@@ -41,6 +41,7 @@ public class SensorManagerFactoryTest extends AndroidTestCase {
     ApiAdapterFactory.getApiAdapter().applyPreferenceChanges(sharedPreferences.edit().clear());
   }
 
+  /* TODO(doug) This functionality is commented out in getSensorManager() Do we want to remove it?
   @SmallTest
   public void testDefaultSettings() throws Exception {
     assertNull(SensorManagerFactory.getSystemSensorManager(getContext()));
@@ -54,6 +55,11 @@ public class SensorManagerFactoryTest extends AndroidTestCase {
   @SmallTest
   public void testCreatePolar() throws Exception {
     assertClassForName(PolarSensorManager.class, R.string.sensor_type_value_polar);
+  } */
+
+  @SmallTest
+  public void testCreateTurbo() throws Exception {
+      assertClassForName(TurboSensorManager.class, R.string.sensor_type_value_turbo);
   }
 
   private void assertClassForName(Class<?> c, int i) {
