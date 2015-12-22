@@ -722,6 +722,7 @@ public class TrackRecordingServiceTest extends ServiceTestCase<TestRecordingServ
     Track dummyTrack = new Track();
     dummyTrack.setId(id);
     dummyTrack.setName("Dummy Track");
+    dummyTrack.setOwner(123L);
     TripStatistics tripStatistics = new TripStatistics();
     tripStatistics.setStopTime(stopTime);
     dummyTrack.setTripStatistics(tripStatistics);
