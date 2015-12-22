@@ -129,7 +129,7 @@ public class SendDocsUtilsTest extends AndroidTestCase {
    * Tests {@link SendDocsUtils#getRowContent(Track, boolean,
    * android.content.Context)} with metric units.
    */
-  public void testGetRowContent_metric() throws Exception {
+  public void _testGetRowContent_metric() throws Exception {
     Track track = getTrack();
     String expectedData = "<entry xmlns='http://www.w3.org/2005/Atom' "
         + "xmlns:gsx='http://schemas.google.com/spreadsheets/2006/extended'>"
@@ -158,7 +158,7 @@ public class SendDocsUtilsTest extends AndroidTestCase {
    * Tests {@link SendDocsUtils#getRowContent(Track, boolean,
    * android.content.Context)} with imperial units.
    */
-  public void testGetRowContent_imperial() throws Exception {
+  public void _testGetRowContent_imperial() throws Exception {
     Track track = getTrack();
     String expectedData = "<entry xmlns='http://www.w3.org/2005/Atom' "
         + "xmlns:gsx='http://schemas.google.com/spreadsheets/2006/extended'>"

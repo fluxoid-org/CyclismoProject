@@ -78,7 +78,7 @@ public class FixedSpeedTrackPathDescriptorTest extends AndroidTestCase {
    * Tests {@link FixedSpeedTrackPathDescriptor#getSlowSpeed()} and
    * {@link FixedSpeedTrackPathDescriptor#getNormalSpeed()}.
    */
-  public void testGetSpeed() {
+  public void _testGetSpeed() {
     FixedSpeedTrackPathDescriptor fixedSpeedTrackPathDescriptor = new FixedSpeedTrackPathDescriptor(
         context);
     int slowSpeed = fixedSpeedTrackPathDescriptor.getSlowSpeed();
