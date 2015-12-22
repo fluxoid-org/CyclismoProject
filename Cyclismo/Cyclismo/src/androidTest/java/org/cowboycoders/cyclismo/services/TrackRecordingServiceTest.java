@@ -221,6 +221,9 @@ public class TrackRecordingServiceTest extends ServiceTestCase<TestRecordingServ
     // No recording track.
     PreferencesUtils.setLong(
         context, R.string.recording_track_id_key, PreferencesUtils.RECORDING_TRACK_ID_DEFAULT);
+    // Setup a dummy user
+    PreferencesUtils.setLong(
+        context, R.string.settings_select_user_current_selection_key, 1l);
   }
 
   @SmallTest
@@ -719,6 +722,7 @@ public class TrackRecordingServiceTest extends ServiceTestCase<TestRecordingServ
     Track dummyTrack = new Track();
     dummyTrack.setId(id);
     dummyTrack.setName("Dummy Track");
+    dummyTrack.setOwner(123L);
     TripStatistics tripStatistics = new TripStatistics();
     tripStatistics.setStopTime(stopTime);
     dummyTrack.setTripStatistics(tripStatistics);

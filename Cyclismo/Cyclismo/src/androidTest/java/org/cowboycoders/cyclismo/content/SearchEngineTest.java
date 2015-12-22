@@ -95,6 +95,7 @@ public class SearchEngineTest extends AndroidTestCase {
     track.setName(title);
     track.setDescription(description);
     track.setCategory(category);
+    track.setOwner(1l);
 
     TripStatistics stats = track.getTripStatistics();
     if (hoursAgo > 0) {

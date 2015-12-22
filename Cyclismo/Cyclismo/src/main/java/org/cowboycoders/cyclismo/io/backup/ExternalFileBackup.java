@@ -64,14 +64,15 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import static org.cowboycoders.cyclismo.Constants.TAG;
-
 /**
  * Handler for writing or reading single-file backups.
  *
  * @author Rodrigo Damazio
  */
 class ExternalFileBackup {
+
+  private static final String TAG = ExternalFileBackup.class.getSimpleName();
+
   // Filename format - in UTC
   private static final SimpleDateFormat BACKUP_FILENAME_FORMAT =
       new SimpleDateFormat("'backup-'yyyy-MM-dd_HH-mm-ss'.zip'");
@@ -108,7 +109,7 @@ class ExternalFileBackup {
   private File getBackupsDirectory(boolean create) {
     String dirName = FileUtils.buildExternalDirectoryPath(BACKUPS_SUBDIR);
     final File dir = new File(dirName);
-    Log.d(Constants.TAG, "Dir: " + dir.getAbsolutePath());
+    Log.d(TAG, "Dir: " + dir.getAbsolutePath());
     if (create) {
       // Try to create - if that fails, return null
       return FileUtils.ensureDirectoryExists(dir) ? dir : null;
@@ -167,7 +168,7 @@ class ExternalFileBackup {
    * Synchronously writes a backup to the given file.
    */
   private void writeToFile(File outputFile) throws IOException {
-    Log.d(Constants.TAG,
+    Log.d(TAG,
         "Writing backup to file " + outputFile.getAbsolutePath());
 
     // Create all the auxiliary classes that will do the writing
@@ -269,7 +270,7 @@ class ExternalFileBackup {
    * Synchronously restores the backup from the given file.
    */
   private void restoreFromFile(File inputFile) throws IOException {
-    Log.d(Constants.TAG,
+    Log.d(TAG,
         "Restoring from file " + inputFile.getAbsolutePath());
 
     PreferenceBackupHelper preferencesHelper = new PreferenceBackupHelper(context);

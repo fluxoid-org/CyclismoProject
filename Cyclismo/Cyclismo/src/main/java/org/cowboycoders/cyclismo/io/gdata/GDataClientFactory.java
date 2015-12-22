@@ -48,6 +48,8 @@ import org.cowboycoders.cyclismo.Constants;
  */
 public class GDataClientFactory {
 
+  private static final String TAG = "GDataClientFactory";
+
   private GDataClientFactory() { }
 
   /**
@@ -64,7 +66,7 @@ public class GDataClientFactory {
     } catch (LinkageError e) {
       // On all other platforms use the client implementation packaged in the
       // apk.
-      Log.i(Constants.TAG, "Using mytracks AndroidGDataClient.", e);
+      Log.i(TAG, "GDataClient: ", e);
       return new org.cowboycoders.cyclismo.io.gdata.AndroidGDataClient();
     }
   }

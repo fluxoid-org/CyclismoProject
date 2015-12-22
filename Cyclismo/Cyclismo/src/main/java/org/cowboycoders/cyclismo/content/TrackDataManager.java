@@ -44,8 +44,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static org.cowboycoders.cyclismo.Constants.TAG;
-
 /**
  * Manages register/unregister {@link TrackDataListener} and keeping the state
  * for each registered listener.
@@ -53,6 +51,8 @@ import static org.cowboycoders.cyclismo.Constants.TAG;
  * @author Rodrigo Damazio
  */
 public class TrackDataManager {
+
+  private static final String TAG = TrackDataManager.class.getSimpleName();
 
   // Map of listener to its track data types
   private final Map<TrackDataListener, EnumSet<TrackDataType>>

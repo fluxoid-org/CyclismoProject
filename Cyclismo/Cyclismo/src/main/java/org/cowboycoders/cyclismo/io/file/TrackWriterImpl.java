@@ -55,8 +55,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
-import static org.cowboycoders.cyclismo.Constants.TAG;
-
 /**
  * This class exports tracks to the SD card.  It is intended to be format-
  * neutral -- it handles creating the output file and reading the track to be
@@ -67,6 +65,9 @@ import static org.cowboycoders.cyclismo.Constants.TAG;
  * @author Rodrigo Damazio
  */
 class TrackWriterImpl implements TrackWriter {
+
+  private static final String TAG = TrackWriterImpl.class.getSimpleName();
+
   private final Context context;
   private final MyTracksProviderUtils providerUtils;
   private final Track track;
@@ -117,7 +118,7 @@ class TrackWriterImpl implements TrackWriter {
     try {
       writeThread.join();
     } catch (InterruptedException e) {
-      Log.e(Constants.TAG, "Interrupted waiting for write to complete", e);
+      Log.e(TAG, "Interrupted waiting for write to complete", e);
     }
   }
 
@@ -130,7 +131,7 @@ class TrackWriterImpl implements TrackWriter {
         try {
           writeDocument();
         } catch (InterruptedException e) {
-          Log.i(Constants.TAG, "The track write was interrupted");
+          Log.i(TAG, "The track write was interrupted");
           if (file != null && !file.delete()) {
             Log.w(TAG, "Failed to delete file " + file.getAbsolutePath());
           }
@@ -143,14 +144,14 @@ class TrackWriterImpl implements TrackWriter {
 
   public void stopWriteTrack() {
     if (writeThread != null && writeThread.isAlive()) {
-      Log.i(Constants.TAG, "Attempting to stop track write");
+      Log.i(TAG, "Attempting to stop track write");
       writeThread.interrupt();
 
       try {
         writeThread.join();
-        Log.i(Constants.TAG, "Track write stopped");
+        Log.i(TAG, "Track write stopped");
       } catch (InterruptedException e) {
-        Log.e(Constants.TAG, "Failed to wait for writer to stop", e);
+        Log.e(TAG, "Failed to wait for writer to stop", e);
       }
     }
   }
@@ -193,16 +194,16 @@ class TrackWriterImpl implements TrackWriter {
     String fileName = FileUtils.buildUniqueFileName(
         directory, track.getName(), writer.getExtension());
     if (fileName == null) {
-      Log.e(Constants.TAG,
+      Log.e(TAG,
           "Unable to get a unique filename for " + track.getName());
       return false;
     }
 
-    Log.i(Constants.TAG, "Writing track to: " + fileName);
+    Log.i(TAG, "Writing track to: " + fileName);
     try {
       writer.prepare(track, newOutputStream(fileName));
     } catch (FileNotFoundException e) {
-      Log.e(Constants.TAG, "Failed to open output file.", e);
+      Log.e(TAG, "Failed to open output file.", e);
       errorMessage = R.string.external_storage_save_error;
       return false;
     }
@@ -214,7 +215,7 @@ class TrackWriterImpl implements TrackWriter {
    */
   protected boolean canWriteFile() {
     if (!FileUtils.isSdCardAvailable()) {
-      Log.i(Constants.TAG, "Could not find SD card.");
+      Log.i(TAG, "Could not find SD card.");
       errorMessage = R.string.external_storage_error_no_storage;
       return false;
     }
@@ -225,7 +226,7 @@ class TrackWriterImpl implements TrackWriter {
       directory = newFile(dirName);
     }
     if (!FileUtils.ensureDirectoryExists(directory)) {
-      Log.i(Constants.TAG, "Could not create export directory.");
+      Log.i(TAG, "Could not create export directory.");
       errorMessage = R.string.external_storage_save_error_create_dir;
       return false;
     }
@@ -261,8 +262,7 @@ class TrackWriterImpl implements TrackWriter {
     // problem because we don't try to load them into objects all at the
     // same time.
     Cursor cursor = null;
-    cursor = providerUtils.getWaypointCursor(trackId, 0,
-        Constants.MAX_LOADED_WAYPOINTS_POINTS);
+    cursor = providerUtils.getWaypointCursor(trackId, 0, Constants.MAX_LOADED_WAYPOINTS_POINTS);
     boolean hasWaypoints = false;
     if (cursor != null) {
       try {
@@ -291,14 +291,14 @@ class TrackWriterImpl implements TrackWriter {
    * Does the actual work of writing the track to the now open file.
    */
   void writeDocument() throws InterruptedException {
-    Log.d(Constants.TAG, "Started writing track.");
+    Log.d(TAG, "Started writing track.");
     writer.writeHeader();
     writeWaypoints(track.getId());
     writeLocations();
     writer.writeFooter();
     writer.close();
     success = true;
-    Log.d(Constants.TAG, "Done writing track.");
+    Log.d(TAG, "Done writing track.");
     errorMessage = R.string.external_storage_save_success;
   }
 

@@ -50,14 +50,14 @@ import org.cowboycoders.cyclismo.stats.TripStatistics;
 import org.cowboycoders.cyclismo.util.PreferencesUtils;
 import org.cowboycoders.cyclismo.util.UnitConversions;
 
-import static org.cowboycoders.cyclismo.Constants.TAG;
-
 /**
  * A dynamic speed path descriptor.
  * 
  * @author Vangelis S.
  */
 public class DynamicSpeedTrackPathDescriptor implements TrackPathDescriptor {
+
+  private static final String TAG = "DynamicSpeedTrackPathDescriptor";
 
   private final OnSharedPreferenceChangeListener
       sharedPreferenceChangeListener = new OnSharedPreferenceChangeListener() {

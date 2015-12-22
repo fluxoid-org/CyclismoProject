@@ -49,8 +49,6 @@ import org.cowboycoders.cyclismo.R;
 import org.cowboycoders.cyclismo.services.ITrackRecordingService;
 import org.cowboycoders.cyclismo.widgets.TrackWidgetProvider;
 
-import static org.cowboycoders.cyclismo.Constants.TAG;
-
 /**
  * A service to control starting and stopping of a recording. This service,
  * through the AndroidManifest.xml, is configured to only allow components of
@@ -62,6 +60,8 @@ import static org.cowboycoders.cyclismo.Constants.TAG;
  * @author Jimmy Shih
  */
 public class ControlRecordingService extends IntentService implements ServiceConnection {
+
+  private static final String TAG = "ControlRecordingService";
 
   private ITrackRecordingService trackRecordingService;
   private boolean connected = false;
@@ -141,7 +141,7 @@ public class ControlRecordingService extends IntentService implements ServiceCon
           service.resumeCurrentTrack();
         }
       } catch (RemoteException e) {
-        Log.d(TAG, "ControlRecordingService onHandleIntent RemoteException", e);
+        Log.d(TAG, "onHandleIntent RemoteException", e);
       }
     }
     unbindService(this);

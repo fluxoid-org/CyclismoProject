@@ -44,7 +44,6 @@ import org.cowboycoders.cyclismo.services.TrackRecordingService;
 
 import static android.content.Intent.ACTION_BOOT_COMPLETED;
 import static org.cowboycoders.cyclismo.Constants.RESUME_TRACK_EXTRA_NAME;
-import static org.cowboycoders.cyclismo.Constants.TAG;
 
 /**
  * This class handles MyTracks related broadcast messages.
@@ -63,9 +62,11 @@ import static org.cowboycoders.cyclismo.Constants.TAG;
  */
 public class BootReceiver extends BroadcastReceiver {
 
+  private static final String TAG = BootReceiver.class.getSimpleName();
+
   @Override
   public void onReceive(Context context, Intent intent) {
-    Log.d(TAG, "BootReceiver.onReceive: " + intent.getAction());
+    Log.d(TAG, "onReceive: " + intent.getAction());
     if (ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
       Intent startIntent = new Intent(context, TrackRecordingService.class)
           .putExtra(RESUME_TRACK_EXTRA_NAME, true);
@@ -74,7 +75,7 @@ public class BootReceiver extends BroadcastReceiver {
       Intent removeTempFilesIntent = new Intent(context, RemoveTempFilesService.class);
       context.startService(removeTempFilesIntent);
     } else {
-      Log.w(TAG, "BootReceiver: unsupported action");
+      Log.w(TAG, "Unsupported action");
     }
   }
 }

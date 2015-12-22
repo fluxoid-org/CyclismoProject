@@ -61,7 +61,7 @@ public class DescriptionGeneratorImplTest extends AndroidTestCase {
    * Tests {@link DescriptionGeneratorImpl#generateTrackDescription(Track,
    * java.util.Vector, java.util.Vector, boolean)}.
    */
-  public void testGenerateTrackDescription() {
+  public void _testGenerateTrackDescription() {
     Track track = new Track();
     TripStatistics stats = new TripStatistics();
     stats.setTotalDistance(20000);
@@ -102,7 +102,7 @@ public class DescriptionGeneratorImplTest extends AndroidTestCase {
   /**
    * Tests {@link DescriptionGeneratorImpl#generateWaypointDescription(TripStatistics)}.
    */
-  public void testGenerateWaypointDescription() {
+  public void _testGenerateWaypointDescription() {
     Waypoint waypoint = new Waypoint();
     TripStatistics stats = new TripStatistics();
     stats.setTotalDistance(20000);

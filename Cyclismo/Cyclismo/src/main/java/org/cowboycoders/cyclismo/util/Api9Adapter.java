@@ -43,8 +43,6 @@ import android.util.Log;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 
-import org.cowboycoders.cyclismo.Constants;
-
 import java.util.Arrays;
 
 /**
@@ -54,6 +52,8 @@ import java.util.Arrays;
  */
 @TargetApi(9)
 public class Api9Adapter extends Api8Adapter {
+
+  private static final String TAG = "Api9Adapter";
   
   @Override
   public void applyPreferenceChanges(Editor editor) {
@@ -63,7 +63,7 @@ public class Api9Adapter extends Api8Adapter {
 
   @Override
   public void enableStrictMode() {
-    Log.d(Constants.TAG, "Enabling strict mode");
+    Log.d(TAG, "Enabling strict mode");
     StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
         .detectAll()
         .penaltyLog()

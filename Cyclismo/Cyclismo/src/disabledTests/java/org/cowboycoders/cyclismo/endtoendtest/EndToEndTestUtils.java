@@ -148,7 +148,6 @@ public class EndToEndTestUtils {
   static boolean isEmulator = true;
   static boolean hasGpsSingal = true;
   static boolean isCheckedFirstLaunch = false;
-  static boolean isGooglePlayServicesLatest = true;
   public static final String LOG_TAG = "MyTracksTest";
 
   private EndToEndTestUtils() {}
@@ -252,13 +251,6 @@ public class EndToEndTestUtils {
   private static void setIsEmulator() {
     isEmulator = android.os.Build.MODEL.equals("google_sdk");
   }
-  
-  /**
-  * Checks whether the Google Play Services need update.
-  */
-  private static boolean isGooglePlayServicesLatest() {
-    return findTextView("Google Play services") == null;
-  }
 
   /**
    * A setup for debugging end-to-end tests.
@@ -288,21 +280,9 @@ public class EndToEndTestUtils {
     EndToEndTestUtils.activityMytracks = activityMyTracks;
     SOLO = new Solo(EndToEndTestUtils.instrumentation, EndToEndTestUtils.activityMytracks);
 
-    if (!isGooglePlayServicesLatest) {
-      SOLO.finishOpenedActivities();
-      Assert.fail();
-      Log.e(LOG_TAG, "Need update Google Play Services");
-    }
-
     // Check if open MyTracks first time after install. If so, there would be a
     // welcome view with accept buttons. And makes sure only check once.
     if (!isCheckedFirstLaunch) {
-      isGooglePlayServicesLatest = isGooglePlayServicesLatest();
-      if (!isGooglePlayServicesLatest) {
-        SOLO.finishOpenedActivities();
-        Assert.fail();
-        Log.e(LOG_TAG, "Need update Google Play Services");
-      }
       setIsEmulator();
       if ((getButtonOnScreen(activityMytracks.getString(R.string.eula_accept),
           false, false) != null)) {

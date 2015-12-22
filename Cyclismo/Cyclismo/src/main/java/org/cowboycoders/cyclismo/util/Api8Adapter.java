@@ -63,6 +63,8 @@ import java.util.List;
  */
 public class Api8Adapter implements ApiAdapter {
 
+  private static final String TAG = "Api8Adapter";
+
   @Override
   public void applyPreferenceChanges(Editor editor) {
     editor.commit();
@@ -99,15 +101,15 @@ public class Api8Adapter implements ApiAdapter {
       insecure.setAccessible(true);
       return (BluetoothSocket) insecure.invoke(bluetoothDevice, 1);
     } catch (SecurityException e) {
-      Log.d(Constants.TAG, "Unable to create insecure connection", e);
+      Log.d(TAG, "Unable to create insecure connection", e);
     } catch (NoSuchMethodException e) {
-      Log.d(Constants.TAG, "Unable to create insecure connection", e);
+      Log.d(TAG, "Unable to create insecure connection", e);
     } catch (IllegalArgumentException e) {
-      Log.d(Constants.TAG, "Unable to create insecure connection", e);
+      Log.d(TAG, "Unable to create insecure connection", e);
     } catch (IllegalAccessException e) {
-      Log.d(Constants.TAG, "Unable to create insecure connection", e);
+      Log.d(TAG, "Unable to create insecure connection", e);
     } catch (InvocationTargetException e) {
-      Log.d(Constants.TAG, "Unable to create insecure connection", e);
+      Log.d(TAG, "Unable to create insecure connection", e);
     }
     return bluetoothDevice.createRfcommSocketToServiceRecord(BluetoothConnectionManager.MY_TRACKS_UUID);
   }

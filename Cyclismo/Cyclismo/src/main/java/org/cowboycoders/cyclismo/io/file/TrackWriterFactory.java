@@ -43,14 +43,14 @@ import android.util.Log;
 import org.cowboycoders.cyclismo.content.MyTracksProviderUtils;
 import org.cowboycoders.cyclismo.content.Track;
 
-import static org.cowboycoders.cyclismo.Constants.TAG;
-
 /**
  * A factory to produce track writers for any format.
  *
  * @author Rodrigo Damazio
  */
 public class TrackWriterFactory {
+
+  private static final String TAG = TrackWriterFactory.class.getSimpleName();
 
   /**
    * Definition of all possible track formats.
