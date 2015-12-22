@@ -631,8 +631,10 @@ public class TurboService extends Service {
       } catch (SecurityException e) {
         // is this possible now we aren't using mock locations?
         handleException(e,"Error updating location",true,NOTIFCATION_ID_STARTUP);
-      } catch (InvocationTargetException | IllegalAccessException e) {
-          e.printStackTrace();
+      } catch (InvocationTargetException e) {
+        e.printStackTrace();
+      } catch (IllegalAccessException e) {
+        e.printStackTrace();
       }
   }
 
