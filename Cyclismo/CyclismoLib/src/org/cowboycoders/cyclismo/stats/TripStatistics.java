@@ -194,6 +194,10 @@ public class TripStatistics implements Parcelable {
     return totalTime;
   }
 
+  public double getTotalTimeSeconds() {
+    return totalTime / CyclismoLibConstants.MILLISEC_IN_SEC;
+  }
+
   /**
    * Gets the moving time in milliseconds.
    */
@@ -205,7 +209,9 @@ public class TripStatistics implements Parcelable {
     return movingTime / CyclismoLibConstants.MILLISEC_IN_SEC;
   }
 
-  public double getMovingTimeMinutes() { return movingTime / CyclismoLibConstants.MILLISEC_IN_MIN; }
+  public double getMovingTimeMinutes() {
+    return movingTime / CyclismoLibConstants.MILLISEC_IN_MIN;
+  }
 
   /**
    * Gets the topmost position (highest latitude) of the track, in signed
@@ -294,7 +300,7 @@ public class TripStatistics implements Parcelable {
     if (totalTime == 0L) {
       return 0.0;
     }
-    return totalDistance / getMovingTimeSeconds();
+    return totalDistance / getTotalTimeSeconds();
   }
 
   /**

@@ -61,7 +61,7 @@ public class DescriptionGeneratorImplTest extends AndroidTestCase {
    * Tests {@link DescriptionGeneratorImpl#generateTrackDescription(Track,
    * java.util.Vector, java.util.Vector, boolean)}.
    */
-  public void _testGenerateTrackDescription() {
+  public void testGenerateTrackDescription() {
     Track track = new Track();
     TripStatistics stats = new TripStatistics();
     stats.setTotalDistance(20000);
@@ -96,13 +96,14 @@ public class DescriptionGeneratorImplTest extends AndroidTestCase {
       + "Max grade: 42 %<br>"
       + "Min grade: 11 %<br>"
       + "Recorded: " + StringUtils.formatDateTime(getContext(), START_TIME) + "<br>";
-    assertEquals(expected, descriptionGenerator.generateTrackDescription(track, null, null, true));
+    String actual = descriptionGenerator.generateTrackDescription(track, null, null, true);
+    assertEquals(expected, actual);
   }
 
   /**
    * Tests {@link DescriptionGeneratorImpl#generateWaypointDescription(TripStatistics)}.
    */
-  public void _testGenerateWaypointDescription() {
+  public void testGenerateWaypointDescription() {
     Waypoint waypoint = new Waypoint();
     TripStatistics stats = new TripStatistics();
     stats.setTotalDistance(20000);
@@ -131,8 +132,8 @@ public class DescriptionGeneratorImplTest extends AndroidTestCase {
       + "Max grade: 42 %\n"
       + "Min grade: 11 %\n"
       + "Recorded: " + StringUtils.formatDateTime(getContext(), START_TIME) + "\n";
-    assertEquals(
-        expected, descriptionGenerator.generateWaypointDescription(waypoint.getTripStatistics()));
+    String actual = descriptionGenerator.generateWaypointDescription(waypoint.getTripStatistics());
+    assertEquals(expected, actual);
   }
 
   /**
