@@ -30,4 +30,4 @@ before_script:
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
 
-script:  sh update_android.sh && ./gradlew clean build connectedAndroidTest
+script:  sh update_android.sh && ./gradlew --stacktrace clean build connectedAndroidTest
