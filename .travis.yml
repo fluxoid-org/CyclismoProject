@@ -2,6 +2,7 @@ language: android
 
 # Use container based infrastructure
 sudo: false
+cache: false
 
 jdk:
   - openjdk7
@@ -29,5 +30,12 @@ before_script:
   - emulator -avd test -no-skin -no-audio -no-window &
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
+
+after_failure:
+  - echo $PWD
+  - export LOG_DIR="$(pwd)/Cyclismo/Cyclismo/build/outputs/reports/androidTests/connected/"
+  - cd "${LOG_DIR}"
+  - apt-get install -qq lynx && lynx --dump index.html > index.log
+  - cat index.log
 
 script:  sh update_android.sh && ./gradlew --stacktrace clean build connectedAndroidTest
