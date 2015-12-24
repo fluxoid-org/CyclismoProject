@@ -73,6 +73,9 @@ public class DescriptionGeneratorImplTest extends AndroidTestCase {
     stats.setTotalElevationGain(6000);
     stats.setMaxGrade(0.42);
     stats.setMinGrade(0.11);
+    stats.setTotalWorkDone(60000);
+    stats.setTotalCrankRotations(400);
+    stats.setTotalHeartBeats(500);
     stats.setStartTime(START_TIME);
     track.setTripStatistics(stats);
     track.setCategory("hiking");
@@ -87,6 +90,9 @@ public class DescriptionGeneratorImplTest extends AndroidTestCase {
       + "Average speed: 120.00 km/h (74.6 mi/h)<br>"
       + "Average moving speed: 240.00 km/h (149.1 mi/h)<br>"
       + "Max speed: 360.00 km/h (223.7 mi/h)<br>"
+      + "Avg. moving heart rate: 100 BPM<br>"
+      + "Avg. moving power: 200 W<br>"
+      + "Avg. moving cadence: 80 RPM<br>"
       + "Average pace: 0.50 min/km (0.8 min/mi)<br>"
       + "Average moving pace: 0.25 min/km (0.4 min/mi)<br>"
       + "Fastest pace: 0.17 min/km (0.3 min/mi)<br>"
@@ -96,7 +102,8 @@ public class DescriptionGeneratorImplTest extends AndroidTestCase {
       + "Max grade: 42 %<br>"
       + "Min grade: 11 %<br>"
       + "Recorded: " + StringUtils.formatDateTime(getContext(), START_TIME) + "<br>";
-    assertEquals(expected, descriptionGenerator.generateTrackDescription(track, null, null, true));
+    String actual = descriptionGenerator.generateTrackDescription(track, null, null, true);
+    assertEquals(expected, actual);
   }
 
   /**
@@ -114,6 +121,9 @@ public class DescriptionGeneratorImplTest extends AndroidTestCase {
     stats.setTotalElevationGain(6000);
     stats.setMaxGrade(0.42);
     stats.setMinGrade(0.11);
+    stats.setTotalWorkDone(60000);
+    stats.setTotalCrankRotations(400);
+    stats.setTotalHeartBeats(500);
     stats.setStartTime(START_TIME);
     waypoint.setTripStatistics(stats);
     String expected = "Total distance: 20.00 km (12.4 mi)\n"
@@ -122,6 +132,9 @@ public class DescriptionGeneratorImplTest extends AndroidTestCase {
       + "Average speed: 120.00 km/h (74.6 mi/h)\n"
       + "Average moving speed: 240.00 km/h (149.1 mi/h)\n"
       + "Max speed: 360.00 km/h (223.7 mi/h)\n"
+      + "Avg. moving heart rate: 100 BPM\n"
+      + "Avg. moving power: 200 W\n"
+      + "Avg. moving cadence: 80 RPM\n"
       + "Average pace: 0.50 min/km (0.8 min/mi)\n"
       + "Average moving pace: 0.25 min/km (0.4 min/mi)\n"
       + "Fastest pace: 0.17 min/km (0.3 min/mi)\n"

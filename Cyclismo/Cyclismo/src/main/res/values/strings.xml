@@ -491,18 +491,28 @@ limitations under the License.
     Min grade: %1$d %%
   </string>
   <string name="description_inst_power"
-    translation_description="Instantaneous power description. %% is the escape sequence for the
-     percent symbol.
+    translation_description="Instantaneous power description.
 
       %1$d power in Watts">
-    Inst. power: %1$d %%
+    Inst. power: %1$d W
   </string>
   <string name="description_avg_power"
-    translation_description="Average power description. %% is the escape sequence for the percent
-      symbol.
+    translation_description="Average moving power description.
 
       %1$d power in Watts">
-    Avg. power: %1$d %%
+    Avg. moving power: %1$d W
+  </string>
+  <string name="description_avg_heart_rate"
+          translation_description="Average moving heart rate description.
+
+      %1$d heart rate in BPM">
+    Avg. moving heart rate: %1$d BPM
+  </string>
+  <string name="description_avg_cadence"
+          translation_description="Average moving cadence description.
+
+      %1$d cadence in RPM">
+    Avg. moving cadence: %1$d RPM
   </string>
   <string name="description_moving_time"
     translation_description="Moving time description.
