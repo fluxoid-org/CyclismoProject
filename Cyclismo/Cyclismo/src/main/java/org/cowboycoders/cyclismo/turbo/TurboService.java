@@ -46,6 +46,9 @@ import org.cowboycoders.ant.interfaces.AndroidAntTransceiver;
 import org.cowboycoders.ant.interfaces.AntRadioPoweredOffException;
 import org.cowboycoders.ant.interfaces.AntRadioServiceNotInstalledException;
 import org.cowboycoders.ant.interfaces.ServiceAlreadyClaimedException;
+import org.cowboycoders.ant.sensors.DataSourceCombiner;
+import org.cowboycoders.ant.sensors.HeartRateListener;
+import org.cowboycoders.ant.sensors.HeartRateMonitor;
 import org.cowboycoders.cyclismo.Constants;
 import org.cowboycoders.cyclismo.R;
 import org.cowboycoders.cyclismo.TrackEditActivity;
@@ -83,11 +86,14 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class TurboService extends Service {
 
+  public static final int TIMEOUT_HRM_STALE_DATA = 10 * 1000; // milliseconds
   private static final int DEFAULT_BIKE_WEIGHT = 7;
 
   private static final int DEFAULT_USER_WEIGHT = 60;
 
   private static final int RESULT_ERROR = 0;
+  public static final int PRECEDENCE_HRM_STRAP = 20;
+  public static final int PRECEDENCE_TURBO_HRM = 100;
 
   private Binder turboBinder = new TurboBinder();
   
@@ -144,6 +150,21 @@ public class TurboService extends Service {
   private Lock parameterBuilderLock = new ReentrantLock();
   
   private Parameters.Builder parameterBuilder;
+  private HeartRateMonitor hrm;
+  private DataSourceCombiner dsc = new DataSourceCombiner(new HeartRateListener(){
+
+    /**
+     * @param heartRate new heart rate value
+     */
+    @Override
+    public void onValueChange(int heartRate) {
+      if (heartRate > 0) {
+        Intent intent = new Intent(getString(R.string.sensor_data_heart_rate));
+        intent.putExtra(getString(R.string.sensor_data_double_value), (double) heartRate);
+        sendBroadcast(intent);
+      }
+    }
+  }, TIMEOUT_HRM_STALE_DATA);
 
   public void setParameterBuilder(Parameters.Builder builder) {
     try {
@@ -154,9 +175,21 @@ public class TurboService extends Service {
     }
    
   }
+
+  private HeartRateListener hrmListener = new HeartRateListener() {
+
+    /**
+     * @param hr new heart rate value
+     */
+    @Override
+    public void onValueChange(int hr) {
+      Log.d(TAG, "hr(strap): " + hr);
+      dsc.update(hr, PRECEDENCE_HRM_STRAP);
+    }
+  };
   
 
-  TurboTrainerDataListener dataListener = new TurboTrainerDataListener() {
+  private TurboTrainerDataListener dataListener = new TurboTrainerDataListener() {
 
     boolean updating = false;
     Lock updatingLock = new ReentrantLock();
@@ -253,11 +286,8 @@ public class TurboService extends Service {
 
     @Override
     public void onHeartRateChange(double heartRate) {
-      if (heartRate > 0.) {
-        Intent intent = new Intent(getString(R.string.sensor_data_heart_rate));
-        intent.putExtra(getString(R.string.sensor_data_double_value), heartRate);
-        sendBroadcast(intent);
-      }
+      dsc.update((int) heartRate, PRECEDENCE_TURBO_HRM);
+      Log.d(TAG, "hr(turbo): " + heartRate);
     }
 
   };
@@ -426,13 +456,22 @@ public class TurboService extends Service {
     }
   }
   
-  private ErrorProneCall startTurbo= new ErrorProneCall() {
+  private ErrorProneCall startTurbo = new ErrorProneCall() {
 
     @Override
     public void call() throws TurboCommunicationException, InterruptedException, TimeoutException {
       turboTrainer.start();
     }
     
+  };
+
+  private ErrorProneCall startHrm = new ErrorProneCall() {
+
+    @Override
+    public void call() throws TurboCommunicationException, InterruptedException, TimeoutException {
+      hrm.start();
+    }
+
   };
 
   private ErrorProneCall startBushidoBrake= new ErrorProneCall() {
@@ -511,6 +550,7 @@ public class TurboService extends Service {
                         turboTrainer.setMode(Mode.TARGET_SLOPE);
                         // slight hack to get around timeout errors on my tablet
                         retryErrorProneCall(startTurbo, 10);
+                        retryErrorProneCall(startHrm, 10);
                         turboTrainer.registerDataListener(dataListener);
                         unpauseRecording();
                         updateLocation(courseTracker.getNearestLocation(0.0));
@@ -556,6 +596,17 @@ public class TurboService extends Service {
         transceiver = s.getTransceiver();
     }
 
+    private void initAntSensors() {
+      if (hrm != null) return;
+      hrm = new HeartRateMonitor(antNode);
+      hrm.registerListener(hrmListener);
+    }
+
+    private void initAnt(AntHubService.LocalBinder binder) {
+      initAntWireless(binder);
+      initAntSensors();
+    }
+
     private TrackRecordingServiceConnection trackRecordingServiceConnection;
 
 
@@ -575,16 +626,16 @@ public class TurboService extends Service {
 
   protected TurboTrainerInterface getTurboTrainer(AntHubService.LocalBinder binder) {
 
-      Log.d(TAG,selectedTurboTrainer);
+    Log.d(TAG,selectedTurboTrainer);
+
+    initAnt(binder);     // TODO: iff ant sensors are enabled
+
     if (selectedTurboTrainer.equals(getString(R.string.turbotrainer_tacx_bushido_headunit_value))) {
-        initAntWireless(binder);
         return new BushidoHeadunit(antNode);
     } else if (selectedTurboTrainer.equals(getString(R.string.turbotrainer_tacx_bushido_brake_headunit_simulation_value))) {
         SpeedResistanceMapper mapper = new SpeedResistanceMapper();
-        initAntWireless(binder);
       return new BushidoBrake(antNode,mapper);
     } else if (selectedTurboTrainer.equals(getString(R.string.turbotrainer_tacx_bushido_brake_pid_control_value))) {
-        initAntWireless(binder);
         PidBrakeController pid = new PidBrakeController();
         return new BushidoBrake(antNode, pid);
     }  else if (selectedTurboTrainer.equals(getString(R.string.turbotrainer_dummy_value))) {
@@ -662,6 +713,7 @@ public class TurboService extends Service {
       try {
         turboTrainer.unregisterDataListener(dataListener);
         turboTrainer.stop();
+        hrm.stop();
       } catch (Exception e) {
         handleException(e,"Error shutting down turbo",false,NOTIFCATION_ID_SHUTDOWN);
         shutDownSuccess = false;
