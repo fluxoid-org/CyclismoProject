@@ -46,7 +46,7 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import org.cowboycoders.cyclismo.BushidoBrakeCalibrate;
+import org.cowboycoders.cyclismo.CalibrateBushidoBrakeActivity;
 import org.cowboycoders.cyclismo.R;
 import org.cowboycoders.cyclismo.util.IntentUtils;
 
@@ -71,7 +71,7 @@ public class TurboSettingsActivity extends AbstractSettingsActivity {
     calibrateBushido.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
       @Override
       public boolean onPreferenceClick(Preference preference) {
-        Intent intent = IntentUtils.newIntent(TurboSettingsActivity.this, BushidoBrakeCalibrate.class);
+        Intent intent = IntentUtils.newIntent(TurboSettingsActivity.this, CalibrateBushidoBrakeActivity.class);
         startActivity(intent);
         return true;
       }

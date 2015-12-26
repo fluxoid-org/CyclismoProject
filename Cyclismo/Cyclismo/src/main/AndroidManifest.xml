@@ -356,7 +356,7 @@ limitations under the License.
             android:exported="false" />
 
         <activity
-            android:name=".BushidoBrakeCalibrate"
+            android:name=".CalibrateBushidoBrakeActivity"
             android:label="@string/title_activity_bushido_brake_calibrate" >
         </activity>
     </application>

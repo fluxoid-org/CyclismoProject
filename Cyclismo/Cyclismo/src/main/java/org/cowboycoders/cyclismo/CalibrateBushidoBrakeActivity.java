@@ -23,7 +23,7 @@ import org.cowboycoders.turbotrainers.bushido.brake.BushidoBrake;
 import java.text.DecimalFormat;
 
 
-public class BushidoBrakeCalibrate extends Activity {
+public class CalibrateBushidoBrakeActivity extends Activity {
 
   private boolean mIsBound = false;
 
@@ -166,14 +166,14 @@ public class BushidoBrakeCalibrate extends Activity {
     public void onServiceConnected(ComponentName className, IBinder binder) {
       TurboService s = ((TurboService.TurboBinder) binder).getService();
       s.startBushidoCalibrate(calibrationCallback, dataListener);
-      Toast.makeText(BushidoBrakeCalibrate.this, "Connected to turbo service",
+      Toast.makeText(CalibrateBushidoBrakeActivity.this, "Connected to turbo service",
               Toast.LENGTH_SHORT).show();
       // no longer needed
       doUnbindService();
     }
 
     public void onServiceDisconnected(ComponentName className) {
-      Toast.makeText(BushidoBrakeCalibrate.this, "Disconnected from turbo service",
+      Toast.makeText(CalibrateBushidoBrakeActivity.this, "Disconnected from turbo service",
               Toast.LENGTH_SHORT).show();
     }
   };
