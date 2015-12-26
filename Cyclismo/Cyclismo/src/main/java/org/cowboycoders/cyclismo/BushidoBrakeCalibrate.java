@@ -27,7 +27,7 @@ public class BushidoBrakeCalibrate extends Activity {
 
   private boolean mIsBound = false;
 
-  private BushidoBrake.CallibrationCallback calibrationCallback = new BushidoBrake.CallibrationCallback() {
+  private BushidoBrake.CalibrationCallback calibrationCallback = new BushidoBrake.CalibrationCallback() {
 
 
     /**

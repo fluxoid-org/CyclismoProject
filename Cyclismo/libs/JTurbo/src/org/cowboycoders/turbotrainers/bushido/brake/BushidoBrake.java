@@ -402,7 +402,7 @@ public class BushidoBrake extends AntTurboTrainer {
 	 * @author will
 	 * 
 	 */
-	public static interface CallibrationCallback {
+	public interface CalibrationCallback {
 		/**
 		 * Called when user is required to speed up to 40 km/h
 		 */
@@ -535,7 +535,7 @@ public class BushidoBrake extends AntTurboTrainer {
 		private long timeout;
 		private Long startTimeStamp;
 		private Timer timer;
-		private CallibrationCallback callback;
+		private CalibrationCallback callback;
 		private CalibrationStateMachine stateMachine;
 
 		private TimerTask timeOutMonitor;
@@ -929,7 +929,7 @@ public class BushidoBrake extends AntTurboTrainer {
 					// and restart with remaining time
 					LOGGER.info("Illegal state transition: restarting calibration");
 					long timeLeft = CalibrationController.this.nanosRemaining(null);
-					CallibrationCallback oldCallBack = callback;
+					CalibrationCallback oldCallBack = callback;
 					stop();
 					start(oldCallBack,timeLeft);
 				}
@@ -1045,7 +1045,7 @@ public class BushidoBrake extends AntTurboTrainer {
 			return timeLeft;
 		}
 
-		public synchronized void start(final CallibrationCallback callback,
+		public synchronized void start(final CalibrationCallback callback,
 				long timeout) {
 			if (started)
 				throw new IllegalStateException(
@@ -1099,11 +1099,11 @@ public class BushidoBrake extends AntTurboTrainer {
 
 /**
 	 * Asynchronously calibrates the brake.
-	 * @param callback various calibration hooks {@link BushidoBrake.CallibrationCallback)
+	 * @param callback various calibration hooks {@link CalibrationCallback )
 	 * @param timeout timeout for calibration to complete (in seconds)
 	 * @return new calibration value (as would be displayed on headunit)
 	 */
-	public double calibrate(CallibrationCallback callback, long timeout) {
+	public double calibrate(CalibrationCallback callback, long timeout) {
 		double calibrationValue = 0;
 		calibrationController
 				.start(callback, TimeUnit.SECONDS.toNanos(timeout));

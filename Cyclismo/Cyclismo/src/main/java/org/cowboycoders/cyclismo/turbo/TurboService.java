@@ -429,7 +429,7 @@ public class TurboService extends Service {
         startForeground(ONGOING_NOTIFICATION, noti);
     }
 
-    public synchronized void startBushidoCalibrate(BushidoBrake.CallibrationCallback callback,
+    public synchronized void startBushidoCalibrate(BushidoBrake.CalibrationCallback callback,
                                                    TurboTrainerDataListener listener) {
       startServiceInBackround();
 
@@ -487,9 +487,9 @@ public class TurboService extends Service {
 
     private TurboTrainerDataListener dataListener;
 
-    private BushidoBrake.CallibrationCallback calibrationListener;
+    private BushidoBrake.CalibrationCallback calibrationListener;
 
-    private BushidoCalibrateConnection(BushidoBrake.CallibrationCallback calibrationListener, TurboTrainerDataListener dataListener) {
+    private BushidoCalibrateConnection(BushidoBrake.CalibrationCallback calibrationListener, TurboTrainerDataListener dataListener) {
       this.calibrationListener = calibrationListener;
       this.dataListener = dataListener;
     }
@@ -617,7 +617,7 @@ public class TurboService extends Service {
     mIsBound = true;
   }
 
-  void doBindForBushidoCalibrate(BushidoBrake.CallibrationCallback calibrationCallback, TurboTrainerDataListener listener) {
+  void doBindForBushidoCalibrate(BushidoBrake.CalibrationCallback calibrationCallback, TurboTrainerDataListener listener) {
       assert mConnection == null: "expecting mConnection to be null";
       mConnection = new BushidoCalibrateConnection(calibrationCallback, listener);
       bindService(new Intent(this, AntHubService.class), mConnection, Context.BIND_AUTO_CREATE);
