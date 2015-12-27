@@ -131,11 +131,11 @@ public class TripStatisticsTest extends TestCase {
     assertEquals(2.0, statistics.getMovingTimeMinutes());
   }
 
-  public void _testGetAverageSpeed() {
+  public void testGetAverageSpeed() {
     statistics.setTotalDistance(1000.0);
-    statistics.setTotalTime(1L); // Average is calculated only for finite total times
-    statistics.setMovingTime(1000L); // in milliseconds
-    assertEquals(1000.0, statistics.getAverageSpeed(), DELTA);
+    statistics.setTotalTime(2000L);
+    statistics.setMovingTime(1000L);
+    assertEquals(500.0, statistics.getAverageSpeed(), DELTA);
 
     statistics.setTotalTime(0L);
     assertEquals(0.0, statistics.getAverageSpeed(), DELTA);
@@ -145,6 +145,9 @@ public class TripStatisticsTest extends TestCase {
     statistics.setTotalDistance(1000.0);
     statistics.setMovingTime(20000);  // in milliseconds
     assertEquals(50.0, statistics.getAverageMovingSpeed(), DELTA);
+
+    statistics.setMovingTime(0L);
+    assertEquals(0.0, statistics.getAverageMovingSpeed(), DELTA);
   }
 
   public void testGetAverageMovingPower() {
