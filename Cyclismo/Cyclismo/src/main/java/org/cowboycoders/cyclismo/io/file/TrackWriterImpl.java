@@ -336,6 +336,7 @@ class TrackWriterImpl implements TrackWriter {
       int pointNumber = 0;
       while (it.hasNext()) {
         Location location = it.next();
+        Log.d(TAG, "Wrote waypoint with speed: " + location.getSpeed());
         if (Thread.interrupted()) {
           throw new InterruptedException();
         }

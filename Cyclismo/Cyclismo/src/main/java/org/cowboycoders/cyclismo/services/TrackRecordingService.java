@@ -912,15 +912,24 @@ public class TrackRecordingService extends Service {
    */
   private void insertLocation(Track track, Location location, Location lastValidTrackPoint) {
     if (location == null) {
-      Log.w(TAG, "Ignore insertLocation. loation is null.");
-      return;
-    }
-    // Do not insert if inserted already
-    if (lastValidTrackPoint != null && lastValidTrackPoint.getTime()  == location.getTime()) {
-      Log.w(TAG, "Ignore insertLocation. location time same as last valid track point time.");
+      Log.w(TAG, "Ignore insertLocation. Location is null.");
       return;
     }
 
+    Log.d(TAG, "insertLocation, location: " +  location.toString());
+    if (lastValidTrackPoint != null) {
+      Log.d(TAG, "insertLocation, lastValidTrackPoint" + lastValidTrackPoint.toString());
+    }
+
+    // Do not insert if inserted already
+    if (lastValidTrackPoint != null && lastValidTrackPoint.getTime()  == location.getTime()) {
+      Log.w(TAG, "Ignore insertLocation. Location time same as last valid track point time.");
+      return;
+    }
+    Log.d(TAG, "insertLocation, location: " + location.toString());
+    if (lastValidTrackPoint != null) {
+      Log.d(TAG, "insertLocation, lastValidLocation: " + lastValidTrackPoint.toString());
+    }
     try {
       Uri uri = myTracksProviderUtils.insertTrackPoint(location, track.getId());
       long trackPointId = Long.parseLong(uri.getLastPathSegment());

@@ -37,7 +37,6 @@ public class LatLongAlt extends LatLong {
   public LatLongAlt(double latitude, double longitude, double altitude) {
     super(latitude, longitude);
     this.altitude = altitude;
-    
   }
 
   @Override
