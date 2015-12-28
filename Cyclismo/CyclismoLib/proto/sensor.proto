@@ -1,3 +1,22 @@
+/*
+*    Copyright (c) 2013, Will Szumski
+*    Copyright (c) 2013, Doug Szumski
+*
+*    This file is part of Cyclismo.
+*
+*    Cyclismo is free software: you can redistribute it and/or modify
+*    it under the terms of the GNU General Public License as published by
+*    the Free Software Foundation, either version 3 of the License, or
+*    (at your option) any later version.
+*
+*    Cyclismo is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*    GNU General Public License for more details.
+*
+*    You should have received a copy of the GNU General Public License
+*    along with Cyclismo.  If not, see <http://www.gnu.org/licenses/>.
+*/
 // Copyright 2010 Google Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -12,7 +31,7 @@
 // License for the specific language governing permissions and limitations under
 // the License.
 
-package com.google.android.apps.mytracks.content;
+package org.cowboycoders.cyclismo.content;
 
 option optimize_for = LITE_RUNTIME;
 
@@ -51,4 +70,8 @@ message SensorDataSet {
   optional SensorData cadence = 3;
   optional SensorData power = 4;
   optional SensorData battery_level = 5;
+  optional SensorData speed = 6;
+  optional SensorData distance = 7;
+  optional SensorData power_b = 8;
+  optional SensorData temperature = 9;
 }
