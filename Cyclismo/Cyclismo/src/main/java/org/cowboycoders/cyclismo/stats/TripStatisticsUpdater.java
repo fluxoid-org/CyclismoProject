@@ -212,7 +212,7 @@ public class TripStatisticsUpdater {
 
   /**
    * Gets the smoothed elevation over several readings. The elevation readings
-   * is noisy so the smoothed elevation is better than the raw elevation for
+   * are noisy so the smoothed elevation is better than the raw elevation for
    * many tasks.
    */
   public double getSmoothedElevation() {

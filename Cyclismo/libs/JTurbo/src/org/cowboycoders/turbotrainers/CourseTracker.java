@@ -35,8 +35,13 @@ public class CourseTracker {
   
   private Double[] distanceMarkers;
   
-  private int lastKnownDistanceMarkerIndex = 0; 
-  
+  private int lastKnownDistanceMarkerIndex = 0;
+
+  /**
+   * Maps absolute distance travelled to course points.
+   *
+   * @param coursePoints to map distance from.
+   */
   public CourseTracker(List<LatLongAlt> coursePoints) {
     double totalDistance = 0.0;
     distanceLocationMap.put(totalDistance,coursePoints.get(0));
@@ -62,7 +67,7 @@ public class CourseTracker {
       if ((distance - key) < ACCURACY) {
         break;
       }
-  }
+    }
     if (key == null) { // must have reached end
       key = distanceMarkers[distanceMarkers.length -1];
       return distanceLocationMap.get(key);
@@ -90,10 +95,10 @@ public class CourseTracker {
   }
   
   public static void main(String [] args) {
-    LatLongAlt l1 = new LatLongAlt(50.066389,5.715, 1000);
-    LatLongAlt l2 = new LatLongAlt(58.643889,3.07, 4000);
-    List<LatLongAlt> locations = LocationUtils.interpolateBetweenPoints(l1,l2,1000);
-    locations.addAll(LocationUtils.interpolateBetweenPoints(l2,l1,1000));
+    LatLongAlt l1 = new LatLongAlt(50.066389, 5.715, 1000);
+    LatLongAlt l2 = new LatLongAlt(58.643889, 3.07, 4000);
+    List<LatLongAlt> locations = LocationUtils.interpolateBetweenPoints(l1, l2, 1000);
+    locations.addAll(LocationUtils.interpolateBetweenPoints(l2, l1, 1000)); // Back to start
     CourseTracker ct = new CourseTracker(locations);
     
     for (Double marker : ct.distanceMarkers) {
@@ -101,8 +106,9 @@ public class CourseTracker {
     }
     double distance = 0;
     while (!ct.hasFinished()) {
-      ct.getNearestLocation(distance += 1000);
-      System.out.println("lastKnownDistanceMarkerIndex " + ct.lastKnownDistanceMarkerIndex);
+      double delta = ct.getNearestLocation(distance += 1000, new LatLongAlt(0,0,0));
+      System.out.println("lastKnownDistanceMarkerIndex " + ct.lastKnownDistanceMarkerIndex
+              + ", delta: " + delta);
     }
     System.out.println("finished");
   }

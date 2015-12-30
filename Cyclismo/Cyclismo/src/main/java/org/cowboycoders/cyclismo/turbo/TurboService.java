@@ -195,9 +195,9 @@ public class TurboService extends Service {
     Lock updatingLock = new ReentrantLock();
 
     @Override
-    public void onSpeedChange(double speed) { // synchronized to keep speed in
-      
-      // alignment with distance    
+    public void onSpeedChange(double speed) {
+
+      // synchronized to keep speed in alignment with distance
       
       Intent intent = new Intent(getString(R.string.sensor_data_speed_kmh));
       intent.putExtra(getString(R.string.sensor_data_double_value), speed);

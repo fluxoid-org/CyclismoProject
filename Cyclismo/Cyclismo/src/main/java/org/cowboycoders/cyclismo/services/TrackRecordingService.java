@@ -429,6 +429,7 @@ public class TrackRecordingService extends Service {
    * @return the waypoint id
    */
   public long insertWaypoint(WaypointCreationRequest waypointCreationRequest) {
+
     if (!isRecording() || isPaused()) {
       return -1L;
     }
