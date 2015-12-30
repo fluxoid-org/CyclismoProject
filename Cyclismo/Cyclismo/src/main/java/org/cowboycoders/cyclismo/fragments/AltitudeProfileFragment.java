@@ -317,6 +317,7 @@ public class AltitudeProfileFragment extends Fragment implements TrackDataListen
 
   @Override
   public void onResume() {
+    super.onResume();
     //TODO: why only in course mode? We need it to work in existing rides.
     //if (((TrackDetailActivity) getActivity()).isCourseMode()) {
     overlayCourseData = true;
