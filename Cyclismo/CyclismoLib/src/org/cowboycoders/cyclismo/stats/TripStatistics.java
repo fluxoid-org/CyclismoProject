@@ -407,6 +407,7 @@ public class TripStatistics implements Parcelable {
    * @param totalTime the trip total time in milliseconds
    */
   public void setTotalTime(long totalTime) {
+    Log.d(TAG, "Total time set: " + totalTime);
     this.totalTime = totalTime;
   }
 
@@ -416,6 +417,7 @@ public class TripStatistics implements Parcelable {
    * @param movingTime the trip total moving time in milliseconds
    */
   public void setMovingTime(long movingTime) {
+    Log.d(TAG, "Moving time set: " + movingTime);
     this.movingTime = movingTime;
   }
 

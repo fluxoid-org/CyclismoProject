@@ -270,7 +270,7 @@ public class TurboService extends Service {
         parameterBuilderLock.unlock();
       }
       
-      Log.d(TAG, "New Gradient: " + gradient);
+      Log.d(TAG, "new gradient: " + gradient);
       if (courseTracker.hasFinished()) {
         doFinish();
       }
@@ -389,8 +389,7 @@ public class TurboService extends Service {
     try {
       latLongAlts = cl.getLatLongAlts();
     } catch (InterruptedException e) {
-      String error = "interrupted whilst loading course";
-      Log.e(TAG, error);
+      Log.e(TAG, "interrupted whilst loading course");
       handleException(e, "Error loading course",true,NOTIFCATION_ID_STARTUP);
     }
 
@@ -806,7 +805,7 @@ public class TurboService extends Service {
   }
   
   // probably should show an activity with detail?
-  // toDO: move strings to R
+  // TODO: move strings to R
   private void handleException(Exception e , String title, boolean finish, int id) {
     title = title == null ? "An Error occured communicating with your turbotrainer" : title;
     NotificationCompat.Builder mBuilder =

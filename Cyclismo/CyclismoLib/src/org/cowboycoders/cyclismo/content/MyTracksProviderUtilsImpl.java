@@ -835,6 +835,7 @@ public class MyTracksProviderUtilsImpl implements MyTracksProviderUtils {
 
   @Override
   public Uri insertWaypoint(Waypoint waypoint) {
+    Log.d(TAG, "insertWaypoint: " + waypoint.toString());
     waypoint.setId(-1L);
     return contentResolver.insert(WaypointsColumns.CONTENT_URI, createContentValues(waypoint));
   }
@@ -1150,6 +1151,7 @@ public class MyTracksProviderUtilsImpl implements MyTracksProviderUtils {
 
   @Override
   public Uri insertTrackPoint(Location location, long trackId) {
+    Log.d(TAG, "insertTrackPoint: " + location.toString());
     return contentResolver.insert(
         TrackPointsColumns.CONTENT_URI, createContentValues(location, trackId));
   }
