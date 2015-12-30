@@ -84,6 +84,7 @@ import org.cowboycoders.cyclismo.stats.TripStatisticsUpdater;
 import org.cowboycoders.cyclismo.util.IntentUtils;
 import org.cowboycoders.cyclismo.util.LocationUtils;
 import org.cowboycoders.cyclismo.util.PreferencesUtils;
+import org.cowboycoders.cyclismo.util.TrackIconUtils;
 import org.cowboycoders.cyclismo.util.TrackNameUtils;
 
 import java.util.Timer;
@@ -594,7 +595,8 @@ public class TrackRecordingService extends Service {
     track.setId(trackId);
     track.setName(TrackNameUtils.getTrackName(this, trackId, now, null));
     track.setCategory(PreferencesUtils.getString(
-        this, R.string.default_activity_key, PreferencesUtils.DEFAULT_ACTIVITY_DEFAULT));
+            this, R.string.default_activity_key, PreferencesUtils.getDefaultActivityDefault(this)));
+    track.setIcon((TrackIconUtils.getIconValue(this, track.getCategory())));
     track.setTripStatistics(trackTripStatisticsUpdater.getTripStatistics());
     myTracksProviderUtils.updateTrack(track);
     insertWaypoint(WaypointCreationRequest.DEFAULT_START_TRACK);
