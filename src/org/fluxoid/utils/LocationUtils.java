@@ -87,7 +87,7 @@ public class LocationUtils {
     return d;
   }
   
-  public static double gradientCorrectedDistance(LatLongAlt point1, LatLongAlt point2) {
+  public static double getGradientCorrectedDistance(LatLongAlt point1, LatLongAlt point2) {
 	    double horizontalDistance = getDistance(point1, point2);
 	    double heightDifference = point2.getAltitude() - point1.getAltitude();
 	    return Math.sqrt(Math.pow(heightDifference,2) + Math.pow(horizontalDistance, 2));
