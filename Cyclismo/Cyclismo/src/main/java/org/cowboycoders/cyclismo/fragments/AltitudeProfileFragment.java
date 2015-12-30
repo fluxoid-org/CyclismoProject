@@ -50,9 +50,6 @@ import com.google.common.annotations.VisibleForTesting;
 import org.cowboycoders.cyclismo.AltitudeProfileView;
 import org.cowboycoders.cyclismo.R;
 import org.cowboycoders.cyclismo.TrackDetailActivity;
-import org.cowboycoders.cyclismo.content.MyTracksLocation;
-import org.cowboycoders.cyclismo.content.Sensor;
-import org.cowboycoders.cyclismo.content.Sensor.SensorDataSet;
 import org.cowboycoders.cyclismo.content.Track;
 import org.cowboycoders.cyclismo.content.TrackDataHub;
 import org.cowboycoders.cyclismo.content.TrackDataListener;
@@ -72,7 +69,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * A fragment to display track chart to the user.
- * 
+ *
  * @author Sandor Dornbush
  * @author Rodrigo Damazio
  */
@@ -103,7 +100,7 @@ public class AltitudeProfileFragment extends Fragment implements TrackDataListen
 
   // Modes of operation
   private boolean chartByDistance = true;
-  private boolean[] chartShow = new boolean[] { true, true, true, true, true, true };
+  private boolean[] chartShow = new boolean[]{true, true, true, true, true, true};
 
   long currentCourseId = -1L;
 
@@ -118,7 +115,7 @@ public class AltitudeProfileFragment extends Fragment implements TrackDataListen
    * appropriate and redraw.
    */
   private final Runnable updateChart = new Runnable() {
-      @Override
+    @Override
     public void run() {
       if (!isResumed() || trackDataHub == null) {
         return;
@@ -133,64 +130,64 @@ public class AltitudeProfileFragment extends Fragment implements TrackDataListen
   private TrackDataHub courseDataHub;
 
 
-// would need to zoom in to relevant section to use
+  // would need to zoom in to relevant section to use
 // (as is stretches scale too much and zoom limit prevents from seeing new data)
 // also x-axis should be restricted to distance
-private TrackDataListener courseTrackDataListener = new TrackDataListener() {
+  private TrackDataListener courseTrackDataListener = new TrackDataListener() {
 
-  private Track currentCourse;
-  private boolean overlayAdded = false;
+    private Track currentCourse;
+    private boolean overlayAdded = false;
 
-  @Override
-  public void onLocationStateChanged(LocationState state) {
-    // We don't care.
-  }
+    @Override
+    public void onLocationStateChanged(LocationState state) {
+      // We don't care.
+    }
 
-  @Override
-  public void onLocationChanged(Location loc) {
-    // We don't care.
-  }
+    @Override
+    public void onLocationChanged(Location loc) {
+      // We don't care.
+    }
 
-  @Override
-  public void onHeadingChanged(double heading) {
-    // We don't care.
-  }
+    @Override
+    public void onHeadingChanged(double heading) {
+      // We don't care.
+    }
 
-  @Override
-  public void onSelectedTrackChanged(Track track) {
-    // We don't care.
-  }
+    @Override
+    public void onSelectedTrackChanged(Track track) {
+      // We don't care.
+    }
 
-  @Override
-  public void onTrackUpdated(Track track) {
-    if (isResumed()) {
-      Log.d(TAG,"course updated");
-      currentCourse = track;
-   }
-  }
+    @Override
+    public void onTrackUpdated(Track track) {
+      if (isResumed()) {
+        Log.d(TAG, "course updated");
+        currentCourse = track;
+      }
+    }
 
-  @Override
-  public synchronized void clearTrackPoints() {
-    if (isResumed()) {
+    @Override
+    public synchronized void clearTrackPoints() {
+      if (isResumed()) {
 //      Log.d(TAG,"track points cleared");
 
-      try {
-      // FIXME: appears to be waiting for startTime, but could have our own startTime, as
-      // in track loader
-      while(startTime == -1l) {
         try {
-          classLock.lock();
-          startCondition.await();
-        } finally {
-          classLock.unlock();
+          // FIXME: appears to be waiting for startTime, but could have our own startTime, as
+          // in track loader
+          while (startTime == -1l) {
+            try {
+              classLock.lock();
+              startCondition.await();
+            } finally {
+              classLock.unlock();
+            }
+          }
+
+        } catch (InterruptedException e) {
+          // use start time as is
         }
-      }
 
-      } catch (InterruptedException e) {
-        // use start time as is
-      }
-
-      tripStatisticsUpdaterOverlay = startTime != -1L ? new TripStatisticsUpdater(startTime) : null;
+        tripStatisticsUpdaterOverlay = startTime != -1L ? new TripStatisticsUpdater(startTime) : null;
 //      pendingPoints.clear();
 //      altitudeProfileView.reset();
 //      getActivity().runOnUiThread(new Runnable() {
@@ -201,81 +198,79 @@ private TrackDataListener courseTrackDataListener = new TrackDataListener() {
 //          }
 //        }
 //      });
-    }
-  }
-
-  @Override
-  public synchronized void onSampledInTrackPoint(Location location) {
-    if (isResumed()) {
-      Log.d(TAG,"adding course point");
-      double[] data = new double[AltitudeProfileView.NUM_SERIES + 1];
-      fillDataPoint(location, data, tripStatisticsUpdaterOverlay);
-      pendingOverlayPoints.add(data);
-    }
-  }
-
-  @Override
-  public void onSampledOutTrackPoint(Location location) {
-
-  }
-
-  @Override
-  public void onSegmentSplit(Location location) {
-    if (isResumed()) {
-      fillDataPoint(location, null,tripStatisticsUpdaterOverlay);
-    }
-  }
-
-  @Override
-  public synchronized void onNewTrackPointsDone() {
-    if (isResumed()) {
-      Log.d(TAG,"course points done");
-      if (overlayCourseData && currentCourse != null && currentCourse.getId() == currentCourseId && !overlayAdded ) {
-        altitudeProfileView.addAltitudeData(pendingOverlayPoints);
-        getActivity().runOnUiThread(updateChart);
-        overlayAdded = true;
       }
-      pendingOverlayPoints.clear();
     }
-  }
 
-  @Override
-  public void clearWaypoints() {
+    @Override
+    public synchronized void onSampledInTrackPoint(Location location) {
+      if (isResumed()) {
+        Log.d(TAG, "adding course point");
+        double[] data = new double[AltitudeProfileView.NUM_SERIES + 1];
+        fillDataPoint(location, data, tripStatisticsUpdaterOverlay);
+        pendingOverlayPoints.add(data);
+      }
+    }
 
-  }
+    @Override
+    public void onSampledOutTrackPoint(Location location) {
 
-  @Override
-  public void onNewWaypoint(Waypoint waypoint) {
+    }
+
+    @Override
+    public void onSegmentSplit(Location location) {
+      if (isResumed()) {
+        fillDataPoint(location, null, tripStatisticsUpdaterOverlay);
+      }
+    }
+
+    @Override
+    public synchronized void onNewTrackPointsDone() {
+      if (isResumed()) {
+        Log.d(TAG, "course points done");
+        if (overlayCourseData && currentCourse != null && currentCourse.getId() == currentCourseId && !overlayAdded) {
+          altitudeProfileView.addAltitudeData(pendingOverlayPoints);
+          getActivity().runOnUiThread(updateChart);
+          overlayAdded = true;
+        }
+        pendingOverlayPoints.clear();
+      }
+    }
+
+    @Override
+    public void clearWaypoints() {
+
+    }
+
+    @Override
+    public void onNewWaypoint(Waypoint waypoint) {
 //    if (isResumed() && waypoint != null && LocationUtils.isValidLocation(waypoint.getLocation())) {
 //      altitudeProfileView.addWaypoint(waypoint);
 //    }
-  }
+    }
 
-  @Override
-  public void onNewWaypointsDone() {
+    @Override
+    public void onNewWaypointsDone() {
 //    if (isResumed()) {
 //      getActivity().runOnUiThread(updateChart);
 //    }
-  }
+    }
 
-  @Override
-  public boolean onMetricUnitsChanged(boolean metric) {
-    return false;
-  }
+    @Override
+    public boolean onMetricUnitsChanged(boolean metric) {
+      return false;
+    }
 
-  @Override
-  public boolean onReportSpeedChanged(boolean speed) {
-    return false;
+    @Override
+    public boolean onReportSpeedChanged(boolean speed) {
+      return false;
 
-  }
+    }
 
-  @Override
-  public boolean onMinRecordingDistanceChanged(int value) {
-    return false;
-  }
+    @Override
+    public boolean onMinRecordingDistanceChanged(int value) {
+      return false;
+    }
   };
-
-
 
 
   @Override
@@ -287,21 +282,23 @@ private TrackDataListener courseTrackDataListener = new TrackDataListener() {
      * data on every onStart or onResume.
      */
     altitudeProfileView = new AltitudeProfileView(getActivity());
-  };
+  }
+
+  ;
 
   @Override
   public View onCreateView(
-      LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+          LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.altitude_profile, container, false);
     zoomControls = (ZoomControls) view.findViewById(R.id.altitude_profile_zoom_controls);
     zoomControls.setOnZoomInClickListener(new View.OnClickListener() {
-        @Override
+      @Override
       public void onClick(View v) {
         zoomIn();
       }
     });
     zoomControls.setOnZoomOutClickListener(new View.OnClickListener() {
-        @Override
+      @Override
       public void onClick(View v) {
         zoomOut();
       }
@@ -314,17 +311,18 @@ private TrackDataListener courseTrackDataListener = new TrackDataListener() {
     super.onStart();
     ViewGroup layout = (ViewGroup) getActivity().findViewById(R.id.altitude_profile_layout);
     LayoutParams layoutParams = new LayoutParams(
-        LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+            LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
     layout.addView(altitudeProfileView, layoutParams);
   }
 
   @Override
   public void onResume() {
     super.onResume();
-    if (((TrackDetailActivity) getActivity()).isCourseMode()) {
-      overlayCourseData = true;
+    //TODO: why only in course mode? We need it to work in existing rides.
+    //if (((TrackDetailActivity) getActivity()).isCourseMode()) {
+    overlayCourseData = true;
 
-    }
+    //}
     resumeTrackDataHub();
     resumeCourseDataHub();
 
@@ -376,7 +374,7 @@ private TrackDataListener courseTrackDataListener = new TrackDataListener() {
   @Override
   public void onTrackUpdated(Track track) {
     if (isResumed()) {
-      Log.d(TAG,"track updated");
+      Log.d(TAG, "track updated");
       currentTrack = track;
       if (track == null || track.getTripStatistics() == null) {
         startTime = -1L;
@@ -395,12 +393,12 @@ private TrackDataListener courseTrackDataListener = new TrackDataListener() {
   @Override
   public synchronized void clearTrackPoints() {
     if (isResumed()) {
-      Log.d(TAG,"track points cleared");
+      Log.d(TAG, "track points cleared");
       tripStatisticsUpdater = startTime != -1L ? new TripStatisticsUpdater(startTime) : null;
       pendingPoints.clear();
       altitudeProfileView.reset();
       getActivity().runOnUiThread(new Runnable() {
-          @Override
+        @Override
         public void run() {
           if (isResumed()) {
             altitudeProfileView.resetScroll();
@@ -413,11 +411,11 @@ private TrackDataListener courseTrackDataListener = new TrackDataListener() {
   @Override
   public synchronized void onSampledInTrackPoint(Location location) {
     if (isResumed()) {
-      Log.d(TAG,"adding point");
+      Log.d(TAG, "adding point");
       Log.d(TAG, "onSampliedInTrack elevation: " + location.getAltitude());
       double[] data = new double[AltitudeProfileView.NUM_SERIES + 1];
 
-      fillDataPoint(location, data,tripStatisticsUpdater);
+      fillDataPoint(location, data, tripStatisticsUpdater);
       pendingPoints.add(data);
     }
   }
@@ -425,21 +423,21 @@ private TrackDataListener courseTrackDataListener = new TrackDataListener() {
   @Override
   public void onSampledOutTrackPoint(Location location) {
     if (isResumed()) {
-      fillDataPoint(location, null,tripStatisticsUpdater);
+      fillDataPoint(location, null, tripStatisticsUpdater);
     }
   }
 
   @Override
   public void onSegmentSplit(Location location) {
     if (isResumed()) {
-      fillDataPoint(location, null,tripStatisticsUpdater);
+      fillDataPoint(location, null, tripStatisticsUpdater);
     }
   }
 
   @Override
   public synchronized void onNewTrackPointsDone() {
     if (isResumed()) {
-      Log.d(TAG,"track points done");
+      Log.d(TAG, "track points done");
       altitudeProfileView.addDataPoints(pendingPoints);
       pendingPoints.clear();
       getActivity().runOnUiThread(updateChart);
@@ -476,7 +474,7 @@ private TrackDataListener courseTrackDataListener = new TrackDataListener() {
       metricUnits = metric;
       altitudeProfileView.setMetricUnits(metricUnits);
       getActivity().runOnUiThread(new Runnable() {
-          @Override
+        @Override
         public void run() {
           if (isResumed()) {
             altitudeProfileView.requestLayout();
@@ -511,7 +509,7 @@ private TrackDataListener courseTrackDataListener = new TrackDataListener() {
   private void checkChartSettings() {
     boolean needUpdate = false;
     if (chartByDistance != PreferencesUtils.getBoolean(getActivity(),
-        R.string.chart_by_distance_key, PreferencesUtils.CHART_BY_DISTANCE_DEFAULT)) {
+            R.string.chart_by_distance_key, PreferencesUtils.CHART_BY_DISTANCE_DEFAULT)) {
       chartByDistance = !chartByDistance;
       altitudeProfileView.setChartByDistance(chartByDistance);
       reloadTrackDataHub();
@@ -519,7 +517,7 @@ private TrackDataListener courseTrackDataListener = new TrackDataListener() {
       needUpdate = true;
     }
     if (setSeriesEnabled(AltitudeProfileView.ELEVATION_SERIES, PreferencesUtils.getBoolean(getActivity(),
-        R.string.chart_show_elevation_key, PreferencesUtils.CHART_SHOW_ELEVATION_DEFAULT))) {
+            R.string.chart_show_elevation_key, PreferencesUtils.CHART_SHOW_ELEVATION_DEFAULT))) {
       needUpdate = true;
     }
 
@@ -552,8 +550,8 @@ private TrackDataListener courseTrackDataListener = new TrackDataListener() {
   private synchronized void resumeTrackDataHub() {
     trackDataHub = ((TrackDetailActivity) getActivity()).getTrackDataHub();
     trackDataHub.registerTrackDataListener(this, EnumSet.of(TrackDataType.TRACKS_TABLE,
-        TrackDataType.WAYPOINTS_TABLE, TrackDataType.SAMPLED_IN_TRACK_POINTS_TABLE,
-        TrackDataType.SAMPLED_OUT_TRACK_POINTS_TABLE, TrackDataType.PREFERENCE));
+            TrackDataType.WAYPOINTS_TABLE, TrackDataType.SAMPLED_IN_TRACK_POINTS_TABLE,
+            TrackDataType.SAMPLED_OUT_TRACK_POINTS_TABLE, TrackDataType.PREFERENCE));
   }
 
   /**
@@ -592,7 +590,6 @@ private TrackDataListener courseTrackDataListener = new TrackDataListener() {
       courseDataHub.loadTrack(currentCourseId);
       courseDataHub.reloadDataForListener(courseTrackDataListener);
     }
-
   }
 
   /**
@@ -612,13 +609,22 @@ private TrackDataListener courseTrackDataListener = new TrackDataListener() {
    */
   private synchronized void resumeCourseDataHub() {
     if (overlayCourseData) {
-    currentCourseId = ((TrackDetailActivity) getActivity()).getCourseTrackId();
-    courseDataHub = ((TrackDetailActivity) getActivity()).getCourseDataHub();
-    courseDataHub.registerTrackDataListener(courseTrackDataListener, EnumSet.of(TrackDataType.TRACKS_TABLE,
-        TrackDataType.SELECTED_TRACK,
-        TrackDataType.WAYPOINTS_TABLE, TrackDataType.SAMPLED_IN_TRACK_POINTS_TABLE,
-        TrackDataType.LOCATION));
-    reloadCourseDataHub();
+      TrackDetailActivity activity = (TrackDetailActivity) getActivity();
+      courseDataHub = activity.getCourseDataHub();
+
+      if (activity.isCourseMode()) {
+        currentCourseId = activity.getCourseTrackId();
+      } else {
+        currentCourseId = activity.getTrackId();
+        courseDataHub = activity.getTrackDataHub();
+      }
+
+      courseDataHub.registerTrackDataListener(courseTrackDataListener, EnumSet.of(TrackDataType.TRACKS_TABLE,
+              TrackDataType.SELECTED_TRACK,
+              TrackDataType.WAYPOINTS_TABLE, TrackDataType.SAMPLED_IN_TRACK_POINTS_TABLE,
+              TrackDataType.LOCATION));
+      reloadCourseDataHub();
+
     }
 
   }
@@ -653,7 +659,7 @@ private TrackDataListener courseTrackDataListener = new TrackDataListener() {
    * data[6] = power <br>
    *
    * @param location the location
-   * @param data the data point to fill in, can be null
+   * @param data     the data point to fill in, can be null
    */
   @VisibleForTesting
   void fillDataPoint(Location location, double data[], TripStatisticsUpdater tripStatisticsUpdaterIn) {
@@ -677,15 +683,17 @@ private TrackDataListener courseTrackDataListener = new TrackDataListener() {
         elevation *= UnitConversions.M_TO_FT;
       }
 
-    if (data != null) {
-      data[0] = timeOrDistance;
-      data[1] = elevation;
-      Log.d(TAG, "filldataPoint: elevation: " + elevation);
+      if (data != null) {
+        data[0] = timeOrDistance;
+        data[1] = elevation;
+        Log.d(TAG, "filldataPoint: elevation: " + elevation);
+      }
     }
-  }}
+  }
 
   /**
    * Non-overlay default {@link org.cowboycoders.cyclismo.fragments.AltitudeProfileFragment#fillDataPoint(android.location.Location, double[], org.cowboycoders.cyclismo.stats.TripStatisticsUpdater)}
+   *
    * @param location
    * @param data
    */
@@ -719,5 +727,5 @@ private TrackDataListener courseTrackDataListener = new TrackDataListener() {
   void setChartByDistance(boolean value) {
     chartByDistance = value;
   }
-  
+
 }

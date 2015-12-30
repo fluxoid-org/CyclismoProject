@@ -321,6 +321,10 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
     return this.courseTrackId;
   }
 
+  public long getTrackId() {
+    return this.trackId;
+  }
+
   @Override
   protected void onStart() {
     super.onStart();
