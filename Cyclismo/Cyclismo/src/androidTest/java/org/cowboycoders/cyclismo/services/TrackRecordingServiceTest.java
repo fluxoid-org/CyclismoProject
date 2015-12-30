@@ -448,7 +448,7 @@ public class TrackRecordingServiceTest extends ServiceTestCase<TestRecordingServ
     assertNotNull(track);
     assertEquals(id, track.getId());
     assertEquals(PreferencesUtils.getString(
-        context, R.string.default_activity_key, PreferencesUtils.DEFAULT_ACTIVITY_DEFAULT),
+        context, R.string.default_activity_key, PreferencesUtils.getDefaultActivityDefault(context)),
         track.getCategory());
     assertEquals(id, PreferencesUtils.getLong(context, R.string.recording_track_id_key));
     assertEquals(id, service.getRecordingTrackId());

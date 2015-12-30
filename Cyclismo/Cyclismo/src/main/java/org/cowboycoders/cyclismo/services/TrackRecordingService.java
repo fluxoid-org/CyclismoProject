@@ -594,7 +594,7 @@ public class TrackRecordingService extends Service {
     track.setId(trackId);
     track.setName(TrackNameUtils.getTrackName(this, trackId, now, null));
     track.setCategory(PreferencesUtils.getString(
-        this, R.string.default_activity_key, PreferencesUtils.DEFAULT_ACTIVITY_DEFAULT));
+        this, R.string.default_activity_key, PreferencesUtils.getDefaultActivityDefault(this)));
     track.setTripStatistics(trackTripStatisticsUpdater.getTripStatistics());
     myTracksProviderUtils.updateTrack(track);
     insertWaypoint(WaypointCreationRequest.DEFAULT_START_TRACK);

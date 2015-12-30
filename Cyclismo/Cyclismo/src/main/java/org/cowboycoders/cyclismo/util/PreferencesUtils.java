@@ -41,6 +41,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
 import org.cowboycoders.cyclismo.Constants;
+import org.cowboycoders.cyclismo.R;
 
 /**
  * Utilities to access preferences stored in {@link SharedPreferences}.
@@ -69,7 +70,6 @@ public class PreferencesUtils {
   public static final boolean CHART_SHOW_POWER_DEFAULT = true;
   public static final boolean CHART_SHOW_SPEED_DEFAULT = true;
 
-  public static final String DEFAULT_ACTIVITY_DEFAULT = "";
   public static final boolean DEFAULT_MAP_PUBLIC_DEFAULT = false;
   public static final int FREQUENCY_OFF = 0;
   public static final String GOOGLE_ACCOUNT_DEFAULT = "";
@@ -247,7 +247,11 @@ public class PreferencesUtils {
     editor.putString(getKey(context, keyId), value);
     ApiAdapterFactory.getApiAdapter().applyPreferenceChanges(editor);
   }
-  
+
+  public static String getDefaultActivityDefault(Context context) {
+    return context.getString(R.string.activity_type_cycling);
+  }
+
   /**
    * Convert a settings selection to its string representation
    * @author will

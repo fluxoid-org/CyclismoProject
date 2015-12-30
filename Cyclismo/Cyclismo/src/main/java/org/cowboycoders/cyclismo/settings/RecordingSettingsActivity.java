@@ -88,7 +88,7 @@ public class RecordingSettingsActivity extends AbstractSettingsActivity {
         R.string.settings_recording_track_name_summary, trackNameValue);
 
     String defaultActivityValue = PreferencesUtils.getString(
-        this, R.string.default_activity_key, PreferencesUtils.DEFAULT_ACTIVITY_DEFAULT);
+        this, R.string.default_activity_key, PreferencesUtils.getDefaultActivityDefault(this));
     Preference defaultActivityPreference = findPreference(getString(R.string.default_activity_key));
     configurePreference(defaultActivityPreference, null, null,
         R.string.settings_recording_default_activity_summary, defaultActivityValue);
