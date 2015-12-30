@@ -320,11 +320,11 @@ private TrackDataListener courseTrackDataListener = new TrackDataListener() {
 
   @Override
   public void onResume() {
-    super.onResume();
-    if (((TrackDetailActivity) getActivity()).isCourseMode()) {
+    //TODO: why only in course mode? We need it to work in existing rides.
+    //if (((TrackDetailActivity) getActivity()).isCourseMode()) {
       overlayCourseData = true;
 
-    }
+    //}
     resumeTrackDataHub();
     resumeCourseDataHub();
 
@@ -612,13 +612,22 @@ private TrackDataListener courseTrackDataListener = new TrackDataListener() {
    */
   private synchronized void resumeCourseDataHub() {
     if (overlayCourseData) {
-    currentCourseId = ((TrackDetailActivity) getActivity()).getCourseTrackId();
-    courseDataHub = ((TrackDetailActivity) getActivity()).getCourseDataHub();
+      TrackDetailActivity activity = (TrackDetailActivity) getActivity();
+      courseDataHub = activity.getCourseDataHub();
+
+      if (activity.isCourseMode()) {
+        currentCourseId = activity.getCourseTrackId();
+      } else {
+        currentCourseId = activity.getTrackId();
+        courseDataHub = activity.getTrackDataHub();
+      }
+
     courseDataHub.registerTrackDataListener(courseTrackDataListener, EnumSet.of(TrackDataType.TRACKS_TABLE,
         TrackDataType.SELECTED_TRACK,
         TrackDataType.WAYPOINTS_TABLE, TrackDataType.SAMPLED_IN_TRACK_POINTS_TABLE,
         TrackDataType.LOCATION));
     reloadCourseDataHub();
+
     }
 
   }
