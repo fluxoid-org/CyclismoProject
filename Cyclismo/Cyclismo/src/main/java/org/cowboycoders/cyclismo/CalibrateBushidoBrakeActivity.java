@@ -9,6 +9,7 @@ import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,7 +26,9 @@ import java.text.DecimalFormat;
 
 public class CalibrateBushidoBrakeActivity extends Activity {
 
+  private static final String TAG = CalibrateBushidoBrakeActivity.class.getSimpleName();
   private boolean mIsBound = false;
+  private boolean speedReached = false;
 
   private BushidoBrake.CalibrationCallback calibrationCallback = new BushidoBrake.CalibrationCallback() {
 
@@ -35,10 +38,13 @@ public class CalibrateBushidoBrakeActivity extends Activity {
      */
     @Override
     public void onRequestStartPedalling() {
+      Log.d(TAG, "onRequestPedal");
       runOnUiThread(new Runnable() {
         @Override
         public void run() {
-          statusMessage.setText(getString(R.string.bushido_brake_calibrate_start));
+          if (!speedReached) {
+            statusMessage.setText(getString(R.string.bushido_brake_calibrate_start));
+          }
         }
       });
 
@@ -50,6 +56,7 @@ public class CalibrateBushidoBrakeActivity extends Activity {
      */
     @Override
     public void onReachedCalibrationSpeed() {
+      Log.d(TAG, "onSpeedReached");
       //produce a beep to signal that the user should slow down
       ToneGenerator toneGen = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
       toneGen.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 500);
@@ -57,6 +64,7 @@ public class CalibrateBushidoBrakeActivity extends Activity {
         @Override
         public void run() {
           statusMessage.setText(getString(R.string.bushido_brake_calibrate_stop));
+          speedReached = true;
         }
       });
     }
@@ -68,6 +76,7 @@ public class CalibrateBushidoBrakeActivity extends Activity {
      */
     @Override
     public void onRequestResumePedalling() {
+      Log.d(TAG, "onRequestResumePedalling");
       runOnUiThread(new Runnable() {
         @Override
         public void run() {
@@ -83,11 +92,13 @@ public class CalibrateBushidoBrakeActivity extends Activity {
      */
     @Override
     public void onSuccess(final double calibrationValue) {
+      Log.d(TAG, "onSuccess");
       final String prefix = getString(R.string.bushido_brake_calibrate_calibration_value);
       runOnUiThread(new Runnable() {
         @Override
         public void run() {
           statusMessage.setText(prefix + calibrationValue);
+          finishButton.setText(getString(R.string.generic_ok));
         }
       });
 
@@ -101,6 +112,7 @@ public class CalibrateBushidoBrakeActivity extends Activity {
      */
     @Override
     public void onFailure(BushidoBrake.CalibrationException exception) {
+      Log.d(TAG, "onFailure");
       runOnUiThread(new Runnable() {
         @Override
         public void run() {
@@ -117,10 +129,13 @@ public class CalibrateBushidoBrakeActivity extends Activity {
      */
     @Override
     public void onBelowSpeedReminder(double speed) {
+      Log.d(TAG, "onBelowSpeed");
       runOnUiThread(new Runnable() {
         @Override
         public void run() {
-          statusMessage.setText(getString(R.string.bushido_brake_calibrate_start));
+          if (!speedReached) {
+            statusMessage.setText(getString(R.string.bushido_brake_calibrate_start));
+          }
         }
       });
 
@@ -220,6 +235,7 @@ public class CalibrateBushidoBrakeActivity extends Activity {
       @Override
       public void onClick(View v) {
         startButtonEnabled = false;
+        speedReached = false;
         updateUi();
         startServiceInBackround();
         doBindService();
