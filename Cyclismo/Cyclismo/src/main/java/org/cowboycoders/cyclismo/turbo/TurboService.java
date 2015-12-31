@@ -303,15 +303,19 @@ public class TurboService extends Service {
   private String selectedTurboTrainer;
 
   public void doFinish() {
-    preferences.unregisterOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
-    // if (recordingTrackId != PreferencesUtils.RECORDING_TRACK_ID_DEFAULT) {
-    Intent intent = IntentUtils.newIntent(getBaseContext(), TrackEditActivity.class)
-        .putExtra(TrackEditActivity.EXTRA_TRACK_ID, recordingTrackId)
-        .putExtra(TrackEditActivity.EXTRA_NEW_TRACK, true).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-    getApplication().startActivity(intent);
-    TrackRecordingServiceConnectionUtils
-        .stopRecording(this, trackRecordingServiceConnection, false);
-    // }
+    // FIXME: preferences is a bad choice for the guard
+    // preferences is non-null when start() has been called, but not in calibrate mode
+    if (preferences != null) {
+      preferences.unregisterOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
+      // if (recordingTrackId != PreferencesUtils.RECORDING_TRACK_ID_DEFAULT) {
+      Intent intent = IntentUtils.newIntent(getBaseContext(), TrackEditActivity.class)
+              .putExtra(TrackEditActivity.EXTRA_TRACK_ID, recordingTrackId)
+              .putExtra(TrackEditActivity.EXTRA_NEW_TRACK, true).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+      getApplication().startActivity(intent);
+      TrackRecordingServiceConnectionUtils
+              .stopRecording(this, trackRecordingServiceConnection, false);
+      // }
+    }
     this.stopSelf();
   }
 
@@ -690,6 +694,7 @@ public class TurboService extends Service {
 
   @Override
   public synchronized void onDestroy() {
+    //FIXME: should not do this in calibrate mode
     unregisterRecordingReceiver();
     running = false;
 
@@ -733,7 +738,9 @@ public class TurboService extends Service {
     }
     Intent intent = new Intent().setAction(this.getString(R.string.anthub_action_shutdown));
     sendBroadcast(intent);
-    wakeLock.release();
+    if (wakeLock.isHeld()) {
+      wakeLock.release();
+    }
     // trackRecordingServiceConnection.unbind();
     return shutDownSuccess;
 
@@ -801,7 +808,12 @@ public class TurboService extends Service {
   }
 
   public void unregisterRecordingReceiver() {
-    unregisterReceiver(receiver);
+    try {
+      unregisterReceiver(receiver);
+    } catch (IllegalArgumentException e) {
+      //FIXME: catch-all shoudln't be necessary if we had better logic
+      Log.d(TAG, "unable to unregister Recording receiver");
+    }
   }
   
   // probably should show an activity with detail?

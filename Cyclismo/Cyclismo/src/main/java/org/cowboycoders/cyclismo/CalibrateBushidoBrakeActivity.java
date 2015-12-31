@@ -214,6 +214,18 @@ public class CalibrateBushidoBrakeActivity extends Activity {
     }
   }
 
+  private void stop() {
+    Intent stop = new Intent(this, TurboService.class);
+    try {
+      this.stopService(stop);
+    } catch (Exception e) {
+      Log.d(TAG, e.getMessage());
+      Log.d(TAG, e.getStackTrace().toString());
+    }
+
+    doUnbindService();
+  }
+
   private void startServiceInBackround() {
     Intent intent = new Intent(this, TurboService.class);
     this.startService(intent);
@@ -249,6 +261,7 @@ public class CalibrateBushidoBrakeActivity extends Activity {
       @Override
       public void onClick(View v) {
         startButtonEnabled = true;
+        stop();
         finish();
       }
     });
