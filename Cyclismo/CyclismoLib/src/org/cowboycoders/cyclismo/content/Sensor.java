@@ -148,9 +148,9 @@ public final class Sensor {
      */
     org.cowboycoders.cyclismo.content.Sensor.SensorState getState();
 
-    // optional int32 value = 2;
+    // optional float value = 2;
     /**
-     * <code>optional int32 value = 2;</code>
+     * <code>optional float value = 2;</code>
      *
      * <pre>
      * Value is only defined if state = SENDING.
@@ -158,19 +158,19 @@ public final class Sensor {
      */
     boolean hasValue();
     /**
-     * <code>optional int32 value = 2;</code>
+     * <code>optional float value = 2;</code>
      *
      * <pre>
      * Value is only defined if state = SENDING.
      * </pre>
      */
-    int getValue();
+    float getValue();
   }
   /**
    * Protobuf type {@code org.cowboycoders.cyclismo.content.SensorData}
    *
    * <pre>
-   * The state and possible reading for one integer sensor.
+   * The state and possible reading for a single sensor.
    * </pre>
    */
   public static final class SensorData extends
@@ -222,9 +222,9 @@ public final class Sensor {
               }
               break;
             }
-            case 16: {
+            case 21: {
               bitField0_ |= 0x00000002;
-              value_ = input.readInt32();
+              value_ = input.readFloat();
               break;
             }
           }
@@ -270,11 +270,11 @@ public final class Sensor {
       return state_;
     }
 
-    // optional int32 value = 2;
+    // optional float value = 2;
     public static final int VALUE_FIELD_NUMBER = 2;
-    private int value_;
+    private float value_;
     /**
-     * <code>optional int32 value = 2;</code>
+     * <code>optional float value = 2;</code>
      *
      * <pre>
      * Value is only defined if state = SENDING.
@@ -284,19 +284,19 @@ public final class Sensor {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>optional int32 value = 2;</code>
+     * <code>optional float value = 2;</code>
      *
      * <pre>
      * Value is only defined if state = SENDING.
      * </pre>
      */
-    public int getValue() {
+    public float getValue() {
       return value_;
     }
 
     private void initFields() {
       state_ = org.cowboycoders.cyclismo.content.Sensor.SensorState.NONE;
-      value_ = 0;
+      value_ = 0F;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -318,7 +318,7 @@ public final class Sensor {
         output.writeEnum(1, state_.getNumber());
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeInt32(2, value_);
+        output.writeFloat(2, value_);
       }
     }
 
@@ -334,7 +334,7 @@ public final class Sensor {
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(2, value_);
+          .computeFloatSize(2, value_);
       }
       memoizedSerializedSize = size;
       return size;
@@ -411,7 +411,7 @@ public final class Sensor {
      * Protobuf type {@code org.cowboycoders.cyclismo.content.SensorData}
      *
      * <pre>
-     * The state and possible reading for one integer sensor.
+     * The state and possible reading for a single sensor.
      * </pre>
      */
     public static final class Builder extends
@@ -433,7 +433,7 @@ public final class Sensor {
         super.clear();
         state_ = org.cowboycoders.cyclismo.content.Sensor.SensorState.NONE;
         bitField0_ = (bitField0_ & ~0x00000001);
-        value_ = 0;
+        value_ = 0F;
         bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
@@ -544,10 +544,10 @@ public final class Sensor {
         return this;
       }
 
-      // optional int32 value = 2;
-      private int value_ ;
+      // optional float value = 2;
+      private float value_ ;
       /**
-       * <code>optional int32 value = 2;</code>
+       * <code>optional float value = 2;</code>
        *
        * <pre>
        * Value is only defined if state = SENDING.
@@ -557,30 +557,30 @@ public final class Sensor {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>optional int32 value = 2;</code>
+       * <code>optional float value = 2;</code>
        *
        * <pre>
        * Value is only defined if state = SENDING.
        * </pre>
        */
-      public int getValue() {
+      public float getValue() {
         return value_;
       }
       /**
-       * <code>optional int32 value = 2;</code>
+       * <code>optional float value = 2;</code>
        *
        * <pre>
        * Value is only defined if state = SENDING.
        * </pre>
        */
-      public Builder setValue(int value) {
+      public Builder setValue(float value) {
         bitField0_ |= 0x00000002;
         value_ = value;
         
         return this;
       }
       /**
-       * <code>optional int32 value = 2;</code>
+       * <code>optional float value = 2;</code>
        *
        * <pre>
        * Value is only defined if state = SENDING.
@@ -588,7 +588,7 @@ public final class Sensor {
        */
       public Builder clearValue() {
         bitField0_ = (bitField0_ & ~0x00000002);
-        value_ = 0;
+        value_ = 0F;
         
         return this;
       }

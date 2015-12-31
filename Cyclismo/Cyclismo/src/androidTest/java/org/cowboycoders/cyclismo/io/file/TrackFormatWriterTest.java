@@ -116,10 +116,12 @@ public abstract class TrackFormatWriterTest extends AndroidTestCase {
           .setState(Sensor.SensorState.SENDING);
       Sensor.SensorData.Builder cadence = Sensor.SensorData.newBuilder().setValue(200 + i)
           .setState(Sensor.SensorState.SENDING);
+      Sensor.SensorData.Builder distance = Sensor.SensorData.newBuilder().setValue(12.3f + i)
+          .setState(Sensor.SensorState.SENDING);
       Sensor.SensorData.Builder heartRate = Sensor.SensorData.newBuilder().setValue(300 + i)
           .setState(Sensor.SensorState.SENDING);     
       Sensor.SensorDataSet sensorDataSet = Sensor.SensorDataSet.newBuilder().setPower(power)
-          .setCadence(cadence).setHeartRate(heartRate).build();
+          .setCadence(cadence).setDistance(distance).setHeartRate(heartRate).build();
       location.setSensorDataSet(sensorDataSet);
     }
   }
@@ -168,7 +170,7 @@ public abstract class TrackFormatWriterTest extends AndroidTestCase {
     int length = children.getLength();
     assertTrue(length > 0);
 
-    // The children may be a sucession of text elements, just concatenate them
+    // The children may be a succession of text elements, just concatenate them
     String result = "";
     for (int i = 0; i < length; i++) {
       Text textNode = (Text) children.item(i);

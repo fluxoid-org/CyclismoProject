@@ -55,13 +55,13 @@ public class ZephyrMessageParserTest extends TestCase {
     Sensor.SensorDataSet sds = parser.parseBuffer(buf);
     assertTrue(sds.hasHeartRate());
     assertTrue(sds.getHeartRate().getState() == Sensor.SensorState.SENDING);
-    assertEquals(255, sds.getHeartRate().getValue());
+    assertEquals(255.0f, sds.getHeartRate().getValue());
     assertTrue(sds.hasBatteryLevel());
     assertTrue(sds.getBatteryLevel().getState() == Sensor.SensorState.SENDING);
-    assertEquals(51, sds.getBatteryLevel().getValue());
+    assertEquals(51.0f, sds.getBatteryLevel().getValue());
     assertTrue(sds.hasCadence());
     assertTrue(sds.getCadence().getState() == Sensor.SensorState.SENDING);
-    assertEquals(255, sds.getCadence().getValue());
+    assertEquals(255.0f, sds.getCadence().getValue());
   }
 
   public void testFindNextAlignment() {

@@ -168,6 +168,15 @@ public class TcxTrackWriter implements TrackFormatWriter {
     }
   }
 
+  public static String getElement(String tag, float value, boolean asInt) {
+    String valueStr = asInt ? Integer.toString(Math.round(value)) : Float.toString(value);
+    return  "<" + tag + ">" + valueStr + "</" + tag + ">";
+  }
+
+  public static String getElement(String tag, float value) {
+    return TcxTrackWriter.getElement(tag, value, false);
+  }
+
   @Override
   public void writeBeginTrack(Location firstPoint) {
     if (printWriter != null) {
@@ -256,18 +265,21 @@ public class TcxTrackWriter implements TrackFormatWriter {
           // the turbo speed to correct for errors in the simulation we should use the speed
           // from the location. This would also be required if we supported turbos with no
           // resistance control.
-          double speed = speedAvailable ? sensorDataSet.getSpeed().getValue() : location.getSpeed();
-          printWriter.println("<Speed>" + speed + "</Speed>");
+          // TODO: Get rid of this? Garmin uses the distance for speed calc
+          float speed = speedAvailable ? sensorDataSet.getSpeed().getValue() : location.getSpeed();
+          printWriter.println(TcxTrackWriter.getElement("Speed", speed));
 
           if (heartRateAvailable) {
             printWriter.println("<HeartRateBpm>");
-            printWriter.println("<Value>" + sensorDataSet.getHeartRate().getValue() + "</Value>");
+            printWriter.println(TcxTrackWriter.getElement("Value",
+                Math.round(sensorDataSet.getHeartRate().getValue()),
+                true));
             printWriter.println("</HeartRateBpm>");
           }
 
           if (distanceAvailable) {
-            printWriter.println("<DistanceMeters>" + sensorDataSet.getDistance().getValue()
-                    + "</DistanceMeters>");
+            printWriter.println(TcxTrackWriter.getElement("DistanceMeters",
+                sensorDataSet.getDistance().getValue()));
           }
 
           // <Cadence> needs to be put before <Extensions>.
@@ -275,8 +287,9 @@ public class TcxTrackWriter implements TrackFormatWriter {
           // type. For others, use <RunCadence> in <Extensions>.
           if (cadenceAvailable && sportType == SportType.BIKING) {
             // The spec requires the max value be 254.
-            printWriter.println(
-                "<Cadence>" + Math.min(254, sensorDataSet.getCadence().getValue()) + "</Cadence>");
+            printWriter.println(TcxTrackWriter.getElement("Cadence",
+                Math.min(254, sensorDataSet.getCadence().getValue()),
+                true));
           }
 
           if ((cadenceAvailable && sportType != SportType.BIKING) || powerAvailable) {
@@ -287,12 +300,15 @@ public class TcxTrackWriter implements TrackFormatWriter {
             // <RunCadence> needs to be put before <Watts>.
             if (cadenceAvailable && sportType != SportType.BIKING) {
               // The spec requires the max value to be 254.
-              printWriter.println("<RunCadence>"
-                  + Math.min(254, sensorDataSet.getCadence().getValue()) + "</RunCadence>");
+              printWriter.println(TcxTrackWriter.getElement("RunCadence",
+                  Math.min(254, sensorDataSet.getCadence().getValue()),
+                  true));
             }
 
             if (powerAvailable) {
-              printWriter.println("<Watts>" + sensorDataSet.getPower().getValue() + "</Watts>");
+              printWriter.println(TcxTrackWriter.getElement("Watts",
+                  sensorDataSet.getPower().getValue(),
+                  true));
             }
             printWriter.println("</TPX>");
             printWriter.println("</Extensions>");

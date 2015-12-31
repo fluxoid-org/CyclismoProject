@@ -53,12 +53,12 @@ enum SensorState {
   SENDING = 5;
 };
 
-// The state and possible reading for one integer sensor.
+// The state and possible reading for a single sensor.
 message SensorData {
   required SensorState state = 1 [default = NONE];
   
   // Value is only defined if state = SENDING.
-  optional int32 value = 2;
+  optional float value = 2;
 };
 
 // A message to encapsulate sensor readings associated with a track point.

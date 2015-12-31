@@ -65,7 +65,7 @@ public class PolarMessageParserTest extends TestCase {
     Sensor.SensorDataSet sds = parser.parseBuffer(buf);
     assertTrue(sds.hasHeartRate());
     assertTrue(sds.getHeartRate().getState() == Sensor.SensorState.SENDING);
-    assertEquals(70, sds.getHeartRate().getValue());
+    assertEquals(70.0f, sds.getHeartRate().getValue());
   }
 
   public void testFindNextAlignment_offset() {

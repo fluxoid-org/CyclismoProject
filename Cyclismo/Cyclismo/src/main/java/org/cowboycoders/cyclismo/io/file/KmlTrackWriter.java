@@ -269,21 +269,21 @@ public class KmlTrackWriter implements TrackFormatWriter {
             SensorData sensorData = sensorDataSet.getPower();
             if (sensorData.hasValue() && sensorData.getState() == Sensor.SensorState.SENDING) {
               hasPower = true;
-              power = sensorData.getValue();
+              power = Math.round(sensorData.getValue());
             }
           }
           if (sensorDataSet.hasCadence()) {
             SensorData sensorData = sensorDataSet.getCadence();
             if (sensorData.hasValue() && sensorData.getState() == Sensor.SensorState.SENDING) {
               hasCadence = true;
-              cadence = sensorData.getValue();
+              cadence = Math.round(sensorData.getValue());
             }
           }
           if (sensorDataSet.hasHeartRate()) {
             SensorData sensorData = sensorDataSet.getHeartRate();
             if (sensorData.hasValue() && sensorData.getState() == Sensor.SensorState.SENDING) {
               hasHeartRate = true;
-              heartRate = sensorData.getValue();
+              heartRate = Math.round(sensorData.getValue());
             }
           }          
         }

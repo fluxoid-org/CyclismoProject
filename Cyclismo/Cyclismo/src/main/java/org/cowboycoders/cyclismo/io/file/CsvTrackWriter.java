@@ -186,25 +186,25 @@ public class CsvTrackWriter implements TrackFormatWriter {
         if (sensorDataSet.hasDistance()) {
           SensorData sensorData = sensorDataSet.getDistance();
           if (sensorData.hasValue() && sensorData.getState() == Sensor.SensorState.SENDING) {
-            distance = Double.toString(sensorData.getValue());
+            distance = Float.toString(sensorData.getValue());
           }
         }
         if (sensorDataSet.hasPower()) {
           SensorData sensorData = sensorDataSet.getPower();
           if (sensorData.hasValue() && sensorData.getState() == Sensor.SensorState.SENDING) {
-            power = Double.toString(sensorData.getValue());
+            power = Float.toString(sensorData.getValue());
           }
         }
         if (sensorDataSet.hasCadence()) {
           SensorData sensorData = sensorDataSet.getCadence();
           if (sensorData.hasValue() && sensorData.getState() == Sensor.SensorState.SENDING) {
-            cadence = Double.toString(sensorData.getValue());
+            cadence = Float.toString(sensorData.getValue());
           }
         }
         if (sensorDataSet.hasHeartRate()) {
           SensorData sensorData = sensorDataSet.getHeartRate();
           if (sensorData.hasValue() && sensorData.getState() == Sensor.SensorState.SENDING) {
-            heartRate = Double.toString(sensorData.getValue());
+            heartRate = Float.toString(sensorData.getValue());
           }
         }
       }
