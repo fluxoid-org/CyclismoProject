@@ -1,7 +1,5 @@
 language: android
 
-# Use container based infrastructure
-sudo: false
 cache: false
 
 jdk:
@@ -11,7 +9,7 @@ env:
   global:
     - TERM=dumb
     - JAVA_OPTS=-Xmx2g
-    - ADB_INSTALL_TIMEOUT=8 # Default of 2 mins can cause timeouts
+    - ADB_INSTALL_TIMEOUT=12 # Default of 2 mins can cause timeouts
   matrix:
     # KVM not available to satisfy the x86 images so just use Arm.
     - ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a
@@ -33,9 +31,9 @@ before_script:
 
 after_failure:
   - echo $PWD
-  - export LOG_DIR="$(pwd)/Cyclismo/Cyclismo/build/outputs/reports/androidTests/connected/"
+  - export LOG_DIR="$(pwd)/Cyclismo/Cyclismo/build/outputs/reports/androidTests/connected"
   - cd "${LOG_DIR}"
-  - apt-get install -qq lynx && lynx --dump index.html > index.log
+  - sudo apt-get install -qq lynx && lynx --dump index.html > index.log
   - cat index.log
 
 script:  sh update_android.sh && ./gradlew --stacktrace clean build connectedAndroidTest
