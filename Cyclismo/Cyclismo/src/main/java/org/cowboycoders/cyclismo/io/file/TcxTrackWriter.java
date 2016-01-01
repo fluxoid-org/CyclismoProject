@@ -260,17 +260,17 @@ public class TcxTrackWriter implements TrackFormatWriter {
           boolean distanceAvailable = sensorDataSet.hasDistance()
             && sensorDataSet.getDistance().hasValue()
             && sensorDataSet.getDistance().getState() == Sensor.SensorState.SENDING;
-          boolean speedAvailable = sensorDataSet.hasSpeed()
-              && sensorDataSet.getSpeed().hasValue()
-              && sensorDataSet.getSpeed().getState() == Sensor.SensorState.SENDING;
+          //boolean speedAvailable = sensorDataSet.hasSpeed()
+          //    && sensorDataSet.getSpeed().hasValue()
+          //    && sensorDataSet.getSpeed().getState() == Sensor.SensorState.SENDING;
 
           // Prefer the speed measured on the Turbo. In the future, if we made adjustments to
           // the turbo speed to correct for errors in the simulation we should use the speed
           // from the location. This would also be required if we supported turbos with no
           // resistance control.
           // TODO: Get rid of this? Garmin uses the distance for speed calc
-          float speed = speedAvailable ? sensorDataSet.getSpeed().getValue() : location.getSpeed();
-          printWriter.println(TcxTrackWriter.getElement("Speed", speed));
+          //float speed = speedAvailable ? sensorDataSet.getSpeed().getValue() : location.getSpeed();
+          //printWriter.println(TcxTrackWriter.getElement("Speed", speed));
 
           if (heartRateAvailable) {
             printWriter.println("<HeartRateBpm>");
