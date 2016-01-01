@@ -36,6 +36,7 @@ package org.cowboycoders.cyclismo.io.file;
 
 import android.content.Context;
 import android.location.Location;
+import android.util.Log;
 
 import org.cowboycoders.cyclismo.R;
 import org.cowboycoders.cyclismo.content.MyTracksLocation;
@@ -61,6 +62,8 @@ import java.util.Locale;
  * @author Dominik Rttsches
  */
 public class TcxTrackWriter implements TrackFormatWriter {
+
+  private static final String TAG = TcxTrackWriter.class.getSimpleName();
 
   /**
    * TCX sport type. See the TCX spec.
@@ -278,6 +281,7 @@ public class TcxTrackWriter implements TrackFormatWriter {
           }
 
           if (distanceAvailable) {
+            Log.d(TAG, "Distance, sensor: " + sensorDataSet.getDistance().getValue());
             printWriter.println(TcxTrackWriter.getElement("DistanceMeters",
                 sensorDataSet.getDistance().getValue()));
           }
