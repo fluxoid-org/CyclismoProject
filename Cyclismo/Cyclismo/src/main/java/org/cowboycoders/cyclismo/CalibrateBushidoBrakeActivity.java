@@ -9,6 +9,7 @@ import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,9 +24,11 @@ import org.cowboycoders.turbotrainers.bushido.brake.BushidoBrake;
 import java.text.DecimalFormat;
 
 
-public class BushidoBrakeCalibrate extends Activity {
+public class CalibrateBushidoBrakeActivity extends Activity {
 
+  private static final String TAG = CalibrateBushidoBrakeActivity.class.getSimpleName();
   private boolean mIsBound = false;
+  private boolean speedReached = false;
 
   private BushidoBrake.CalibrationCallback calibrationCallback = new BushidoBrake.CalibrationCallback() {
 
@@ -35,10 +38,13 @@ public class BushidoBrakeCalibrate extends Activity {
      */
     @Override
     public void onRequestStartPedalling() {
+      Log.d(TAG, "onRequestPedal");
       runOnUiThread(new Runnable() {
         @Override
         public void run() {
-          statusMessage.setText(getString(R.string.bushido_brake_calibrate_start));
+          if (!speedReached) {
+            statusMessage.setText(getString(R.string.bushido_brake_calibrate_start));
+          }
         }
       });
 
@@ -50,6 +56,7 @@ public class BushidoBrakeCalibrate extends Activity {
      */
     @Override
     public void onReachedCalibrationSpeed() {
+      Log.d(TAG, "onSpeedReached");
       //produce a beep to signal that the user should slow down
       ToneGenerator toneGen = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
       toneGen.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 500);
@@ -57,6 +64,7 @@ public class BushidoBrakeCalibrate extends Activity {
         @Override
         public void run() {
           statusMessage.setText(getString(R.string.bushido_brake_calibrate_stop));
+          speedReached = true;
         }
       });
     }
@@ -68,6 +76,7 @@ public class BushidoBrakeCalibrate extends Activity {
      */
     @Override
     public void onRequestResumePedalling() {
+      Log.d(TAG, "onRequestResumePedalling");
       runOnUiThread(new Runnable() {
         @Override
         public void run() {
@@ -83,11 +92,13 @@ public class BushidoBrakeCalibrate extends Activity {
      */
     @Override
     public void onSuccess(final double calibrationValue) {
+      Log.d(TAG, "onSuccess");
       final String prefix = getString(R.string.bushido_brake_calibrate_calibration_value);
       runOnUiThread(new Runnable() {
         @Override
         public void run() {
           statusMessage.setText(prefix + calibrationValue);
+          finishButton.setText(getString(R.string.generic_ok));
         }
       });
 
@@ -101,6 +112,7 @@ public class BushidoBrakeCalibrate extends Activity {
      */
     @Override
     public void onFailure(BushidoBrake.CalibrationException exception) {
+      Log.d(TAG, "onFailure");
       runOnUiThread(new Runnable() {
         @Override
         public void run() {
@@ -117,10 +129,13 @@ public class BushidoBrakeCalibrate extends Activity {
      */
     @Override
     public void onBelowSpeedReminder(double speed) {
+      Log.d(TAG, "onBelowSpeed");
       runOnUiThread(new Runnable() {
         @Override
         public void run() {
-          statusMessage.setText(getString(R.string.bushido_brake_calibrate_start));
+          if (!speedReached) {
+            statusMessage.setText(getString(R.string.bushido_brake_calibrate_start));
+          }
         }
       });
 
@@ -166,14 +181,14 @@ public class BushidoBrakeCalibrate extends Activity {
     public void onServiceConnected(ComponentName className, IBinder binder) {
       TurboService s = ((TurboService.TurboBinder) binder).getService();
       s.startBushidoCalibrate(calibrationCallback, dataListener);
-      Toast.makeText(BushidoBrakeCalibrate.this, "Connected to turbo service",
+      Toast.makeText(CalibrateBushidoBrakeActivity.this, "Connected to turbo service",
               Toast.LENGTH_SHORT).show();
       // no longer needed
       doUnbindService();
     }
 
     public void onServiceDisconnected(ComponentName className) {
-      Toast.makeText(BushidoBrakeCalibrate.this, "Disconnected from turbo service",
+      Toast.makeText(CalibrateBushidoBrakeActivity.this, "Disconnected from turbo service",
               Toast.LENGTH_SHORT).show();
     }
   };
@@ -199,6 +214,18 @@ public class BushidoBrakeCalibrate extends Activity {
     }
   }
 
+  private void stop() {
+    Intent stop = new Intent(this, TurboService.class);
+    try {
+      this.stopService(stop);
+    } catch (Exception e) {
+      Log.d(TAG, e.getMessage());
+      Log.d(TAG, e.getStackTrace().toString());
+    }
+
+    doUnbindService();
+  }
+
   private void startServiceInBackround() {
     Intent intent = new Intent(this, TurboService.class);
     this.startService(intent);
@@ -220,6 +247,7 @@ public class BushidoBrakeCalibrate extends Activity {
       @Override
       public void onClick(View v) {
         startButtonEnabled = false;
+        speedReached = false;
         updateUi();
         startServiceInBackround();
         doBindService();
@@ -233,6 +261,7 @@ public class BushidoBrakeCalibrate extends Activity {
       @Override
       public void onClick(View v) {
         startButtonEnabled = true;
+        stop();
         finish();
       }
     });
