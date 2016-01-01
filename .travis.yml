@@ -3,7 +3,8 @@ language: android
 cache: false
 
 jdk:
-  - openjdk7
+  - oraclejdk7
+#  - openjdk7
 
 env:
   global:
