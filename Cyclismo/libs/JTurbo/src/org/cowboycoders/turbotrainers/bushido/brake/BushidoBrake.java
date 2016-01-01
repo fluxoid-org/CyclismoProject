@@ -149,17 +149,20 @@ public class BushidoBrake extends AntTurboTrainer {
 
 		@Override
 		public void onSpeedChange(final double speed) {
+			// allow hooks in controller to determine which speed we send
+			final double speedToSend = resistanceController.onSpeedChange(speed);
+
 			synchronized (model) {
 				model.setActualSpeed(speed);
+				model.setVirtualSpeed(speedToSend);
 			}
+
 			synchronized (dataChangeListeners) {
 				IterationUtils.operateOnAll(dataChangeListeners,
 						new IterationOperator<TurboTrainerDataListener>() {
 							@Override
 							public void performOperation(
 									TurboTrainerDataListener dcl) {
-								// allow hooks in controller to determine which speed we send
-								double speedToSend = resistanceController.onSpeedChange(speed);
 								dcl.onSpeedChange(speedToSend);
 							}
 
@@ -170,7 +173,7 @@ public class BushidoBrake extends AntTurboTrainer {
 			// receive values directly
 			// manually update with new value obtained through integration
 			synchronized (model) {
-				this.onDistanceChange(model.getActualDistance(true));
+				this.onDistanceChange(model.getVirtualDistance());
 			}
 
 		}
@@ -216,7 +219,7 @@ public class BushidoBrake extends AntTurboTrainer {
 
 		@Override
 		public void onDistanceChange(final double distance) {
-
+			//FIXME: I don't think this code path is used. Verify and remove.
 			synchronized (dataChangeListeners) {
 				IterationUtils.operateOnAll(dataChangeListeners,
 						new IterationOperator<TurboTrainerDataListener>() {

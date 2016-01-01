@@ -33,7 +33,7 @@ abstract public class TurboBaseModel {
 	}
 
 	/**
-	 * @param set slope as percentage
+	 * @param slope as percentage
 	 */
 	public void setSlope(double slope) {
 		this.slope = slope;
@@ -47,7 +47,7 @@ abstract public class TurboBaseModel {
 	}
 
 	/**
-	 * @param set heartRate in bpm
+	 * @param heartRate in bpm
 	 */
 	public void setHeartRate(double heartRate) {
 		this.heartRate = heartRate;
@@ -61,7 +61,8 @@ abstract public class TurboBaseModel {
 	}
 	
 	/**
-	 * @param set virtualSpeed in kmph
+	 * Speed with gradient compensation
+	 * @param virtualSpeed in kmph
 	 */
 	public void setVirtualSpeed(double virtualSpeed) {
 		this.virtualSpeed = virtualSpeed;
@@ -94,7 +95,7 @@ abstract public class TurboBaseModel {
 	}
 	
 	/**
-	 * @param set cadence in rpm
+	 * @param cadence in rpm
 	 */
 	public void setCadence(double cadence) {
 		this.cadence = cadence;
@@ -108,7 +109,7 @@ abstract public class TurboBaseModel {
 	}
 
 	/**
-	 * @param set power in Watts
+	 * @param power in Watts
 	 */
 	public void setPower(double power) {
 		this.power = power;
@@ -117,7 +118,7 @@ abstract public class TurboBaseModel {
 	/**
 	 * True distance (travelled by wheel) as opposed to integrated speed
 	 * 
-	 * @param set actualDistance in m
+	 * @param actualDistance actualDistance in m
 	 */
 	public void setActualDistance(double actualDistance) {
 		this.actualDistance = actualDistance;
@@ -131,7 +132,7 @@ abstract public class TurboBaseModel {
 	}
 	
 	/**
-	 * @param userIntegral result obtained through integrating actual speed
+	 * @param useIntegral result obtained through integrating actual speed
 	 * @return actual distance in m
 	 */
 	public double getActualDistance(boolean useIntegral) {
