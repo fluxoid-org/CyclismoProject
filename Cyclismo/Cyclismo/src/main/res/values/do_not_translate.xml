@@ -104,6 +104,7 @@ Google은 이용자에 대한 위치정보의 이용∙제공사실을 위치정
   <string name="sensor_data_cadence">org.cowboycoders.cyclismo.SENSOR_DATA_CADENCE</string>
   <string name="sensor_data_power">org.cowboycoders.cyclismo.SENSOR_DATA_POWER</string>
   <string name="sensor_data_speed_kmh">org.cowboycoders.cyclismo.SENSOR_DATA_SPEED_KMH</string>
+  <string name="sensor_data_distance">org.cowboycoders.cyclismo.SENSOR_DATA_DISTANCE</string>
   <string name="sensor_data_heart_rate">org.cowboycoders.cyclismo.SENSOR_DATA_HEART_RATE</string>
   <string name="sensor_data_double_value">org.cowboycoders.cyclismo.SENSOR_DATA_DOUBLE_VALUE</string>
   <string name="settings_bushido_antlog_filename">antlog</string>

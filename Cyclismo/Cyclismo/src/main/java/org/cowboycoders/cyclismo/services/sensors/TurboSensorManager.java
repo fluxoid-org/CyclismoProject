@@ -39,6 +39,7 @@ public class TurboSensorManager extends SensorManager {
   
   private static String NEW_CADENCE_ACTION;
   private static String NEW_SPEED_ACTION;
+  private static String NEW_DISTANCE_ACTION;
   private static String NEW_HEART_RATE_ACTION;
   private static String NEW_POWER_ACTION;
   private static String DATA_ID;
@@ -50,6 +51,7 @@ public class TurboSensorManager extends SensorManager {
     sensorDataSet = Sensor.SensorDataSet.getDefaultInstance();
     NEW_CADENCE_ACTION = context.getString(R.string.sensor_data_cadence);
     NEW_SPEED_ACTION = context.getString(R.string.sensor_data_speed_kmh);
+    NEW_DISTANCE_ACTION = context.getString(R.string.sensor_data_distance);
     NEW_HEART_RATE_ACTION = context.getString(R.string.sensor_data_heart_rate);
     NEW_POWER_ACTION = context.getString(R.string.sensor_data_power);
     DATA_ID = context.getString(R.string.sensor_data_double_value);
@@ -89,7 +91,7 @@ public class TurboSensorManager extends SensorManager {
        String action = intent.getAction();
        double value = intent.getDoubleExtra(DATA_ID, -1);
        SensorData sd = SensorData.newBuilder()
-           .setValue((int) value)
+           .setValue((float) value)
            .setState(Sensor.SensorState.SENDING)
            .build();
        if(action.equals(NEW_CADENCE_ACTION)){
@@ -106,7 +108,24 @@ public class TurboSensorManager extends SensorManager {
          }
        }
        else if(action.equals(NEW_SPEED_ACTION)){
-         //can't handle this atm
+         synchronized (TurboSensorManager.this) {
+           SensorDataSet sds = getSensorDataSet();
+           sds = sds.toBuilder()
+               .setSpeed(sd)
+               .setCreationTime(System.currentTimeMillis())
+               .build();
+           setSensorDataSet(sds);
+         }
+       }
+       else if(action.equals(NEW_DISTANCE_ACTION)){
+         synchronized (TurboSensorManager.this) {
+           SensorDataSet sds = getSensorDataSet();
+           sds = sds.toBuilder()
+               .setDistance(sd)
+               .setCreationTime(System.currentTimeMillis())
+               .build();
+           setSensorDataSet(sds);
+         }
        }
        else if(action.equals(NEW_HEART_RATE_ACTION)){
          synchronized (TurboSensorManager.this) {
@@ -132,12 +151,12 @@ public class TurboSensorManager extends SensorManager {
   };
 
 
-
   public void registerTurboReceiver() {
     IntentFilter filter = new IntentFilter();
     filter.addAction(NEW_POWER_ACTION);
     filter.addAction(NEW_HEART_RATE_ACTION);
     filter.addAction(NEW_SPEED_ACTION);
+    filter.addAction(NEW_DISTANCE_ACTION);
     filter.addAction(NEW_CADENCE_ACTION);
 
     context.registerReceiver(receiver, filter);

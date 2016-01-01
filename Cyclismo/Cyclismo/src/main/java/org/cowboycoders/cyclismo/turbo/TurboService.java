@@ -63,6 +63,7 @@ import org.cowboycoders.cyclismo.util.TrackRecordingServiceConnectionUtils;
 import org.cowboycoders.cyclismo.util.UnitConversions;
 import org.cowboycoders.turbotrainers.DummyTrainer;
 import org.cowboycoders.turbotrainers.bushido.brake.ConstantResistanceController;
+import org.fluxoid.utils.LatLong;
 import org.fluxoid.utils.LatLongAlt;
 import org.cowboycoders.turbotrainers.CourseTracker;
 import org.cowboycoders.turbotrainers.Mode;
@@ -106,7 +107,7 @@ public class TurboService extends Service {
 
   public static String COURSE_TRACK_ID = "COURSE_TRACK_ID";
 
-  public static double TARGET_TRACKPOINT_DISTANCE_METRES = 5;
+  public static double TARGET_TRACKPOINT_DISTANCE_METRES = 0.1;
   
   protected AntLoggerImpl antLogger;
 
@@ -195,9 +196,9 @@ public class TurboService extends Service {
     Lock updatingLock = new ReentrantLock();
 
     @Override
-    public void onSpeedChange(double speed) { // synchronized to keep speed in
-      
-      // alignment with distance    
+    public void onSpeedChange(double speed) {
+
+      // synchronized to keep speed in alignment with distance
       
       Intent intent = new Intent(getString(R.string.sensor_data_speed_kmh));
       intent.putExtra(getString(R.string.sensor_data_double_value), speed);
@@ -253,12 +254,23 @@ public class TurboService extends Service {
         updatingLock.unlock();
       }
 
-      Log.d(TAG, "distance:" + distance);
-      LatLongAlt currentLocation = courseTracker.getNearestLocation(distance);
-      updateLocation(currentLocation);
-      double gradient = courseTracker.getCurrentGradient(); // returns 0.0 if
-                                                            // finished for warm
-                                                            // down
+      // Log the cumulative distance as it is used by some tools (Strava etc.) to calculate speed
+      Log.d(TAG, "distance: " + distance);
+      Intent intent = new Intent(getString(R.string.sensor_data_distance));
+      intent.putExtra(getString(R.string.sensor_data_double_value), distance);
+      sendBroadcast(intent);
+
+      // FIXME: If the locations are significantly far apart we may be in front / behind
+      // at the point of timestamp. This could lead to oscillations in the speed reported by some
+      // analysis tools which calculate the speed from locations. We should probably interpolate?
+      LatLongAlt currentLocation = new LatLongAlt(0,0,0);
+      Double delta = courseTracker.getNearestLocation(distance, currentLocation);
+      Log.d(TAG, "nearest location distance (m): " + delta);
+      updateLocation(currentLocation, delta);
+
+      // returns 0.0 if finished for warm down
+      double gradient = courseTracker.getCurrentGradient();
+
       if (gradient > 0) {
         gradient = gradient * scaleFactor;
       }
@@ -556,7 +568,9 @@ public class TurboService extends Service {
                         retryErrorProneCall(startHrm, 10);
                         turboTrainer.registerDataListener(dataListener);
                         unpauseRecording();
-                        updateLocation(courseTracker.getNearestLocation(0.0));
+                        LatLongAlt loc = new LatLongAlt(0,0,0);
+                        double delta = courseTracker.getNearestLocation(0.0, loc);
+                        updateLocation(loc, delta);
                     } catch (Exception e) {
                         handleException(e, "Error initiliasing turbo trainer",true,NOTIFCATION_ID_STARTUP);
                     }
@@ -655,7 +669,7 @@ public class TurboService extends Service {
   
 
 
-  private synchronized void updateLocation(LatLongAlt pos) {
+  private synchronized void updateLocation(LatLongAlt pos, double delta) {
       try {
         float locSpeed = (float) (lastRecordedSpeed / UnitConversions.MS_TO_KMH);
         final long timestamp = System.currentTimeMillis();
@@ -667,6 +681,9 @@ public class TurboService extends Service {
         loc.setLatitude(pos.getLatitude());
         loc.setLongitude(pos.getLongitude());
         loc.setAltitude(pos.getAltitude());
+        // TODO(dszumski) one possible way to correct
+        // long timeCorrection = (long) (1000.0 * (delta / lastRecordedSpeed));
+        // loc.setTime(timestamp - timeCorrection);
         loc.setTime(timestamp);
         loc.setSpeed(locSpeed);
         loc.setAccuracy(gpsAccuracy);

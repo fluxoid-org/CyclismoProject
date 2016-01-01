@@ -69,4 +69,7 @@ public class UnitConversions {
 
   // multiplication factor to convert degrees to radians
   public static final double DEG_TO_RAD = Math.PI / 180.0;
+
+  // multiplication factor to convert seconds to ms
+  public static final double S_TO_MS = 1000.0;
 }

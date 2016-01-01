@@ -45,29 +45,15 @@ import org.cowboycoders.cyclismo.content.Sensor.SensorDataSet;
 import org.cowboycoders.cyclismo.content.Track;
 import org.cowboycoders.cyclismo.content.Waypoint;
 import org.cowboycoders.cyclismo.io.file.TrackWriterFactory.TrackFileFormat;
+import org.cowboycoders.cyclismo.util.LocationUtils;
 import org.cowboycoders.cyclismo.util.StringUtils;
+import org.cowboycoders.cyclismo.util.UnitConversions;
+import org.fluxoid.utils.LatLongAlt;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.text.NumberFormat;
 
-/**
- * Write track as CSV to a file. See RFC 4180 for info on CSV. Output three
- * tables.<br>
- * The first table contains the track info. Its columns are:<br>
- * "Track name","Activity type","Track description" <br>
- * <br>
- * The second table contains the markers. Its columns are:<br>
- * "Marker name","Marker type","Marker description","Latitude (deg)","Longitude
- * (deg)","Altitude (m)","Bearing (deg)","Accuracy (m)","Speed (m/s)","Time"<br>
- * <br>
- * The thrid table contains the points. Its columns are:<br>
- * "Segment","Point","Latitude (deg)","Longitude (deg)","Altitude (m)","Bearing
- * (deg)","Accuracy (m)","Speed (m/s)","Time","Power (W)","Cadence (rpm)","Heart
- * rate (bpm)","Battery level (%)"<br>
- *
- * @author Rodrigo Damazio
- */
 public class CsvTrackWriter implements TrackFormatWriter {
 
   private static final NumberFormat SHORT_FORMAT = NumberFormat.getInstance();
@@ -81,6 +67,7 @@ public class CsvTrackWriter implements TrackFormatWriter {
   private Track track;
   private int segmentIndex;
   private int pointIndex;
+  private Location previousLocation;
 
   public CsvTrackWriter(Context context) {
     this.context = context;
@@ -161,8 +148,10 @@ public class CsvTrackWriter implements TrackFormatWriter {
         context.getString(R.string.description_location_altitude),
         context.getString(R.string.description_location_bearing),
         context.getString(R.string.description_location_accuracy),
-        context.getString(R.string.description_location_speed),
         context.getString(R.string.description_time),
+        context.getString(R.string.description_location_speed),
+        context.getString(R.string.description_spheroid_speed),
+        context.getString(R.string.description_sensor_distance_meters),
         context.getString(R.string.description_sensor_power),
         context.getString(R.string.description_sensor_cadence),
         context.getString(R.string.description_sensor_heart_rate));
@@ -186,46 +175,80 @@ public class CsvTrackWriter implements TrackFormatWriter {
 
   @Override
   public void writeLocation(Location location) {
-    String power = null;
-    String cadence = null;
-    String heartRate = null;
+    String distance = "";
+    String power = "";
+    String cadence = "";
+    String heartRate = "";
+    String spheroidSpeed = "";
     if (location instanceof MyTracksLocation) {
       SensorDataSet sensorDataSet = ((MyTracksLocation) location).getSensorDataSet();
-
       if (sensorDataSet != null) {
+        if (sensorDataSet.hasDistance()) {
+          SensorData sensorData = sensorDataSet.getDistance();
+          if (sensorData.hasValue() && sensorData.getState() == Sensor.SensorState.SENDING) {
+            distance = Float.toString(sensorData.getValue());
+          }
+        }
         if (sensorDataSet.hasPower()) {
           SensorData sensorData = sensorDataSet.getPower();
           if (sensorData.hasValue() && sensorData.getState() == Sensor.SensorState.SENDING) {
-            power = Double.toString(sensorData.getValue());
+            power = Float.toString(sensorData.getValue());
           }
         }
         if (sensorDataSet.hasCadence()) {
           SensorData sensorData = sensorDataSet.getCadence();
           if (sensorData.hasValue() && sensorData.getState() == Sensor.SensorState.SENDING) {
-            cadence = Double.toString(sensorData.getValue());
+            cadence = Float.toString(sensorData.getValue());
           }
         }
         if (sensorDataSet.hasHeartRate()) {
           SensorData sensorData = sensorDataSet.getHeartRate();
           if (sensorData.hasValue() && sensorData.getState() == Sensor.SensorState.SENDING) {
-            heartRate = Double.toString(sensorData.getValue());
+            heartRate = Float.toString(sensorData.getValue());
           }
         }
       }
     }
-    pointIndex++;
+
+    if (previousLocation != null) {
+        spheroidSpeed = Double.toString(getSpheroidSpeed(previousLocation, location));
+    }
+
     writeCommaSeparatedLine(Integer.toString(segmentIndex),
-        Integer.toString(pointIndex),
+        Integer.toString(pointIndex++),
         Double.toString(location.getLatitude()),
         Double.toString(location.getLongitude()),
         Double.toString(location.getAltitude()),
         Double.toString(location.getBearing()),
         SHORT_FORMAT.format(location.getAccuracy()),
+        //StringUtils.formatDateTimeIso8601(location.getTime()), // Eg. 2015-08-09T12:35:57.880Z
+        Long.toString(location.getTime()), // ms since the epoch
         SHORT_FORMAT.format(location.getSpeed()),
-        StringUtils.formatDateTimeIso8601(location.getTime()),
+        spheroidSpeed,
+        distance,
         power,
         cadence,
         heartRate);
+
+    // Used for calculating the speed from lat longs as is done on some analysis tools.
+    previousLocation = location;
+  }
+
+  /**
+   * Calculates the average speed whilst travelling from the source to the destination across a
+   * spheroidal Earth. This method is used by some tools for calculating the speed from TCX files
+   * etc.
+   *
+   * @param src is the starting location.
+   * @param dst is the finishing location.
+   * @return speed in m/s.
+   */
+  private static double getSpheroidSpeed(Location src, Location dst) {
+    LatLongAlt prevLatLong = LocationUtils.locationToLatLongAlt(src);
+    LatLongAlt latLong = LocationUtils.locationToLatLongAlt(dst);
+    double dist = org.fluxoid.utils.LocationUtils.getGradientCorrectedDistance(prevLatLong, latLong);
+    double time_delta = (dst.getTime() - src.getTime()) / UnitConversions.S_TO_MS;
+    return dist / time_delta;
   }
 
   /**

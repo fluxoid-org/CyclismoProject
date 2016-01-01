@@ -40,6 +40,7 @@ import android.util.Log;
 import org.cowboycoders.cyclismo.content.MyTracksLocation;
 import org.cowboycoders.cyclismo.content.Sensor;
 import org.cowboycoders.cyclismo.content.Track;
+import org.fluxoid.utils.LatLongAlt;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -195,6 +196,15 @@ public class LocationUtils {
     }
     return ((MyTracksLocation) location).getSensorDataSet();
   }
-  
+
+  /**
+   * Converts a Location to a LatLongAlt.
+   *
+   * @param loc is the location to convert
+   * @return LatLongAlt from location
+   */
+  public static LatLongAlt locationToLatLongAlt(Location loc)  {
+    return new LatLongAlt(loc.getLatitude(), loc.getLatitude(), loc.getAltitude());
+  }
 
 }

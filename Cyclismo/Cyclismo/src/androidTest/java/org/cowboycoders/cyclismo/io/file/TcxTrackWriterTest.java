@@ -88,27 +88,44 @@ public class TcxTrackWriterTest extends TrackFormatWriterTest {
    * @param location the location
    */
   private void assertTagMatchesLocation(Element tag, MyTracksLocation location) {
-    assertEquals(StringUtils.formatDateTimeIso8601(location.getTime()), getChildTextValue(tag, "Time"));
+    assertEquals(StringUtils.formatDateTimeIso8601(location.getTime()),
+        getChildTextValue(tag, "Time"));
 
     Element positionTag = getChildElement(tag, "Position");
-    assertEquals(
-        Double.toString(location.getLatitude()), getChildTextValue(positionTag, "LatitudeDegrees"));
+    assertEquals(Double.toString(location.getLatitude()),
+        getChildTextValue(positionTag, "LatitudeDegrees"));
     assertEquals(Double.toString(location.getLongitude()),
         getChildTextValue(positionTag, "LongitudeDegrees"));
 
-    assertEquals(Double.toString(location.getAltitude()), getChildTextValue(tag, "AltitudeMeters"));
+    assertEquals(Double.toString(location.getAltitude()),
+        getChildTextValue(tag, "AltitudeMeters"));
     assertTrue(location.getSensorDataSet() != null);
     Sensor.SensorDataSet sds = location.getSensorDataSet();
 
+    assertEquals(Float.toString(sds.getDistance().getValue()),
+        getChildTextValue(tag, "DistanceMeters"));
+
     List<Element> heartRate = getChildElements(tag, "HeartRateBpm", 1);
-    assertEquals(Integer.toString(sds.getHeartRate().getValue()),
+    assertEquals(Integer.toString(Math.round(sds.getHeartRate().getValue())),
         getChildTextValue(heartRate.get(0), "Value"));
 
     List<Element> extensions = getChildElements(tag, "Extensions", 1);
     List<Element> tpx = getChildElements(extensions.get(0), "TPX", 1);
-    assertEquals(
-        Integer.toString(sds.getCadence().getValue()), getChildTextValue(tpx.get(0), "RunCadence"));
-    assertEquals(
-        Integer.toString(sds.getPower().getValue()), getChildTextValue(tpx.get(0), "Watts"));
+    assertEquals(Integer.toString(Math.round(sds.getCadence().getValue())),
+        getChildTextValue(tpx.get(0), "RunCadence"));
+    assertEquals(Integer.toString(Math.round(sds.getPower().getValue())),
+        getChildTextValue(tpx.get(0), "Watts"));
+  }
+
+  public void testGetIntElement() {
+    String expected = "<Cadence>80</Cadence>";
+    String actual =  TcxTrackWriter.getElement("Cadence", 80.1f, true);
+    assertEquals(expected, actual);
+  }
+
+  public void testGetFloatElement() {
+    String expected = "<Distance>1.23</Distance>";
+    String actual =  TcxTrackWriter.getElement("Distance", 1.23f);
+    assertEquals(expected, actual);
   }
 }

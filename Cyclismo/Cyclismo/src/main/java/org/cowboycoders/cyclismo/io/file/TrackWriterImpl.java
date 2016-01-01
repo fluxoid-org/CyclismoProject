@@ -261,8 +261,8 @@ class TrackWriterImpl implements TrackWriter {
     // I am leaving the number of waypoints very high which should not be a
     // problem because we don't try to load them into objects all at the
     // same time.
-    Cursor cursor = null;
-    cursor = providerUtils.getWaypointCursor(trackId, 0, Constants.MAX_LOADED_WAYPOINTS_POINTS);
+    Cursor cursor = providerUtils.getWaypointCursor(
+            trackId, 0, Constants.MAX_LOADED_WAYPOINTS_POINTS);
     boolean hasWaypoints = false;
     if (cursor != null) {
       try {
