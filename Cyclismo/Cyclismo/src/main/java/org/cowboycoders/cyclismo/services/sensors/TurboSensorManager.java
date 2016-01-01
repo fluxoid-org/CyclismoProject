@@ -91,7 +91,7 @@ public class TurboSensorManager extends SensorManager {
        String action = intent.getAction();
        double value = intent.getDoubleExtra(DATA_ID, -1);
        SensorData sd = SensorData.newBuilder()
-           .setValue((int) value)
+           .setValue((float) value)
            .setState(Sensor.SensorState.SENDING)
            .build();
        if(action.equals(NEW_CADENCE_ACTION)){
