@@ -29,7 +29,7 @@ import org.fluxoid.utils.LocationUtils;
 
 public class CourseTracker {
   
-  private static final double ACCURACY = 0.001;
+  private static final double MIN_POINT_SPACING_M = 0.001;
   
   private Map<Double,LatLongAlt> distanceLocationMap = new HashMap<Double,LatLongAlt>();
   
@@ -45,35 +45,56 @@ public class CourseTracker {
   public CourseTracker(List<LatLongAlt> coursePoints) {
     double totalDistance = 0.0;
     distanceLocationMap.put(totalDistance,coursePoints.get(0));
-    for (int i=1 ; i< coursePoints.size() ; i++) {
-      double distanceBetweenPoints = LocationUtils.gradientCorrectedDistance(coursePoints.get(i - 1), coursePoints.get(i));
-      if (distanceBetweenPoints < ACCURACY) {
+    for (int i = 1; i < coursePoints.size(); i++) {
+      double distanceBetweenPoints = LocationUtils.getGradientCorrectedDistance(
+              coursePoints.get(i - 1), coursePoints.get(i));
+      totalDistance += distanceBetweenPoints;
+      if (distanceBetweenPoints < MIN_POINT_SPACING_M) {
         // assume the same location
         continue;
       }
-      assert distanceBetweenPoints > 0;
-      totalDistance += distanceBetweenPoints;
       distanceLocationMap.put(totalDistance, coursePoints.get(i));
     }
     distanceMarkers = distanceLocationMap.keySet().toArray(new Double[0]);
     Arrays.sort(distanceMarkers);
   }
-  
-  public LatLongAlt getNearestLocation(final double distance) {
+
+  /**
+   * Returns the nearest location to the specified distance.
+   *
+   * FIXME: Two distance, locations: (25.0, locA), (30.0, locB), we are at 26.0
+   *
+   * In this case distance - key is not less than min point spacing, so we go to the next location,
+   * which is not the closest.
+   *
+   * Although this never returns the same location?
+   *
+   * @param distance is the distance travelled.
+   * @param location TODO
+   * @return the difference.
+   */
+  public double getNearestLocation(final double distance, LatLongAlt location) {
     Double key = null;
-    for (int i = lastKnownDistanceMarkerIndex ; i < distanceMarkers.length ; i++) {
+    double delta = 0.0;
+    for (int i = lastKnownDistanceMarkerIndex; i < distanceMarkers.length; i++) {
       key = distanceMarkers[i];
       lastKnownDistanceMarkerIndex = i;
-      if ((distance - key) < ACCURACY) {
+      delta = distance - key;
+      if (delta < MIN_POINT_SPACING_M) {
         break;
       }
     }
     if (key == null) { // must have reached end
       key = distanceMarkers[distanceMarkers.length -1];
-      return distanceLocationMap.get(key);
     }
-    
-    return distanceLocationMap.get(key);
+
+    // FIXME: Some neater way..
+    LatLongAlt closest = distanceLocationMap.get(key);
+    location.setLatitude(closest.getLatitude());
+    location.setLongitude(closest.getLongitude());
+    location.setAltitude(closest.getAltitude());
+
+    return delta;
 }
   
   public boolean hasFinished() {
