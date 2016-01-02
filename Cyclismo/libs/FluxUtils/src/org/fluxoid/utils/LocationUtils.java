@@ -148,6 +148,42 @@ public class LocationUtils {
 
     return interpolatedPoints;
   }
+
+  /**
+   * Linearly interpolates between two points. The destination point must not have been reached.
+   *
+   * @param src   is the starting point.
+   * @param dst   is the finishing point.
+   * @param speed_ms is the speed at the starting point.
+   * @param dt_ms    is the time travelled since leaving the starting point.
+   * @return the interpolated point.
+   */
+  public static LatLongAlt getLocationBetweenPoints(
+      LatLongAlt src,
+      LatLongAlt dst,
+      double speed_ms,
+      double dt_ms)
+  {
+    assert (dt_ms >= 0.0);
+    double distBetweenPoints = LocationUtils.getGradientCorrectedDistance(src, dst);
+    double timeBetweenPoints = distBetweenPoints / speed_ms;
+
+    // Should never be called with the current location beyond the destination
+    if (dt_ms / Conversions.MILLISECONDS_IN_SECOND > timeBetweenPoints) {
+      throw new RuntimeException("The interpolated point should not fall beyond the destination.");
+    }
+
+    double fracComplete = (dt_ms / Conversions.MILLISECONDS_IN_SECOND) / timeBetweenPoints;
+    double lat = LocationUtils.weightPoints(src.getLatitude(), dst.getLatitude(), fracComplete);
+    double lon = LocationUtils.weightPoints(src.getLongitude(), dst.getLongitude(), fracComplete);
+    double alt = LocationUtils.weightPoints(src.getAltitude(), dst.getAltitude(), fracComplete);
+
+    return new LatLongAlt(lat, lon, alt);
+  }
+
+  private static double weightPoints(double x, double y, double w) {
+    return x + w * (y - x);
+  }
   
   /**
    * Gradient in percent between two points.
