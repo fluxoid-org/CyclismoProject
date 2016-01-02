@@ -19,6 +19,7 @@
 */
 package org.fluxoid.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -75,17 +76,20 @@ public class AltitudeSmoother {
      *
      * @param trackPoints Points to smooth.
      */
-    public void smoothTrackPointAltitudes(List<LatLongAlt> trackPoints) {
+    public List<LatLongAlt> smoothTrackPointAltitudes(List<LatLongAlt> trackPoints) {
         // Interpolate and smooth the data points to prevent large changes in the simulated gradient.
         trackPoints = LocationUtils.interpolatePoints(trackPoints, this.minTrackPointSpacing);
+        List<LatLongAlt> newPoints = new ArrayList<LatLongAlt>();
         // Smooth the altitudes
         for (int i = 0; i < this.averagingSweeps; ++i) {
             RunningAverager runningAverager = new RunningAverager(this.averagingWindowSize);
             for (LatLongAlt p: trackPoints) {
                 runningAverager.add(p.getAltitude());
-                p.setAltitude(runningAverager.getAverage());
+                LatLongAlt newLoc = new LatLongAlt(p.getLatitude(), p.getLongitude(), runningAverager.getAverage());
+                newPoints.add(newLoc);
             }
         }
+        return newPoints;
     }
 
 }
