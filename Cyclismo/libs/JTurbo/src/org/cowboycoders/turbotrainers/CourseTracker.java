@@ -40,7 +40,10 @@ public class CourseTracker {
   
   private int lastKnownDistanceMarkerIndex = 0;
 
-  private TrapezoidIntegrator distanceIntegrator = new TrapezoidIntegrator();
+  private double speed = 0.0;
+  private Double lastTimeStamp;
+  private Double currentTimeStamp;
+  private double distance;
 
   /**
    * Maps absolute distance travelled to course points.
@@ -70,13 +73,13 @@ public class CourseTracker {
    * Must be polled at frequency >= 1Hz
    */
   public void updateSpeed(double speed) {
-    double timeStampSeconds = System.nanoTime() / (Math.pow(10, 9));
-    double speedMetresPerSecond = speed * Conversions.KM_PER_HOUR_TO_METRES_PER_SECOND;
-    distanceIntegrator.add(timeStampSeconds, speedMetresPerSecond);
+    lastTimeStamp = currentTimeStamp;
+    currentTimeStamp = System.nanoTime() / (Math.pow(10, 6));
+    this.speed = speed * Conversions.KM_PER_HOUR_TO_METRES_PER_SECOND;
   }
 
   public double getDistance() {
-    return distanceIntegrator.getIntegral();
+    return distance;
   }
 
   /**
@@ -92,10 +95,9 @@ public class CourseTracker {
    * @return the difference.
    */
   public LatLongAlt getNearestLocation() {
-    double distance = distanceIntegrator.getIntegral();
     Double key = null;
-    Double nextKey = null;
-    double delta = 0.0;
+    Double nextKey;
+    double delta;
     int lastI = 0;
     for (int i = lastKnownDistanceMarkerIndex; i < distanceMarkers.length; i++) {
       lastI = i;
@@ -116,19 +118,22 @@ public class CourseTracker {
 
     LatLongAlt previous = distanceLocationMap.get(key);
     LatLongAlt next = distanceLocationMap.get(nextKey);
-    List<LatLongAlt> interpolated = LocationUtils.interpolateBetweenPoints(previous, next, resolution);
-    Iterator<LatLongAlt> iter = interpolated.iterator();
-    int requiredIterations = (int) Math.round (delta / resolution);
-
-    LatLongAlt current = previous;
-    for (int i = 0; i < requiredIterations; i++) {
-      if (iter.hasNext()) {
-        current = iter.next();
-      } else {
-        current = next;
-      }
+    if (lastTimeStamp == null) {
+      //only polled speed once
+      return previous;
     }
-
+    double timeDelta = currentTimeStamp - lastTimeStamp;
+    LatLongAlt current;
+    while ((current = LocationUtils.getLocationBetweenPoints(previous, next, speed, timeDelta)) == null) {
+      lastI ++;
+      if (lastI < distanceMarkers.length - 1) {
+        nextKey = distanceMarkers[lastI + 1];
+      } else { // must have reached end
+        break;
+      }
+      next = distanceLocationMap.get(nextKey);
+    }
+    distance += LocationUtils.getDistance(previous, current);
     return current;
 }
   

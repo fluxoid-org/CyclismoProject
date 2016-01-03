@@ -168,7 +168,7 @@ public class LocationUtils {
 
     // Should never be called with the current location beyond the destination
     if (dt_ms / Conversions.MILLISECONDS_IN_SECOND > timeBetweenPoints) {
-      throw new RuntimeException("The interpolated point should not fall beyond the destination.");
+      return null;
     }
 
     double fracComplete = (dt_ms / Conversions.MILLISECONDS_IN_SECOND) / timeBetweenPoints;
