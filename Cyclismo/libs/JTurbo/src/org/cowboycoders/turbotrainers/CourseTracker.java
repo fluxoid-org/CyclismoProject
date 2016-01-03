@@ -98,9 +98,7 @@ public class CourseTracker {
     Double key = null;
     Double nextKey;
     double delta;
-    int lastI = 0;
     for (int i = lastKnownDistanceMarkerIndex; i < distanceMarkers.length; i++) {
-      lastI = i;
       key = distanceMarkers[i];
       lastKnownDistanceMarkerIndex = i;
       delta = distance - key;
@@ -109,8 +107,8 @@ public class CourseTracker {
       }
     }
 
-    if (lastI < distanceMarkers.length - 1) {
-      nextKey = distanceMarkers[lastI + 1];
+    if (lastKnownDistanceMarkerIndex < distanceMarkers.length - 1) {
+      nextKey = distanceMarkers[lastKnownDistanceMarkerIndex + 1];
     } else { // must have reached end
       key = distanceMarkers[distanceMarkers.length -1];
       nextKey = distanceMarkers[distanceMarkers.length -1];
@@ -125,9 +123,9 @@ public class CourseTracker {
     double timeDelta = currentTimeStamp - lastTimeStamp;
     LatLongAlt current;
     while ((current = LocationUtils.getLocationBetweenPoints(previous, next, speed, timeDelta)) == null) {
-      lastI ++;
-      if (lastI < distanceMarkers.length - 1) {
-        nextKey = distanceMarkers[lastI + 1];
+      lastKnownDistanceMarkerIndex ++;
+      if (lastKnownDistanceMarkerIndex < distanceMarkers.length - 1) {
+        nextKey = distanceMarkers[lastKnownDistanceMarkerIndex + 1];
       } else { // must have reached end
         break;
       }
