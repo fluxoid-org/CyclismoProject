@@ -63,7 +63,6 @@ import org.cowboycoders.cyclismo.util.TrackRecordingServiceConnectionUtils;
 import org.cowboycoders.cyclismo.util.UnitConversions;
 import org.cowboycoders.turbotrainers.DummyTrainer;
 import org.cowboycoders.turbotrainers.bushido.brake.ConstantResistanceController;
-import org.fluxoid.utils.LatLong;
 import org.fluxoid.utils.LatLongAlt;
 import org.cowboycoders.turbotrainers.CourseTracker;
 import org.cowboycoders.turbotrainers.Mode;
@@ -76,7 +75,6 @@ import org.cowboycoders.turbotrainers.bushido.brake.BushidoBrake;
 import org.cowboycoders.turbotrainers.bushido.brake.PidBrakeController;
 import org.cowboycoders.turbotrainers.bushido.brake.SpeedResistanceMapper;
 import org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit;
-import org.fluxoid.utils.LocationUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -216,6 +214,8 @@ public class TurboService extends Service {
       lastRecordedSpeed = speed;
       Log.v(TAG, "new speed: " + speed);
 
+      courseTracker.updateSpeed(speed);
+
       try {
         updatingLock.lock();
         updating = false;
@@ -242,6 +242,9 @@ public class TurboService extends Service {
 
     @Override
     public void onDistanceChange(double distance) {
+      // NOTE: this method currently doesn't make use of distance passed in; other than to log
+      // it's value
+
       // synchronized to keep speed in alignment with distance : may need
       // changing if threads are queueing and order becomes
       // unpredictable
@@ -254,19 +257,18 @@ public class TurboService extends Service {
         updatingLock.unlock();
       }
 
+      double courseTrackerDistance = courseTracker.getDistance();
+
       // Log the cumulative distance as it is used by some tools (Strava etc.) to calculate speed
-      Log.d(TAG, "distance: " + distance);
+      Log.d(TAG, "sensor distance: " + distance);
+      Log.d(TAG, "courseTracker distance" + courseTrackerDistance);
+
       Intent intent = new Intent(getString(R.string.sensor_data_distance));
-      intent.putExtra(getString(R.string.sensor_data_double_value), distance);
+      intent.putExtra(getString(R.string.sensor_data_double_value), courseTrackerDistance);
       sendBroadcast(intent);
 
-      // FIXME: If the locations are significantly far apart we may be in front / behind
-      // at the point of timestamp. This could lead to oscillations in the speed reported by some
-      // analysis tools which calculate the speed from locations. We should probably interpolate?
-      LatLongAlt currentLocation = new LatLongAlt(0,0,0);
-      Double delta = courseTracker.getNearestLocation(distance, currentLocation);
-      Log.d(TAG, "nearest location distance (m): " + delta);
-      updateLocation(currentLocation, delta);
+      LatLongAlt currentLocation = courseTracker.getNearestLocation();
+      updateLocation(currentLocation);
 
       // returns 0.0 if finished for warm down
       double gradient = courseTracker.getCurrentGradient();
@@ -409,10 +411,8 @@ public class TurboService extends Service {
       handleException(e, "Error loading course",true,NOTIFCATION_ID_STARTUP);
     }
 
-    latLongAlts = LocationUtils.interpolatePoints(latLongAlts,
-            TARGET_TRACKPOINT_DISTANCE_METRES);
 
-    this.courseTracker = new CourseTracker(latLongAlts);
+    this.courseTracker = new CourseTracker(latLongAlts, TARGET_TRACKPOINT_DISTANCE_METRES);
 
     Log.d(TAG, "latlong length: " + latLongAlts.size());
 
@@ -568,9 +568,8 @@ public class TurboService extends Service {
                         retryErrorProneCall(startHrm, 10);
                         turboTrainer.registerDataListener(dataListener);
                         unpauseRecording();
-                        LatLongAlt loc = new LatLongAlt(0,0,0);
-                        double delta = courseTracker.getNearestLocation(0.0, loc);
-                        updateLocation(loc, delta);
+                        LatLongAlt loc = courseTracker.getNearestLocation();
+                        updateLocation(loc);
                     } catch (Exception e) {
                         handleException(e, "Error initiliasing turbo trainer",true,NOTIFCATION_ID_STARTUP);
                     }
@@ -669,7 +668,7 @@ public class TurboService extends Service {
   
 
 
-  private synchronized void updateLocation(LatLongAlt pos, double delta) {
+  private synchronized void updateLocation(LatLongAlt pos) {
       try {
         float locSpeed = (float) (lastRecordedSpeed / UnitConversions.MS_TO_KMH);
         final long timestamp = System.currentTimeMillis();

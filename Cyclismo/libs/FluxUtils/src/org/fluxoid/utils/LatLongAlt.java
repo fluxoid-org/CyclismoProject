@@ -27,8 +27,6 @@ public class LatLongAlt extends LatLong {
     return altitude;
   }
 
-  public void setAltitude(double altitude) { this.altitude = altitude; }
-
     /**
      * @param latitude - Latitude (decimal)
      * @param longitude - Longitude (decimal)
