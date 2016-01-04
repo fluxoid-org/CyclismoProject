@@ -1,12 +1,11 @@
 package org.fluxoid.utils;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class LocationUtilsTest {
@@ -74,13 +73,12 @@ public class LocationUtilsTest {
     assertEquals(DST.getAltitude(), end.getAltitude(), COARSE);
   }
 
-  @Rule
-  public final ExpectedException exception = ExpectedException.none();
 
   @Test
   public void testGetLocationBetweenPointsInvalid() {
-    exception.expect(RuntimeException.class);
     // ~50m past the destination
-    LocationUtils.getLocationBetweenPoints(SRC, DST, 100.0, 1000.0);
+    LatLongAlt beyond = LocationUtils.getLocationBetweenPoints(SRC, DST, 100.0, 1000.0);
+    // null indicates an invalid location
+    assertNull(beyond);
   }
 }
