@@ -19,27 +19,26 @@
 */
 package org.cowboycoders.turbotrainers;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.fluxoid.utils.Conversions;
 import org.fluxoid.utils.LatLongAlt;
 import org.fluxoid.utils.LocationUtils;
 import org.fluxoid.utils.TrapezoidIntegrator;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CourseTracker {
 
   private static final double FUTURE_LOOKAHEAD = 1000; //ms
   public static final double ZERO_CUTOFF = 0.0001;
   private final double resolution;
-  
-  private Map<Double,LatLongAlt> distanceLocationMap = new HashMap<Double,LatLongAlt>();
-  
+
+  private Map<Double, LatLongAlt> distanceLocationMap = new HashMap<Double, LatLongAlt>();
+
   private Double[] distanceMarkers;
-  
+
   private int lastKnownDistanceMarkerIndex = 0;
 
   private double speed = 0.0;
@@ -52,12 +51,12 @@ public class CourseTracker {
    * Maps absolute distance travelled to course points.
    *
    * @param coursePoints to map distance from.
-   * @param resolution for interpolation
+   * @param resolution   for interpolation
    */
   public CourseTracker(List<LatLongAlt> coursePoints, double resolution) {
     this.resolution = resolution;
     double totalDistance = 0.0;
-    distanceLocationMap.put(totalDistance,coursePoints.get(0));
+    distanceLocationMap.put(totalDistance, coursePoints.get(0));
     for (int i = 1; i < coursePoints.size(); i++) {
       double distanceBetweenPoints = LocationUtils.getGradientCorrectedDistance(
               coursePoints.get(i - 1), coursePoints.get(i));
@@ -115,7 +114,7 @@ public class CourseTracker {
     if (lastKnownDistanceMarkerIndex < distanceMarkers.length - 1) {
       nextKey = distanceMarkers[lastKnownDistanceMarkerIndex + 1];
     } else { // must have reached end
-      nearestLocation = distanceLocationMap.get(distanceMarkers[distanceMarkers.length -1]);
+      nearestLocation = distanceLocationMap.get(distanceMarkers[distanceMarkers.length - 1]);
       return;
     }
     LatLongAlt previous = getNearestLocation();
@@ -127,7 +126,7 @@ public class CourseTracker {
     double timeDelta = currentTimeStamp - lastTimeStamp;
     LatLongAlt current;
     while ((current = LocationUtils.getLocationBetweenPoints(previous, next, speed, timeDelta)) == null) {
-      lastKnownDistanceMarkerIndex ++;
+      lastKnownDistanceMarkerIndex++;
       if (lastKnownDistanceMarkerIndex < distanceMarkers.length - 1) {
         nextKey = distanceMarkers[lastKnownDistanceMarkerIndex + 1];
       } else { // must have reached end
@@ -149,20 +148,20 @@ public class CourseTracker {
    */
   public LatLongAlt getNearestLocation() {
     return nearestLocation;
-}
-  
+  }
+
   public boolean hasFinished() {
-    if (lastKnownDistanceMarkerIndex < distanceMarkers.length -1){
+    if (lastKnownDistanceMarkerIndex < distanceMarkers.length - 1) {
       return false;
     }
     return true;
   }
-  
+
   public double getCurrentGradient() {
     if (hasFinished()) {
       return 0.0;
     }
-    final Double nextLocationKey = distanceMarkers[lastKnownDistanceMarkerIndex +1];
+    final Double nextLocationKey = distanceMarkers[lastKnownDistanceMarkerIndex + 1];
     final LatLongAlt current = getNearestLocation();
     double estimatedSpeed = this.speed;
     if (speed < ZERO_CUTOFF) {
@@ -177,7 +176,7 @@ public class CourseTracker {
       futureDest = distanceLocationMap.get(nextLocationKey);
     }
     double gradient = LocationUtils
-        .getLocalisedGradient(current, futureDest);
+            .getLocalisedGradient(current, futureDest);
     if (gradient == Double.NaN) {
       //two points at same lat/long
       return 0.0;
@@ -185,18 +184,18 @@ public class CourseTracker {
     return gradient;
   }
   
-  public static void main(String [] args) {
+  public static void main(String[] args) {
     LatLongAlt l1 = new LatLongAlt(50.066389, 5.715, 1000);
     LatLongAlt l2 = new LatLongAlt(58.643889, 3.07, 4000);
     List<LatLongAlt> locations = LocationUtils.interpolateBetweenPoints(l1, l2, 1000);
     locations.addAll(LocationUtils.interpolateBetweenPoints(l2, l1, 1000)); // Back to start
     CourseTracker ct = new CourseTracker(locations, 0.001);
-    
+
     for (Double marker : ct.distanceMarkers) {
       System.out.println(marker);
     }
 
     System.out.println("finished");
   }
-  
+
 }
