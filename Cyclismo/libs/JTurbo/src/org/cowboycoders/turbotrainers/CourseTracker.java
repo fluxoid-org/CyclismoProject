@@ -32,6 +32,8 @@ import org.fluxoid.utils.TrapezoidIntegrator;
 
 public class CourseTracker {
 
+  private static final double FUTURE_LOOKAHEAD = 1000; //ms
+  public static final double ZERO_CUTOFF = 0.0001;
   private final double resolution;
   
   private Map<Double,LatLongAlt> distanceLocationMap = new HashMap<Double,LatLongAlt>();
@@ -43,7 +45,8 @@ public class CourseTracker {
   private double speed = 0.0;
   private Double lastTimeStamp;
   private Double currentTimeStamp;
-  private double distance;
+  private TrapezoidIntegrator distanceIntegrator = new TrapezoidIntegrator();
+  private LatLongAlt nearestLocation;
 
   /**
    * Maps absolute distance travelled to course points.
@@ -67,42 +70,44 @@ public class CourseTracker {
     }
     distanceMarkers = distanceLocationMap.keySet().toArray(new Double[0]);
     Arrays.sort(distanceMarkers);
+    nearestLocation = distanceLocationMap.get(distanceMarkers[0]);
   }
 
   /**
    * Must be polled at frequency >= 1Hz
    */
-  public void updateSpeed(double speed) {
+  public void updateSpeed(double newSpeed) {
+    // we assume speed doesn't change much between updates
+    this.speed = newSpeed * Conversions.KM_PER_HOUR_TO_METRES_PER_SECOND;
     lastTimeStamp = currentTimeStamp;
     currentTimeStamp = System.nanoTime() / (Math.pow(10, 6));
-    this.speed = speed * Conversions.KM_PER_HOUR_TO_METRES_PER_SECOND;
-  }
 
-  public double getDistance() {
-    return distance;
-  }
+    distanceIntegrator.add(System.nanoTime() / (Math.pow(10, 9)), speed);
+    double distance = distanceIntegrator.getIntegral();
+    if (newSpeed < ZERO_CUTOFF) {
+      // assume haven't moved
+      return;
+    }
 
-  /**
-   * Returns the nearest location to the specified distance.
-   *
-   * FIXME: Two distance, locations: (25.0, locA), (30.0, locB), we are at 26.0
-   *
-   * In this case distance - key is not less than min point spacing, so we go to the next location,
-   * which is not the closest.
-   *
-   * Although this never returns the same location?
-   *
-   * @return the difference.
-   */
-  public LatLongAlt getNearestLocation() {
-    Double key = null;
+    Double key;
     Double nextKey;
     double delta;
+
+    // loop gives us index of last marker passed
     for (int i = lastKnownDistanceMarkerIndex; i < distanceMarkers.length; i++) {
       key = distanceMarkers[i];
       lastKnownDistanceMarkerIndex = i;
       delta = distance - key;
       if (delta < resolution) {
+        if (delta < 0) {
+          // we haven't yet reached the point, so pick the one previous
+          lastKnownDistanceMarkerIndex = i - 1;
+          if (lastKnownDistanceMarkerIndex < 0) {
+            //special case for the first point
+            lastKnownDistanceMarkerIndex = 0;
+          }
+          //key = distanceMarkers[lastKnownDistanceMarkerIndex];
+        }
         break;
       }
     }
@@ -110,15 +115,14 @@ public class CourseTracker {
     if (lastKnownDistanceMarkerIndex < distanceMarkers.length - 1) {
       nextKey = distanceMarkers[lastKnownDistanceMarkerIndex + 1];
     } else { // must have reached end
-      key = distanceMarkers[distanceMarkers.length -1];
-      nextKey = distanceMarkers[distanceMarkers.length -1];
+      nearestLocation = distanceLocationMap.get(distanceMarkers[distanceMarkers.length -1]);
+      return;
     }
-
-    LatLongAlt previous = distanceLocationMap.get(key);
+    LatLongAlt previous = getNearestLocation();
     LatLongAlt next = distanceLocationMap.get(nextKey);
     if (lastTimeStamp == null) {
       //only polled speed once
-      return previous;
+      return;
     }
     double timeDelta = currentTimeStamp - lastTimeStamp;
     LatLongAlt current;
@@ -127,12 +131,24 @@ public class CourseTracker {
       if (lastKnownDistanceMarkerIndex < distanceMarkers.length - 1) {
         nextKey = distanceMarkers[lastKnownDistanceMarkerIndex + 1];
       } else { // must have reached end
+        current = distanceLocationMap.get(nextKey);
         break;
       }
       next = distanceLocationMap.get(nextKey);
     }
-    distance += LocationUtils.getDistance(previous, current);
-    return current;
+    //distance += LocationUtils.getDistance(previous, current);
+    nearestLocation = current;
+  }
+
+  public double getDistance() {
+    return distanceIntegrator.getIntegral();
+  }
+
+  /**
+   * @returns the nearest location on the course (that has been passed)
+   */
+  public LatLongAlt getNearestLocation() {
+    return nearestLocation;
 }
   
   public boolean hasFinished() {
@@ -146,10 +162,26 @@ public class CourseTracker {
     if (hasFinished()) {
       return 0.0;
     }
-    final Double currentLocationKey = distanceMarkers[lastKnownDistanceMarkerIndex];
     final Double nextLocationKey = distanceMarkers[lastKnownDistanceMarkerIndex +1];
+    final LatLongAlt current = getNearestLocation();
+    double estimatedSpeed = this.speed;
+    if (speed < ZERO_CUTOFF) {
+      // default to 10 kmph to find sensible next point
+      estimatedSpeed = 10 * Conversions.KM_PER_HOUR_TO_METRES_PER_SECOND;
+    }
+    // look for a point FUTURE_LOOKAEAD in the future at current speed
+    LatLongAlt futureDest = LocationUtils.getLocationBetweenPoints(current, distanceLocationMap.get(nextLocationKey),
+            estimatedSpeed, FUTURE_LOOKAHEAD);
+    if (futureDest == null) {
+      // we overshoot the mark, but use it anyway
+      futureDest = distanceLocationMap.get(nextLocationKey);
+    }
     double gradient = LocationUtils
-        .getLocalisedGradient(distanceLocationMap.get(currentLocationKey), distanceLocationMap.get(nextLocationKey));
+        .getLocalisedGradient(current, futureDest);
+    if (gradient == Double.NaN) {
+      //two points at same lat/long
+      return 0.0;
+    }
     return gradient;
   }
   
