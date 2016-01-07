@@ -37,8 +37,11 @@ import org.cowboycoders.turbotrainers.Mode;
 import org.cowboycoders.turbotrainers.Parameters.CommonParametersInterface;
 import org.cowboycoders.turbotrainers.TooFewAntChannelsAvailableException;
 import org.cowboycoders.turbotrainers.TurboTrainerDataListener;
+import org.fluxoid.utils.FixedPeriodUpdater;
+import org.fluxoid.utils.FixedPeriodUpdaterWithReset;
 import org.fluxoid.utils.IterationOperator;
 import org.fluxoid.utils.IterationUtils;
+import org.fluxoid.utils.UpdateCallback;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -58,6 +61,9 @@ import java.util.logging.Logger;
 public class BushidoBrake extends AntTurboTrainer {
 
   public static final Mode[] SUPPORTED_MODES = new Mode[]{Mode.TARGET_SLOPE};
+
+  private static final int UPDATE_PERIOD_MS = 100;
+  private static final int RESET_PERIOD_MS = 2000;
 
   {
     // switch on controller type (different controllers support diff modes)
@@ -112,6 +118,158 @@ public class BushidoBrake extends AntTurboTrainer {
   public class BushidoUpdatesListener implements BushidoBrakeInternalListener {
 
     private BrakeModel model;
+    private TurboTrainerDataListener dispatchListener = new TurboTrainerDataListener() {
+
+
+      /**
+       * @param speed in km/h
+       */
+      @Override
+      public void onSpeedChange(double speed) {
+        // allow hooks in controller to determine which speed we send
+        final double speedToSend = resistanceController.onSpeedChange(speed);
+
+        synchronized (model) {
+          model.setActualSpeed(speed);
+          model.setVirtualSpeed(speedToSend);
+        }
+
+        synchronized (dataChangeListeners) {
+          IterationUtils.operateOnAll(dataChangeListeners,
+                  new IterationOperator<TurboTrainerDataListener>() {
+                    @Override
+                    public void performOperation(
+                            TurboTrainerDataListener dcl) {
+                      dcl.onSpeedChange(speedToSend);
+                    }
+
+                  });
+        }
+
+        // We are integrating for distance. As onDistanceChange() doesn't
+        // receive values directly
+        // manually update with new value obtained through integration
+        synchronized (model) {
+          this.onDistanceChange(model.getVirtualDistance());
+        }
+      }
+
+      /**
+       * @param power in watts
+       */
+      @Override
+      public void onPowerChange(final double power) {
+        synchronized (model) {
+          model.setPower(power);
+        }
+        synchronized (dataChangeListeners) {
+          IterationUtils.operateOnAll(dataChangeListeners,
+                  new IterationOperator<TurboTrainerDataListener>() {
+                    @Override
+                    public void performOperation(
+                            TurboTrainerDataListener dcl) {
+                      double powerToSend = resistanceController.onPowerChange(power);
+                      dcl.onPowerChange(powerToSend);
+                    }
+
+                  });
+        }
+
+      }
+
+      /**
+       * @param cadence in rpm
+       */
+      @Override
+      public void onCadenceChange(final double cadence) {
+        synchronized (model) {
+          model.setCadence(cadence);
+        }
+        synchronized (dataChangeListeners) {
+          IterationUtils.operateOnAll(dataChangeListeners,
+                  new IterationOperator<TurboTrainerDataListener>() {
+                    @Override
+                    public void performOperation(
+                            TurboTrainerDataListener dcl) {
+                      double cadenceToSend = resistanceController.onCadenceChange(cadence);
+                      dcl.onCadenceChange(cadenceToSend);
+                    }
+
+                  });
+        }
+      }
+
+      /**
+       * @param distance in m
+       */
+      @Override
+      public void onDistanceChange(final double distance) {
+        // called from onSpeedChange
+        synchronized (dataChangeListeners) {
+          IterationUtils.operateOnAll(dataChangeListeners,
+                  new IterationOperator<TurboTrainerDataListener>() {
+                    @Override
+                    public void performOperation(
+                            TurboTrainerDataListener dcl) {
+                      synchronized (model) {
+                        double distanceToSend = resistanceController.onDistanceChange(distance);
+                        dcl.onDistanceChange(distanceToSend);
+                      }
+                    }
+
+                  });
+        }
+      }
+
+      /**
+       * @param heartRate in bpm
+       */
+      @Override
+      public void onHeartRateChange(double heartRate) {
+
+      }
+    };
+
+    private FixedPeriodUpdater speedUpdater = new FixedPeriodUpdaterWithReset(0.0, new UpdateCallback() {
+
+      @Override
+      public void onUpdate(Object newValue) {
+        dispatchListener.onSpeedChange((Double) newValue);
+      }
+    }, UPDATE_PERIOD_MS, RESET_PERIOD_MS) {
+      @Override
+      public Object getResetValue() {
+        return 0.0;
+      }
+    };
+
+
+    private FixedPeriodUpdater powerUpdater = new FixedPeriodUpdaterWithReset(0.0, new UpdateCallback() {
+
+      @Override
+      public void onUpdate(Object newValue) {
+        dispatchListener.onPowerChange((Double) newValue);
+      }
+    }, UPDATE_PERIOD_MS, RESET_PERIOD_MS) {
+      @Override
+      public Object getResetValue() {
+        return 0.0;
+      }
+    };
+
+    private FixedPeriodUpdater cadenceUpdater = new FixedPeriodUpdaterWithReset(0.0, new UpdateCallback() {
+
+      @Override
+      public void onUpdate(Object newValue) {
+        dispatchListener.onCadenceChange((Double) newValue);
+      }
+    }, UPDATE_PERIOD_MS, RESET_PERIOD_MS) {
+      @Override
+      public Object getResetValue() {
+        return model.getHeartRate();
+      }
+    };
+
 
     /**
      * Only route responses through this member
@@ -122,6 +280,9 @@ public class BushidoBrake extends AntTurboTrainer {
                                   ChannelMessageSender channelSender) {
       this.model = model;
       this.channelSender = channelSender;
+      speedUpdater.start();
+      powerUpdater.start();
+      cadenceUpdater.start();
     }
 
     @Override
@@ -149,91 +310,21 @@ public class BushidoBrake extends AntTurboTrainer {
 
     @Override
     public void onSpeedChange(final double speed) {
-      // allow hooks in controller to determine which speed we send
-      final double speedToSend = resistanceController.onSpeedChange(speed);
-
-      synchronized (model) {
-        model.setActualSpeed(speed);
-        model.setVirtualSpeed(speedToSend);
-      }
-
-      synchronized (dataChangeListeners) {
-        IterationUtils.operateOnAll(dataChangeListeners,
-                new IterationOperator<TurboTrainerDataListener>() {
-                  @Override
-                  public void performOperation(
-                          TurboTrainerDataListener dcl) {
-                    dcl.onSpeedChange(speedToSend);
-                  }
-
-                });
-      }
-
-      // We are integrating for distance. As onDistanceChange() doesn't
-      // receive values directly
-      // manually update with new value obtained through integration
-      synchronized (model) {
-        this.onDistanceChange(model.getVirtualDistance());
-      }
-
+      speedUpdater.update(speed);
     }
 
     @Override
     public void onPowerChange(final double power) {
-      synchronized (model) {
-        model.setPower(power);
-      }
-      synchronized (dataChangeListeners) {
-        IterationUtils.operateOnAll(dataChangeListeners,
-                new IterationOperator<TurboTrainerDataListener>() {
-                  @Override
-                  public void performOperation(
-                          TurboTrainerDataListener dcl) {
-                    double powerToSend = resistanceController.onPowerChange(power);
-                    dcl.onPowerChange(powerToSend);
-                  }
-
-                });
-      }
-
+      powerUpdater.update(power);
     }
 
     @Override
     public void onCadenceChange(final double cadence) {
-      synchronized (model) {
-        model.setCadence(cadence);
-      }
-      synchronized (dataChangeListeners) {
-        IterationUtils.operateOnAll(dataChangeListeners,
-                new IterationOperator<TurboTrainerDataListener>() {
-                  @Override
-                  public void performOperation(
-                          TurboTrainerDataListener dcl) {
-                    double cadenceToSend = resistanceController.onCadenceChange(cadence);
-                    dcl.onCadenceChange(cadenceToSend);
-                  }
-
-                });
-      }
+      cadenceUpdater.update(cadence);
     }
 
     @Override
     public void onDistanceChange(final double distance) {
-      //FIXME: I don't think this code path is used. Verify and remove.
-      synchronized (dataChangeListeners) {
-        IterationUtils.operateOnAll(dataChangeListeners,
-                new IterationOperator<TurboTrainerDataListener>() {
-                  @Override
-                  public void performOperation(
-                          TurboTrainerDataListener dcl) {
-                    synchronized (model) {
-                      double distanceToSend = resistanceController.onDistanceChange(distance);
-                      dcl.onDistanceChange(distanceToSend);
-                    }
-                  }
-
-                });
-      }
     }
 
     @Override
