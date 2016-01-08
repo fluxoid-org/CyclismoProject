@@ -62,8 +62,9 @@ public class BushidoBrake extends AntTurboTrainer {
 
   public static final Mode[] SUPPORTED_MODES = new Mode[]{Mode.TARGET_SLOPE};
 
-  private static final int UPDATE_PERIOD_MS = 100;
-  private static final int RESET_PERIOD_MS = 2000;
+  private static final int UPDATE_PERIOD_MS = 1000;
+  // must be > 2 seconds as this is the approximate update period from the brake
+  private static final int RESET_PERIOD_MS = 5000;
 
   {
     // switch on controller type (different controllers support diff modes)
