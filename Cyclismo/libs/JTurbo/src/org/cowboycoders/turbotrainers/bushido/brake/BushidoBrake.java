@@ -115,160 +115,161 @@ public class BushidoBrake extends AntTurboTrainer {
 
   private VersionRequestCallback versionRequestCallback;
 
+  private TurboTrainerDataListener dispatchListener = new TurboTrainerDataListener() {
+
+
+    /**
+     * @param speed in km/h
+     */
+    @Override
+    public void onSpeedChange(double speed) {
+      // allow hooks in controller to determine which speed we send
+      final double speedToSend = resistanceController.onSpeedChange(speed);
+
+      synchronized (model) {
+        model.setActualSpeed(speed);
+        model.setVirtualSpeed(speedToSend);
+      }
+
+      synchronized (dataChangeListeners) {
+        IterationUtils.operateOnAll(dataChangeListeners,
+                new IterationOperator<TurboTrainerDataListener>() {
+                  @Override
+                  public void performOperation(
+                          TurboTrainerDataListener dcl) {
+                    dcl.onSpeedChange(speedToSend);
+                  }
+
+                });
+      }
+
+      // We are integrating for distance. As onDistanceChange() doesn't
+      // receive values directly
+      // manually update with new value obtained through integration
+      synchronized (model) {
+        this.onDistanceChange(model.getVirtualDistance());
+      }
+    }
+
+    /**
+     * @param power in watts
+     */
+    @Override
+    public void onPowerChange(final double power) {
+      synchronized (model) {
+        model.setPower(power);
+      }
+      synchronized (dataChangeListeners) {
+        IterationUtils.operateOnAll(dataChangeListeners,
+                new IterationOperator<TurboTrainerDataListener>() {
+                  @Override
+                  public void performOperation(
+                          TurboTrainerDataListener dcl) {
+                    double powerToSend = resistanceController.onPowerChange(power);
+                    dcl.onPowerChange(powerToSend);
+                  }
+
+                });
+      }
+
+    }
+
+    /**
+     * @param cadence in rpm
+     */
+    @Override
+    public void onCadenceChange(final double cadence) {
+      synchronized (model) {
+        model.setCadence(cadence);
+      }
+      synchronized (dataChangeListeners) {
+        IterationUtils.operateOnAll(dataChangeListeners,
+                new IterationOperator<TurboTrainerDataListener>() {
+                  @Override
+                  public void performOperation(
+                          TurboTrainerDataListener dcl) {
+                    double cadenceToSend = resistanceController.onCadenceChange(cadence);
+                    dcl.onCadenceChange(cadenceToSend);
+                  }
+
+                });
+      }
+    }
+
+    /**
+     * @param distance in m
+     */
+    @Override
+    public void onDistanceChange(final double distance) {
+      // called from onSpeedChange
+      synchronized (dataChangeListeners) {
+        IterationUtils.operateOnAll(dataChangeListeners,
+                new IterationOperator<TurboTrainerDataListener>() {
+                  @Override
+                  public void performOperation(
+                          TurboTrainerDataListener dcl) {
+                    synchronized (model) {
+                      double distanceToSend = resistanceController.onDistanceChange(distance);
+                      dcl.onDistanceChange(distanceToSend);
+                    }
+                  }
+
+                });
+      }
+    }
+
+    /**
+     * @param heartRate in bpm
+     */
+    @Override
+    public void onHeartRateChange(double heartRate) {
+
+    }
+  };
+
+  private FixedPeriodUpdater speedUpdater = new FixedPeriodUpdaterWithReset(0.0, new UpdateCallback() {
+
+    @Override
+    public void onUpdate(Object newValue) {
+      dispatchListener.onSpeedChange((Double) newValue);
+    }
+  }, UPDATE_PERIOD_MS, RESET_PERIOD_MS) {
+    @Override
+    public Object getResetValue() {
+      return 0.0;
+    }
+  };
+
+
+  private FixedPeriodUpdater powerUpdater = new FixedPeriodUpdaterWithReset(0.0, new UpdateCallback() {
+
+    @Override
+    public void onUpdate(Object newValue) {
+      dispatchListener.onPowerChange((Double) newValue);
+    }
+  }, UPDATE_PERIOD_MS, RESET_PERIOD_MS) {
+    @Override
+    public Object getResetValue() {
+      return 0.0;
+    }
+  };
+
+  private FixedPeriodUpdater cadenceUpdater = new FixedPeriodUpdaterWithReset(0.0, new UpdateCallback() {
+
+    @Override
+    public void onUpdate(Object newValue) {
+      dispatchListener.onCadenceChange((Double) newValue);
+    }
+  }, UPDATE_PERIOD_MS, RESET_PERIOD_MS) {
+    @Override
+    public Object getResetValue() {
+      return model.getHeartRate();
+    }
+  };
+
   public class BushidoUpdatesListener implements BushidoBrakeInternalListener {
 
     private BrakeModel model;
-    private TurboTrainerDataListener dispatchListener = new TurboTrainerDataListener() {
-
-
-      /**
-       * @param speed in km/h
-       */
-      @Override
-      public void onSpeedChange(double speed) {
-        // allow hooks in controller to determine which speed we send
-        final double speedToSend = resistanceController.onSpeedChange(speed);
-
-        synchronized (model) {
-          model.setActualSpeed(speed);
-          model.setVirtualSpeed(speedToSend);
-        }
-
-        synchronized (dataChangeListeners) {
-          IterationUtils.operateOnAll(dataChangeListeners,
-                  new IterationOperator<TurboTrainerDataListener>() {
-                    @Override
-                    public void performOperation(
-                            TurboTrainerDataListener dcl) {
-                      dcl.onSpeedChange(speedToSend);
-                    }
-
-                  });
-        }
-
-        // We are integrating for distance. As onDistanceChange() doesn't
-        // receive values directly
-        // manually update with new value obtained through integration
-        synchronized (model) {
-          this.onDistanceChange(model.getVirtualDistance());
-        }
-      }
-
-      /**
-       * @param power in watts
-       */
-      @Override
-      public void onPowerChange(final double power) {
-        synchronized (model) {
-          model.setPower(power);
-        }
-        synchronized (dataChangeListeners) {
-          IterationUtils.operateOnAll(dataChangeListeners,
-                  new IterationOperator<TurboTrainerDataListener>() {
-                    @Override
-                    public void performOperation(
-                            TurboTrainerDataListener dcl) {
-                      double powerToSend = resistanceController.onPowerChange(power);
-                      dcl.onPowerChange(powerToSend);
-                    }
-
-                  });
-        }
-
-      }
-
-      /**
-       * @param cadence in rpm
-       */
-      @Override
-      public void onCadenceChange(final double cadence) {
-        synchronized (model) {
-          model.setCadence(cadence);
-        }
-        synchronized (dataChangeListeners) {
-          IterationUtils.operateOnAll(dataChangeListeners,
-                  new IterationOperator<TurboTrainerDataListener>() {
-                    @Override
-                    public void performOperation(
-                            TurboTrainerDataListener dcl) {
-                      double cadenceToSend = resistanceController.onCadenceChange(cadence);
-                      dcl.onCadenceChange(cadenceToSend);
-                    }
-
-                  });
-        }
-      }
-
-      /**
-       * @param distance in m
-       */
-      @Override
-      public void onDistanceChange(final double distance) {
-        // called from onSpeedChange
-        synchronized (dataChangeListeners) {
-          IterationUtils.operateOnAll(dataChangeListeners,
-                  new IterationOperator<TurboTrainerDataListener>() {
-                    @Override
-                    public void performOperation(
-                            TurboTrainerDataListener dcl) {
-                      synchronized (model) {
-                        double distanceToSend = resistanceController.onDistanceChange(distance);
-                        dcl.onDistanceChange(distanceToSend);
-                      }
-                    }
-
-                  });
-        }
-      }
-
-      /**
-       * @param heartRate in bpm
-       */
-      @Override
-      public void onHeartRateChange(double heartRate) {
-
-      }
-    };
-
-    private FixedPeriodUpdater speedUpdater = new FixedPeriodUpdaterWithReset(0.0, new UpdateCallback() {
-
-      @Override
-      public void onUpdate(Object newValue) {
-        dispatchListener.onSpeedChange((Double) newValue);
-      }
-    }, UPDATE_PERIOD_MS, RESET_PERIOD_MS) {
-      @Override
-      public Object getResetValue() {
-        return 0.0;
-      }
-    };
-
-
-    private FixedPeriodUpdater powerUpdater = new FixedPeriodUpdaterWithReset(0.0, new UpdateCallback() {
-
-      @Override
-      public void onUpdate(Object newValue) {
-        dispatchListener.onPowerChange((Double) newValue);
-      }
-    }, UPDATE_PERIOD_MS, RESET_PERIOD_MS) {
-      @Override
-      public Object getResetValue() {
-        return 0.0;
-      }
-    };
-
-    private FixedPeriodUpdater cadenceUpdater = new FixedPeriodUpdaterWithReset(0.0, new UpdateCallback() {
-
-      @Override
-      public void onUpdate(Object newValue) {
-        dispatchListener.onCadenceChange((Double) newValue);
-      }
-    }, UPDATE_PERIOD_MS, RESET_PERIOD_MS) {
-      @Override
-      public Object getResetValue() {
-        return model.getHeartRate();
-      }
-    };
 
 
     /**
@@ -280,10 +281,8 @@ public class BushidoBrake extends AntTurboTrainer {
                                   ChannelMessageSender channelSender) {
       this.model = model;
       this.channelSender = channelSender;
-      speedUpdater.start();
-      powerUpdater.start();
-      cadenceUpdater.start();
     }
+
 
     @Override
     public void onRequestData(Byte[] data) {
@@ -458,6 +457,13 @@ public class BushidoBrake extends AntTurboTrainer {
     this.registerChannelRxListener(dataListener, BroadcastDataMessage.class);
 
     resistanceController.start(model);
+    //FIXME: these need to be called after the line above. DO NOT MOVE.
+    //This is because start(model) sets the data model on the resistance controller.
+    //These calls delegate to the resistance controller. If the resistance controller
+    //calls getDataModel() we dereference a null pointer.
+    speedUpdater.start();
+    powerUpdater.start();
+    cadenceUpdater.start();
 
   }
 
