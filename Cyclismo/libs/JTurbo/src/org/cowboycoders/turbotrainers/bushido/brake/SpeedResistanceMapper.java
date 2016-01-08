@@ -93,6 +93,7 @@ public class SpeedResistanceMapper extends AbstractController {
 		@Override
 		public void onUpdate(final Object newValue) {
 			final BrakeModel bushidoDataModel = getDataModel();
+			powerModel.setGradientAsPercentage(bushidoDataModel.getSlope());
 			final double virtualSpeed = powerModel.updatePower((Double) newValue) * Conversions.METRES_PER_SECOND_TO_KM_PER_HOUR;
 			bushidoDataModel.setVirtualSpeed(virtualSpeed);
 			// Update the brake resistance from the current virtual speed
