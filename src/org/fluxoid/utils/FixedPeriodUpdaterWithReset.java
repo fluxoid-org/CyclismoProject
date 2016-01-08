@@ -24,7 +24,7 @@ public abstract class FixedPeriodUpdaterWithReset extends FixedPeriodUpdater {
   }
 
   @Override
-  public void update(Object o) {
+  public synchronized void update(Object o) {
     super.update(o);
     t.cancel();
     t = new Timer(true);
