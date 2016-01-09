@@ -63,6 +63,7 @@ public class PidBrakeController extends AbstractController {
 
 		@Override
 		public void onUpdate(Object newValue) {
+			powerModel.setGradientAsPercentage(getDataModel().getSlope());
 			double predictedSpeed = powerModel.updatePower((Double) newValue);
 			//predictedSpeed = Conversions.METRES_PER_SECOND_TO_KM_PER_HOUR * predictedSpeed;
 			setPredictedSpeed(predictedSpeed);

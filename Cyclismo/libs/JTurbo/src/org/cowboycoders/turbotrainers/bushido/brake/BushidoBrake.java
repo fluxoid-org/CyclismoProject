@@ -37,8 +37,11 @@ import org.cowboycoders.turbotrainers.Mode;
 import org.cowboycoders.turbotrainers.Parameters.CommonParametersInterface;
 import org.cowboycoders.turbotrainers.TooFewAntChannelsAvailableException;
 import org.cowboycoders.turbotrainers.TurboTrainerDataListener;
+import org.fluxoid.utils.FixedPeriodUpdater;
+import org.fluxoid.utils.FixedPeriodUpdaterWithReset;
 import org.fluxoid.utils.IterationOperator;
 import org.fluxoid.utils.IterationUtils;
+import org.fluxoid.utils.UpdateCallback;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -58,6 +61,10 @@ import java.util.logging.Logger;
 public class BushidoBrake extends AntTurboTrainer {
 
   public static final Mode[] SUPPORTED_MODES = new Mode[]{Mode.TARGET_SLOPE};
+
+  private static final int UPDATE_PERIOD_MS = 1000;
+  // must be > 2 seconds as this is the approximate update period from the brake
+  private static final int RESET_PERIOD_MS = 5000;
 
   {
     // switch on controller type (different controllers support diff modes)
@@ -109,46 +116,14 @@ public class BushidoBrake extends AntTurboTrainer {
 
   private VersionRequestCallback versionRequestCallback;
 
-  public class BushidoUpdatesListener implements BushidoBrakeInternalListener {
+  private TurboTrainerDataListener dispatchListener = new TurboTrainerDataListener() {
 
-    private BrakeModel model;
 
     /**
-     * Only route responses through this member
+     * @param speed in km/h
      */
-    private ChannelMessageSender channelSender;
-
-    public BushidoUpdatesListener(BrakeModel model,
-                                  ChannelMessageSender channelSender) {
-      this.model = model;
-      this.channelSender = channelSender;
-    }
-
     @Override
-    public void onRequestData(Byte[] data) {
-
-      // We don't want thread's queueing up waiting to be serviced.
-      // Subject to a race but we will respond to next request.
-      try {
-        requestDataLock.lock();
-        if (requestDataInProgess)
-          return;
-        requestDataInProgess = true;
-      } finally {
-        requestDataLock.unlock();
-      }
-
-      byte[] bytes = null;
-      synchronized (model) {
-        bytes = model.getDataPacket();
-      }
-
-      channelSender.sendMessage(AntUtils.buildBroadcastMessage(bytes),
-              requestDataCallback);
-    }
-
-    @Override
-    public void onSpeedChange(final double speed) {
+    public void onSpeedChange(double speed) {
       // allow hooks in controller to determine which speed we send
       final double speedToSend = resistanceController.onSpeedChange(speed);
 
@@ -175,9 +150,11 @@ public class BushidoBrake extends AntTurboTrainer {
       synchronized (model) {
         this.onDistanceChange(model.getVirtualDistance());
       }
-
     }
 
+    /**
+     * @param power in watts
+     */
     @Override
     public void onPowerChange(final double power) {
       synchronized (model) {
@@ -198,6 +175,9 @@ public class BushidoBrake extends AntTurboTrainer {
 
     }
 
+    /**
+     * @param cadence in rpm
+     */
     @Override
     public void onCadenceChange(final double cadence) {
       synchronized (model) {
@@ -217,9 +197,12 @@ public class BushidoBrake extends AntTurboTrainer {
       }
     }
 
+    /**
+     * @param distance in m
+     */
     @Override
     public void onDistanceChange(final double distance) {
-      //FIXME: I don't think this code path is used. Verify and remove.
+      // called from onSpeedChange
       synchronized (dataChangeListeners) {
         IterationUtils.operateOnAll(dataChangeListeners,
                 new IterationOperator<TurboTrainerDataListener>() {
@@ -234,6 +217,114 @@ public class BushidoBrake extends AntTurboTrainer {
 
                 });
       }
+    }
+
+    /**
+     * @param heartRate in bpm
+     */
+    @Override
+    public void onHeartRateChange(double heartRate) {
+
+    }
+  };
+
+  private FixedPeriodUpdater speedUpdater = new FixedPeriodUpdaterWithReset(0.0, new UpdateCallback() {
+
+    @Override
+    public void onUpdate(Object newValue) {
+      dispatchListener.onSpeedChange((Double) newValue);
+    }
+  }, UPDATE_PERIOD_MS, RESET_PERIOD_MS) {
+    @Override
+    public Object getResetValue() {
+      return 0.0;
+    }
+  };
+
+
+  private FixedPeriodUpdater powerUpdater = new FixedPeriodUpdaterWithReset(0.0, new UpdateCallback() {
+
+    @Override
+    public void onUpdate(Object newValue) {
+      dispatchListener.onPowerChange((Double) newValue);
+    }
+  }, UPDATE_PERIOD_MS, RESET_PERIOD_MS) {
+    @Override
+    public Object getResetValue() {
+      return 0.0;
+    }
+  };
+
+  private FixedPeriodUpdater cadenceUpdater = new FixedPeriodUpdaterWithReset(0.0, new UpdateCallback() {
+
+    @Override
+    public void onUpdate(Object newValue) {
+      dispatchListener.onCadenceChange((Double) newValue);
+    }
+  }, UPDATE_PERIOD_MS, RESET_PERIOD_MS) {
+    @Override
+    public Object getResetValue() {
+      return model.getHeartRate();
+    }
+  };
+
+  public class BushidoUpdatesListener implements BushidoBrakeInternalListener {
+
+    private BrakeModel model;
+
+
+    /**
+     * Only route responses through this member
+     */
+    private ChannelMessageSender channelSender;
+
+    public BushidoUpdatesListener(BrakeModel model,
+                                  ChannelMessageSender channelSender) {
+      this.model = model;
+      this.channelSender = channelSender;
+    }
+
+
+    @Override
+    public void onRequestData(Byte[] data) {
+
+      // We don't want thread's queueing up waiting to be serviced.
+      // Subject to a race but we will respond to next request.
+      try {
+        requestDataLock.lock();
+        if (requestDataInProgess)
+          return;
+        requestDataInProgess = true;
+      } finally {
+        requestDataLock.unlock();
+      }
+
+      byte[] bytes = null;
+      synchronized (model) {
+        bytes = model.getDataPacket();
+      }
+
+      channelSender.sendMessage(AntUtils.buildBroadcastMessage(bytes),
+              requestDataCallback);
+    }
+
+    @Override
+    public void onSpeedChange(final double speed) {
+      speedUpdater.update(speed);
+    }
+
+    @Override
+    public void onPowerChange(final double power) {
+      powerUpdater.update(power);
+    }
+
+    @Override
+    public void onCadenceChange(final double cadence) {
+      cadenceUpdater.update(cadence);
+    }
+
+    @Override
+    public void onDistanceChange(final double distance) {
     }
 
     @Override
@@ -367,6 +458,13 @@ public class BushidoBrake extends AntTurboTrainer {
     this.registerChannelRxListener(dataListener, BroadcastDataMessage.class);
 
     resistanceController.start(model);
+    //FIXME: these need to be called after the line above. DO NOT MOVE.
+    //This is because start(model) sets the data model on the resistance controller.
+    //These calls delegate to the resistance controller. If the resistance controller
+    //calls getDataModel() we dereference a null pointer.
+    speedUpdater.start();
+    powerUpdater.start();
+    cadenceUpdater.start();
 
   }
 

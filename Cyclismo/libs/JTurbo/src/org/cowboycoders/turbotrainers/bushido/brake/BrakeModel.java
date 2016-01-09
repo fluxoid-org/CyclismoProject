@@ -179,7 +179,7 @@ public abstract class BrakeModel extends TurboBaseModel {
 	/**
 	 * Sets Brake temp in degrees
 	 * 
-	 * @param new temp
+	 * @param brakeTemperature in degrees centigrade
 	 */
 	public void setBrakeTemperature(double brakeTemperature) {
 		this.brakeTemperature = brakeTemperature;
