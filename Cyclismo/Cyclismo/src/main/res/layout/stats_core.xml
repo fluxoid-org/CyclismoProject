@@ -95,6 +95,7 @@ limitations under the License.
   <TableRow>
     <TextView
       android:text="@string/stats_total_time"
+      android:id="@+id/stats_total_time_label"
       style="@style/StatsLabel" />
     <TextView
       android:id="@+id/stats_moving_time_label"
