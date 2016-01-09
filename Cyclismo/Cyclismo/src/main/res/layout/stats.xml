@@ -41,17 +41,6 @@ limitations under the License.
     android:padding="8dp"
     android:shrinkColumns="0,2"
     android:stretchColumns="0,2" >
-    <!-- Speed on one line -->
-    <TableRow>
-      <TextView
-        android:id="@+id/stats_speed_label"
-        style="@style/StatsLabel" />
-    </TableRow>
-    <TableRow>
-      <TextView
-        android:id="@+id/stats_speed_value"
-        style="@style/StatsValue" />
-    </TableRow>
     <include layout="@layout/stats_core" />
     <TableRow android:id="@+id/stats_coordinate_label_table_row" >
       <TextView
