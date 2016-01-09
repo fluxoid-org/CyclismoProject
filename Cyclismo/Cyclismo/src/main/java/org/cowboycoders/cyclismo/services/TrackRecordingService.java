@@ -1051,8 +1051,13 @@ public class TrackRecordingService extends Service {
    */
   private void showNotification() {
     if (isRecording() && !isPaused()) {
+      Long courseId = PreferencesUtils.getLong(this,
+              R.string.recording_course_track_id_key);
       Intent intent = IntentUtils.newIntent(this, TrackDetailActivity.class)
-          .putExtra(TrackDetailActivity.EXTRA_TRACK_ID, recordingTrackId);
+              .putExtra(TrackDetailActivity.EXTRA_TRACK_ID, recordingTrackId)
+              .putExtra(TrackDetailActivity.EXTRA_USE_COURSE_PROVIDER, false)
+              .putExtra(TrackDetailActivity.EXTRA_COURSE_TRACK_ID, courseId);
+
       TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this);
       taskStackBuilder.addNextIntent(intent);
 
