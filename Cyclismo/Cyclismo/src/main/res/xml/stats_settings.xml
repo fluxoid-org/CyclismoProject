@@ -29,6 +29,10 @@ limitations under the License.
   <PreferenceCategory android:title="@string/settings_show" >
     <CheckBoxPreference
       android:defaultValue="false"
+      android:key="@string/stats_show_total_time_key"
+      android:title="@string/stats_total_time" />
+    <CheckBoxPreference
+      android:defaultValue="false"
       android:key="@string/stats_show_moving_time_key"
       android:title="@string/stats_moving_time" />
     <CheckBoxPreference

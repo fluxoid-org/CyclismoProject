@@ -15,21 +15,87 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android" >
-  <!-- Total distance -->
+  <!-- Speed and distance on one line -->
   <TableRow>
     <TextView
+      android:id="@+id/stats_speed_label"
+      style="@style/StatsLabel" />
+    <TextView
       android:text="@string/stats_distance"
+      android:layout_column="2"
       style="@style/StatsLabel" />
   </TableRow>
   <TableRow>
     <TextView
+      android:id="@+id/stats_speed_value"
+      style="@style/StatsValue" />
+    <TextView style="@style/StatsSpacer" />
+    <TextView
       android:id="@+id/stats_distance_value"
+      style="@style/StatsValue" />
+  </TableRow>
+  <!-- Instantaneous and average power -->
+  <TableRow android:id="@+id/stats_power_label_table_row" >
+    <TextView
+      style="@style/StatsLabel"
+      android:text="@string/stats_inst_power" />
+    <TextView
+      style="@style/StatsLabel"
+      android:layout_column="2"
+      android:text="@string/stats_avg_power" />
+  </TableRow>
+  <TableRow android:id="@+id/stats_power_value_table_row" >
+    <TextView
+      android:id="@+id/stats_inst_power_value"
+      style="@style/StatsValue" />
+    <TextView style="@style/StatsSpacer" />
+    <TextView
+      android:id="@+id/stats_avg_power_value"
+      style="@style/StatsValue" />
+  </TableRow>
+  <!-- Instantaneous and average cadence -->
+  <TableRow android:id="@+id/stats_cadence_label_table_row" >
+    <TextView
+      style="@style/StatsLabel"
+      android:text="@string/stats_inst_cadence" />
+    <TextView
+      style="@style/StatsLabel"
+      android:layout_column="2"
+      android:text="@string/stats_avg_cadence" />
+  </TableRow>
+  <TableRow android:id="@+id/stats_cadence_value_table_row" >
+    <TextView
+      android:id="@+id/stats_inst_cadence_value"
+      style="@style/StatsValue" />
+    <TextView style="@style/StatsSpacer" />
+    <TextView
+      android:id="@+id/stats_avg_cadence_value"
+      style="@style/StatsValue" />
+  </TableRow>
+  <!-- Instantaneous and average heart rate -->
+  <TableRow android:id="@+id/stats_heartrate_label_table_row" >
+    <TextView
+      style="@style/StatsLabel"
+      android:text="@string/stats_inst_heartrate" />
+    <TextView
+      style="@style/StatsLabel"
+      android:layout_column="2"
+      android:text="@string/stats_avg_heartrate" />
+  </TableRow>
+  <TableRow android:id="@+id/stats_heartrate_value_table_row" >
+    <TextView
+      android:id="@+id/stats_inst_heartrate_value"
+      style="@style/StatsValue" />
+    <TextView style="@style/StatsSpacer" />
+    <TextView
+      android:id="@+id/stats_avg_heartrate_value"
       style="@style/StatsValue" />
   </TableRow>
   <!-- Total time/moving time -->
   <TableRow>
     <TextView
       android:text="@string/stats_total_time"
+      android:id="@+id/stats_total_time_label"
       style="@style/StatsLabel" />
     <TextView
       android:id="@+id/stats_moving_time_label"
@@ -41,7 +107,7 @@ limitations under the License.
     <TextView
       android:id="@+id/stats_total_time_value"
       style="@style/StatsValue" />
-    <TextView 
+    <TextView
       android:id="@+id/stats_moving_time_spacer"
       style="@style/StatsSpacer" />
     <TextView
@@ -62,7 +128,7 @@ limitations under the License.
     <TextView
       android:id="@+id/stats_average_speed_value"
       style="@style/StatsValue" />
-    <TextView 
+    <TextView
       android:id="@+id/stats_average_moving_speed_spacer"
       style="@style/StatsSpacer" />
     <TextView
@@ -135,63 +201,6 @@ limitations under the License.
     <TextView style="@style/StatsSpacer" />
     <TextView
       android:id="@+id/stats_max_grade_value"
-      style="@style/StatsValue" />
-  </TableRow>
-  <!-- Instantaneous and average power -->
-  <TableRow android:id="@+id/stats_power_label_table_row" >
-    <TextView
-      style="@style/StatsLabel"
-      android:text="@string/stats_inst_power" />
-    <TextView
-      style="@style/StatsLabel"
-      android:layout_column="2"
-      android:text="@string/stats_avg_power" />
-  </TableRow>
-  <TableRow android:id="@+id/stats_power_value_table_row" >
-    <TextView
-      android:id="@+id/stats_inst_power_value"
-      style="@style/StatsValue" />
-    <TextView style="@style/StatsSpacer" />
-    <TextView
-      android:id="@+id/stats_avg_power_value"
-      style="@style/StatsValue" />
-  </TableRow>
-  <!-- Instantaneous and average cadence -->
-  <TableRow android:id="@+id/stats_cadence_label_table_row" >
-    <TextView
-      style="@style/StatsLabel"
-      android:text="@string/stats_inst_cadence" />
-    <TextView
-      style="@style/StatsLabel"
-      android:layout_column="2"
-      android:text="@string/stats_avg_cadence" />
-  </TableRow>
-  <TableRow android:id="@+id/stats_cadence_value_table_row" >
-    <TextView
-      android:id="@+id/stats_inst_cadence_value"
-      style="@style/StatsValue" />
-    <TextView style="@style/StatsSpacer" />
-    <TextView
-      android:id="@+id/stats_avg_cadence_value"
-      style="@style/StatsValue" />
-  </TableRow>
-  <!-- Instantaneous and average heart rate -->
-  <TableRow android:id="@+id/stats_heartrate_label_table_row" >
-    <TextView
-      style="@style/StatsLabel"
-      android:text="@string/stats_inst_heartrate" />
-    <TextView
-      style="@style/StatsLabel"
-      android:layout_column="2"
-      android:text="@string/stats_avg_heartrate" />
-  </TableRow>
-  <TableRow android:id="@+id/stats_heartrate_value_table_row" >
-    <TextView
-      android:id="@+id/stats_inst_heartrate_value"
-      style="@style/StatsValue" />
-    <TextView style="@style/StatsSpacer" />
-    <TextView
-      android:id="@+id/stats_avg_heartrate_value"
       style="@style/StatsValue" />
   </TableRow>
 </merge>

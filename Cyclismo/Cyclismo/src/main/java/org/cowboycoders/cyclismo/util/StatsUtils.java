@@ -208,6 +208,8 @@ public class StatsUtils {
         activity, R.string.metric_units_key, PreferencesUtils.METRIC_UNITS_DEFAULT);
     boolean reportSpeed = PreferencesUtils.getBoolean(
         activity, R.string.report_speed_key, PreferencesUtils.REPORT_SPEED_DEFAULT);
+    boolean showTotalTime = PreferencesUtils.getBoolean(activity,
+        R.string.stats_show_total_time_key, PreferencesUtils.STATS_SHOW_TOTAL_TIME_DEFAULT);
     boolean showMovingTime = PreferencesUtils.getBoolean(activity,
         R.string.stats_show_moving_time_key, PreferencesUtils.STATS_SHOW_MOVING_TIME_DEFAULT);
     
@@ -216,12 +218,16 @@ public class StatsUtils {
     setDistanceValue(activity, R.id.stats_distance_value, totalDistance, metricUnits);
     
     // Set total time
-    setTimeValue(activity, R.id.stats_total_time_value,
-        tripStatistics != null ? tripStatistics.getTotalTime() : -1L);
+    setItemVisibility(activity, R.id.stats_total_time_label, -1,
+        R.id.stats_total_time_value, showTotalTime);
+    if (showTotalTime) {
+      setTimeValue(activity, R.id.stats_total_time_value,
+          tripStatistics != null ? tripStatistics.getTotalTime() : -1L);
+    }
 
-    // Set moving time
+    // Set moving time. Only show the spacer if total time is shown.
     setItemVisibility(activity, R.id.stats_moving_time_label, R.id.stats_moving_time_spacer,
-        R.id.stats_moving_time_value, showMovingTime);
+        R.id.stats_moving_time_value, showMovingTime, showTotalTime);
     if (showMovingTime) {
       setTimeValue(activity, R.id.stats_moving_time_value,
           tripStatistics != null ? tripStatistics.getMovingTime() : -1L);
@@ -307,6 +313,12 @@ public class StatsUtils {
 
   private static void setItemVisibility(
       Activity activity, int labelId, int spacerId, int valueId, boolean show) {
+    setItemVisibility(activity, labelId, spacerId, valueId, show, true);
+  }
+
+  private static void setItemVisibility(
+      Activity activity, int labelId, int spacerId, int valueId,
+      boolean show, boolean show_spacer) {
     View label = activity.findViewById(labelId);
     View spacer = activity.findViewById(spacerId);
     View value = activity.findViewById(valueId);
@@ -314,7 +326,7 @@ public class StatsUtils {
       label.setVisibility(show ? View.VISIBLE : View.GONE);
     }
     if (spacer != null) {
-      spacer.setVisibility(show ? View.VISIBLE : View.GONE);
+      spacer.setVisibility(show_spacer ? View.VISIBLE : View.GONE);
     }
     if (value != null) {
       value.setVisibility(show ? View.VISIBLE : View.GONE);
