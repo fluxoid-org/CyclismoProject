@@ -440,21 +440,16 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
 
         mapView.setOnTouchListener(new View.OnTouchListener() {
 
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (isResumed() && keepCurrentLocationVisible && currentLocation != null
-                        && !isLocationVisible(currentLocation)) {
-                    keepCurrentLocationVisible = false;
-                    zoomToCurrentLocation = false;
-                }
-                return false;
+          @Override
+          public boolean onTouch(View view, MotionEvent motionEvent) {
+            if (isResumed() && keepCurrentLocationVisible && currentLocation != null
+                    && !isLocationVisible(currentLocation)) {
+              keepCurrentLocationVisible = false;
+              zoomToCurrentLocation = false;
             }
+            return false;
+          }
         });
-
-
-        Drawable currenPosDrawable = this.getActivity().getResources().getDrawable(R.drawable.location_marker);
-        currentPosBitmap = AndroidGraphicFactory.convertToBitmap(currenPosDrawable);
-        currentPosBitmap.incrementRefCount(); // keep the bitmap alive
 
 
         return layout;
@@ -469,6 +464,14 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
   public synchronized void onStart() {
     super.onStart();
     Log.d(TAG, "onStart");
+
+    Drawable currentPosDrawable = this.getActivity().getResources().getDrawable(R.drawable.location_marker);
+    currentPosBitmap = AndroidGraphicFactory.convertToBitmap(currentPosDrawable);
+    currentPosBitmap.incrementRefCount(); // keep the bitmap alive
+    // FIXME: we have to double increment here to stop a null pointer issue on reload
+    // NOTE2: we dec the ref count in onStop; is some other method decrementing the count?!
+    currentPosBitmap.incrementRefCount();
+
     mapOverlay = new MapOverlay(getActivity());
 
     mapViewPos = mapView.getModel().mapViewPosition;
@@ -490,10 +493,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
     mapViewPos.animateTo(getDefaultLatLong());
 
     layers.add(makeMapLayer());
-    // FIXME: we have to double increment here to stop a null pointer issue on reload
-    // NOTE: we inc the ref count in onCreateView
-    // NOTE2: we dec the ref count in onStop AND onDestroy to account for the double reffing
-    currentPosBitmap.incrementRefCount();
+
     currentPosMarker = new Marker(getDefaultLatLong(), currentPosBitmap,
             (int) ((currentPosBitmap.getWidth() / 2) - getLocationXAnchor() * currentPosBitmap.getWidth()),
             (int) ((currentPosBitmap.getWidth() / 2) - getLocationYAnchor() * currentPosBitmap.getWidth()));
