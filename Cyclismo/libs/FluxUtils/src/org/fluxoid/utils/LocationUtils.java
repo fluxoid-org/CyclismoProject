@@ -155,7 +155,7 @@ public class LocationUtils {
    * @param dst      is the finishing point.
    * @param speed_ms is the speed at the starting point.
    * @param dt_ms    is the time travelled since leaving the starting point.
-   * @return the interpolated point.
+   * @return the interpolated point, or null if the destination has been passed.
    */
   public static LatLongAlt getLocationBetweenPoints(
       LatLongAlt src,
@@ -166,7 +166,6 @@ public class LocationUtils {
     double distBetweenPoints = LocationUtils.getGradientCorrectedDistance(src, dst);
     double timeBetweenPoints = distBetweenPoints / speed_ms;
 
-    // Should never be called with the current location beyond the destination
     if (dt_ms / Conversions.MILLISECONDS_IN_SECOND > timeBetweenPoints) {
       return null;
     }
