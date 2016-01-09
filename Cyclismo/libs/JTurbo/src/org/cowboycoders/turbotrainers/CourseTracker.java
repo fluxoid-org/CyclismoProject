@@ -30,8 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CourseTracker {
-
-  private static final double FUTURE_LOOKAHEAD = 1000; //ms
+  
   public static final double ZERO_CUTOFF = 0.0001;
   private final double resolution;
 
@@ -162,21 +161,13 @@ public class CourseTracker {
       return 0.0;
     }
     final Double nextLocationKey = distanceMarkers[lastKnownDistanceMarkerIndex + 1];
-    final LatLongAlt current = getNearestLocation();
-    double estimatedSpeed = this.speed;
-    if (speed < ZERO_CUTOFF) {
-      // default to 10 kmph to find sensible next point
-      estimatedSpeed = 10 * Conversions.KM_PER_HOUR_TO_METRES_PER_SECOND;
-    }
-    // look for a point FUTURE_LOOKAEAD in the future at current speed
-    LatLongAlt futureDest = LocationUtils.getLocationBetweenPoints(current, distanceLocationMap.get(nextLocationKey),
-            estimatedSpeed, FUTURE_LOOKAHEAD);
-    if (futureDest == null) {
-      // we overshoot the mark, but use it anyway
-      futureDest = distanceLocationMap.get(nextLocationKey);
-    }
+    final Double previousLocationKey = distanceMarkers[lastKnownDistanceMarkerIndex];
+    final LatLongAlt next = distanceLocationMap.get(nextLocationKey);
+    final LatLongAlt previous = distanceLocationMap.get(previousLocationKey);
+    // as we are interpolating elevation data between markers, we don't gain any precision
+    // by using the currentLocation (getCurrentLocation) compared to using the previous marker
     double gradient = LocationUtils
-            .getLocalisedGradient(current, futureDest);
+            .getLocalisedGradient(previous, next);
     if (gradient == Double.NaN) {
       //two points at same lat/long
       return 0.0;
