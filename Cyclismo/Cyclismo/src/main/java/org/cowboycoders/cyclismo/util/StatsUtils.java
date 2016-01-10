@@ -225,9 +225,9 @@ public class StatsUtils {
           tripStatistics != null ? tripStatistics.getTotalTime() : -1L);
     }
 
-    // Set moving time. Only show the spacer if total time is shown.
+    // Set moving time. Only show the spacer if total time and moving time are shown.
     setItemVisibility(activity, R.id.stats_moving_time_label, R.id.stats_moving_time_spacer,
-        R.id.stats_moving_time_value, showMovingTime, showTotalTime);
+        R.id.stats_moving_time_value, showMovingTime, showMovingTime && showTotalTime);
     if (showMovingTime) {
       setTimeValue(activity, R.id.stats_moving_time_value,
           tripStatistics != null ? tripStatistics.getMovingTime() : -1L);
@@ -313,7 +313,7 @@ public class StatsUtils {
 
   private static void setItemVisibility(
       Activity activity, int labelId, int spacerId, int valueId, boolean show) {
-    setItemVisibility(activity, labelId, spacerId, valueId, show, true);
+    setItemVisibility(activity, labelId, spacerId, valueId, show, show);
   }
 
   private static void setItemVisibility(
