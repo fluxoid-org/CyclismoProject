@@ -45,13 +45,13 @@ import android.provider.BaseColumns;
  */
 public interface CourseTracksColumns extends BaseColumns {
 
-  public static final String TABLE_NAME = "tracks";
+  public static final String TABLE_NAME = "course_tracks";
 
   /**
    * Tracks provider uri.
    */
   public static final Uri CONTENT_URI = Uri.parse(
-      "content://org.cowboycoders.cyclismo.courses/course_tracks");
+      "content://org.cowboycoders.cyclismo/course_tracks");
 
   /**
    * Track content type.
