@@ -50,9 +50,9 @@ import static org.cowboycoders.cyclismo.content.ContentTypeIds.STRING_TYPE_ID;
  */
 public interface CourseWaypointsColumns extends BaseColumns {
 
-  public static final String TABLE_NAME = "waypoints";
+  public static final String TABLE_NAME = "course_waypoints";
   public static final Uri CONTENT_URI = Uri.parse(
-      "content://org.cowboycoders.cyclismo.courses/course_waypoints");
+      "content://org.cowboycoders.cyclismo/course_waypoints");
   public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.google.waypoint";
   public static final String CONTENT_ITEMTYPE = "vnd.android.cursor.item/vnd.google.waypoint";
   public static final String DEFAULT_SORT_ORDER = "_id";

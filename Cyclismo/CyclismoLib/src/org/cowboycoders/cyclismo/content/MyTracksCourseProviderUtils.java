@@ -62,13 +62,7 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
   private static final String TAG = MyTracksCourseProviderUtils.class.getSimpleName();
 
   private static final int MAX_LATITUDE = 90000000;
-  
-  /**
-   * The authority (the first part of the URI) for the My Tracks content
-   * provider.
-   */
-  public static final String AUTHORITY = "org.cowboycoders.cyclismo.courses";
-  
+
   /**
    * The authority (the first part of the URI) for the My Tracks content
    * provider.

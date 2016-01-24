@@ -343,12 +343,6 @@ limitations under the License.
             android:exported="true"
             android:readPermission="org.cowboycoders.cyclismo.READ_TRACK_DATA"
             android:writePermission="org.cowboycoders.cyclismo.WRITE_TRACK_DATA" />
-        <provider
-            android:name=".content.MyTracksCourseProvider"
-            android:authorities="org.cowboycoders.cyclismo.courses"
-            android:exported="true"
-            android:readPermission="org.cowboycoders.cyclismo.READ_TRACK_DATA"
-            android:writePermission="org.cowboycoders.cyclismo.WRITE_TRACK_DATA" />
         <!-- Search suggestion provider -->
         <provider
             android:name=".content.SearchEngineProvider"

@@ -60,31 +60,33 @@ import org.cowboycoders.cyclismo.util.PreferencesUtils;
 /**
  * A {@link ContentProvider} that handles access to track points, tracks, and
  * waypoints tables.
- * 
+ *
  * @author Leif Hendrik Wilden
  */
 public class MyTracksProvider extends ContentProvider {
 
+  private enum TrackType {COURSE, TRACK}
+
   private static final String TAG = MyTracksProvider.class.getSimpleName();
   @VisibleForTesting
   static final String DATABASE_NAME = "cyclismo.db";
-  private static final int DATABASE_VERSION = 24;
+  private static final int DATABASE_VERSION = 25;
 
   /**
    * Database helper for creating and upgrading the database.
    */
   @VisibleForTesting
   static class DatabaseHelper extends SQLiteOpenHelper {
-  
+
     public DatabaseHelper(Context context) {
       this(context, DATABASE_NAME);
     }
-    
+
     @VisibleForTesting
     public DatabaseHelper(Context context, String databaseName) {
       super(context, databaseName, null, DATABASE_VERSION);
     }
-  
+
     @Override
     public void onCreate(SQLiteDatabase db) {
       db.execSQL(UserInfoColumns.CREATE_TABLE);
@@ -92,22 +94,28 @@ public class MyTracksProvider extends ContentProvider {
       db.execSQL(TracksColumns.CREATE_TABLE);
       db.execSQL(WaypointsColumns.CREATE_TABLE);
       db.execSQL(BikeInfoColumns.CREATE_TABLE);
+      db.execSQL(CourseTrackPointsColumns.CREATE_TABLE);
+      db.execSQL(CourseTracksColumns.CREATE_TABLE);
+      db.execSQL(CourseWaypointsColumns.CREATE_TABLE);
     }
-  
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
       Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
-      if (oldVersion <= 23) {
+      if (oldVersion <= 24) {
         Log.w(TAG, "Deleting all old data.");
         db.execSQL("DROP TABLE IF EXISTS " + TrackPointsColumns.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + TracksColumns.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + WaypointsColumns.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + UserInfoColumns.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + BikeInfoColumns.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + CourseTrackPointsColumns.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + CourseTracksColumns.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + CourseWaypointsColumns.TABLE_NAME);
         onCreate(db);
       } else {
         // Incremental upgrades. One if statement per DB version.
-  
+
 //        // Add track points SENSOR column
 //        if (oldVersion <= 17) {
 //          Log.w(TAG, "Upgrade DB: Adding sensor column.");
@@ -133,12 +141,19 @@ public class MyTracksProvider extends ContentProvider {
 
   /**
    * Types of url.
-   * 
+   *
    * @author Jimmy Shih
    */
   @VisibleForTesting
   enum UrlType {
-    USER, USER_ID, TRACKPOINTS, TRACKPOINTS_ID, TRACKS, TRACKS_ID, WAYPOINTS, WAYPOINTS_ID, BIKE, BIKE_ID
+    USER, USER_ID,
+    TRACKPOINTS, TRACKPOINTS_ID,
+    TRACKS, TRACKS_ID,
+    WAYPOINTS, WAYPOINTS_ID,
+    BIKE, BIKE_ID,
+    COURSE_TRACKPOINTS, COURSE_TRACKPOINTS_ID,
+    COURSE_TRACKS, COURSE_TRACKS_ID,
+    COURSE_WAYPOINTS, COURSE_WAYPOINTS_ID,
   }
 
   private final UriMatcher uriMatcher;
@@ -146,36 +161,80 @@ public class MyTracksProvider extends ContentProvider {
 
   public MyTracksProvider() {
     uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-    uriMatcher.addURI(MyTracksProviderUtils.AUTHORITY, UserInfoColumns.TABLE_NAME,
+
+    // User
+    uriMatcher.addURI(MyTracksProviderUtils.AUTHORITY,
+        UserInfoColumns.TABLE_NAME,
         UrlType.USER.ordinal());
-    uriMatcher.addURI(MyTracksProviderUtils.AUTHORITY, UserInfoColumns.TABLE_NAME + "/#",
+    uriMatcher.addURI(MyTracksProviderUtils.AUTHORITY,
+        UserInfoColumns.TABLE_NAME + "/#",
         UrlType.USER_ID.ordinal());
-    uriMatcher.addURI(MyTracksProviderUtils.AUTHORITY, TrackPointsColumns.TABLE_NAME,
+
+    // Track trackpoints
+    uriMatcher.addURI(MyTracksProviderUtils.AUTHORITY,
+        TrackPointsColumns.TABLE_NAME,
         UrlType.TRACKPOINTS.ordinal());
-    uriMatcher.addURI(MyTracksProviderUtils.AUTHORITY, TrackPointsColumns.TABLE_NAME + "/#",
+    uriMatcher.addURI(MyTracksProviderUtils.AUTHORITY,
+        TrackPointsColumns.TABLE_NAME + "/#",
         UrlType.TRACKPOINTS_ID.ordinal());
-    uriMatcher.addURI(
-        MyTracksProviderUtils.AUTHORITY, TracksColumns.TABLE_NAME, UrlType.TRACKS.ordinal());
-    uriMatcher.addURI(MyTracksProviderUtils.AUTHORITY, TracksColumns.TABLE_NAME + "/#",
+
+    // Track track
+    uriMatcher.addURI(MyTracksProviderUtils.AUTHORITY,
+        TracksColumns.TABLE_NAME,
+        UrlType.TRACKS.ordinal());
+    uriMatcher.addURI(MyTracksProviderUtils.AUTHORITY,
+        TracksColumns.TABLE_NAME + "/#",
         UrlType.TRACKS_ID.ordinal());
-    uriMatcher.addURI(
-        MyTracksProviderUtils.AUTHORITY, WaypointsColumns.TABLE_NAME, UrlType.WAYPOINTS.ordinal());
-    uriMatcher.addURI(MyTracksProviderUtils.AUTHORITY, WaypointsColumns.TABLE_NAME + "/#",
+
+    // Track waypoints
+    uriMatcher.addURI(MyTracksProviderUtils.AUTHORITY,
+        WaypointsColumns.TABLE_NAME,
+        UrlType.WAYPOINTS.ordinal());
+    uriMatcher.addURI(MyTracksProviderUtils.AUTHORITY,
+        WaypointsColumns.TABLE_NAME + "/#",
         UrlType.WAYPOINTS_ID.ordinal());
-    // bike
-    uriMatcher.addURI(
-        MyTracksProviderUtils.AUTHORITY, BikeInfoColumns.TABLE_NAME, UrlType.BIKE.ordinal());
-    uriMatcher.addURI(MyTracksProviderUtils.AUTHORITY, BikeInfoColumns.TABLE_NAME + "/#",
+
+    // Bike
+    uriMatcher.addURI(MyTracksProviderUtils.AUTHORITY,
+        BikeInfoColumns.TABLE_NAME,
+        UrlType.BIKE.ordinal());
+    uriMatcher.addURI(MyTracksProviderUtils.AUTHORITY,
+        BikeInfoColumns.TABLE_NAME + "/#",
         UrlType.BIKE_ID.ordinal());
+
+    // Course trackpoints
+    uriMatcher.addURI(MyTracksProviderUtils.AUTHORITY,
+        CourseTrackPointsColumns.TABLE_NAME,
+        UrlType.COURSE_TRACKPOINTS.ordinal());
+    uriMatcher.addURI(MyTracksProviderUtils.AUTHORITY,
+        CourseTrackPointsColumns.TABLE_NAME + "/#",
+        UrlType.COURSE_TRACKPOINTS_ID.ordinal());
+
+    // Course track
+    uriMatcher.addURI(MyTracksProviderUtils.AUTHORITY,
+        CourseTracksColumns.TABLE_NAME,
+        UrlType.COURSE_TRACKS.ordinal());
+    uriMatcher.addURI(MyTracksProviderUtils.AUTHORITY,
+        CourseTracksColumns.TABLE_NAME + "/#",
+        UrlType.COURSE_TRACKS_ID.ordinal());
+
+    // Course waypoints
+    uriMatcher.addURI(MyTracksProviderUtils.AUTHORITY,
+        CourseWaypointsColumns.TABLE_NAME,
+        UrlType.COURSE_WAYPOINTS.ordinal());
+    uriMatcher.addURI(MyTracksProviderUtils.AUTHORITY,
+        CourseWaypointsColumns.TABLE_NAME + "/#",
+        UrlType.COURSE_WAYPOINTS_ID.ordinal());
   }
 
   @Override
   public boolean onCreate() {
     return onCreate(getContext());
   }
-  
+
   /**
    * Helper method to make onCreate is testable.
+   *
    * @param context context to creates database
    * @return true means run successfully
    */
@@ -217,10 +276,20 @@ public class MyTracksProvider extends ContentProvider {
       case BIKE:
         table = BikeInfoColumns.TABLE_NAME;
         break;
+      case COURSE_TRACKPOINTS:
+        table = CourseTrackPointsColumns.TABLE_NAME;
+        break;
+      case COURSE_TRACKS:
+        table = CourseTracksColumns.TABLE_NAME;
+        shouldVacuum = true;
+        break;
+      case COURSE_WAYPOINTS:
+        table = CourseWaypointsColumns.TABLE_NAME;
+        break;
       default:
         throw new IllegalArgumentException("Unknown URL " + url);
     }
-  
+
     Log.w(MyTracksProvider.TAG, "Deleting table " + table);
     int count;
     try {
@@ -231,7 +300,7 @@ public class MyTracksProvider extends ContentProvider {
       db.endTransaction();
     }
     getContext().getContentResolver().notifyChange(url, null, true);
-  
+
     if (shouldVacuum) {
       // If a potentially large amount of data was deleted, reclaim its space.
       Log.i(TAG, "Vacuuming the database.");
@@ -259,13 +328,25 @@ public class MyTracksProvider extends ContentProvider {
       case WAYPOINTS_ID:
         return WaypointsColumns.CONTENT_ITEMTYPE;
       case USER:
-         return UserInfoColumns.CONTENT_TYPE;
+        return UserInfoColumns.CONTENT_TYPE;
       case USER_ID:
-         return UserInfoColumns.CONTENT_ITEMTYPE;
+        return UserInfoColumns.CONTENT_ITEMTYPE;
       case BIKE:
-         return BikeInfoColumns.CONTENT_TYPE;
+        return BikeInfoColumns.CONTENT_TYPE;
       case BIKE_ID:
-          return BikeInfoColumns.CONTENT_ITEMTYPE;
+        return BikeInfoColumns.CONTENT_ITEMTYPE;
+      case COURSE_TRACKPOINTS:
+        return CourseTrackPointsColumns.CONTENT_TYPE;
+      case COURSE_TRACKPOINTS_ID:
+        return CourseTrackPointsColumns.CONTENT_ITEMTYPE;
+      case COURSE_TRACKS:
+        return CourseTracksColumns.CONTENT_TYPE;
+      case COURSE_TRACKS_ID:
+        return CourseTracksColumns.CONTENT_ITEMTYPE;
+      case COURSE_WAYPOINTS:
+        return CourseWaypointsColumns.CONTENT_TYPE;
+      case COURSE_WAYPOINTS_ID:
+        return CourseWaypointsColumns.CONTENT_ITEMTYPE;
       default:
         throw new IllegalArgumentException("Unknown URL " + url);
     }
@@ -299,7 +380,7 @@ public class MyTracksProvider extends ContentProvider {
     try {
       // Use a transaction in order to make the insertions run as a single batch
       db.beginTransaction();
-  
+
       UrlType urlType = getUrlType(url);
       for (numInserted = 0; numInserted < valuesBulk.length; numInserted++) {
         ContentValues contentValues = valuesBulk[numInserted];
@@ -362,6 +443,30 @@ public class MyTracksProvider extends ContentProvider {
         break;
       case BIKE_ID:
         queryBuilder.setTables(BikeInfoColumns.TABLE_NAME);
+        queryBuilder.appendWhere("_id=" + url.getPathSegments().get(1));
+        break;
+      case COURSE_TRACKPOINTS:
+        queryBuilder.setTables(CourseTrackPointsColumns.TABLE_NAME);
+        sortOrder = sort != null ? sort : CourseTrackPointsColumns.DEFAULT_SORT_ORDER;
+        break;
+      case COURSE_TRACKPOINTS_ID:
+        queryBuilder.setTables(CourseTrackPointsColumns.TABLE_NAME);
+        queryBuilder.appendWhere("_id=" + url.getPathSegments().get(1));
+        break;
+      case COURSE_TRACKS:
+        queryBuilder.setTables(CourseTracksColumns.TABLE_NAME);
+        sortOrder = sort != null ? sort : CourseTracksColumns.DEFAULT_SORT_ORDER;
+        break;
+      case COURSE_TRACKS_ID:
+        queryBuilder.setTables(CourseTracksColumns.TABLE_NAME);
+        queryBuilder.appendWhere("_id=" + url.getPathSegments().get(1));
+        break;
+      case COURSE_WAYPOINTS:
+        queryBuilder.setTables(CourseWaypointsColumns.TABLE_NAME);
+        sortOrder = sort != null ? sort : CourseWaypointsColumns.DEFAULT_SORT_ORDER;
+        break;
+      case COURSE_WAYPOINTS_ID:
+        queryBuilder.setTables(CourseWaypointsColumns.TABLE_NAME);
         queryBuilder.appendWhere("_id=" + url.getPathSegments().get(1));
         break;
       default:
@@ -436,6 +541,39 @@ public class MyTracksProvider extends ContentProvider {
           whereClause += " AND (" + where + ")";
         }
         break;
+      case COURSE_TRACKPOINTS:
+        table = CourseTrackPointsColumns.TABLE_NAME;
+        whereClause = where;
+        break;
+      case COURSE_TRACKPOINTS_ID:
+        table = CourseTrackPointsColumns.TABLE_NAME;
+        whereClause = CourseTrackPointsColumns._ID + "=" + url.getPathSegments().get(1);
+        if (!TextUtils.isEmpty(where)) {
+          whereClause += " AND (" + where + ")";
+        }
+        break;
+      case COURSE_TRACKS:
+        table = CourseTracksColumns.TABLE_NAME;
+        whereClause = where;
+        break;
+      case COURSE_TRACKS_ID:
+        table = CourseTracksColumns.TABLE_NAME;
+        whereClause = CourseTracksColumns._ID + "=" + url.getPathSegments().get(1);
+        if (!TextUtils.isEmpty(where)) {
+          whereClause += " AND (" + where + ")";
+        }
+        break;
+      case COURSE_WAYPOINTS:
+        table = CourseWaypointsColumns.TABLE_NAME;
+        whereClause = where;
+        break;
+      case COURSE_WAYPOINTS_ID:
+        table = CourseWaypointsColumns.TABLE_NAME;
+        whereClause = CourseWaypointsColumns._ID + "=" + url.getPathSegments().get(1);
+        if (!TextUtils.isEmpty(where)) {
+          whereClause += " AND (" + where + ")";
+        }
+        break;
       default:
         throw new IllegalArgumentException("Unknown url " + url);
     }
@@ -465,7 +603,7 @@ public class MyTracksProvider extends ContentProvider {
 
   /**
    * Gets the {@link UrlType} for a url.
-   * 
+   *
    * @param url the url
    */
   private UrlType getUrlType(Uri url) {
@@ -474,32 +612,38 @@ public class MyTracksProvider extends ContentProvider {
 
   /**
    * Inserts a content based on the url type.
-   * 
-   * @param url the content url
-   * @param urlType the url type
+   *
+   * @param url           the content url
+   * @param urlType       the url type
    * @param contentValues the content values
    */
   private Uri insertContentValues(Uri url, UrlType urlType, ContentValues contentValues) {
     switch (urlType) {
       case TRACKPOINTS:
-        return insertTrackPoint(url, contentValues);
+        return insertTrackPoint(url, contentValues, TrackType.TRACK);
       case TRACKS:
-        return insertTrack(url, contentValues);
+        return insertTrack(url, contentValues, TrackType.TRACK);
       case WAYPOINTS:
-        return insertWaypoint(url, contentValues);
+        return insertWaypoint(url, contentValues, TrackType.TRACK);
       case USER:
-        return insertUser(url,contentValues);
+        return insertUser(url, contentValues);
       case BIKE:
-        return insertBike(url,contentValues);
+        return insertBike(url, contentValues);
+      case COURSE_TRACKPOINTS:
+        return insertTrackPoint(url, contentValues, TrackType.COURSE);
+      case COURSE_TRACKS:
+        return insertTrack(url, contentValues, TrackType.COURSE);
+      case COURSE_WAYPOINTS:
+        return insertWaypoint(url, contentValues, TrackType.COURSE);
       default:
         throw new IllegalArgumentException("Unknown url " + url);
     }
   }
-  
+
   /**
    * Inserts a bike.
-   * 
-   * @param url the content url
+   *
+   * @param url    the content url
    * @param values the content values
    */
   private Uri insertBike(Uri url, ContentValues values) {
@@ -515,11 +659,11 @@ public class MyTracksProvider extends ContentProvider {
     }
     throw new SQLiteException("Failed to insert a bike " + url);
   }
-  
+
   /**
    * Inserts a User.
-   * 
-   * @param url the content url
+   *
+   * @param url    the content url
    * @param values the content values
    */
   private Uri insertUser(Uri url, ContentValues values) {
@@ -537,21 +681,50 @@ public class MyTracksProvider extends ContentProvider {
   }
 
   /**
-   * Inserts a track point.
-   * 
-   * @param url the content url
-   * @param values the content values
+   * Inserts a track point into the database.
+   *
+   * @param url       the content url
+   * @param values    the content values
+   * @param trackType the type of track
    */
-  private Uri insertTrackPoint(Uri url, ContentValues values) {
-    boolean hasLatitude = values.containsKey(TrackPointsColumns.LATITUDE);
-    boolean hasLongitude = values.containsKey(TrackPointsColumns.LONGITUDE);
-    boolean hasTime = values.containsKey(TrackPointsColumns.TIME);
+  private Uri insertTrackPoint(Uri url, ContentValues values, TrackType trackType) {
+    String latitude;
+    String longitude;
+    String time;
+    String tableName;
+    String columnId;
+    Uri contentUri;
+
+    switch (trackType) {
+      case TRACK:
+        latitude = TrackPointsColumns.LATITUDE;
+        longitude = TrackPointsColumns.LONGITUDE;
+        time = TrackPointsColumns.TIME;
+        tableName = TrackPointsColumns.TABLE_NAME;
+        columnId = TrackPointsColumns._ID;
+        contentUri = TrackPointsColumns.CONTENT_URI;
+        break;
+      case COURSE:
+        latitude = CourseTrackPointsColumns.LATITUDE;
+        longitude = CourseTrackPointsColumns.LONGITUDE;
+        time = CourseTrackPointsColumns.TIME;
+        tableName = CourseTrackPointsColumns.TABLE_NAME;
+        columnId = CourseTrackPointsColumns._ID;
+        contentUri = CourseTrackPointsColumns.CONTENT_URI;
+        break;
+      default:
+        throw new SQLException("Invalid track type" + url);
+    }
+
+    boolean hasLatitude = values.containsKey(latitude);
+    boolean hasLongitude = values.containsKey(longitude);
+    boolean hasTime = values.containsKey(time);
     if (!hasLatitude || !hasLongitude || !hasTime) {
       throw new IllegalArgumentException("Latitude, longitude, and time values are required.");
     }
-    long rowId = db.insert(TrackPointsColumns.TABLE_NAME, TrackPointsColumns._ID, values);
+    long rowId = db.insert(tableName, columnId, values);
     if (rowId >= 0) {
-      Uri uri = ContentUris.appendId(TrackPointsColumns.CONTENT_URI.buildUpon(), rowId).build();
+      Uri uri = ContentUris.appendId(contentUri.buildUpon(), rowId).build();
       getContext().getContentResolver().notifyChange(url, null, true);
       return uri;
     }
@@ -559,20 +732,46 @@ public class MyTracksProvider extends ContentProvider {
   }
 
   /**
-   * Inserts a track.
-   * 
-   * @param url the content url
+   * Inserts a track into the database.
+   *
+   * @param url           the content url
    * @param contentValues the content values
+   * @param trackType     the type of track
    */
-  private Uri insertTrack(Uri url, ContentValues contentValues) {
-    boolean hasStartTime = contentValues.containsKey(TracksColumns.STARTTIME);
-    boolean hasStartId = contentValues.containsKey(TracksColumns.STARTID);
+  private Uri insertTrack(Uri url, ContentValues contentValues, TrackType trackType) {
+    String startTime;
+    String startId;
+    String tableName;
+    String columnId;
+    Uri contentUri;
+
+    switch (trackType) {
+      case TRACK:
+        startTime = TracksColumns.STARTTIME;
+        startId = TracksColumns.STARTID;
+        tableName = TracksColumns.TABLE_NAME;
+        columnId = TracksColumns._ID;
+        contentUri = TracksColumns.CONTENT_URI;
+        break;
+      case COURSE:
+        startTime = CourseTracksColumns.STARTTIME;
+        startId = CourseTracksColumns.STARTID;
+        tableName = CourseTracksColumns.TABLE_NAME;
+        columnId = CourseTracksColumns._ID;
+        contentUri = CourseTracksColumns.CONTENT_URI;
+        break;
+      default:
+        throw new SQLException("Invalid track type" + url);
+    }
+
+    boolean hasStartTime = contentValues.containsKey(startTime);
+    boolean hasStartId = contentValues.containsKey(startId);
     if (!hasStartTime || !hasStartId) {
       throw new IllegalArgumentException("Both start time and start id values are required.");
     }
-    long rowId = db.insert(TracksColumns.TABLE_NAME, TracksColumns._ID, contentValues);
+    long rowId = db.insert(tableName, columnId, contentValues);
     if (rowId >= 0) {
-      Uri uri = ContentUris.appendId(TracksColumns.CONTENT_URI.buildUpon(), rowId).build();
+      Uri uri = ContentUris.appendId(contentUri.buildUpon(), rowId).build();
       getContext().getContentResolver().notifyChange(url, null, true);
       return uri;
     }
@@ -580,15 +779,35 @@ public class MyTracksProvider extends ContentProvider {
   }
 
   /**
-   * Inserts a waypoint.
-   * 
-   * @param url the content url
+   * Inserts a waypoint into the database.
+   *
+   * @param url           the content url
    * @param contentValues the content values
+   * @param trackType     the type of track
    */
-  private Uri insertWaypoint(Uri url, ContentValues contentValues) {
-    long rowId = db.insert(WaypointsColumns.TABLE_NAME, WaypointsColumns._ID, contentValues);
+  private Uri insertWaypoint(Uri url, ContentValues contentValues, TrackType trackType) {
+    String tableName;
+    String columnId;
+    Uri contentUri;
+
+    switch (trackType) {
+      case TRACK:
+        tableName = WaypointsColumns.TABLE_NAME;
+        columnId = WaypointsColumns._ID;
+        contentUri = WaypointsColumns.CONTENT_URI;
+        break;
+      case COURSE:
+        tableName = CourseWaypointsColumns.TABLE_NAME;
+        columnId = CourseWaypointsColumns._ID;
+        contentUri = CourseWaypointsColumns.CONTENT_URI;
+        break;
+      default:
+        throw new SQLException("Invalid track type" + url);
+    }
+
+    long rowId = db.insert(tableName, columnId, contentValues);
     if (rowId >= 0) {
-      Uri uri = ContentUris.appendId(WaypointsColumns.CONTENT_URI.buildUpon(), rowId).build();
+      Uri uri = ContentUris.appendId(contentUri.buildUpon(), rowId).build();
       getContext().getContentResolver().notifyChange(url, null, true);
       return uri;
     }
