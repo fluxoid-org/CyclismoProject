@@ -1,8 +1,6 @@
 package org.cowboycoders.turbotrainers.bushido.brake;
 
 import java.io.File;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.cowboycoders.pid.GainController;
 import org.cowboycoders.pid.GainParameters;
@@ -43,9 +41,7 @@ public class SpeedPidBrakeController extends AbstractController {
 
   private PowerModel powerModel = new PowerModel();
 
-  private Lock speedUpdateLock = new ReentrantLock();
-
-  private double predictedSpeed = -1; // metres/s
+  private volatile double predictedSpeed = -1; // metres/s
 
   private volatile double actualSpeed = -1; // metres/s
 
@@ -190,30 +186,15 @@ public class SpeedPidBrakeController extends AbstractController {
 
 
   protected double getPredictedSpeed() {
-    // double non-atomic?
-    try {
-      speedUpdateLock.lock();
-//			if (predictedSpeed <= LOW_SPEED_LIMIT) {
-//				return LOW_SPEED_LIMIT;
-//			}
-      return predictedSpeed;
-    } finally {
-      speedUpdateLock.unlock();
-    }
+    return predictedSpeed;
   }
 
 
   protected void setPredictedSpeed(double newValue) {
     logToCsv(VIRTUAL_SPEED_HEADING, newValue);
-    // double non-atomic?
-    try {
-      speedUpdateLock.lock();
-      SpeedPidBrakeController.this.predictedSpeed = newValue;
-      // gradient averager
-      predictedSpeedSlopeAverager.add(predictedSpeed);
-    } finally {
-      speedUpdateLock.unlock();
-    }
+    SpeedPidBrakeController.this.predictedSpeed = newValue;
+    // gradient averager
+    predictedSpeedSlopeAverager.add(predictedSpeed);
   }
 
   protected void setActualSpeed(double newValue) {
