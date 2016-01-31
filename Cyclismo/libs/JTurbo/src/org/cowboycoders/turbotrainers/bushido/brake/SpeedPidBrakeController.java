@@ -47,7 +47,7 @@ public class SpeedPidBrakeController extends AbstractController {
 
 	private double predictedSpeed = -1; // metres/s
 	
-	private double actualSpeed = -1; // metres/s
+	private volatile double actualSpeed = -1; // metres/s
 	
 	private SlopeTimeAverager predictedSpeedSlopeAverager = new SlopeTimeAverager();
 	
@@ -78,7 +78,6 @@ public class SpeedPidBrakeController extends AbstractController {
 
 		@Override
 		public double getProcessVariable() {
-			double actualSpeed = getActualSpeed();
 			return actualSpeed;
 		}
 		
@@ -140,7 +139,6 @@ public class SpeedPidBrakeController extends AbstractController {
 		BrakeModel bushidoDataModel = getDataModel();
 		setActualSpeed(speed* Conversions.KM_PER_HOUR_TO_METRES_PER_SECOND);
 		double predictedSpeed = getPredictedSpeed();
-		double actualSpeed = getActualSpeed();
 
 		// test for stationary -> non-stationary transition
 		// speed is on average increasing and is below our threshold
@@ -160,8 +158,9 @@ public class SpeedPidBrakeController extends AbstractController {
 		// don't mess with brake resistance until reached steady state
 		if (!needsSync || actualSpeedSlopeAverager.getNumberOfSamples() >= MIN_SLOPE_SAMPLES && actualSpeedSlopeAverager.isWithinThreshold()) {
 			if (needsSync) {
-				powerModel.setVelocity(actualSpeed);
-				setPredictedSpeed(actualSpeed);
+        double spd = actualSpeed;
+				powerModel.setVelocity(spd);
+				setPredictedSpeed(spd);
 			}
 			resistancePidController.adjustSetpoint(getPredictedSpeed());
 		}
@@ -217,28 +216,11 @@ public class SpeedPidBrakeController extends AbstractController {
 			speedUpdateLock.unlock();
 		}
 	}
-	
-	protected double getActualSpeed() {
-		// double non-atomic?
-		try {
-			speedUpdateLock.lock();
-			return actualSpeed;
-		} finally {
-			speedUpdateLock.unlock();
-		}
-	}
-	
-	
+
 	protected  void setActualSpeed(double newValue) {
 		logToCsv(ACTUAL_SPEED_HEADING, newValue);
-		// double non-atomic?
-		try {
-			speedUpdateLock.lock();
-			SpeedPidBrakeController.this.actualSpeed = newValue;
-			actualSpeedSlopeAverager.add(actualSpeed);
-		} finally {
-			speedUpdateLock.unlock();
-		}
+    SpeedPidBrakeController.this.actualSpeed = newValue;
+    actualSpeedSlopeAverager.add(actualSpeed);
 	}
 	
 	public PowerModelManipulator getPowerModelManipulator() {
