@@ -116,7 +116,7 @@ public class TurboTrainerListActivity extends FragmentActivity {
     bottomButtons.setVisibility(View.GONE);
     
     Resources res = getResources();
-    String[] trainers = res.getStringArray(R.array.turbotrainer_opions); 
+    String[] trainers = res.getStringArray(R.array.turbotrainer_options);
     
     resourceCursorAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,trainers);
 

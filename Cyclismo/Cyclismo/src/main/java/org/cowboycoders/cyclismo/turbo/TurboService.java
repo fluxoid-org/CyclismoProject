@@ -63,6 +63,8 @@ import org.cowboycoders.cyclismo.util.TrackRecordingServiceConnectionUtils;
 import org.cowboycoders.cyclismo.util.UnitConversions;
 import org.cowboycoders.turbotrainers.DummyTrainer;
 import org.cowboycoders.turbotrainers.bushido.brake.ConstantResistanceController;
+import org.cowboycoders.turbotrainers.bushido.brake.PowerPidBrakeController;
+import org.cowboycoders.turbotrainers.bushido.brake.SpeedPidBrakeController;
 import org.fluxoid.utils.LatLongAlt;
 import org.cowboycoders.turbotrainers.CourseTracker;
 import org.cowboycoders.turbotrainers.Mode;
@@ -72,7 +74,6 @@ import org.cowboycoders.turbotrainers.TurboCommunicationException;
 import org.cowboycoders.turbotrainers.TurboTrainerDataListener;
 import org.cowboycoders.turbotrainers.TurboTrainerInterface;
 import org.cowboycoders.turbotrainers.bushido.brake.BushidoBrake;
-import org.cowboycoders.turbotrainers.bushido.brake.PidBrakeController;
 import org.cowboycoders.turbotrainers.bushido.brake.SpeedResistanceMapper;
 import org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit;
 
@@ -106,7 +107,7 @@ public class TurboService extends Service {
   public static String COURSE_TRACK_ID = "COURSE_TRACK_ID";
 
   public static double TARGET_TRACKPOINT_DISTANCE_METRES = 0.1;
-  
+
   protected AntLoggerImpl antLogger;
 
   // FIXME: Something must be checking for GPS_PROVIDER only?
@@ -596,7 +597,7 @@ public class TurboService extends Service {
 
     private void broadcastLocation(Location loc) {
         Intent intent = new Intent().setAction(this
-                .getString(R.string.turbo_service_action_location_update));
+            .getString(R.string.turbo_service_action_location_update));
         intent.putExtra(getString(R.string.turbo_service_data_location_update), loc);
         sendBroadcast(intent);
     }
@@ -640,20 +641,30 @@ public class TurboService extends Service {
       mIsBound = true;
   }
 
+
   protected TurboTrainerInterface getTurboTrainer(AntHubService.LocalBinder binder) {
 
-    Log.d(TAG,selectedTurboTrainer);
+    Log.d(TAG, selectedTurboTrainer);
 
     initAnt(binder);     // TODO: iff ant sensors are enabled
+
 
     if (selectedTurboTrainer.equals(getString(R.string.turbotrainer_tacx_bushido_headunit_value))) {
         return new BushidoHeadunit(antNode);
     } else if (selectedTurboTrainer.equals(getString(R.string.turbotrainer_tacx_bushido_brake_headunit_simulation_value))) {
         SpeedResistanceMapper mapper = new SpeedResistanceMapper();
       return new BushidoBrake(antNode,mapper);
-    } else if (selectedTurboTrainer.equals(getString(R.string.turbotrainer_tacx_bushido_brake_pid_control_value))) {
-        PidBrakeController pid = new PidBrakeController();
-        return new BushidoBrake(antNode, pid);
+    } else if (selectedTurboTrainer.equals(getString(R.string.turbotrainer_tacx_bushido_brake_speed_pid_control_value))) {
+      SpeedPidBrakeController pid = new SpeedPidBrakeController();
+      return new BushidoBrake(antNode, pid);
+    } else if (selectedTurboTrainer.equals(getString(R.string.turbotrainer_tacx_bushido_brake_power_pid_control_value))) {
+      PowerPidBrakeController pid = new PowerPidBrakeController() {
+        @Override
+        protected void log(String msg) {
+          Log.d(PowerPidBrakeController.class.getSimpleName(), msg);
+        }
+      };
+      return new BushidoBrake(antNode, pid);
     }  else if (selectedTurboTrainer.equals(getString(R.string.turbotrainer_dummy_value))) {
         return new DummyTrainer();
     }

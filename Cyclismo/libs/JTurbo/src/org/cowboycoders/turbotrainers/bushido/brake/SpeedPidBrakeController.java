@@ -19,7 +19,7 @@ import org.fluxoid.utils.SimpleCsvLogger;
 import org.fluxoid.utils.SlopeTimeAverager;
 import org.fluxoid.utils.UpdateCallback;
 
-public class PidBrakeController extends AbstractController {
+public class SpeedPidBrakeController extends AbstractController {
 	
 	private static final int  POWER_MODEL_UPDATE_PERIOD_MS = 100; // milli-seconds
 	
@@ -53,7 +53,7 @@ public class PidBrakeController extends AbstractController {
 	
 	private SlopeTimeAverager actualSpeedSlopeAverager = new SlopeTimeAverager();
 	
-//	public PidBrakeController(BrakeModel bushidoModel) {
+//	public SpeedPidBrakeController(BrakeModel bushidoModel) {
 //		this.bushidoDataModel = bushidoModel;
 //		bushidoDataModel.setResistance(getEstimatedResistance());
 //		actualSpeedSlopeAverager.setThreshold(ACTUAL_SPEED_STEADY_STATE_THRESHOLD, -ACTUAL_SPEED_STEADY_STATE_THRESHOLD);
@@ -210,7 +210,7 @@ public class PidBrakeController extends AbstractController {
 		// double non-atomic?
 		try {
 			speedUpdateLock.lock();
-			PidBrakeController.this.predictedSpeed = newValue;
+			SpeedPidBrakeController.this.predictedSpeed = newValue;
 			// gradient averager
 			predictedSpeedSlopeAverager.add(predictedSpeed);
 		} finally {
@@ -234,7 +234,7 @@ public class PidBrakeController extends AbstractController {
 		// double non-atomic?
 		try {
 			speedUpdateLock.lock();
-			PidBrakeController.this.actualSpeed = newValue;
+			SpeedPidBrakeController.this.actualSpeed = newValue;
 			actualSpeedSlopeAverager.add(actualSpeed);
 		} finally {
 			speedUpdateLock.unlock();

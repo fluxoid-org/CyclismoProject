@@ -3286,7 +3286,8 @@ limitations under the License.
   
     <string name="turbotrainer_tacx_bushido_headunit_option">Tacx Bushido Headunit</string>
     <string name="turbotrainer_tacx_bushido_brake_headunit_simulation_option">Tacx Bushido Brake (Resistance curve)</string>
-    <string name="turbotrainer_tacx_bushido_brake_pid_control_option">Tacx Bushido Brake (PID)</string>
+    <string name="turbotrainer_tacx_bushido_brake_pid_speed_control_option">Tacx Bushido Brake Speed (PID)</string>
+    <string name="turbotrainer_tacx_bushido_brake_pid_power_control_option">Tacx Bushido Brake Power (PID)</string>
     <string name="turbotrainer_dummy_option">Dummy Trainer (for testing)</string>
     
     <string name="turbotrainer_select_title">Select Turbo Trainer</string>
