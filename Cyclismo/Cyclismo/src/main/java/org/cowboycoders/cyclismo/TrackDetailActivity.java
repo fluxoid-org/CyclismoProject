@@ -312,8 +312,10 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
             getString(R.string.track_detail_chart_tab),
             getResources().getDrawable(R.drawable.tab_chart));
     tabManager.addTab(chartTabSpec, ChartFragment.class, extras);
+
+    // Track controller bar at bottom of screen
     trackController = new TrackController(this, trackRecordingServiceConnection, false,
-        recordListener, stopListener);
+        recordListener, stopListener, getCourseTrackId());
     showMarker();
   }
 
@@ -357,7 +359,7 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
   protected void onPause() {
     super.onPause();
     unregisterTurboServiceReceiver();
-    trackController.stop();
+    trackController.stopTimer();
   }
 
   @Override

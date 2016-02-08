@@ -42,15 +42,17 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import org.cowboycoders.cyclismo.content.MyTracksCourseProviderUtils;
 import org.cowboycoders.cyclismo.services.ITrackRecordingService;
 import org.cowboycoders.cyclismo.services.TrackRecordingServiceConnection;
 import org.cowboycoders.cyclismo.util.StringUtils;
 
 /**
- * Track controller for record, pause, resume, and stop.
- * 
+ * Track controller for record, pause, resume and the progress bar.
+ *
  * @author Jimmy Shih
  */
 public class TrackController {
@@ -66,13 +68,14 @@ public class TrackController {
   private final TextView totalTimeTextView;
   private final ImageButton recordImageButton;
   private final ImageButton stopImageButton;
+  private ProgressBar courseProgressBar;
   private final boolean alwaysShow;
 
   private boolean isRecording;
   private boolean isPaused;
   private long totalTime = 0;
-  // the timestamp for the toal time
   private long totalTimeTimestamp = 0;
+  private double courseDistance = 0.0;
 
   // A runnable to update the total time.
   private final Runnable updateTotalTimeRunnable = new Runnable() {
@@ -86,8 +89,8 @@ public class TrackController {
   };
 
   public TrackController(Activity activity,
-      TrackRecordingServiceConnection trackRecordingServiceConnection, boolean alwaysShow,
-      OnClickListener recordListener, OnClickListener stopListener) {
+                         TrackRecordingServiceConnection trackRecordingServiceConnection, boolean alwaysShow,
+                         OnClickListener recordListener, OnClickListener stopListener, long courseId) {
     this.activity = activity;
     this.trackRecordingServiceConnection = trackRecordingServiceConnection;
     this.alwaysShow = alwaysShow;
@@ -99,6 +102,20 @@ public class TrackController {
     recordImageButton.setOnClickListener(recordListener);
     stopImageButton = (ImageButton) activity.findViewById(R.id.track_controller_stop);
     stopImageButton.setOnClickListener(stopListener);
+
+    // Setup course progress bar (hidden by default).
+    courseProgressBar = (ProgressBar) activity.findViewById(R.id.course_progress_bar);
+    courseProgressBar.setMax(100);
+    courseProgressBar.setProgress(0);
+
+    if (courseId > 0) {
+      courseProgressBar.setVisibility(View.VISIBLE);
+      // Lookup the course distance from the db
+      MyTracksCourseProviderUtils myTracksCourseProviderUtils = new MyTracksCourseProviderUtils(
+          this.activity.getContentResolver());
+      courseDistance = myTracksCourseProviderUtils.getCourseDistance(courseId);
+      Log.d(TAG, "Course total distance (m): " + courseDistance);
+    }
   }
 
   public void update(boolean recording, boolean paused) {
@@ -107,7 +124,7 @@ public class TrackController {
     containerView.setVisibility(alwaysShow || isRecording ? View.VISIBLE : View.GONE);
 
     if (!alwaysShow && !isRecording) {
-      stop();
+      stopTimer();
       return;
     }
 
@@ -126,20 +143,37 @@ public class TrackController {
       statusTextView.setText(isPaused ? R.string.generic_paused : R.string.generic_recording);
     }
 
-    stop();
+    stopTimer();
     totalTime = isRecording ? getTotalTime() : 0L;
     totalTimeTextView.setText(StringUtils.formatElapsedTimeWithHour(totalTime));
     if (isRecording && !isPaused) {
       totalTimeTimestamp = System.currentTimeMillis();
       handler.postDelayed(updateTotalTimeRunnable, ONE_SECOND);
     }
+
+    // Update progress bar
+    if (isRecording && !isPaused) {
+      courseProgressBar.setProgress(getProgress());
+    }
   }
 
-  /**
-   * Stops the timer.
-   */
-  public void stop() {
+  public void stopTimer() {
     handler.removeCallbacks(updateTotalTimeRunnable);
+  }
+
+  private int getProgress() {
+    ITrackRecordingService trackRecordingService = trackRecordingServiceConnection.getServiceIfBound();
+    double distanceCycled;
+    try {
+      distanceCycled = trackRecordingService != null ?
+          trackRecordingService.getTripStatistics().getTotalDistance() : 0.0;
+    } catch (RemoteException e) {
+      Log.e(TAG, "Failed to get total distance from trip statistics: ", e);
+      return 0;
+    }
+    // This lags the actual trip statistics by 1 second, but it's ok for a progress bar
+    Log.d(TAG, "Distance cycled (m): " + distanceCycled);
+    return (int) Math.round(100.0 * (distanceCycled / courseDistance));
   }
 
   /**

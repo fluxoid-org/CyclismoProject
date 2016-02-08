@@ -434,7 +434,7 @@ public class CourseListActivity extends FragmentActivity implements DeleteOneTra
     sharedPreferences.unregisterOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
 
 
-    //trackDataHub.stop();
+    //trackDataHub.stopTimer();
 
   }
 

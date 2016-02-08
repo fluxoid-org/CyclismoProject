@@ -55,6 +55,7 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.os.Process;
+import android.os.RemoteException;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
@@ -1198,6 +1199,21 @@ public class TrackRecordingService extends Service {
         updater.updateTime(System.currentTimeMillis());
       }
       return updater.getTripStatistics().getTotalTime();
+    }
+
+    @Override
+    public TripStatistics getTripStatistics() throws RemoteException {
+      if (!canAccess()) {
+        return null;
+      }
+      TripStatisticsUpdater updater = trackRecordingService.trackTripStatisticsUpdater;
+      if (updater == null) {
+        return null;
+      }
+      if (!trackRecordingService.isPaused()) {
+        updater.updateTime(System.currentTimeMillis());
+      }
+      return updater.getTripStatistics();
     }
 
     @Override

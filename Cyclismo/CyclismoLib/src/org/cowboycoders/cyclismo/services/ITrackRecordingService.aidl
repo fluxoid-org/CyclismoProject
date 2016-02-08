@@ -16,6 +16,7 @@
 package org.cowboycoders.cyclismo.services;
 
 import org.cowboycoders.cyclismo.content.WaypointCreationRequest;
+import org.cowboycoders.cyclismo.stats.TripStatistics;
 
 /**
  * MyTracks service.
@@ -64,6 +65,12 @@ interface ITrackRecordingService {
     * Gets the total time for the current recording track. Returns 0 if not recording.
     */
   long getTotalTime();
+
+
+  /**
+    * Gets the trip statistics for the current recording track. Returns null if not recording.
+    */
+  TripStatistics getTripStatistics();
 
   /**
    * Inserts a waypoint in the current recording track.
