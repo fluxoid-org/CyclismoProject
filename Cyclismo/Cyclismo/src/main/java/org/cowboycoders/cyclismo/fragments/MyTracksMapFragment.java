@@ -38,10 +38,8 @@ package org.cowboycoders.cyclismo.fragments;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -371,7 +369,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
     ApiAdapterFactory.getApiAdapter().invalidMenu(getActivity());
     courseTrackId = -1l;
     if (getActivity() instanceof TrackDetailActivity) {
-      mUseCourseProvider = ((TrackDetailActivity) getActivity()).isUsingCourseProivder();
+      mUseCourseProvider = ((TrackDetailActivity) getActivity()).isUsingCourseProvider();
       courseTrackId = ((TrackDetailActivity) getActivity()).getCourseTrackId();
       
     }
