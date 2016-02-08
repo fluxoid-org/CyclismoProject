@@ -42,37 +42,43 @@ import org.cowboycoders.cyclismo.content.User;
 import org.cowboycoders.cyclismo.settings.AbstractSettingsFragment;
 import org.cowboycoders.cyclismo.util.PreferencesUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CourseSetupFragment extends AbstractSettingsFragment {
-    private final static String TAG = "CourseSetupFragment";
-    
+    private final static String TAG = CourseSetupFragment.class.getSimpleName();
+
     public static final int PICK_COURSE_REQUEST = 1567;
 
     private OnSharedPreferenceChangeListener sharedListener;
     private SharedPreferences sharedPreferences;
-    private UpdateSummaryCaller updateTrackIdSummarryCaller;
-    private CourseSetupObserver observer;
+    private UpdateSummaryCaller updateTrackIdSummaryCaller;
+    private UpdateSummaryCaller updateBikeSummaryCaller;
+    private List<CourseSetupObserver> observers = new ArrayList<>();
     private Preference courseTrackIdPreference;
     private Preference bikeSelectPreference;
 
-    private UpdateSummaryCaller updateBikeSummarryCaller;
-    
+    public CourseSetupFragment addObserver(CourseSetupObserver observer) {
+      observers.add(observer);
+      return this;
+    }
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Context context = this.getActivity();
         Log.i(TAG, "fragment onCreate");
         addPreferencesFromResource(R.xml.course_settings);
-        
+
         //this is set early as it required for updateUiByCourseMode
         this.courseTrackIdPreference = (Preference) findPreference(
             getString(R.string.course_track_id));
-        
+
         this.bikeSelectPreference = (Preference) findPreference(
             getString(R.string.course_bike_id));
-        
+
         ListPreference courseModeListPreference = (ListPreference) findPreference(
             getString(R.string.course_mode));
-        
-        
+
         OnPreferenceChangeListener listener = new OnPreferenceChangeListener() {
             @Override
           public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -82,32 +88,21 @@ public class CourseSetupFragment extends AbstractSettingsFragment {
         };
         String courseModeValue = PreferencesUtils.getString(
             this.getActivity(), R.string.course_mode, getString(R.string.settings_courses_mode_simulation_value));
-        //mode = courseModeValue;
         this.
         configurePreference(courseModeListPreference,
             getResources().getStringArray(R.array.course_mode_select_options),
             getResources().getStringArray(R.array.course_mode_select_values),
             R.string.settings_courses_mode_summary, courseModeValue, listener,null);
-        
-        if (courseModeListPreference.getValue() == null) { 
-          courseModeListPreference.setValueIndex(0); 
-          }
-        
+
+        if (courseModeListPreference.getValue() == null) {
+          courseModeListPreference.setValueIndex(0);
+        }
+
         courseModeListPreference.setDefaultValue(PreferencesUtils.COURSE_MODE_DEFAULT);
-        
-        
+
         Long courseTrackIdValue = PreferencesUtils.getLong(context, R.string.course_track_id);
         Long bikeSelectValue = PreferencesUtils.getLong(context, R.string.settings_select_bike_current_selection_key);
-        
-        
-        //listener = new OnPreferenceChangeListener() {
-        //  @Override
-        //public boolean onPreferenceChange(Preference preference, Object newValue) {
-        //  updateUiByCourseTrackId((Long)newValue);
-        //  return true;
-        //}
-        //};
-        
+
         bikeSelectPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
           @Override
           public boolean onPreferenceClick(Preference preference) {
@@ -115,32 +110,21 @@ public class CourseSetupFragment extends AbstractSettingsFragment {
             return true;
           }
         });
-        
-        
-        //trackId = courseTrackIdValue;
-        
+
         PreferencesUtils.SettingsSelectionSummarizer bikeSelectSummarizer = new PreferencesUtils.SettingsSelectionSummarizer() {
 
           @Override
           public String summarize(Object value) {
             return summarizeBikeSelection(value);
           }
-          
+
         };
-        
-        //configurePreference(courseTrackIdPreference,
-         //   null,
-         //   null,
-          //  R.string.settings_courses_route_summary, courseTrackIdValue, null, summarizer);
-        
-        this.updateBikeSummarryCaller = new UpdateSummaryCaller(bikeSelectPreference, null, null,R.string.settings_courses_bike_select_summary , bikeSelectSummarizer);
-        
+
+        this.updateBikeSummaryCaller = new UpdateSummaryCaller(bikeSelectPreference, null, null, R.string.settings_courses_bike_select_summary, bikeSelectSummarizer);
+
         // initial trackId update
         updateUiByBikeSelect(bikeSelectValue);
-        
-        
-        
-        
+
         courseTrackIdPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
           @Override
           public boolean onPreferenceClick(Preference preference) {
@@ -148,33 +132,23 @@ public class CourseSetupFragment extends AbstractSettingsFragment {
             return true;
           }
         });
-        
-        
-        //trackId = courseTrackIdValue;
-        
+
         PreferencesUtils.SettingsSelectionSummarizer summarizer = new PreferencesUtils.SettingsSelectionSummarizer() {
 
           @Override
           public String summarize(Object value) {
             return summarizeTrackIdSelection(value);
           }
-          
+
         };
-        
-        //configurePreference(courseTrackIdPreference,
-         //   null,
-         //   null,
-          //  R.string.settings_courses_route_summary, courseTrackIdValue, null, summarizer);
-        
-        this.updateTrackIdSummarryCaller = new UpdateSummaryCaller(courseTrackIdPreference, null, null,R.string.settings_courses_route_summary , summarizer);
-        
+
+        this.updateTrackIdSummaryCaller = new UpdateSummaryCaller(
+            courseTrackIdPreference, null, null,R.string.settings_courses_route_summary , summarizer);
+
         // initial trackId update
         updateUiByCourseTrackId(courseTrackIdValue);
-        
-        
-        
+
         this.sharedPreferences = this.getActivity().getSharedPreferences(Constants.SETTINGS_NAME, Context.MODE_PRIVATE);
-        
         this.sharedListener = new OnSharedPreferenceChangeListener() {
 
           @Override
@@ -188,31 +162,18 @@ public class CourseSetupFragment extends AbstractSettingsFragment {
               Log.i(TAG,"detected new bike: " + newValue);
               updateUiByBikeSelect(newValue);
             }
-            
+
           }
-          
+
         };
-        
-        if(observer != null) {
+
+        for (CourseSetupObserver observer : observers) {
           observer.onCourseModeUpdate(courseModeValue);
           observer.onTrackIdUpdate(courseTrackIdValue);
           updateUiByBikeSelect(bikeSelectValue);
         }
-        
-        
     }
-    
 
-
-    public CourseSetupFragment() {
-      super();
-    }
-    
-    public CourseSetupFragment(CourseSetupObserver observer) {
-      this();
-      this.observer = observer;
-    }
-    
     /* (non-Javadoc)
      * @see android.preference.PreferenceFragment#onStart()
      */
@@ -221,29 +182,28 @@ public class CourseSetupFragment extends AbstractSettingsFragment {
       super.onStart();
       this.sharedPreferences.registerOnSharedPreferenceChangeListener(sharedListener);
     }
-    
+
     @Override
     public void onResume() {
       super.onResume();
       //this.sharedPreferences.registerOnSharedPreferenceChangeListener(sharedListener);
     }
-    
+
     @Override
     public void onStop() {
       super.onStop();
       //sharedPreferences.unregisterOnSharedPreferenceChangeListener(sharedListener);
     }
-    
+
     @Override
     public void onDestroy() {
       super.onStop();
       sharedPreferences.unregisterOnSharedPreferenceChangeListener(sharedListener);
     }
-    
-
 
     protected String summarizeTrackIdSelection(Object value) {
       Long trackId = (Long) value;
+      Log.i(TAG, "Selected track id: " + trackId);
       String noneSelected = this.getString(R.string.course_not_selected);
       if (trackId == -1) {
         return noneSelected;
@@ -256,25 +216,23 @@ public class CourseSetupFragment extends AbstractSettingsFragment {
       }
       return track.getName();
     }
-    
+
     private static User getUser(Context context) {
       final CyclismoProviderUtils providerUtils = MyTracksProviderUtils.Factory.getCyclimso(context);
       final long currentUserId = PreferencesUtils.getLong(context, R.string.settings_select_user_current_selection_key);
       User user = providerUtils.getUser(currentUserId);
       return user;
     }
-    
+
     private void updateUiByBikeSelect(final Long newValue) {
       Log.i(TAG, "new bike selected with id: " + newValue);
-      this.updateBikeSummarryCaller.updateSummary(newValue);
-      if (observer != null) {
+      this.updateBikeSummaryCaller.updateSummary(newValue);
+      for (final CourseSetupObserver observer: observers) {
         new AsyncTask<Object,Integer,Bike>() {
 
           @Override
           protected Bike doInBackground(Object... params) {
             long bikeId = getCurrentBikeId();
-            //long bikeId = newValue;
-            
             if (bikeId == -1L) {
               observer.onBikeUpdate(null);
               return null;
@@ -283,17 +241,17 @@ public class CourseSetupFragment extends AbstractSettingsFragment {
             observer.onBikeUpdate(bike);
             return bike;
           }
-          
+
         }.execute(new Object());
       }
     }
-    
+
     private long getCurrentBikeId() {
       User currentUser = getUser(CourseSetupFragment.this.getActivity());
       long bikeId = currentUser.getCurrentlySelectedBike();
       return bikeId;
     }
-    
+
     private Bike loadBike(long id) {
       return MyTracksProviderUtils.Factory.getCyclimso(this.getActivity()).getBike(id);
     }
@@ -315,25 +273,24 @@ public class CourseSetupFragment extends AbstractSettingsFragment {
       return bike.getName();
     }
 
-
     private void updateUiByCourseTrackId(Long newValue) {
       Log.i(TAG, "new track selected with id: " + newValue);
-      this.updateTrackIdSummarryCaller.updateSummary(newValue);
-      if (observer != null) {
+      this.updateTrackIdSummaryCaller.updateSummary(newValue);
+      for (CourseSetupObserver observer: observers) {
         observer.onTrackIdUpdate(newValue);
       }
     }
 
     private void updateUiByCourseMode(String newValue) {
-      Log.i(TAG,"course mode: " + newValue);
-      if (observer != null) {
+      Log.i(TAG, "course mode: " + newValue);
+      for (CourseSetupObserver observer: observers) {
         observer.onCourseModeUpdate(newValue);
       }
       if (!newValue.equals(getString(R.string.settings_courses_mode_simulation_value))) {
         courseTrackIdPreference.setEnabled(false);
       }
     }
-    
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PICK_COURSE_REQUEST ) {
@@ -347,41 +304,17 @@ public class CourseSetupFragment extends AbstractSettingsFragment {
               }
             }
         }
-//        else if (requestCode == R.string.bike_select_request_code ) {
-//          if (resultCode == Activity.RESULT_OK || resultCode == Activity.RESULT_CANCELED ){
-//            if (data != null) {
-//              Long id = data.getLongExtra(getString(R.string.course_bike_id), -1L);
-//              updateUiByBikeSelect(id);
-//            } else {
-//              Log.d(TAG,"onActivityResult : data was null");
-//              updateUiByBikeSelect(-1L);
-//            }
-//          }
-//      }
         super.onActivityResult(requestCode, resultCode, data);
     }
-    
-    //private void redraw() {
-    //  Log.i(TAG,"redrawing");
-    //  Fragment newFragment = new CourseSetupFragment();
-    //  FragmentTransaction transaction = getFragmentManager().beginTransaction();
-    //  transaction.replace(R.id.course_select_preferences, newFragment);
-    //  transaction.addToBackStack(null);
-    //  transaction.commitAllowingStateLoss();
-   // }
-    
-    public static interface CourseSetupObserver {
-      
+
+    public interface CourseSetupObserver {
       /**
        * @param trackId the new trackID
        */
-      public void onTrackIdUpdate(Long trackId);
-      
-      public void onBikeUpdate(Bike bike);
+      void onTrackIdUpdate(Long trackId);
 
-      public void onCourseModeUpdate(String modeString);
-      
+      void onBikeUpdate(Bike bike);
+
+      void onCourseModeUpdate(String modeString);
     }
-
-
 }
