@@ -20,7 +20,7 @@ limitations under the License.
 
     <ListPreference
         android:defaultValue="@string/turbotrainer_tacx_bushido_headunit_value"
-        android:entries="@array/turbotrainer_opions"
+        android:entries="@array/turbotrainer_options"
         android:entryValues="@array/turbotrainer_values"
         android:key="@string/turbotrainer_selected"
         android:summary="@string/turbotrainer_select_summary"
