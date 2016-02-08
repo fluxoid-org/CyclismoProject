@@ -65,7 +65,7 @@ import java.util.EnumSet;
  */
 public class StatsFragment extends Fragment implements TrackDataListener {
 
-  public static final String STATS_FRAGMENT_TAG = "statsFragment";
+  public static final String STATS_FRAGMENT_TAG = StatsFragment.class.getSimpleName();
 
   private static final int ONE_SECOND_MS = 1000;
   

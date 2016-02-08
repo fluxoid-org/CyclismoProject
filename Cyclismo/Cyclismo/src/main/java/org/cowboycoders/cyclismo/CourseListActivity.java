@@ -228,8 +228,6 @@ public class CourseListActivity extends FragmentActivity implements DeleteOneTra
 
   // The following are set in onCreate
   private SharedPreferences sharedPreferences;
-  //private TrackRecordingServiceConnection trackRecordingServiceConnection;
-  //private TrackController trackController;
   private ListView listView;
   private ResourceCursorAdapter resourceCursorAdapter;
 
@@ -240,9 +238,6 @@ public class CourseListActivity extends FragmentActivity implements DeleteOneTra
   private Button cancelButton;
   
   private static final int REQUEST_CODE = 0x1234;
-
-  //private MenuItem deleteAllMenuItem;
-
 
   private void updateTrackIdSharedPreference(long id) {
     Track track = new MyTracksCourseProviderUtils(CourseListActivity.this.getContentResolver()).getTrack(id);
@@ -310,7 +305,7 @@ public class CourseListActivity extends FragmentActivity implements DeleteOneTra
         ListItemUtils.setListItem(CourseListActivity.this, view, false, false,
             iconId, R.string.icon_track, name, cursor.getString(categoryIndex), totalTime,
             totalDistance, startTimeDisplay, cursor.getString(descriptionIndex));
-        Log.d(TAG,"resourceCursorAdapter.bindview : ListItemUtils.setListItem finsihed");
+        Log.d(TAG,"resourceCursorAdapter.bindview : ListItemUtils.setListItem finished");
       }
     };
     listView.setAdapter(resourceCursorAdapter);

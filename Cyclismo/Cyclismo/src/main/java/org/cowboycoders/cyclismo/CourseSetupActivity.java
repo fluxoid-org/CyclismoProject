@@ -168,9 +168,7 @@ public class CourseSetupActivity extends Activity {
       CourseSetupActivity.this.finish(success);
       
     }
-    
-    
-    
+
   };
   private boolean startNewRecording = false;
   private Bike bike;
