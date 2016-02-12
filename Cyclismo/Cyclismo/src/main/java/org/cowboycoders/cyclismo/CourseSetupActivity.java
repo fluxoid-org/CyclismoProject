@@ -44,16 +44,39 @@ import org.cowboycoders.cyclismo.util.PreferencesUtils;
 
 
 public class CourseSetupActivity extends Activity {
-  
+
   public CourseSetupActivity() {
     super();
   }
-  
-  private static final String TAG = "CourseSetupActivty";
-  private CourseSetupObserver courseSetupObserver;
-  
+
+  private static final String TAG = CourseSetupFragment.class.getSimpleName();
+
+  CourseSetupObserver courseSetupObserver = new CourseSetupFragment.CourseSetupObserver() {
+
+    @Override
+    public void onTrackIdUpdate(Long trackIdIn) {
+      setTrackId(trackIdIn);
+      validate();
+    }
+
+    @Override
+    public void onCourseModeUpdate(String modeStringIn) {
+      setModeString(modeStringIn);
+      validate();
+    }
+
+    @Override
+    public void onBikeUpdate(Bike bikeIn) {
+      String bikeDesc = bikeIn == null ? "null" : bikeIn.getName();
+      Log.d(TAG, "new bike: " + bikeDesc);
+      setBike(bikeIn);
+      validate();
+    }
+  };
+
   /**
    * long reference assignment non atomic
+   *
    * @return the trackId
    */
   private synchronized Long getTrackId() {
@@ -62,10 +85,11 @@ public class CourseSetupActivity extends Activity {
 
   /**
    * long reference assignment non atomic
+   *
    * @param trackId the trackId to set
    */
   private synchronized void setTrackId(Long trackId) {
-    Log.d(TAG, "setTrackID"  + trackId);
+    Log.d(TAG, "setTrackID: " + trackId);
     this.trackId = trackId;
   }
 
@@ -79,7 +103,7 @@ public class CourseSetupActivity extends Activity {
   /**
    * @param modeString the modeString to set
    */
-  private  void setModeString(String modeString) {
+  private void setModeString(String modeString) {
     this.modeString = modeString;
   }
 
@@ -87,14 +111,14 @@ public class CourseSetupActivity extends Activity {
   protected String modeString;
   private Button goButton;
   private boolean mIsBound;
-  
+
   private ServiceConnection mConnection = new ServiceConnection() {
 
     public void onServiceConnected(ComponentName className, IBinder binder) {
       TurboService s = ((TurboService.TurboBinder) binder).getService();
       PreferencesUtils.setLong(CourseSetupActivity.this.getApplicationContext(),
-              R.string.recording_course_track_id_key, getTrackId());
-      s.start(getTrackId(),CourseSetupActivity.this);
+          R.string.recording_course_track_id_key, getTrackId());
+      s.start(getTrackId(), CourseSetupActivity.this);
       Toast.makeText(CourseSetupActivity.this, "Connected to turbo service",
           Toast.LENGTH_SHORT).show();
       // no longer needed
@@ -108,34 +132,32 @@ public class CourseSetupActivity extends Activity {
     }
   };
 
-  
   void doBindService() {
     bindService(new Intent(this, TurboService.class), mConnection,
         Context.BIND_AUTO_CREATE);
     mIsBound = true;
   }
-  
+
   void doUnbindService() {
     if (mIsBound) {
-        // Detach our existing connection.
-        unbindService(mConnection);
-        mIsBound = false;
+      // Detach our existing connection.
+      unbindService(mConnection);
+      mIsBound = false;
     }
-}
-  
+  }
+
   private void startServiceInBackround() {
     Intent intent = new Intent(this, TurboService.class);
     this.startService(intent);
   }
-  
-  
+
   private TrackRecordingServiceConnection trackRecordingServiceConnection;
-  
+
   private Runnable bindChangedCallback = new Runnable() {
 
     @Override
     public void run() {
-      
+
       boolean success = true;
 
       if (!startNewRecording) {
@@ -163,86 +185,48 @@ public class CourseSetupActivity extends Activity {
             .show();
         Log.e(TAG, "Unable to start a new recording.", e);
         success = false;
-      } 
-      
+      }
+
       CourseSetupActivity.this.finish(success);
-      
     }
-    
-    
-    
+
   };
   private boolean startNewRecording = false;
   private Bike bike;
 
   protected void onCreate(Bundle savedInstanceState) {
-      super.onCreate(savedInstanceState);
-      setVolumeControlStream(TextToSpeech.Engine.DEFAULT_STREAM);
-      setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL);
-      this.setContentView(R.layout.course_select);
-      
-      trackRecordingServiceConnection = new TrackRecordingServiceConnection(
-          this, bindChangedCallback);
-      
-      
-      this.goButton = (Button) this.findViewById(R.id.course_select_go);
-      
-      Button cancelButton = (Button) this.findViewById(R.id.course_select_cancel);
-      
-      cancelButton.setOnClickListener(new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-          CourseSetupActivity.this.finish(false);
-        }
-        
-      });
-      
-      goButton.setOnClickListener(new OnClickListener() {
+    super.onCreate(savedInstanceState);
+    setVolumeControlStream(TextToSpeech.Engine.DEFAULT_STREAM);
+    setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL);
+    this.setContentView(R.layout.course_select);
 
-        @Override
-        public void onClick(View v) {
-          startServiceInBackround();
-          doBindService();
-        }
-        
-      });
-      
-      
-      this.courseSetupObserver = new CourseSetupFragment.CourseSetupObserver() {
-         
-        @Override
-        public void onTrackIdUpdate(Long trackIdIn) {
-          setTrackId(trackIdIn);
-          validate();
-        }
-        
-        @Override
-        public void onCourseModeUpdate(String modeStringIn) {
-          setModeString(modeStringIn);
-          validate();
-          
-        }
+    trackRecordingServiceConnection = new TrackRecordingServiceConnection(
+        this, bindChangedCallback);
 
-        @Override
-        public void onBikeUpdate(Bike bikeIn) {
-          String bikeDesc = bikeIn == null ? "null" : bikeIn.getName();
-          Log.d(TAG,"new bike: " + bikeDesc);
-          setBike(bikeIn);
-          validate();
-        }
-      };
-      
-       getFragmentManager().beginTransaction().replace(R.id.course_select_preferences,
-       new CourseSetupFragment(courseSetupObserver)).commit();
+    this.goButton = (Button) this.findViewById(R.id.course_select_go);
+    goButton.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        startServiceInBackround();
+        doBindService();
+      }
+    });
+    Button cancelButton = (Button) this.findViewById(R.id.course_select_cancel);
+    cancelButton.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        CourseSetupActivity.this.finish(false);
+      }
+    });
+
+    getFragmentManager().beginTransaction().replace(R.id.course_select_preferences,
+        new CourseSetupFragment().addObserver(courseSetupObserver)).commit();
   }
-  
-  
-  
+
   private synchronized void setBike(Bike bike) {
     this.bike = bike;
- 
   }
-  
+
   private synchronized Bike getBike() {
     return bike;
   }
@@ -253,8 +237,6 @@ public class CourseSetupActivity extends Activity {
   @Override
   protected void onStart() {
     super.onStart();
-    
-        
   }
 
   protected void finish(boolean trackStarted) {
@@ -265,10 +247,7 @@ public class CourseSetupActivity extends Activity {
       setResult(Activity.RESULT_CANCELED, resultData);
     }
     finish();
-    
   }
-  
-  
 
 
   /**
@@ -276,35 +255,28 @@ public class CourseSetupActivity extends Activity {
    */
   private void validate() {
     String mode = getModeString();
-    
+
     boolean valid = true;
-    
+
     // must have selected a bike
     if (getBike() == null) {
       updateUi(false);
       return;
     }
-    
+
     if (mode.equals(getString(R.string.settings_courses_mode_simulation_value))) {
-   
       if (!validateSimulationMode()) {
         valid = false;
       }
     }
-    
     updateUi(valid);
-    
   }
-  
+
   @Override
   public void finish() {
-    
     super.finish();
   }
-  
-  /**
-   * Starts a new recording.
-   */
+
   private void startRecording() {
     startNewRecording = true;
     trackRecordingServiceConnection.startAndBind();
@@ -317,7 +289,7 @@ public class CourseSetupActivity extends Activity {
      */
     bindChangedCallback.run();
   }
-  
+
   @Override
   protected void onStop() {
     super.onStop();
@@ -325,31 +297,24 @@ public class CourseSetupActivity extends Activity {
   }
 
   private void updateUi(final boolean valid) {
-    Log.d(TAG,"updating ui: " + valid);
+    Log.d(TAG, "updating ui: " + valid);
     this.runOnUiThread(new Runnable() {
 
       @Override
       public void run() {
         goButton.setEnabled(valid);
       }
-      
     });
-
   }
 
   private boolean validateSimulationMode() {
     Long localTrackId = getTrackId();
-    
-    if(localTrackId == null) {
+
+    if (localTrackId == null) {
       return false;
-    }
-    else if (localTrackId.equals(-1L)) {
+    } else if (localTrackId.equals(-1L)) {
       return false;
     }
     return true;
   }
-
-  
-  
- 
-}    
+}

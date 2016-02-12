@@ -271,6 +271,21 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
     return null;
   }
 
+  public double getCourseDistance(long courseId) {
+    // db query is: SELECT totaldistance FROM cyclismo.course_tracks WHERE (_id=courseId)
+    Cursor cursor = contentResolver.query(
+        CourseTracksColumns.CONTENT_URI,
+        new String[]{CourseTracksColumns.TOTALDISTANCE},
+        CourseTracksColumns._ID + "=?",
+        new String[]{Long.toString(courseId)},
+        null);
+    cursor.moveToFirst();
+    int totalDistanceIndex = cursor.getColumnIndexOrThrow(CourseTracksColumns.TOTALDISTANCE);
+    float courseDistance = cursor.getFloat(totalDistanceIndex);
+    cursor.close();
+    return courseDistance;
+  }
+
   @Override
   public Cursor getTrackCursor(String selection, String[] selectionArgs, String sortOrder) {
     return getTrackCursor(null, selection, selectionArgs, sortOrder);

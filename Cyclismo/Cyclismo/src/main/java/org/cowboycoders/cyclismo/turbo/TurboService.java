@@ -368,7 +368,6 @@ public class TurboService extends Service {
     this.selectedTurboTrainer = preferences.getString(this.getApplication().getString(R.string.turbotrainer_selected),
         this.getApplication().getString(R.string.turbotrainer_tacx_bushido_headunit_value));
 
-
     // accessing database so should be put into a task
     double userWeight;
     double bikeWeight;

@@ -211,7 +211,7 @@ public class BushidoBrakeModel {
   /**
    * Another unknown
    */
-  DataPacketProvider zeroFourProivder = new DataPacketProvider() {
+  DataPacketProvider zeroFourProvider = new DataPacketProvider() {
 
     @Override
     public byte[] getDataPacket() {
@@ -224,7 +224,7 @@ public class BushidoBrakeModel {
   };
   
   
-  DataPacketProvider speedCadenceBalanceProivder = new DataPacketProvider() {
+  DataPacketProvider speedCadenceBalanceProvider = new DataPacketProvider() {
 
     @Override
     public byte[] getDataPacket() {
@@ -373,8 +373,8 @@ public class BushidoBrakeModel {
     //TODO : SWITCH ON BUSHIDO MODE
    packetProviders.add(this.ad01Provider);
    packetProviders.add(this.powerProvider);
-   packetProviders.add(this.speedCadenceBalanceProivder);
-   packetProviders.add(this.zeroFourProivder);
+   packetProviders.add(this.speedCadenceBalanceProvider);
+   packetProviders.add(this.zeroFourProvider);
    packetProviders.add(this.counterProvider);
    packetProviders.add(this.monitoringProvider);
    packetProviders.add(this.calibrationProvider);

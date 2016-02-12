@@ -382,7 +382,7 @@ public class TrackListActivity extends FragmentActivity implements DeleteOneTrac
     trackRecordingServiceConnection = new TrackRecordingServiceConnection(this, bindChangedCallback);
 
     trackController = new TrackController(this, trackRecordingServiceConnection, true,
-        recordListener, stopListener);
+        recordListener, stopListener, -1);
 
     listView = (ListView) findViewById(R.id.track_list);
     listView.setEmptyView(findViewById(R.id.track_list_empty_view));
@@ -543,7 +543,7 @@ public class TrackListActivity extends FragmentActivity implements DeleteOneTrac
     trackDataHub.unregisterTrackDataListener(trackDataListener);
 
     // Update UI
-    trackController.stop();
+    trackController.stopTimer();
   }
 
   @Override

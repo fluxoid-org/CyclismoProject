@@ -115,15 +115,15 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
   // From intent
   private long trackId;
   private long markerId;
-  private boolean useCourseProivder = false;
+  private boolean useCourseProvider = false;
   private long courseTrackId;
   private boolean courseLoaded = false;
 
   /**
-   * @return the useCourseProivder
+   * @return the useCourseProvider
    */
-  public boolean isUsingCourseProivder() {
-    return useCourseProivder;
+  public boolean isUsingCourseProvider() {
+    return useCourseProvider;
   }
 
   // Preferences
@@ -274,7 +274,7 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
     sharedPreferences = getSharedPreferences(Constants.SETTINGS_NAME, Context.MODE_PRIVATE);
 
     trackRecordingServiceConnection = new TrackRecordingServiceConnection(this, bindChangedCallback);
-    if (this.useCourseProivder) {
+    if (this.useCourseProvider) {
       trackDataHub = TrackDataHub.newInstance(this, true);
     } else {
       trackDataHub = TrackDataHub.newInstance(this);
@@ -312,8 +312,10 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
             getString(R.string.track_detail_chart_tab),
             getResources().getDrawable(R.drawable.tab_chart));
     tabManager.addTab(chartTabSpec, ChartFragment.class, extras);
+
+    // Track controller bar at bottom of screen
     trackController = new TrackController(this, trackRecordingServiceConnection, false,
-        recordListener, stopListener);
+        recordListener, stopListener, getCourseTrackId());
     showMarker();
   }
 
@@ -357,7 +359,7 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
   protected void onPause() {
     super.onPause();
     unregisterTurboServiceReceiver();
-    trackController.stop();
+    trackController.stopTimer();
   }
 
   @Override
@@ -376,7 +378,7 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
    * @return
    */
   public boolean isCourseMode() {
-    if (!useCourseProivder && getCourseTrackId() != -1L)
+    if (!useCourseProvider && getCourseTrackId() != -1L)
       return true;
     return false;
   }
@@ -504,11 +506,11 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
       case R.id.track_detail_edit:
         intent = IntentUtils.newIntent(this, TrackEditActivity.class)
             .putExtra(TrackEditActivity.EXTRA_TRACK_ID, trackId)
-            .putExtra(TrackEditActivity.EXTRA_USE_COURSE_PROVIDER, useCourseProivder);
+            .putExtra(TrackEditActivity.EXTRA_USE_COURSE_PROVIDER, useCourseProvider);
         startActivity(intent);
         return true;
       case R.id.track_detail_delete:
-        DeleteOneTrackDialogFragment.newInstance(trackId, useCourseProivder).show(
+        DeleteOneTrackDialogFragment.newInstance(trackId, useCourseProvider).show(
             getSupportFragmentManager(), DeleteOneTrackDialogFragment.DELETE_ONE_TRACK_DIALOG_TAG);
         return true;
       case R.id.track_detail_sensor_state:
@@ -562,7 +564,7 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
   private void handleIntent(Intent intent) {
     trackId = intent.getLongExtra(EXTRA_TRACK_ID, -1L);
     markerId = intent.getLongExtra(EXTRA_MARKER_ID, -1L);
-    useCourseProivder = intent.getBooleanExtra(EXTRA_USE_COURSE_PROVIDER, false);
+    useCourseProvider = intent.getBooleanExtra(EXTRA_USE_COURSE_PROVIDER, false);
     courseTrackId = intent.getLongExtra(EXTRA_COURSE_TRACK_ID, -1L);
     if (markerId != -1L) {
       Waypoint waypoint = getProviderUtils().getWaypoint(markerId);
@@ -579,7 +581,7 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
   }
 
   private MyTracksProviderUtils getProviderUtils() {
-    if (this.useCourseProivder) {
+    if (this.useCourseProvider) {
       return new MyTracksCourseProviderUtils(this.getContentResolver());
     } else {
       return MyTracksProviderUtils.Factory.get(this);
@@ -703,7 +705,7 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
       } 
       else if (action.equals(TURBO_SERVICE_EXCEPTION_THROWN_ACTION)) {
         Log.v(TAG, "recieved turbo service exception");
-        DeleteOneTrackDialogFragment.newInstance(trackId, useCourseProivder,R.string.track_detail_delete_after_turbo_exception).show(
+        DeleteOneTrackDialogFragment.newInstance(trackId, useCourseProvider,R.string.track_detail_delete_after_turbo_exception).show(
             getSupportFragmentManager(), DeleteOneTrackDialogFragment.DELETE_ONE_TRACK_DIALOG_TAG);
       }
     }
