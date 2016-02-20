@@ -10,7 +10,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.1.0+'
+        classpath 'com.android.tools.build:gradle:1.2.1'
     }
 }
 
@@ -27,11 +27,11 @@ dependencies {
     compile project(':jformica_core')
     compile project(':JTurbo')
     androidTestCompile fileTree(include: '*.jar', dir: 'test_libs')
-    androidTestCompile 'org.mockito:mockito-all:1.+'
+    androidTestCompile 'org.mockito:mockito-all:1.10.19'
     compile 'com.android.support:support-v4:22.0.0'
 
     // For MapForge
-    compile 'com.caverock:androidsvg:1.2.2+'
+    compile 'com.caverock:androidsvg:1.2.1'
     compile group: 'net.sf.kxml', name: 'kxml2', version:'2.3.0'
 }
 
