@@ -35,13 +35,13 @@
 
 package org.cowboycoders.cyclismo.content;
 
+import android.net.Uri;
+import android.provider.BaseColumns;
+
 import static org.cowboycoders.cyclismo.content.ContentTypeIds.BLOB_TYPE_ID;
 import static org.cowboycoders.cyclismo.content.ContentTypeIds.FLOAT_TYPE_ID;
 import static org.cowboycoders.cyclismo.content.ContentTypeIds.INT_TYPE_ID;
 import static org.cowboycoders.cyclismo.content.ContentTypeIds.LONG_TYPE_ID;
-
-import android.net.Uri;
-import android.provider.BaseColumns;
 
 /**
  * Constants for the track points table.

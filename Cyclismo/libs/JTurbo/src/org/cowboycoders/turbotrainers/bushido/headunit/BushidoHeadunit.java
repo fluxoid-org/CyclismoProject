@@ -19,16 +19,6 @@
 */
 package org.cowboycoders.turbotrainers.bushido.headunit;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Set;
-import java.util.WeakHashMap;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Logger;
-
 import org.cowboycoders.ant.Channel;
 import org.cowboycoders.ant.NetworkKeys;
 import org.cowboycoders.ant.Node;
@@ -52,6 +42,16 @@ import org.cowboycoders.turbotrainers.TooFewAntChannelsAvailableException;
 import org.cowboycoders.turbotrainers.TurboTrainerDataListener;
 import org.fluxoid.utils.IterationOperator;
 import org.fluxoid.utils.IterationUtils;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Set;
+import java.util.WeakHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Logger;
 
 
 public class BushidoHeadunit extends AntTurboTrainer {

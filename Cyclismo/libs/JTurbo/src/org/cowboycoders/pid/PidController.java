@@ -1,9 +1,9 @@
 package org.cowboycoders.pid;
 
+import org.fluxoid.utils.TrapezoidIntegrator;
+
 import java.util.HashSet;
 import java.util.Set;
-
-import org.fluxoid.utils.TrapezoidIntegrator;
 
 public class PidController implements PidParameterController {
 	

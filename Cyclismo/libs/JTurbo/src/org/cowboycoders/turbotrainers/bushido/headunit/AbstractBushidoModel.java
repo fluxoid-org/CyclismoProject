@@ -19,14 +19,14 @@
  */
 package org.cowboycoders.turbotrainers.bushido.headunit;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.cowboycoders.turbotrainers.DataPacketProvider;
 import org.cowboycoders.turbotrainers.TurboBaseModel;
 import org.cowboycoders.turbotrainers.bushido.BushidoUtils;
 import org.fluxoid.utils.LoopingListIterator;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Model for current settings

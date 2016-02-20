@@ -21,10 +21,9 @@ package org.cowboycoders.turbotrainers.bushido.headunit;
 
 import org.cowboycoders.ant.events.BroadcastListener;
 import org.cowboycoders.ant.messages.data.BroadcastDataMessage;
-import org.cowboycoders.ant.utils.ArrayUtils;
 import org.cowboycoders.ant.utils.ByteUtils;
 
-import static org.cowboycoders.ant.utils.ArrayUtils.*;
+import static org.cowboycoders.ant.utils.ArrayUtils.arrayStartsWith;
 
 public class BushidoBroadcastDataListener implements BroadcastListener<BroadcastDataMessage> {
     private Byte[] data;

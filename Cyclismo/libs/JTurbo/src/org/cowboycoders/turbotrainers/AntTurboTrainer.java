@@ -19,20 +19,10 @@
  */
 package org.cowboycoders.turbotrainers;
 
-import java.util.concurrent.TimeUnit;
+import org.cowboycoders.ant.Node;
+
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
-
-import org.cowboycoders.ant.Channel;
-import org.cowboycoders.ant.Node;
-import org.cowboycoders.ant.events.MessageCondition;
-import org.cowboycoders.ant.events.MessageConditionFactory;
-import org.cowboycoders.ant.messages.ChannelMessage;
-import org.cowboycoders.ant.messages.MessageId;
-import org.cowboycoders.ant.messages.MessageMetaWrapper;
-import org.cowboycoders.ant.messages.StandardMessage;
-import org.cowboycoders.ant.messages.responses.ResponseCode;
-import org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit;
 
 public abstract class AntTurboTrainer extends GenericTurboTrainer {
 

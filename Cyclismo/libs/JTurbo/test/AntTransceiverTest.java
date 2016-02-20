@@ -18,20 +18,8 @@
 *    along with Cyclismo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import static org.junit.Assert.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-
 import org.cowboycoders.ant.AntError;
 import org.cowboycoders.ant.Channel;
-import org.cowboycoders.ant.NetworkKey;
 import org.cowboycoders.ant.NetworkKeys;
 import org.cowboycoders.ant.Node;
 import org.cowboycoders.ant.Receipt;
@@ -53,6 +41,18 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 
 

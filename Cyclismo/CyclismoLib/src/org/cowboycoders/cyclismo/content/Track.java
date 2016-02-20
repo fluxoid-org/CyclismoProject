@@ -40,9 +40,9 @@ import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
-
 import org.cowboycoders.cyclismo.stats.TripStatistics;
+
+import java.util.ArrayList;
 
 /**
  * A track.

@@ -20,17 +20,16 @@
 package org.cowboycoders.turbotrainers.bushido.headunit;
 
 
+import org.cowboycoders.turbotrainers.TurboCommunicationException;
+import org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor.Duration;
+
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
-import org.cowboycoders.turbotrainers.TurboCommunicationException;
-import org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor.Duration;
 
 /**
  * Only dispatches a button press when duration is known

@@ -1,9 +1,9 @@
 package org.cowboycoders.turbotrainers.bushido.brake;
 
-import java.math.BigInteger;
-
 import org.cowboycoders.turbotrainers.Parameters;
 import org.cowboycoders.turbotrainers.Parameters.CommonParametersInterface;
+
+import java.math.BigInteger;
 
 public class TargetSlopeModel  extends BrakeModel{
 	

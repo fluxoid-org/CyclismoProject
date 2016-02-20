@@ -35,9 +35,9 @@
 package org.cowboycoders.cyclismo.content;
 
 
-import java.util.Vector;
-
 import org.cowboycoders.cyclismo.stats.TripStatistics;
+
+import java.util.Vector;
 
 /**
  * An interface for an object that can generate descriptions of track and

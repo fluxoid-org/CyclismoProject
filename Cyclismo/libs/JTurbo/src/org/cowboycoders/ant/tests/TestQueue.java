@@ -19,11 +19,11 @@
 */
 package org.cowboycoders.ant.tests;
 
+import org.fluxoid.utils.FixedSizeLifo;
+
 import java.util.Collections;
 import java.util.Set;
 import java.util.WeakHashMap;
-
-import org.fluxoid.utils.FixedSizeLifo;
 
 class Dave {
   String name;

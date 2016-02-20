@@ -18,11 +18,14 @@
 *    along with Cyclismo.  If not, see <http://www.gnu.org/licenses/>.
 */
 package org.cowboycoders.turbotrainers.bushido.headunit;
-import static org.junit.Assert.*;
 
 import org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor.Button;
 import org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor.Duration;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 
 public class BushidoButtonDescriptorTest {

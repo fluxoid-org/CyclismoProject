@@ -19,13 +19,13 @@
 */
 package org.cowboycoders.turbotrainers.bushido.brake;
 
-import java.math.BigInteger;
-
 import org.cowboycoders.ant.events.BroadcastListener;
 import org.cowboycoders.ant.messages.data.BroadcastDataMessage;
 import org.cowboycoders.ant.utils.ByteUtils;
 
-import static org.cowboycoders.ant.utils.ArrayUtils.*;
+import java.math.BigInteger;
+
+import static org.cowboycoders.ant.utils.ArrayUtils.arrayStartsWith;
 
 public class BushidoBrakeBroadcastDataListener implements BroadcastListener<BroadcastDataMessage> {
 	

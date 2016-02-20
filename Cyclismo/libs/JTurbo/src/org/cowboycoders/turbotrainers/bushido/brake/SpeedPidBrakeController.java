@@ -1,7 +1,5 @@
 package org.cowboycoders.turbotrainers.bushido.brake;
 
-import java.io.File;
-
 import org.cowboycoders.pid.GainController;
 import org.cowboycoders.pid.GainParameters;
 import org.cowboycoders.pid.OutputControlParameters;
@@ -16,6 +14,8 @@ import org.fluxoid.utils.FixedPeriodUpdater;
 import org.fluxoid.utils.SimpleCsvLogger;
 import org.fluxoid.utils.SlopeTimeAverager;
 import org.fluxoid.utils.UpdateCallback;
+
+import java.io.File;
 
 public class SpeedPidBrakeController extends AbstractController {
 

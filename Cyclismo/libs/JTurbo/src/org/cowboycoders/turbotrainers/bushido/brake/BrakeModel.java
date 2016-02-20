@@ -19,16 +19,16 @@
  */
 package org.cowboycoders.turbotrainers.bushido.brake;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.cowboycoders.ant.utils.BigIntUtils;
 import org.cowboycoders.turbotrainers.DataPacketProvider;
 import org.cowboycoders.turbotrainers.TurboBaseModel;
 import org.fluxoid.utils.LoopingListIterator;
 import org.fluxoid.utils.TrapezoidIntegrator;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Model for current settings

@@ -18,20 +18,16 @@
 *    along with Cyclismo.  If not, see <http://www.gnu.org/licenses/>.
 */
 package org.cowboycoders.ant.messages;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.cowboycoders.ant.messages.Constants.DataElement;
 import org.cowboycoders.ant.messages.config.ChannelAssignMessage;
 import org.cowboycoders.ant.messages.config.ChannelIdMessage;
 import org.cowboycoders.ant.messages.config.NetworkKeyMessage;
-import org.cowboycoders.ant.messages.ExtendedMessage;
-import org.cowboycoders.ant.messages.LegacyMessage;
-import org.cowboycoders.ant.messages.MessageException;
-import org.cowboycoders.ant.messages.MessageId;
 import org.cowboycoders.ant.utils.ByteUtils;
+
+import java.math.BigInteger;
+import java.util.HashSet;
+import java.util.Set;
 
 public class TestMessageType {
 

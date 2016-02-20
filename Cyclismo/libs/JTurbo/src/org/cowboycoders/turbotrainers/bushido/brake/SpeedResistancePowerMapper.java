@@ -1,12 +1,12 @@
 package org.cowboycoders.turbotrainers.bushido.brake;
 
-import java.io.File;
-
 import org.cowboycoders.turbotrainers.PowerModel;
 import org.fluxoid.utils.Conversions;
 import org.fluxoid.utils.FixedPeriodUpdater;
 import org.fluxoid.utils.SimpleCsvLogger;
 import org.fluxoid.utils.UpdateCallback;
+
+import java.io.File;
 
 /**
  * @author www.cowboycoders.org

@@ -64,7 +64,6 @@ import org.cowboycoders.cyclismo.content.MyTracksProviderUtils;
 import org.cowboycoders.cyclismo.content.Track;
 import org.cowboycoders.cyclismo.content.Waypoint;
 import org.cowboycoders.cyclismo.content.WaypointCreationRequest;
-import org.cowboycoders.cyclismo.services.ITrackRecordingService;
 import org.cowboycoders.cyclismo.stats.TripStatistics;
 import org.cowboycoders.cyclismo.util.ApiAdapterFactory;
 import org.cowboycoders.cyclismo.util.PreferencesUtils;

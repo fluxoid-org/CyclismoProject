@@ -1,9 +1,5 @@
 package org.cowboycoders.ant.utils;
 
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.logging.Logger;
-
 import org.cowboycoders.ant.Channel;
 import org.cowboycoders.ant.events.MessageCondition;
 import org.cowboycoders.ant.events.MessageConditionFactory;
@@ -12,6 +8,10 @@ import org.cowboycoders.ant.messages.MessageId;
 import org.cowboycoders.ant.messages.StandardMessage;
 import org.cowboycoders.ant.messages.data.BroadcastDataMessage;
 import org.cowboycoders.ant.messages.responses.ResponseCode;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.logging.Logger;
 
 public class AntUtils {
 	

@@ -1,8 +1,8 @@
 package org.cowboycoders.turbotrainers.bushido.brake;
 
-import java.io.File;
-
 import org.fluxoid.utils.SimpleCsvLogger;
+
+import java.io.File;
 
 public class ConstantResistanceController extends AbstractController {
 

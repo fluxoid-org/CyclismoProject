@@ -19,13 +19,6 @@
 */
 package org.cowboycoders.ant.temp;
 
-import static org.junit.Assert.*;
-import static org.cowboycoders.ant.utils.ArrayUtils.*;
-
-import java.math.BigInteger;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 import org.cowboycoders.ant.Channel;
 import org.cowboycoders.ant.NetworkKeys;
 import org.cowboycoders.ant.Node;
@@ -49,6 +42,13 @@ import org.fluxoid.utils.SimpleCsvLogger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.math.BigInteger;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import static org.cowboycoders.ant.utils.ArrayUtils.arrayStartsWith;
+import static org.junit.Assert.assertNotNull;
 
 public class BushidoBrakeTest {
   

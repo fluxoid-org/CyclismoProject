@@ -18,52 +18,29 @@
 *    along with Cyclismo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import static org.junit.Assert.*;
-
-
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-
-import org.cowboycoders.ant.AntError;
-import org.cowboycoders.ant.Channel;
-import org.cowboycoders.ant.NetworkKey;
 import org.cowboycoders.ant.Node;
-import org.cowboycoders.ant.TransferException;
-import org.cowboycoders.ant.events.BroadcastListener;
-import org.cowboycoders.ant.events.MessageCondition;
-import org.cowboycoders.ant.events.MessageConditionFactory;
 import org.cowboycoders.ant.interfaces.AntTransceiver;
-import org.cowboycoders.ant.messages.ChannelMessage;
-import org.cowboycoders.ant.messages.MasterChannelType;
-import org.cowboycoders.ant.messages.SlaveChannelType;
 import org.cowboycoders.ant.messages.StandardMessage;
-import org.cowboycoders.ant.messages.commands.ChannelRequestMessage;
 import org.cowboycoders.ant.messages.commands.ResetMessage;
-import org.cowboycoders.ant.messages.data.AcknowledgedDataMessage;
-import org.cowboycoders.ant.messages.data.BroadcastDataMessage;
-import org.cowboycoders.ant.messages.responses.CapabilityResponse;
 import org.cowboycoders.ant.utils.AntLoggerImpl;
-import org.cowboycoders.ant.utils.ArrayUtils;
 import org.cowboycoders.ant.utils.ByteUtils;
-import org.cowboycoders.ant.utils.ChannelMessageSender;
 import org.cowboycoders.turbotrainers.Mode;
 import org.cowboycoders.turbotrainers.Parameters;
 import org.cowboycoders.turbotrainers.TurboTrainerDataListener;
-import org.cowboycoders.turbotrainers.bushido.headunit.BushidoBroadcastDataListener;
 import org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor;
-import org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressListener;
-import org.cowboycoders.turbotrainers.bushido.headunit.BushidoTargetSlopeModel;
-import org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit;
 import org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressDescriptor.Button;
+import org.cowboycoders.turbotrainers.bushido.headunit.BushidoButtonPressListener;
+import org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.util.concurrent.TimeoutException;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+
+import static org.junit.Assert.assertTrue;
 
 
 
