@@ -20,18 +20,18 @@
 package org.fluxoid.utils;
 
 public class LatLongAlt extends LatLong {
-  
+
   private double altitude;
 
   public double getAltitude() {
     return altitude;
   }
 
-    /**
-     * @param latitude - Latitude (decimal)
-     * @param longitude - Longitude (decimal)
-     * @param altitude - Altitude (m)
-     */
+  /**
+   * @param latitude - Latitude (decimal)
+   * @param longitude - Longitude (decimal)
+   * @param altitude - Altitude (m)
+   */
   public LatLongAlt(double latitude, double longitude, double altitude) {
     super(latitude, longitude);
     this.altitude = altitude;
@@ -39,9 +39,9 @@ public class LatLongAlt extends LatLong {
 
   @Override
   public String toString() {
-      return "point: " +
-              String.valueOf(this.getLatitude()) + ", " +
-              String.valueOf(this.getLongitude()) + ", " +
-              String.valueOf(this.getAltitude());
+    return "point: " +
+        String.valueOf(this.getLatitude()) + ", " +
+        String.valueOf(this.getLongitude()) + ", " +
+        String.valueOf(this.getAltitude());
   }
 }
