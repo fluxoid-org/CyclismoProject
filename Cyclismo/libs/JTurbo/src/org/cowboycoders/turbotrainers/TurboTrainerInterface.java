@@ -19,9 +19,9 @@
 */
 package org.cowboycoders.turbotrainers;
 
-import java.util.concurrent.TimeoutException;
-
 import org.cowboycoders.turbotrainers.Parameters.CommonParametersInterface;
+
+import java.util.concurrent.TimeoutException;
 
 public interface TurboTrainerInterface {
 

@@ -44,7 +44,7 @@ import java.util.Date;
 
 /**
  * Tests {@link TrackNameUtils}.
- * 
+ *
  * @author Matthew Simmons
  */
 public class TrackNameUtilsTest extends AndroidTestCase {

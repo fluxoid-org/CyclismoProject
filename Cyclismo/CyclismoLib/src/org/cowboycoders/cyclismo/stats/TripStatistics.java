@@ -46,7 +46,7 @@ import org.cowboycoders.cyclismo.lib.CyclismoLibConstants;
  * TripStatisticsBuilder.
  * <p>
  * TODO: hashCode and equals
- * 
+ *
  * @author Rodrigo Damazio
  */
 public class TripStatistics implements Parcelable {
@@ -103,7 +103,7 @@ public class TripStatistics implements Parcelable {
 
   /**
    * Copy constructor.
-   * 
+   *
    * @param other another statistics data object to copy from
    */
   public TripStatistics(TripStatistics other) {
@@ -131,7 +131,7 @@ public class TripStatistics implements Parcelable {
    * the time periods covered by each do not intersect.
    *
    * FIXME: If the times aren't set they default to -1. This messes up the merge.
-   * 
+   *
    * @param other another statistics data object
    */
   public void merge(TripStatistics other) {
@@ -362,12 +362,12 @@ public class TripStatistics implements Parcelable {
    * Gets the average cycling power over the session duration (W).
    */
   public double getAverageMovingPower() {
-    return totalWorkDone / getMovingTimeSeconds() ;
+    return totalWorkDone / getMovingTimeSeconds();
   }
 
   /**
    * Sets the trip start time.
-   * 
+   *
    * @param startTime the trip start time in milliseconds since the epoch
    */
   public void setStartTime(long startTime) {
@@ -376,7 +376,7 @@ public class TripStatistics implements Parcelable {
 
   /**
    * Sets the trip stop time.
-   * 
+   *
    * @param stopTime the stop time in milliseconds since the epoch
    */
   public void setStopTime(long stopTime) {
@@ -385,7 +385,7 @@ public class TripStatistics implements Parcelable {
 
   /**
    * Sets the total trip distance.
-   * 
+   *
    * @param totalDistance the trip distance in meters
    */
   public void setTotalDistance(double totalDistance) {
@@ -394,7 +394,7 @@ public class TripStatistics implements Parcelable {
 
   /**
    * Adds to the current total distance.
-   * 
+   *
    * @param distance the distance to add in meters
    */
   void addTotalDistance(double distance) {
@@ -403,7 +403,7 @@ public class TripStatistics implements Parcelable {
 
   /**
    * Sets the trip total time.
-   * 
+   *
    * @param totalTime the trip total time in milliseconds
    */
   public void setTotalTime(long totalTime) {
@@ -413,7 +413,7 @@ public class TripStatistics implements Parcelable {
 
   /**
    * Sets the trip total moving time.
-   * 
+   *
    * @param movingTime the trip total moving time in milliseconds
    */
   public void setMovingTime(long movingTime) {
@@ -423,7 +423,7 @@ public class TripStatistics implements Parcelable {
 
   /**
    * Adds to the trip total moving time.
-   * 
+   *
    * @param time the time in milliseconds
    */
   void addMovingTime(long time) {
@@ -446,7 +446,7 @@ public class TripStatistics implements Parcelable {
 
   /**
    * Updates a new latitude value.
-   * 
+   *
    * @param latitude the latitude value in signed decimal degrees
    */
   void updateLatitudeExtremities(double latitude) {
@@ -455,7 +455,7 @@ public class TripStatistics implements Parcelable {
 
   /**
    * Updates a new longitude value.
-   * 
+   *
    * @param longitude the longitude value in signed decimal degrees
    */
   void updateLongitudeExtremities(double longitude) {
@@ -464,7 +464,7 @@ public class TripStatistics implements Parcelable {
 
   /**
    * Sets the maximum speed.
-   * 
+   *
    * @param maxSpeed the maximum speed in meters/second
    */
   public void setMaxSpeed(double maxSpeed) {
@@ -473,7 +473,7 @@ public class TripStatistics implements Parcelable {
 
   /**
    * Sets the minimum elevation.
-   * 
+   *
    * @param elevation the minimum elevation in meters
    */
   public void setMinElevation(double elevation) {
@@ -482,7 +482,7 @@ public class TripStatistics implements Parcelable {
 
   /**
    * Sets the maximum elevation.
-   * 
+   *
    * @param elevation the maximum elevation in meters
    */
   public void setMaxElevation(double elevation) {
@@ -491,7 +491,7 @@ public class TripStatistics implements Parcelable {
 
   /**
    * Updates a new elevation.
-   * 
+   *
    * @param elevation the elevation value in meters
    */
   void updateElevationExtremities(double elevation) {
@@ -500,7 +500,7 @@ public class TripStatistics implements Parcelable {
 
   /**
    * Sets the total elevation gain.
-   * 
+   *
    * @param totalElevationGain the elevation gain in meters
    */
   public void setTotalElevationGain(double totalElevationGain) {
@@ -509,7 +509,7 @@ public class TripStatistics implements Parcelable {
 
   /**
    * Adds to the total elevation gain.
-   * 
+   *
    * @param gain the elevation gain in meters
    */
   void addTotalElevationGain(double gain) {
@@ -518,7 +518,7 @@ public class TripStatistics implements Parcelable {
 
   /**
    * Sets the minimum grade.
-   * 
+   *
    * @param grade the grade as a fraction (-1.0 would mean vertical downwards)
    */
   public void setMinGrade(double grade) {
@@ -527,7 +527,7 @@ public class TripStatistics implements Parcelable {
 
   /**
    * Sets the maximum grade.
-   * 
+   *
    * @param grade the grade as a fraction (1.0 would mean vertical upwards)
    */
   public void setMaxGrade(double grade) {
@@ -569,7 +569,7 @@ public class TripStatistics implements Parcelable {
    * @return average moving heart rate in beats per minute to the nearest whole number.
    */
   public int getAverageMovingHeartRate() {
-    return (int) Math.round( totalHeartBeats / getMovingTimeMinutes() );
+    return (int) Math.round(totalHeartBeats / getMovingTimeMinutes());
   }
 
   public void setTotalHeartBeats(double totalHeartBeats) {
@@ -593,7 +593,7 @@ public class TripStatistics implements Parcelable {
    * @return average moving cadence to the nearest whole number in revs/minute.
    */
   public int getAverageMovingCadence() {
-    return (int) Math.round( totalCrankRotations / getMovingTimeMinutes() );
+    return (int) Math.round(totalCrankRotations / getMovingTimeMinutes());
   }
 
   public void setTotalCrankRotations(double totalCrankRotations) {
@@ -602,7 +602,7 @@ public class TripStatistics implements Parcelable {
 
   /**
    * Updates a new grade value.
-   * 
+   *
    * @param grade the grade value as a fraction
    */
   void updateGradeExtremities(double grade) {
@@ -619,7 +619,7 @@ public class TripStatistics implements Parcelable {
         + "; Max Elevation: " + getMaxElevation() + "; Max Speed: " + getMaxSpeed()
         + "; Min Elevation: " + getMinElevation() + "; Max Elevation: " + getMaxElevation()
         + "; Elevation Gain: " + getTotalElevationGain() + "; Min Grade: " + getMinGrade()
-        + "; Max Grade: " + getMaxGrade()  + "; Total work done: " + getTotalWorkDone()
+        + "; Max Grade: " + getMaxGrade() + "; Total work done: " + getTotalWorkDone()
         + "; Total heart beats: " + getTotalHeartBeats()
         + "; Total crank rotations: " + getTotalCrankRotations()
         + "}";

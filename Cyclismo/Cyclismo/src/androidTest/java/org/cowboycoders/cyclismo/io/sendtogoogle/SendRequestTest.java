@@ -41,7 +41,7 @@ import android.test.AndroidTestCase;
 
 /**
  * Tests the {@link SendRequest}.
- * 
+ *
  * @author Youtao Liu
  */
 public class SendRequestTest extends AndroidTestCase {
@@ -262,7 +262,7 @@ public class SendRequestTest extends AndroidTestCase {
   public void testWriteToParcel() {
     sendRequest = new SendRequest(4);
     sendRequest.setSharingAppPackageName("package");
-    sendRequest.setSharingAppClassName("class"); 
+    sendRequest.setSharingAppClassName("class");
     sendRequest.setSendMaps(true);
     sendRequest.setSendFusionTables(true);
     sendRequest.setSendDocs(true);

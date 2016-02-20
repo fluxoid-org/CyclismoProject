@@ -20,12 +20,12 @@
 package org.fluxoid.utils;
 
 public class TrapezoidIntegrator {
-  
+
   Double lastY;
   Double lastX;
-  
+
   double integral = 0;
-  
+
   public double add(double x, double y) {
     if (lastY == null) {
       lastY = y;
@@ -37,7 +37,7 @@ public class TrapezoidIntegrator {
     lastX = x;
     return integral;
   }
-  
+
 
   /**
    * @return the integral
@@ -45,21 +45,20 @@ public class TrapezoidIntegrator {
   public double getIntegral() {
     return integral;
   }
-  
+
   /**
    * Adjust integral to a new value
-   * @param newValue
    */
   public void setIntegral(double newValue) {
-	  integral = newValue;
+    integral = newValue;
   }
-  
+
   /**
    * @param args
    */
   public static void main(String[] args) {
     TrapezoidIntegrator I = new TrapezoidIntegrator();
-    for (int i = 0 ; i <= 100 ; i++) {
+    for (int i = 0; i <= 100; i++) {
       I.add(i, i);
     }
     System.out.println(I.getIntegral());

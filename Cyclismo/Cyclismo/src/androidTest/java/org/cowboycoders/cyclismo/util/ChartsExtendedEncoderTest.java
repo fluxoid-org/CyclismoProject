@@ -38,7 +38,7 @@ import junit.framework.TestCase;
 
 /**
  * A unit test for {@link ChartsExtendedEncoder}.
- * 
+ *
  * @author Bartlomiej Niechwiej
  */
 public class ChartsExtendedEncoderTest extends TestCase {

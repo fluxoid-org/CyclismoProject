@@ -31,7 +31,9 @@ public class ZephyrMessageParserTest extends TestCase {
     byte[] smallBuf = new byte[59];
     assertFalse(parser.isValid(smallBuf));
     // A complete and valid Zephyr HxM packet
-    byte[] buf = { 2,38,55,26,0,49,101,80,0,49,98,100,42,113,120,-53,-24,-60,-123,-61,117,-69,42,-75,74,-78,51,-79,27,-83,28,-88,28,-93,29,-98,25,-103,26,-108,26,-113,59,-118,0,0,0,0,0,0,-22,3,125,1,48,0,96,4,30,0 };
+    byte[] buf = {2, 38, 55, 26, 0, 49, 101, 80, 0, 49, 98, 100, 42, 113, 120, -53, -24, -60,
+        -123, -61, 117, -69, 42, -75, 74, -78, 51, -79, 27, -83, 28, -88, 28, -93, 29, -98, 25,
+        -103, 26, -108, 26, -113, 59, -118, 0, 0, 0, 0, 0, 0, -22, 3, 125, 1, 48, 0, 96, 4, 30, 0};
     // Make buffer invalid
     buf[0] = buf[58] = buf[59] = 0;
     assertFalse(parser.isValid(buf));

@@ -18,8 +18,8 @@
 *    along with Cyclismo.  If not, see <http://www.gnu.org/licenses/>.
 */
 package org.cowboycoders.ant.utils;
+
 import org.cowboycoders.ant.messages.ChannelMessage;
-import org.cowboycoders.ant.messages.StandardMessage;
 
 
 public interface ChannelMessageSender {

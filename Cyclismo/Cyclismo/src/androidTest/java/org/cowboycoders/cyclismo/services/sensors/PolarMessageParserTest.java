@@ -30,8 +30,8 @@ public class PolarMessageParserTest extends TestCase {
   // A complete and valid Polar HxM packet
   //   FE08F701D1001104FE08F702D1001104
   private final byte[] originalBuf =
-    {(byte) 0xFE, 0x08, (byte) 0xF7, 0x01, (byte) 0xD1, 0x00, 0x11, 0x04, (byte) 0xFE, 0x08,
-     (byte) 0xF7, 0x02, (byte) 0xD1, 0x00, 0x11, 0x04};
+      {(byte) 0xFE, 0x08, (byte) 0xF7, 0x01, (byte) 0xD1, 0x00, 0x11, 0x04, (byte) 0xFE, 0x08,
+          (byte) 0xF7, 0x02, (byte) 0xD1, 0x00, 0x11, 0x04};
   private byte[] buf;
 
   public void setUp() {
@@ -39,21 +39,21 @@ public class PolarMessageParserTest extends TestCase {
   }
 
   public void testIsValid() {
-	assertTrue(parser.isValid(buf));
+    assertTrue(parser.isValid(buf));
   }
-  
+
   public void testIsValid_invalidHeader() {
-	// Invalidate header.
+    // Invalidate header.
     buf[0] = 0x03;
     assertFalse(parser.isValid(buf));
   }
-  
+
   public void testIsValid_invalidCheckbyte() {
-	// Invalidate checkbyte.
+    // Invalidate checkbyte.
     buf[2] = 0x03;
     assertFalse(parser.isValid(buf));
   }
-  
+
   public void testIsValid_invalidSequence() {
     // Invalidate sequence.
     buf[3] = 0x11;
@@ -69,15 +69,15 @@ public class PolarMessageParserTest extends TestCase {
   }
 
   public void testFindNextAlignment_offset() {
-	// The first 4 bytes are garbage
-	buf = new byte[originalBuf.length + 4];
-	buf[0] = 4;
-	buf[1] = 2;
-	buf[2] = 4;
-	buf[3] = 2;
-	
-	// Then the valid message.
-	System.arraycopy(originalBuf, 0, buf, 4, originalBuf.length);
+    // The first 4 bytes are garbage
+    buf = new byte[originalBuf.length + 4];
+    buf[0] = 4;
+    buf[1] = 2;
+    buf[2] = 4;
+    buf[3] = 2;
+
+    // Then the valid message.
+    System.arraycopy(originalBuf, 0, buf, 4, originalBuf.length);
     assertEquals(4, parser.findNextAlignment(buf));
   }
 

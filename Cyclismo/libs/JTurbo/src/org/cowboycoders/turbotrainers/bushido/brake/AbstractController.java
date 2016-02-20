@@ -1,9 +1,9 @@
 package org.cowboycoders.turbotrainers.bushido.brake;
 
-import java.io.File;
-
 import org.cowboycoders.turbotrainers.TurboTrainerDataHooks;
 import org.fluxoid.utils.SimpleCsvLogger;
+
+import java.io.File;
 
 public abstract class AbstractController implements TurboTrainerDataHooks {
 	

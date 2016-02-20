@@ -5,7 +5,7 @@ import android.provider.BaseColumns;
 
 /**
  * Constants for the users table.
- * 
+ *
  * @author Will Szumski
  */
 public interface UserInfoColumns extends BaseColumns {
@@ -38,12 +38,11 @@ public interface UserInfoColumns extends BaseColumns {
   public static final String WEIGHT = "weight"; // weight in kilos
   public static final String CURRENT_BIKE = "current_bike"; // currently selected bike
   public static final String SETTINGS = "settings"; // currently selected bike
-  
-  
-  
-  public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" 
-      + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " 
-      + NAME + " STRING, " 
+
+
+  public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " ("
+      + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+      + NAME + " STRING, "
       + WEIGHT + " FLOAT, "
       + CURRENT_BIKE + " INTEGER, "
       + SETTINGS + " BLOB"
@@ -63,5 +62,5 @@ public interface UserInfoColumns extends BaseColumns {
       ContentTypeIds.FLOAT_TYPE_ID, // weight
       ContentTypeIds.LONG_TYPE_ID, // currently selected bike
       ContentTypeIds.BLOB_TYPE_ID, // user settings
-    };
+  };
 }

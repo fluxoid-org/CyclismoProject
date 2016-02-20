@@ -19,12 +19,6 @@
 */
 
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.util.concurrent.TimeoutException;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-
 import org.cowboycoders.ant.Node;
 import org.cowboycoders.ant.interfaces.AntTransceiver;
 import org.cowboycoders.ant.messages.StandardMessage;
@@ -34,13 +28,19 @@ import org.cowboycoders.ant.utils.AntUtils;
 import org.cowboycoders.turbotrainers.Mode;
 import org.cowboycoders.turbotrainers.TurboTrainerDataListener;
 import org.cowboycoders.turbotrainers.bushido.brake.BushidoBrake;
-import org.cowboycoders.turbotrainers.bushido.brake.BushidoBrake.CalibrationException;
 import org.cowboycoders.turbotrainers.bushido.brake.BushidoBrake.CalibrationCallback;
+import org.cowboycoders.turbotrainers.bushido.brake.BushidoBrake.CalibrationException;
 import org.cowboycoders.turbotrainers.bushido.brake.ConstantResistanceController;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.math.BigInteger;
+import java.util.concurrent.TimeoutException;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
 
 
 

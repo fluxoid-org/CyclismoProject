@@ -30,7 +30,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * A {@link TrackRecordingService} that can be used with {@link ServiceTestCase}. 
+ * A {@link TrackRecordingService} that can be used with {@link ServiceTestCase}.
  * {@link ServiceTestCase} throws a null pointer exception when the service
  * calls {@link Service#startForeground(int, android.app.Notification)} and
  * {@link Service#stopForeground(boolean)}.

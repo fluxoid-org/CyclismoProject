@@ -4,19 +4,19 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Bike implements Parcelable {
-  
-  public Bike() {};
-  
+
+  public Bike() {}
+
   private String name;
-  
+
   private double weight;
-  
+
   private long id = -1L;
-  
+
   private boolean shared;
-  
+
   private long ownerId;
-  
+
   private Bike(Parcel in) {
     id = in.readLong();
     name = in.readString();
@@ -24,8 +24,8 @@ public class Bike implements Parcelable {
     shared = in.readByte() == 1;
     ownerId = in.readLong();
   }
-  
-  
+
+
   @Override
   public int describeContents() {
     return 0;
@@ -39,32 +39,30 @@ public class Bike implements Parcelable {
     dest.writeByte((byte) (shared == true ? 1 : 0));
     dest.writeLong(ownerId);
   }
-  
+
   public static final Parcelable.Creator<Bike> CREATOR = new Parcelable.Creator<Bike>() {
     @Override
-  public Bike createFromParcel(Parcel in) {
-    return new Bike(in);
-  }
+    public Bike createFromParcel(Parcel in) {
+      return new Bike(in);
+    }
 
     @Override
-  public Bike[] newArray(int size) {
-    return new Bike[size];
-  }
+    public Bike[] newArray(int size) {
+      return new Bike[size];
+    }
 
-    
-};
-  
-/**
- * bike name
- * @return
- */
+
+  };
+
+  /**
+   * bike name
+   */
   public String getName() {
     return name;
   }
 
   /**
-   *  bike name
-   * @param name
+   * bike name
    */
   public void setName(String name) {
     this.name = name;
@@ -72,6 +70,7 @@ public class Bike implements Parcelable {
 
   /**
    * Weight in kg
+   *
    * @return weight
    */
   public double getWeight() {
@@ -80,7 +79,6 @@ public class Bike implements Parcelable {
 
   /**
    * Weight in kg
-   * @param weight
    */
   public void setWeight(double weight) {
     this.weight = weight;
@@ -105,7 +103,7 @@ public class Bike implements Parcelable {
   public void setShared(boolean shared) {
     this.shared = shared;
   }
-  
+
   public void setShared(int shared) {
     boolean bool = shared == 0 ? false : true;
     setShared(bool);
@@ -120,8 +118,6 @@ public class Bike implements Parcelable {
   public void setOwnerId(long ownerId) {
     this.ownerId = ownerId;
   }
-  
-  
 
 
 }

@@ -35,13 +35,13 @@
 
 package org.cowboycoders.cyclismo.content;
 
+import android.net.Uri;
+import android.provider.BaseColumns;
+
 import static org.cowboycoders.cyclismo.content.ContentTypeIds.BLOB_TYPE_ID;
 import static org.cowboycoders.cyclismo.content.ContentTypeIds.FLOAT_TYPE_ID;
 import static org.cowboycoders.cyclismo.content.ContentTypeIds.INT_TYPE_ID;
 import static org.cowboycoders.cyclismo.content.ContentTypeIds.LONG_TYPE_ID;
-
-import android.net.Uri;
-import android.provider.BaseColumns;
 
 /**
  * Constants for the track points table.
@@ -78,7 +78,7 @@ public interface CourseTrackPointsColumns extends BaseColumns {
       + ACCURACY + " FLOAT, "
       + SPEED + " FLOAT, "
       + BEARING + " FLOAT, "
-      + SENSOR + " BLOB" 
+      + SENSOR + " BLOB"
       + ");";
 
   public static final String[] COLUMNS = {
@@ -92,18 +92,18 @@ public interface CourseTrackPointsColumns extends BaseColumns {
       SPEED,
       BEARING,
       SENSOR
-   };
+  };
 
-   public static final byte[] COLUMN_TYPES = {
-       LONG_TYPE_ID, // id
-       LONG_TYPE_ID, // track id
-       INT_TYPE_ID, // longitude
-       INT_TYPE_ID, // latitude
-       LONG_TYPE_ID, // time
-       FLOAT_TYPE_ID, // altitude
-       FLOAT_TYPE_ID, // accuracy
-       FLOAT_TYPE_ID, // speed
-       FLOAT_TYPE_ID, // bearing
-       BLOB_TYPE_ID // sensor
-   };
+  public static final byte[] COLUMN_TYPES = {
+      LONG_TYPE_ID, // id
+      LONG_TYPE_ID, // track id
+      INT_TYPE_ID, // longitude
+      INT_TYPE_ID, // latitude
+      LONG_TYPE_ID, // time
+      FLOAT_TYPE_ID, // altitude
+      FLOAT_TYPE_ID, // accuracy
+      FLOAT_TYPE_ID, // speed
+      FLOAT_TYPE_ID, // bearing
+      BLOB_TYPE_ID // sensor
+  };
 }

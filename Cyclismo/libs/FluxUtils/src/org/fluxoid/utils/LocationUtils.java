@@ -46,7 +46,8 @@ public class LocationUtils {
 
     double Bx = Math.cos(lat2) * Math.cos(dLon);
     double By = Math.cos(lat2) * Math.sin(dLon);
-    double lat3 = Math.atan2(Math.sin(lat1) + Math.sin(lat2), Math.sqrt((Math.cos(lat1) + Bx) * (Math.cos(lat1) + Bx) + By * By));
+    double lat3 = Math.atan2(Math.sin(lat1) + Math.sin(lat2), Math.sqrt((Math.cos(lat1) + Bx) *
+        (Math.cos(lat1) + Bx) + By * By));
     double lon3 = lon1 + Math.atan2(By, Math.cos(lat1) + Bx);
 
     return new LatLong(Math.toDegrees(lat3), Math.toDegrees(lon3));
@@ -97,7 +98,7 @@ public class LocationUtils {
    * Returns a list of interpolated points with a specified maximum separation.
    *
    * @param locations List of points to interpolate between
-   * @param maxDist   Maximum separation between points
+   * @param maxDist Maximum separation between points
    * @return List of interpolated points with a specified maximum separation
    */
   public static List<LatLongAlt> interpolatePoints(List<LatLongAlt> locations, double maxDist) {
@@ -120,8 +121,8 @@ public class LocationUtils {
    * <p/>
    * The source and destination points are NOT returned.
    *
-   * @param src     Source point
-   * @param dst     Destination point
+   * @param src Source point
+   * @param dst Destination point
    * @param maxDist Max spacing between any two points in m
    * @return List of interpolated points
    */
@@ -151,10 +152,10 @@ public class LocationUtils {
   /**
    * Linearly interpolates between two points. The destination point must not have been reached.
    *
-   * @param src      is the starting point.
-   * @param dst      is the finishing point.
+   * @param src is the starting point.
+   * @param dst is the finishing point.
    * @param speed_ms is the speed at the starting point.
-   * @param dt_ms    is the time travelled since leaving the starting point.
+   * @param dt_ms is the time travelled since leaving the starting point.
    * @return the interpolated point, or null if the destination has been passed.
    */
   public static LatLongAlt getLocationBetweenPoints(

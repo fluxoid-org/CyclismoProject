@@ -119,13 +119,13 @@ public class TcxTrackWriterTest extends TrackFormatWriterTest {
 
   public void testGetIntElement() {
     String expected = "<Cadence>80</Cadence>";
-    String actual =  TcxTrackWriter.getElement("Cadence", 80.1f, true);
+    String actual = TcxTrackWriter.getElement("Cadence", 80.1f, true);
     assertEquals(expected, actual);
   }
 
   public void testGetFloatElement() {
     String expected = "<Distance>1.23</Distance>";
-    String actual =  TcxTrackWriter.getElement("Distance", 1.23f);
+    String actual = TcxTrackWriter.getElement("Distance", 1.23f);
     assertEquals(expected, actual);
   }
 }

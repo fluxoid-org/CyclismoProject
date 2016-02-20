@@ -37,7 +37,7 @@ package org.cowboycoders.cyclismo.content;
 
 /**
  * Utilities for serializing primitive types.
- * 
+ *
  * @author Rodrigo Damazio
  */
 public class ContentTypeIds {

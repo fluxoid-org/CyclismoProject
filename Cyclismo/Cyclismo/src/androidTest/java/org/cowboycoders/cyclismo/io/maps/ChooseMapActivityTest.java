@@ -45,7 +45,7 @@ import java.util.ArrayList;
 
 /**
  * Tests the {@link ChooseMapActivity}.
- * 
+ *
  * @author Youtao Liu
  */
 public class ChooseMapActivityTest extends AndroidTestCase {
@@ -62,7 +62,7 @@ public class ChooseMapActivityTest extends AndroidTestCase {
   /**
    * Creates a class to override some methods of {@link ChooseMapActivity} to
    * makes it testable.
-   * 
+   *
    * @author youtaol
    */
   public class ChooseMapActivityMock extends ChooseMapActivity {
@@ -80,7 +80,7 @@ public class ChooseMapActivityTest extends AndroidTestCase {
     public void showErrorDialog() {
       errorDialogShown = true;
     }
-    
+
     /**
      * By overriding this method, avoids to show an error dialog and set the
      * show flag to true.
@@ -145,7 +145,7 @@ public class ChooseMapActivityTest extends AndroidTestCase {
 
   /**
    * Simulates map data for the test.
-   * 
+   *
    * @param number of data should be simulated.
    */
   private void simulateMaps(int number) {

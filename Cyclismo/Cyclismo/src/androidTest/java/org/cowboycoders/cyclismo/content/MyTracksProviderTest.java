@@ -43,7 +43,7 @@ import org.cowboycoders.cyclismo.content.MyTracksProvider.DatabaseHelper;
 
 /**
  * A unit test for {@link MyTracksProvider}.
- * 
+ *
  * @author Youtao Liu
  */
 public class MyTracksProviderTest extends AndroidTestCase {
@@ -181,7 +181,8 @@ public class MyTracksProviderTest extends AndroidTestCase {
 //    createEmptyTable(CourseTrackPointsColumns.TABLE_NAME);
 //    createEmptyTable(CourseTracksColumns.TABLE_NAME);
 //    databaseHelper.onUpgrade(db, 17, 20);
-//    assertTrue(isColumnExisted(CourseTrackPointsColumns.TABLE_NAME, CourseTrackPointsColumns.SENSOR));
+//    assertTrue(isColumnExisted(CourseTrackPointsColumns.TABLE_NAME, CourseTrackPointsColumns
+// .SENSOR));
 //    assertTrue(isColumnExisted(CourseTracksColumns.TABLE_NAME, CourseTracksColumns.TABLEID));
 //    assertTrue(isColumnExisted(CourseTracksColumns.TABLE_NAME, CourseTracksColumns.ICON));
 //  }
@@ -200,7 +201,8 @@ public class MyTracksProviderTest extends AndroidTestCase {
 //    createEmptyTable(CourseTrackPointsColumns.TABLE_NAME);
 //    createEmptyTable(CourseTracksColumns.TABLE_NAME);
 //    databaseHelper.onUpgrade(db, 18, 20);
-//    assertFalse(isColumnExisted(CourseTrackPointsColumns.TABLE_NAME, CourseTrackPointsColumns.SENSOR));
+//    assertFalse(isColumnExisted(CourseTrackPointsColumns.TABLE_NAME, CourseTrackPointsColumns
+// .SENSOR));
 //    assertTrue(isColumnExisted(CourseTracksColumns.TABLE_NAME, CourseTracksColumns.TABLEID));
 //    assertTrue(isColumnExisted(CourseTracksColumns.TABLE_NAME, CourseTracksColumns.ICON));
 //  }
@@ -219,7 +221,8 @@ public class MyTracksProviderTest extends AndroidTestCase {
 //    createEmptyTable(CourseTrackPointsColumns.TABLE_NAME);
 //    createEmptyTable(CourseTracksColumns.TABLE_NAME);
 //    databaseHelper.onUpgrade(db, 19, 20);
-//    assertFalse(isColumnExisted(CourseTrackPointsColumns.TABLE_NAME, CourseTrackPointsColumns.SENSOR));
+//    assertFalse(isColumnExisted(CourseTrackPointsColumns.TABLE_NAME, CourseTrackPointsColumns
+// .SENSOR));
 //    assertFalse(isColumnExisted(CourseTracksColumns.TABLE_NAME, CourseTracksColumns.TABLEID));
 //    assertTrue(isColumnExisted(CourseTracksColumns.TABLE_NAME, CourseTracksColumns.ICON));
 //  }
@@ -241,18 +244,21 @@ public class MyTracksProviderTest extends AndroidTestCase {
     assertEquals(TracksColumns.CONTENT_TYPE, myTracksProvider.getType(TracksColumns.CONTENT_URI));
     assertEquals(WaypointsColumns.CONTENT_TYPE,
         myTracksProvider.getType(WaypointsColumns.CONTENT_URI));
-    assertEquals(UserInfoColumns.CONTENT_TYPE,myTracksProvider.getType(UserInfoColumns.CONTENT_URI));
-    assertEquals(BikeInfoColumns.CONTENT_TYPE,myTracksProvider.getType(BikeInfoColumns.CONTENT_URI));
+    assertEquals(UserInfoColumns.CONTENT_TYPE, myTracksProvider.getType(UserInfoColumns
+        .CONTENT_URI));
+    assertEquals(BikeInfoColumns.CONTENT_TYPE, myTracksProvider.getType(BikeInfoColumns
+        .CONTENT_URI));
     assertEquals(CourseTrackPointsColumns.CONTENT_TYPE,
         myTracksProvider.getType(CourseTrackPointsColumns.CONTENT_URI));
-    assertEquals(CourseTracksColumns.CONTENT_TYPE, myTracksProvider.getType(CourseTracksColumns.CONTENT_URI));
+    assertEquals(CourseTracksColumns.CONTENT_TYPE, myTracksProvider.getType(CourseTracksColumns
+        .CONTENT_URI));
     assertEquals(CourseWaypointsColumns.CONTENT_TYPE,
         myTracksProvider.getType(CourseWaypointsColumns.CONTENT_URI));
   }
 
   /**
    * Creates an table only contains one column.
-   * 
+   *
    * @param table the name of table
    */
   private void createEmptyTable(String table) {
@@ -261,8 +267,6 @@ public class MyTracksProviderTest extends AndroidTestCase {
 
   /**
    * Drops a table in database.
-   * 
-   * @param table
    */
   private void dropTable(String table) {
     db.execSQL("Drop TABLE " + table);
@@ -270,7 +274,7 @@ public class MyTracksProviderTest extends AndroidTestCase {
 
   /**
    * Checks whether a table is existed.
-   * 
+   *
    * @param table the name of table
    * @return true means the table has existed
    */
@@ -286,7 +290,7 @@ public class MyTracksProviderTest extends AndroidTestCase {
   /**
    * Checks whether a column in a table is existed by whether can order by the
    * column.
-   * 
+   *
    * @param table the name of table
    * @param column the name of column
    * @return true means the column has existed

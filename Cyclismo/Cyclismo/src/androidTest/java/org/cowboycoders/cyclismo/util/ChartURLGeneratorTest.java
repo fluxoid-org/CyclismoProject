@@ -79,16 +79,16 @@ public class ChartURLGeneratorTest extends TestCase {
     elevations.add(70.0);
 
     String chart = ChartURLGenerator.getChartUrl(distances,
-                                                 elevations,
-                                                 t,
-                                                 "Title",
-                                                 true);
+        elevations,
+        t,
+        "Title",
+        true);
 
     assertEquals(
         "http://chart.apis.google.com/chart?&chs=600x350&cht=lxy&"
-        + "chtt=Title&chxt=x,y&chxr=0,0,0,0|1,0.0,2100.0,300&chco=009A00&"
-        + "chm=B,00AA00,0,0,0&chg=100000,14.285714285714286,1,0&"
-        + "chd=e:AAGZMzf.v.5l..,ATJJYY55kkVVCI",
+            + "chtt=Title&chxt=x,y&chxr=0,0,0,0|1,0.0,2100.0,300&chco=009A00&"
+            + "chm=B,00AA00,0,0,0&chg=100000,14.285714285714286,1,0&"
+            + "chd=e:AAGZMzf.v.5l..,ATJJYY55kkVVCI",
         chart);
   }
 }

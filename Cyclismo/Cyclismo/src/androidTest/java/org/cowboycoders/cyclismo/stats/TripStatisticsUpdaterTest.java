@@ -31,7 +31,7 @@ import org.cowboycoders.cyclismo.util.PreferencesUtils;
 
 /**
  * Tests {@link TripStatisticsUpdater}.
- * 
+ *
  * @author Sandor Dornbush
  */
 public class TripStatisticsUpdaterTest extends TestCase {
@@ -60,7 +60,7 @@ public class TripStatisticsUpdaterTest extends TestCase {
     assertEquals(0.0, tripStatistics.getTotalElevationGain());
     assertEquals(0, tripStatistics.getMovingTime());
     assertEquals(0.0, tripStatistics.getTotalDistance());
-    
+
     float speed = 11.1f;
     for (int i = 0; i < 100; i++) {
       Location location = new Location("test");

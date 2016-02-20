@@ -18,29 +18,14 @@
 *    along with Cyclismo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import static org.junit.Assert.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-
-import org.cowboycoders.ant.AntError;
 import org.cowboycoders.ant.Channel;
-import org.cowboycoders.ant.NetworkKey;
 import org.cowboycoders.ant.NetworkKeys;
 import org.cowboycoders.ant.Node;
-import org.cowboycoders.ant.Receipt;
 import org.cowboycoders.ant.TransferException;
 import org.cowboycoders.ant.events.BroadcastListener;
 import org.cowboycoders.ant.events.MessageCondition;
 import org.cowboycoders.ant.events.MessageConditionFactory;
 import org.cowboycoders.ant.interfaces.AntTransceiver;
-import org.cowboycoders.ant.messages.ChannelMessage;
 import org.cowboycoders.ant.messages.ChannelType;
 import org.cowboycoders.ant.messages.MasterChannelType;
 import org.cowboycoders.ant.messages.SlaveChannelType;
@@ -48,15 +33,18 @@ import org.cowboycoders.ant.messages.StandardMessage;
 import org.cowboycoders.ant.messages.commands.ChannelRequestMessage;
 import org.cowboycoders.ant.messages.commands.ChannelRequestMessage.Request;
 import org.cowboycoders.ant.messages.commands.ResetMessage;
-import org.cowboycoders.ant.messages.data.BroadcastDataMessage;
 import org.cowboycoders.ant.messages.nonstandard.CombinedBurst;
-import org.cowboycoders.ant.messages.responses.CapabilityResponse;
 import org.cowboycoders.ant.messages.responses.ChannelIdResponse;
 import org.cowboycoders.ant.utils.ByteUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
 
 
 /**

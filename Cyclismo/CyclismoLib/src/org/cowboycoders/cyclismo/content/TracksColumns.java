@@ -40,7 +40,7 @@ import android.provider.BaseColumns;
 
 /**
  * Constants for the tracks table.
- * 
+ *
  * @author Leif Hendrik Wilden
  */
 public interface TracksColumns extends BaseColumns {
@@ -99,39 +99,40 @@ public interface TracksColumns extends BaseColumns {
   public static final String TABLEID = "tableid"; // Google Fusion Tables id
   public static final String ICON = "icon"; // track activity type icon
   public static final String OWNER = "owner"; // user_id of owner
-  
-  public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" 
-      + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " 
-      + NAME + " STRING, " 
+
+  public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " ("
+      + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+      + NAME + " STRING, "
       + DESCRIPTION + " STRING, "
-      + CATEGORY + " STRING, " 
-      + STARTID + " INTEGER, " 
-      + STOPID + " INTEGER, " 
-      + STARTTIME + " INTEGER, " 
-      + STOPTIME + " INTEGER, " 
-      + NUMPOINTS + " INTEGER, " 
-      + TOTALDISTANCE + " FLOAT, " 
-      + TOTALTIME + " INTEGER, " 
-      + MOVINGTIME + " INTEGER, " 
+      + CATEGORY + " STRING, "
+      + STARTID + " INTEGER, "
+      + STOPID + " INTEGER, "
+      + STARTTIME + " INTEGER, "
+      + STOPTIME + " INTEGER, "
+      + NUMPOINTS + " INTEGER, "
+      + TOTALDISTANCE + " FLOAT, "
+      + TOTALTIME + " INTEGER, "
+      + MOVINGTIME + " INTEGER, "
       + MINLAT + " INTEGER, "
-      + MAXLAT + " INTEGER, " 
-      + MINLON + " INTEGER, " 
-      + MAXLON + " INTEGER, " 
+      + MAXLAT + " INTEGER, "
+      + MINLON + " INTEGER, "
+      + MAXLON + " INTEGER, "
       + AVGSPEED + " FLOAT, "
-      + AVGMOVINGSPEED + " FLOAT, " 
+      + AVGMOVINGSPEED + " FLOAT, "
       + TOTALWORKDONE + " FLOAT, "
       + TOTALCRANKROTATIONS + " FLOAT, "
       + TOTALHEARTBEATS + " FLOAT, "
-      + MAXSPEED + " FLOAT, " 
+      + MAXSPEED + " FLOAT, "
       + MINELEVATION + " FLOAT, "
-      + MAXELEVATION + " FLOAT, " 
-      + ELEVATIONGAIN + " FLOAT, " 
-      + MINGRADE + " FLOAT, " 
-      + MAXGRADE + " FLOAT, " 
-      + MAPID + " STRING, " 
-      + TABLEID + " STRING, " 
-      + ICON + " STRING, " 
-      + OWNER + " INTEGER REFERENCES " + UserInfoColumns.TABLE_NAME + " ON DELETE CASCADE ON UPDATE CASCADE"
+      + MAXELEVATION + " FLOAT, "
+      + ELEVATIONGAIN + " FLOAT, "
+      + MINGRADE + " FLOAT, "
+      + MAXGRADE + " FLOAT, "
+      + MAPID + " STRING, "
+      + TABLEID + " STRING, "
+      + ICON + " STRING, "
+      + OWNER + " INTEGER REFERENCES " + UserInfoColumns.TABLE_NAME + " ON DELETE CASCADE ON " +
+      "UPDATE CASCADE"
       + ");";
 
   public static final String[] COLUMNS = {
@@ -200,5 +201,5 @@ public interface TracksColumns extends BaseColumns {
       ContentTypeIds.STRING_TYPE_ID, // table id
       ContentTypeIds.STRING_TYPE_ID, // icon
       ContentTypeIds.LONG_TYPE_ID, // owner
-    };
+  };
 }

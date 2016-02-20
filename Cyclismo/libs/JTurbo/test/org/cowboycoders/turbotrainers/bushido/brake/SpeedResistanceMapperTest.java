@@ -1,10 +1,5 @@
 package org.cowboycoders.turbotrainers.bushido.brake;
-import static org.junit.Assert.*;
 
-import org.cowboycoders.turbotrainers.bushido.brake.BrakeModel;
-import org.cowboycoders.turbotrainers.bushido.brake.SpeedResistanceMapper;
-import org.cowboycoders.turbotrainers.bushido.brake.TargetSlopeModel;
-import org.junit.Before;
 import org.junit.Test;
 
 /**

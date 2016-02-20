@@ -86,7 +86,7 @@ public class DoubleBufferTest extends TestCase {
       assertFalse(buffer.isFull());
       double expectedAverage = ((i * 10.0) - 50.0) / (i + 5);
       assertEquals(buffer.toString(),
-                   expectedAverage, buffer.getAverage(), 0.01);
+          expectedAverage, buffer.getAverage(), 0.01);
       double[] averageAndVariance = buffer.getAverageAndVariance();
       assertEquals(expectedAverage, averageAndVariance[0]);
     }

@@ -76,7 +76,7 @@ public class CsvTrackWriterTest extends TrackFormatWriterTest {
         "20,000", "1970-01-01T00:03:20.000Z", "102.0", "202.0", "302.0");
     String expectedPoint4 = getExpectedLine("2", "2", "3.0", "-3.0", "30.0", "300.0", "3,000",
         "30,000", "1970-01-01T00:05:00.000Z", "103.0", "203.0", "303.0");
-    String expected = expectedTrackHeader + expectedTrack + "\n" 
+    String expected = expectedTrackHeader + expectedTrack + "\n"
         + expectedMarkerHeader + expectedMarker1 + expectedMarker2 + "\n"
         + expectedPointHeader + expectedPoint1 + expectedPoint2 + expectedPoint3 + expectedPoint4;
 
@@ -86,7 +86,7 @@ public class CsvTrackWriterTest extends TrackFormatWriterTest {
 
   /**
    * Gets the expected CSV line from a list of expected values.
-   * 
+   *
    * @param values expected values
    */
   private String getExpectedLine(String... values) {

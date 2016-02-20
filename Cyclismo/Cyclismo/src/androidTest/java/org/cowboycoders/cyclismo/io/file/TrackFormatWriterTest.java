@@ -119,7 +119,7 @@ public abstract class TrackFormatWriterTest extends AndroidTestCase {
       Sensor.SensorData.Builder distance = Sensor.SensorData.newBuilder().setValue(12.3f + i)
           .setState(Sensor.SensorState.SENDING);
       Sensor.SensorData.Builder heartRate = Sensor.SensorData.newBuilder().setValue(300 + i)
-          .setState(Sensor.SensorState.SENDING);     
+          .setState(Sensor.SensorState.SENDING);
       Sensor.SensorDataSet sensorDataSet = Sensor.SensorDataSet.newBuilder().setPower(power)
           .setCadence(cadence).setDistance(distance).setHeartRate(heartRate).build();
       location.setSensorDataSet(sensorDataSet);
@@ -220,7 +220,7 @@ public abstract class TrackFormatWriterTest extends AndroidTestCase {
    */
   protected Document parseXmlDocument(String contents)
       throws FactoryConfigurationError, ParserConfigurationException,
-          SAXException, IOException {
+      SAXException, IOException {
     DocumentBuilderFactory builderFactory =
         DocumentBuilderFactory.newInstance();
     builderFactory.setCoalescing(true);

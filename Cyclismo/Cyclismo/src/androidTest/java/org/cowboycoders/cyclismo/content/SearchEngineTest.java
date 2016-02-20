@@ -90,7 +90,8 @@ public class SearchEngineTest extends AndroidTestCase {
     super.tearDown();
   }
 
-  private long insertTrack(String title, String description, String category, double distance, long hoursAgo) {
+  private long insertTrack(String title, String description, String category, double distance,
+      long hoursAgo) {
     Track track = new Track();
     track.setName(title);
     track.setDescription(description);
@@ -124,7 +125,8 @@ public class SearchEngineTest extends AndroidTestCase {
     return insertTrack(title, "", "", 0.0, hoursAgo);
   }
 
-  private long insertWaypoint(String title, String description, String category, double distance, long hoursAgo, long trackId) {
+  private long insertWaypoint(String title, String description, String category, double distance,
+      long hoursAgo, long trackId) {
     Waypoint waypoint = new Waypoint();
     waypoint.setName(title);
     waypoint.setDescription(description);

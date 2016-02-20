@@ -1,15 +1,15 @@
 package org.cowboycoders.ant.utils;
 
+import org.cowboycoders.ant.Channel;
+import org.cowboycoders.ant.events.MessageCondition;
+import org.cowboycoders.ant.messages.ChannelMessage;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
-
-import org.cowboycoders.ant.Channel;
-import org.cowboycoders.ant.events.MessageCondition;
-import org.cowboycoders.ant.messages.ChannelMessage;
 
 public class EnqueuedMessageSender implements ChannelMessageSender {
 	

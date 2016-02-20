@@ -44,7 +44,7 @@ import org.cowboycoders.cyclismo.stats.TripStatistics;
 
 /**
  * A waypoint.
- * 
+ *
  * @author Leif Hendrik Wilden
  * @author Rodrigo Damazio
  */
@@ -68,7 +68,7 @@ public final class Waypoint implements Parcelable {
   private TripStatistics tripStatistics = null;
 
   public Waypoint() {}
-  
+
   public Waypoint(String name, String description, String category, String icon, long trackId,
       int type, double length, long duration, long startId, long stopId, Location location,
       TripStatistics tripStatistics) {
@@ -98,7 +98,7 @@ public final class Waypoint implements Parcelable {
     duration = source.readLong();
     startId = source.readLong();
     stopId = source.readLong();
- 
+
     ClassLoader classLoader = getClass().getClassLoader();
     byte hasLocation = source.readByte();
     if (hasLocation > 0) {
@@ -139,12 +139,12 @@ public final class Waypoint implements Parcelable {
   }
 
   public static final Parcelable.Creator<Waypoint> CREATOR = new Parcelable.Creator<Waypoint>() {
-      @Override
+    @Override
     public Waypoint createFromParcel(Parcel in) {
       return new Waypoint(in);
     }
 
-      @Override
+    @Override
     public Waypoint[] newArray(int size) {
       return new Waypoint[size];
     }

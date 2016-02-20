@@ -45,7 +45,7 @@ import static org.cowboycoders.cyclismo.content.ContentTypeIds.STRING_TYPE_ID;
 
 /**
  * Constants for waypoints table.
- * 
+ *
  * @author Leif Hendrik Wilden
  */
 public interface CourseWaypointsColumns extends BaseColumns {
@@ -65,7 +65,8 @@ public interface CourseWaypointsColumns extends BaseColumns {
   public static final String TRACKID = "trackid"; // track id
   public static final String TYPE = "type"; // type
   public static final String LENGTH = "length"; // length of the track (without smoothing) 
-  public static final String DURATION = "duration"; // total duration of the track (not from last waypoint)
+  public static final String DURATION = "duration"; // total duration of the track (not from last
+  // waypoint)
   public static final String STARTTIME = "starttime"; // start time of the trip statistics 
   public static final String STARTID = "startid"; // start track point id
   public static final String STOPID = "stopid"; // stop track point id
@@ -92,8 +93,8 @@ public interface CourseWaypointsColumns extends BaseColumns {
   public static final String ELEVATIONGAIN = "elevationgain"; // elevation gain
   public static final String MINGRADE = "mingrade"; // min grade
   public static final String MAXGRADE = "maxgrade"; // max grade
-  
-  public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" 
+
+  public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " ("
       + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
       + NAME + " STRING, "
       + DESCRIPTION + " STRING, "
@@ -126,9 +127,9 @@ public interface CourseWaypointsColumns extends BaseColumns {
       + MAXELEVATION + " FLOAT, "
       + ELEVATIONGAIN + " FLOAT, "
       + MINGRADE + " FLOAT, "
-      + MAXGRADE + " FLOAT" 
+      + MAXGRADE + " FLOAT"
       + ");";
-  
+
   public static final String[] COLUMNS = {
       _ID,
       NAME,
@@ -163,8 +164,8 @@ public interface CourseWaypointsColumns extends BaseColumns {
       ELEVATIONGAIN,
       MINGRADE,
       MAXGRADE
-    };
-    
+  };
+
   public static final byte[] COLUMN_TYPES = {
       LONG_TYPE_ID, // id
       STRING_TYPE_ID, // name
@@ -199,5 +200,5 @@ public interface CourseWaypointsColumns extends BaseColumns {
       FLOAT_TYPE_ID, // elevation gain
       FLOAT_TYPE_ID, // min grade
       FLOAT_TYPE_ID // max grade
-    };
+  };
 }

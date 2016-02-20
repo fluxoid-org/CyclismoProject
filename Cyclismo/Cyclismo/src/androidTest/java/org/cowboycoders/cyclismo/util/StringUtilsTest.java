@@ -138,7 +138,7 @@ public class StringUtilsTest extends AndroidTestCase {
     assertEquals("<![CDATA[hello]]>", StringUtils.formatCData("hello"));
     assertEquals("<![CDATA[hello]]]]><![CDATA[>there]]>", StringUtils.formatCData("hello]]>there"));
   }
-  
+
   /**
    * Tests {@link StringUtils#getTime(String)}.
    */

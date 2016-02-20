@@ -40,13 +40,13 @@ import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
-
 import org.cowboycoders.cyclismo.stats.TripStatistics;
+
+import java.util.ArrayList;
 
 /**
  * A track.
- * 
+ *
  * @author Leif Hendrik Wilden
  * @author Rodrigo Damazio
  */
@@ -122,12 +122,12 @@ public class Track implements Parcelable {
   }
 
   public static final Parcelable.Creator<Track> CREATOR = new Parcelable.Creator<Track>() {
-      @Override
+    @Override
     public Track createFromParcel(Parcel in) {
       return new Track(in);
     }
 
-      @Override
+    @Override
     public Track[] newArray(int size) {
       return new Track[size];
     }
@@ -240,6 +240,6 @@ public class Track implements Parcelable {
   public void setOwner(long owner) {
     this.owner = owner;
   }
-  
-  
+
+
 }

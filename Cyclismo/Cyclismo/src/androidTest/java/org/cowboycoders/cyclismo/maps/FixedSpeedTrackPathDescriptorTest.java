@@ -42,7 +42,7 @@ import org.cowboycoders.cyclismo.util.PreferencesUtils;
 
 /**
  * Tests for the {@link DynamicSpeedTrackPathDescriptor}.
- * 
+ *
  * @author Youtao Liu
  */
 public class FixedSpeedTrackPathDescriptorTest extends AndroidTestCase {
@@ -56,18 +56,20 @@ public class FixedSpeedTrackPathDescriptorTest extends AndroidTestCase {
   }
 
   /**
-   * Tests the initialization of slowSpeed and normalSpeed in {@link DynamicSpeedTrackPathDescriptor#DynamicSpeedTrackPathDescriptor(Context)}
+   * Tests the initialization of slowSpeed and normalSpeed in {@link
+   * DynamicSpeedTrackPathDescriptor#DynamicSpeedTrackPathDescriptor(Context)}
    * .
    */
   public void testConstructor() {
-    int[] slowSpeedExpectations = { 0, 1, 99, PreferencesUtils.TRACK_COLOR_MODE_SLOW_DEFAULT };
-    int[] normalSpeedExpectations = { 0, 1, 99, PreferencesUtils.TRACK_COLOR_MODE_MEDIUM_DEFAULT };
+    int[] slowSpeedExpectations = {0, 1, 99, PreferencesUtils.TRACK_COLOR_MODE_SLOW_DEFAULT};
+    int[] normalSpeedExpectations = {0, 1, 99, PreferencesUtils.TRACK_COLOR_MODE_MEDIUM_DEFAULT};
     for (int i = 0; i < slowSpeedExpectations.length; i++) {
       PreferencesUtils.setInt(
           context, R.string.track_color_mode_slow_key, slowSpeedExpectations[i]);
       PreferencesUtils.setInt(
           context, R.string.track_color_mode_medium_key, normalSpeedExpectations[i]);
-      FixedSpeedTrackPathDescriptor fixedSpeedTrackPathDescriptor = new FixedSpeedTrackPathDescriptor(
+      FixedSpeedTrackPathDescriptor fixedSpeedTrackPathDescriptor = new
+          FixedSpeedTrackPathDescriptor(
           context);
       assertEquals(slowSpeedExpectations[i], fixedSpeedTrackPathDescriptor.getSlowSpeed());
       assertEquals(normalSpeedExpectations[i], fixedSpeedTrackPathDescriptor.getNormalSpeed());

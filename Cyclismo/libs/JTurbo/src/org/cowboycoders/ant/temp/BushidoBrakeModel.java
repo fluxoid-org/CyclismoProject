@@ -18,15 +18,16 @@
 *    along with Cyclismo.  If not, see <http://www.gnu.org/licenses/>.
 */
 package org.cowboycoders.ant.temp;
-import java.math.BigInteger;
-import org.cowboycoders.ant.utils.BigIntUtils;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
+import org.cowboycoders.ant.utils.BigIntUtils;
 import org.cowboycoders.turbotrainers.DataPacketProvider;
 import org.cowboycoders.turbotrainers.bushido.brake.CalibrationState;
 import org.fluxoid.utils.LoopingListIterator;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Model for current settings

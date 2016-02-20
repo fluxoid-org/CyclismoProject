@@ -46,7 +46,7 @@ import org.cowboycoders.cyclismo.R;
 
 /**
  * Tests the {@link UploadResultActivity}.
- * 
+ *
  * @author Youtao Liu
  */
 public class UploadResultActivityTest extends
@@ -132,13 +132,6 @@ public class UploadResultActivityTest extends
 
   /**
    * Initials a {@link SendRequest} and then initials a activity to be tested.
-   * 
-   * @param isSendMaps
-   * @param isSendFusionTables
-   * @param isSendDocs
-   * @param isMapsSuccess
-   * @param isFusionTablesSuccess
-   * @param isDocsSuccess
    */
   private void initialActivity(boolean isSendMaps, boolean isSendFusionTables, boolean isSendDocs,
       boolean isMapsSuccess, boolean isFusionTablesSuccess, boolean isDocsSuccess) {

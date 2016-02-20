@@ -4,21 +4,21 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class User implements Parcelable {
-  
+
   public User() {
-    
+
   }
-  
+
   private String name;
-  
+
   private long id = -1L;
-  
+
   private double weight = -1l;
-  
-  private byte [] settings;
-  
-  private long currentlySelectedBike = -1l; 
-  
+
+  private byte[] settings;
+
+  private long currentlySelectedBike = -1l;
+
   private User(Parcel in) {
     id = in.readLong();
     name = in.readString();
@@ -30,8 +30,8 @@ public class User implements Parcelable {
       in.readByteArray(settings);
     }
   }
-  
-  
+
+
   @Override
   public int describeContents() {
     return 0;
@@ -43,39 +43,37 @@ public class User implements Parcelable {
     dest.writeString(name);
     dest.writeDouble(weight);
     dest.writeLong(currentlySelectedBike);
-    
+
     dest.writeInt(settings == null ? 0 : settings.length);
     if (settings != null) {
       dest.writeByteArray(settings);
     }
 
   }
-  
+
   public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
     @Override
-  public User createFromParcel(Parcel in) {
-    return new User(in);
-  }
+    public User createFromParcel(Parcel in) {
+      return new User(in);
+    }
 
     @Override
-  public User[] newArray(int size) {
-    return new User[size];
-  }
+    public User[] newArray(int size) {
+      return new User[size];
+    }
 
-    
-};
-  
-/**
- * User name
- * @return
- */
+
+  };
+
+  /**
+   * User name
+   */
   public String getName() {
     return name;
   }
 
   /**
    * Username
-   * @param name
    */
   public void setName(String name) {
     this.name = name;
@@ -83,6 +81,7 @@ public class User implements Parcelable {
 
   /**
    * Weight in kg
+   *
    * @return weight
    */
   public double getWeight() {
@@ -91,7 +90,6 @@ public class User implements Parcelable {
 
   /**
    * Weight in kg
-   * @param weight
    */
   public void setWeight(double weight) {
     this.weight = weight;
@@ -116,13 +114,13 @@ public class User implements Parcelable {
   public void setCurrentlySelectedBike(long currentlySelectedBike) {
     this.currentlySelectedBike = currentlySelectedBike;
   }
-  
-  public byte [] getSettings() {
+
+  public byte[] getSettings() {
     return settings;
   }
-  
-  public void setSettings(byte [] newSettings) {
+
+  public void setSettings(byte[] newSettings) {
     this.settings = newSettings;
   }
-  
+
 }

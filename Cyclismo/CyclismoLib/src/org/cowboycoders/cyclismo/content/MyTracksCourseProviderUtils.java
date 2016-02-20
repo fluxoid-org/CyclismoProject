@@ -54,7 +54,7 @@ import java.util.NoSuchElementException;
 
 /**
  * {@link MyTracksProviderUtils} implementation.
- * 
+ *
  * @author Leif Hendrik Wilden
  */
 public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
@@ -95,7 +95,8 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
     int minLonIndex = cursor.getColumnIndexOrThrow(CourseTracksColumns.MINLON);
     int maxLonIndex = cursor.getColumnIndexOrThrow(CourseTracksColumns.MAXLON);
     int totalWorkDoneIndex = cursor.getColumnIndexOrThrow(CourseTracksColumns.TOTALWORKDONE);
-    int totalCrankRotationsIndex = cursor.getColumnIndexOrThrow(CourseTracksColumns.TOTALCRANKROTATIONS);
+    int totalCrankRotationsIndex = cursor.getColumnIndexOrThrow(CourseTracksColumns
+        .TOTALCRANKROTATIONS);
     int totalHeartBeatsIndex = cursor.getColumnIndexOrThrow(CourseTracksColumns.TOTALHEARTBEATS);
     int maxSpeedIndex = cursor.getColumnIndexOrThrow(CourseTracksColumns.MAXSPEED);
     int minElevationIndex = cursor.getColumnIndexOrThrow(CourseTracksColumns.MINELEVATION);
@@ -205,16 +206,18 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
   public void deleteTrack(long trackId) {
     Track track = getTrack(trackId);
     if (track != null) {
-      String where = CourseTrackPointsColumns._ID + ">=? AND " + CourseTrackPointsColumns._ID + "<=?";
-      String[] selectionArgs = new String[] {
-          Long.toString(track.getStartId()), Long.toString(track.getStopId()) };
+      String where = CourseTrackPointsColumns._ID + ">=? AND " + CourseTrackPointsColumns._ID +
+          "<=?";
+      String[] selectionArgs = new String[]{
+          Long.toString(track.getStartId()), Long.toString(track.getStopId())};
       contentResolver.delete(CourseTrackPointsColumns.CONTENT_URI, where, selectionArgs);
     }
-    contentResolver.delete(CourseWaypointsColumns.CONTENT_URI, CourseWaypointsColumns.TRACKID + "=?",
-        new String[] { Long.toString(trackId) });
+    contentResolver.delete(CourseWaypointsColumns.CONTENT_URI, CourseWaypointsColumns.TRACKID +
+            "=?",
+        new String[]{Long.toString(trackId)});
     // Delete tracks last since it triggers a database vaccum call
     contentResolver.delete(CourseTracksColumns.CONTENT_URI, CourseTracksColumns._ID + "=?",
-        new String[] { Long.toString(trackId) });
+        new String[]{Long.toString(trackId)});
   }
 
   @Override
@@ -237,7 +240,8 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
   public Track getLastTrack() {
     Cursor cursor = null;
     try {
-      String selection = CourseTracksColumns._ID + "=(select max(" + CourseTracksColumns._ID + ") from "
+      String selection = CourseTracksColumns._ID + "=(select max(" + CourseTracksColumns._ID + ")" +
+          " from "
           + CourseTracksColumns.TABLE_NAME + ")";
       cursor = getTrackCursor(null, selection, null, CourseTracksColumns._ID);
       if (cursor != null && cursor.moveToNext()) {
@@ -259,7 +263,7 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
     Cursor cursor = null;
     try {
       cursor = getTrackCursor(null, CourseTracksColumns._ID + "=?",
-          new String[] { Long.toString(trackId) }, CourseTracksColumns._ID);
+          new String[]{Long.toString(trackId)}, CourseTracksColumns._ID);
       if (cursor != null && cursor.moveToNext()) {
         return createTrack(cursor);
       }
@@ -299,7 +303,7 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
   @Override
   public void updateTrack(Track track) {
     contentResolver.update(CourseTracksColumns.CONTENT_URI, createContentValues(track),
-        CourseTracksColumns._ID + "=?", new String[] { Long.toString(track.getId()) });
+        CourseTracksColumns._ID + "=?", new String[]{Long.toString(track.getId())});
   }
 
   private ContentValues createContentValues(Track track) {
@@ -344,7 +348,7 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
 
   /**
    * Gets a track cursor.
-   * 
+   *
    * @param projection the projection
    * @param selection the selection
    * @param selectionArgs the selection arguments
@@ -381,7 +385,8 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
     int totalTimeIndex = cursor.getColumnIndexOrThrow(CourseWaypointsColumns.TOTALTIME);
     int movingTimeIndex = cursor.getColumnIndexOrThrow(CourseWaypointsColumns.MOVINGTIME);
     int totalWorkDoneIndex = cursor.getColumnIndexOrThrow(CourseWaypointsColumns.TOTALWORKDONE);
-    int totalCrankRotationsIndex = cursor.getColumnIndexOrThrow(CourseWaypointsColumns.TOTALCRANKROTATIONS);
+    int totalCrankRotationsIndex = cursor.getColumnIndexOrThrow(CourseWaypointsColumns
+        .TOTALCRANKROTATIONS);
     int totalHeartBeatsIndex = cursor.getColumnIndexOrThrow(CourseWaypointsColumns.TOTALHEARTBEATS);
     int maxSpeedIndex = cursor.getColumnIndexOrThrow(CourseWaypointsColumns.MAXSPEED);
     int minElevationIndex = cursor.getColumnIndexOrThrow(CourseWaypointsColumns.MINELEVATION);
@@ -526,7 +531,7 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
       }
     }
     contentResolver.delete(CourseWaypointsColumns.CONTENT_URI, CourseWaypointsColumns._ID + "=?",
-        new String[] { Long.toString(waypointId) });
+        new String[]{Long.toString(waypointId)});
   }
 
   @Override
@@ -536,8 +541,8 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
     }
     Cursor cursor = null;
     try {
-      cursor = getWaypointCursor(new String[] { CourseWaypointsColumns._ID },
-          CourseWaypointsColumns.TRACKID + "=?", new String[] { Long.toString(trackId) },
+      cursor = getWaypointCursor(new String[]{CourseWaypointsColumns._ID},
+          CourseWaypointsColumns.TRACKID + "=?", new String[]{Long.toString(trackId)},
           CourseWaypointsColumns._ID, 1);
       if (cursor != null && cursor.moveToFirst()) {
         return cursor.getLong(cursor.getColumnIndexOrThrow(CourseWaypointsColumns._ID));
@@ -557,10 +562,12 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
     }
     Cursor cursor = null;
     try {
-      String selection = CourseWaypointsColumns.TRACKID + "=? AND " + CourseWaypointsColumns.TYPE + "="
+      String selection = CourseWaypointsColumns.TRACKID + "=? AND " + CourseWaypointsColumns.TYPE
+          + "="
           + Waypoint.TYPE_STATISTICS;
-      String[] selectionArgs = new String[] { Long.toString(trackId) };
-      cursor = getWaypointCursor(null, selection, selectionArgs, CourseWaypointsColumns._ID + " DESC", 1);
+      String[] selectionArgs = new String[]{Long.toString(trackId)};
+      cursor = getWaypointCursor(null, selection, selectionArgs, CourseWaypointsColumns._ID + " " +
+          "DESC", 1);
       if (cursor != null && cursor.moveToFirst()) {
         return createWaypoint(cursor);
       }
@@ -579,11 +586,13 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
     }
     Cursor cursor = null;
     try {
-      String[] projection = { CourseWaypointsColumns._ID };
-      String selection = CourseWaypointsColumns.TRACKID + "=?  AND " + CourseWaypointsColumns.TYPE + "=?";
+      String[] projection = {CourseWaypointsColumns._ID};
+      String selection = CourseWaypointsColumns.TRACKID + "=?  AND " + CourseWaypointsColumns
+          .TYPE + "=?";
       int type = statistics ? Waypoint.TYPE_STATISTICS : Waypoint.TYPE_WAYPOINT;
-      String[] selectionArgs = new String[] { Long.toString(trackId), Integer.toString(type) };
-      cursor = getWaypointCursor(projection, selection, selectionArgs, CourseWaypointsColumns._ID, 0);
+      String[] selectionArgs = new String[]{Long.toString(trackId), Integer.toString(type)};
+      cursor = getWaypointCursor(projection, selection, selectionArgs, CourseWaypointsColumns
+          ._ID, 0);
       if (cursor != null) {
         int count = cursor.getCount();
         /*
@@ -608,7 +617,7 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
     Cursor cursor = null;
     try {
       cursor = getWaypointCursor(null, CourseWaypointsColumns._ID + "=?",
-          new String[] { Long.toString(waypointId) }, CourseWaypointsColumns._ID, 0);
+          new String[]{Long.toString(waypointId)}, CourseWaypointsColumns._ID, 0);
       if (cursor != null && cursor.moveToFirst()) {
         return createWaypoint(cursor);
       }
@@ -636,24 +645,27 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
     String[] selectionArgs;
     if (minWaypointId >= 0) {
       selection = CourseWaypointsColumns.TRACKID + "=? AND " + CourseWaypointsColumns._ID + ">=?";
-      selectionArgs = new String[] { Long.toString(trackId), Long.toString(minWaypointId) };
+      selectionArgs = new String[]{Long.toString(trackId), Long.toString(minWaypointId)};
     } else {
       selection = CourseWaypointsColumns.TRACKID + "=?";
-      selectionArgs = new String[] { Long.toString(trackId) };
+      selectionArgs = new String[]{Long.toString(trackId)};
     }
-    return getWaypointCursor(null, selection, selectionArgs, CourseWaypointsColumns._ID, maxWaypoints);
+    return getWaypointCursor(null, selection, selectionArgs, CourseWaypointsColumns._ID,
+        maxWaypoints);
   }
 
   @Override
   public Uri insertWaypoint(Waypoint waypoint) {
     waypoint.setId(-1L);
-    return contentResolver.insert(CourseWaypointsColumns.CONTENT_URI, createContentValues(waypoint));
+    return contentResolver.insert(CourseWaypointsColumns.CONTENT_URI, createContentValues
+        (waypoint));
   }
 
   @Override
   public boolean updateWaypoint(Waypoint waypoint) {
-    int rows = contentResolver.update(CourseWaypointsColumns.CONTENT_URI, createContentValues(waypoint),
-        CourseWaypointsColumns._ID + "=?", new String[] { Long.toString(waypoint.getId()) });
+    int rows = contentResolver.update(CourseWaypointsColumns.CONTENT_URI, createContentValues
+            (waypoint),
+        CourseWaypointsColumns._ID + "=?", new String[]{Long.toString(waypoint.getId())});
     return rows == 1;
   }
 
@@ -703,7 +715,8 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
       values.put(CourseWaypointsColumns.AVGSPEED, tripStatistics.getAverageSpeed());
       values.put(CourseWaypointsColumns.AVGMOVINGSPEED, tripStatistics.getAverageMovingSpeed());
       values.put(CourseWaypointsColumns.TOTALWORKDONE, tripStatistics.getTotalWorkDone());
-      values.put(CourseWaypointsColumns.TOTALCRANKROTATIONS, tripStatistics.getTotalCrankRotations());
+      values.put(CourseWaypointsColumns.TOTALCRANKROTATIONS, tripStatistics
+          .getTotalCrankRotations());
       values.put(CourseWaypointsColumns.TOTALHEARTBEATS, tripStatistics.getTotalHeartBeats());
       values.put(CourseWaypointsColumns.MAXSPEED, tripStatistics.getMaxSpeed());
       values.put(CourseWaypointsColumns.MINELEVATION, tripStatistics.getMinElevation());
@@ -718,10 +731,11 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
   private Waypoint getNextStatisticsWaypointAfter(Waypoint waypoint) {
     Cursor cursor = null;
     try {
-      String selection = CourseWaypointsColumns._ID + ">?  AND " + CourseWaypointsColumns.TRACKID + "=? AND "
+      String selection = CourseWaypointsColumns._ID + ">?  AND " + CourseWaypointsColumns.TRACKID
+          + "=? AND "
           + CourseWaypointsColumns.TYPE + "=" + Waypoint.TYPE_STATISTICS;
-      String[] selectionArgs = new String[] {
-          Long.toString(waypoint.getId()), Long.toString(waypoint.getTrackId()) };
+      String[] selectionArgs = new String[]{
+          Long.toString(waypoint.getId()), Long.toString(waypoint.getTrackId())};
       cursor = getWaypointCursor(null, selection, selectionArgs, CourseWaypointsColumns._ID, 1);
       if (cursor != null && cursor.moveToFirst()) {
         return createWaypoint(cursor);
@@ -736,7 +750,7 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
 
   /**
    * Gets a waypoint cursor.
-   * 
+   *
    * @param projection the projection
    * @param selection the selection
    * @param selectionArgs the selection args
@@ -781,11 +795,13 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
     }
     Cursor cursor = null;
     try {
-      String selection = CourseTrackPointsColumns._ID + "=(select min(" + CourseTrackPointsColumns._ID
-          + ") from " + CourseTrackPointsColumns.TABLE_NAME + " WHERE " + CourseTrackPointsColumns.TRACKID
+      String selection = CourseTrackPointsColumns._ID + "=(select min(" +
+          CourseTrackPointsColumns._ID
+          + ") from " + CourseTrackPointsColumns.TABLE_NAME + " WHERE " +
+          CourseTrackPointsColumns.TRACKID
           + "=?)";
-      String[] selectionArgs = new String[] { Long.toString(trackId) };
-      cursor = getTrackPointCursor(new String[] { CourseTrackPointsColumns._ID }, selection,
+      String[] selectionArgs = new String[]{Long.toString(trackId)};
+      cursor = getTrackPointCursor(new String[]{CourseTrackPointsColumns._ID}, selection,
           selectionArgs, CourseTrackPointsColumns._ID);
       if (cursor != null && cursor.moveToFirst()) {
         return cursor.getLong(cursor.getColumnIndexOrThrow(CourseTrackPointsColumns._ID));
@@ -805,11 +821,13 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
     }
     Cursor cursor = null;
     try {
-      String selection = CourseTrackPointsColumns._ID + "=(select max(" + CourseTrackPointsColumns._ID
-          + ") from " + CourseTrackPointsColumns.TABLE_NAME + " WHERE " + CourseTrackPointsColumns.TRACKID
+      String selection = CourseTrackPointsColumns._ID + "=(select max(" +
+          CourseTrackPointsColumns._ID
+          + ") from " + CourseTrackPointsColumns.TABLE_NAME + " WHERE " +
+          CourseTrackPointsColumns.TRACKID
           + "=?)";
-      String[] selectionArgs = new String[] { Long.toString(trackId) };
-      cursor = getTrackPointCursor(new String[] { CourseTrackPointsColumns._ID }, selection,
+      String[] selectionArgs = new String[]{Long.toString(trackId)};
+      cursor = getTrackPointCursor(new String[]{CourseTrackPointsColumns._ID}, selection,
           selectionArgs, CourseTrackPointsColumns._ID);
       if (cursor != null && cursor.moveToFirst()) {
         return cursor.getLong(cursor.getColumnIndexOrThrow(CourseTrackPointsColumns._ID));
@@ -827,16 +845,19 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
     if (trackId < 0) {
       return null;
     }
-    String selection = CourseTrackPointsColumns._ID + "=(select max(" + CourseTrackPointsColumns._ID + ") from "
-        + CourseTrackPointsColumns.TABLE_NAME + " WHERE " + CourseTrackPointsColumns.TRACKID + "=? AND "
+    String selection = CourseTrackPointsColumns._ID + "=(select max(" + CourseTrackPointsColumns
+        ._ID + ") from "
+        + CourseTrackPointsColumns.TABLE_NAME + " WHERE " + CourseTrackPointsColumns.TRACKID +
+        "=? AND "
         + CourseTrackPointsColumns.LATITUDE + "<=" + MAX_LATITUDE + ")";
-    String[] selectionArgs = new String[] { Long.toString(trackId) };
+    String[] selectionArgs = new String[]{Long.toString(trackId)};
     return findTrackPointBy(selection, selectionArgs);
   }
 
   @Override
   public Location getLastValidTrackPoint() {
-    String selection = CourseTrackPointsColumns._ID + "=(select max(" + CourseTrackPointsColumns._ID + ") from "
+    String selection = CourseTrackPointsColumns._ID + "=(select max(" + CourseTrackPointsColumns
+        ._ID + ") from "
         + CourseTrackPointsColumns.TABLE_NAME + " WHERE " + CourseTrackPointsColumns.LATITUDE + "<="
         + MAX_LATITUDE + ")";
     return findTrackPointBy(selection, null);
@@ -853,12 +874,13 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
     String[] selectionArgs;
     if (startTrackPointId >= 0) {
       String comparison = descending ? "<=" : ">=";
-      selection = CourseTrackPointsColumns.TRACKID + "=? AND " + CourseTrackPointsColumns._ID + comparison
+      selection = CourseTrackPointsColumns.TRACKID + "=? AND " + CourseTrackPointsColumns._ID +
+          comparison
           + "?";
-      selectionArgs = new String[] { Long.toString(trackId), Long.toString(startTrackPointId) };
+      selectionArgs = new String[]{Long.toString(trackId), Long.toString(startTrackPointId)};
     } else {
       selection = CourseTrackPointsColumns.TRACKID + "=?";
-      selectionArgs = new String[] { Long.toString(trackId) };
+      selectionArgs = new String[]{Long.toString(trackId)};
     }
 
     String sortOrder = CourseTrackPointsColumns._ID;
@@ -883,11 +905,11 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
       private Cursor cursor = getCursor(startTrackPointId);
       private final CachedTrackPointsIndexes
           indexes = cursor != null ? new CachedTrackPointsIndexes(cursor)
-              : null;
+          : null;
 
       /**
        * Gets the track point cursor.
-       * 
+       *
        * @param trackPointId the starting track point id
        */
       private Cursor getCursor(long trackPointId) {
@@ -906,12 +928,12 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
         return cursor != null;
       }
 
-        @Override
+      @Override
       public long getLocationId() {
         return lastTrackPointId;
       }
 
-        @Override
+      @Override
       public boolean hasNext() {
         if (cursor == null) {
           return false;
@@ -928,7 +950,7 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
         return true;
       }
 
-        @Override
+      @Override
       public Location next() {
         if (cursor == null) {
           throw new NoSuchElementException();
@@ -944,7 +966,7 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
         return location;
       }
 
-        @Override
+      @Override
       public void close() {
         if (cursor != null) {
           cursor.close();
@@ -952,7 +974,7 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
         }
       }
 
-        @Override
+      @Override
       public void remove() {
         throw new UnsupportedOperationException();
       }
@@ -967,7 +989,7 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
 
   /**
    * Creates the {@link ContentValues} for a {@link Location}.
-   * 
+   *
    * @param location the location
    * @param trackId the track id
    */
@@ -999,7 +1021,8 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
     if (location instanceof MyTracksLocation) {
       MyTracksLocation myTracksLocation = (MyTracksLocation) location;
       if (myTracksLocation.getSensorDataSet() != null) {
-        values.put(CourseTrackPointsColumns.SENSOR, myTracksLocation.getSensorDataSet().toByteArray());
+        values.put(CourseTrackPointsColumns.SENSOR, myTracksLocation.getSensorDataSet()
+            .toByteArray());
       }
     }
     return values;
@@ -1007,7 +1030,7 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
 
   /**
    * Fills a track point from a cursor.
-   * 
+   *
    * @param cursor the cursor pointing to a location.
    * @param indexes the cached track points indexes
    * @param location the track point
@@ -1064,7 +1087,7 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
 
   /**
    * Gets a track point cursor.
-   * 
+   *
    * @param projection the projection
    * @param selection the selection
    * @param selectionArgs the selection arguments
@@ -1105,15 +1128,14 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
 
   /**
    * Sets the default cursor batch size. For testing purpose.
-   * 
+   *
    * @param defaultCursorBatchSize the default cursor batch size
    */
   void setDefaultCursorBatchSize(int defaultCursorBatchSize) {
     this.defaultCursorBatchSize = defaultCursorBatchSize;
   }
-  
-  
-  
+
+
   /**
    * A factory which can produce instances of {@link MyTracksProviderUtils}, and
    * can be overridden for testing.
@@ -1123,7 +1145,7 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
     /**
      * Creates an instance of {@link MyTracksProviderUtils}. Allows subclasses
      * to override for testing.
-     * 
+     *
      * @param context the context
      */
     public MyTracksProviderUtils newForContext(Context context) {
@@ -1136,6 +1158,6 @@ public class MyTracksCourseProviderUtils implements MyTracksProviderUtils {
     //TODO: add preferences associated with this provider course_id etc
     // in the current use case this doesn't matter.
     return false;
-    
+
   }
 }

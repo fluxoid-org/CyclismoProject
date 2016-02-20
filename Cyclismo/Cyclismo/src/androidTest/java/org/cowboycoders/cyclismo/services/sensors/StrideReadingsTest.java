@@ -40,17 +40,17 @@ import junit.framework.TestCase;
  * @author Dominik Rottsches
  */
 public class StrideReadingsTest extends TestCase {
-  
+
   public void testNoReadingOnStartup() {
     StrideReadings strideReadings = new StrideReadings();
     assertEquals(StrideReadings.CADENCE_NOT_AVAILABLE, strideReadings.getCadence());
   }
-  
+
   public void testAverageCadenceAvailable() {
     StrideReadings strideReadings = new StrideReadings();
     // 2 steps / second => Cadence is 120 / minute
     for (int i = 1; i <= 30; i++) {
-      strideReadings.updateStrideReading(i*2);
+      strideReadings.updateStrideReading(i * 2);
       if (i >= StrideReadings.MIN_READINGS_FOR_AVERAGE) {
         assertEquals(120, strideReadings.getCadence());
       } else {
@@ -58,7 +58,7 @@ public class StrideReadingsTest extends TestCase {
       }
     }
   }
-  
+
   /**
    * Tests for correct calculation after rolling over at 128 strides,
    * just like the HxM seems to do it.
