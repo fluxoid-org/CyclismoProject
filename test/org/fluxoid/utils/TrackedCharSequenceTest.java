@@ -19,10 +19,9 @@
 */
 package org.fluxoid.utils;
 
-import static org.junit.Assert.*;
-
-import org.fluxoid.utils.TrackedCharSequence;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class TrackedCharSequenceTest {
 

@@ -19,8 +19,8 @@
 */
 package org.fluxoid.utils;
 
-import static org.junit.Assert.*;
-import static org.fluxoid.utils.PolyLineUtils.*;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,10 +29,10 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 
-import org.fluxoid.utils.DecodeException;
-import org.fluxoid.utils.LatLong;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.fluxoid.utils.PolyLineUtils.decode;
+import static org.fluxoid.utils.PolyLineUtils.encode;
+import static org.fluxoid.utils.PolyLineUtils.logger;
+import static org.junit.Assert.assertEquals;
 
 public class PolyLineUtilsTest {
 	
