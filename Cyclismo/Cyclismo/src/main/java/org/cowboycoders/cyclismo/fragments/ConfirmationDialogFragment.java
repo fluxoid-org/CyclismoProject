@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 
@@ -13,14 +14,13 @@ import org.cowboycoders.cyclismo.util.DialogUtils;
 
 public class ConfirmationDialogFragment extends DialogFragment {
 
-  public static final String TAG = "confirmationDialog";
-  //private static final String CALLBACK_KEY = "callbackKey";
-  
-  
-  public interface DialogCallback{
-    public void onConfirm(Context context);
-    public CharSequence getConfirmationMessage(Context context);
-    public void onFinish(Context context);
+  public static final String TAG = ConfirmationDialogFragment.class.getSimpleName();
+  private static final String CALLBACK_KEY = "callbackKey";
+
+  public interface DialogCallback extends Parcelable {
+    void onConfirm(Context context);
+    CharSequence getConfirmationMessage(Context context);
+    void onFinish(Context context);
   }
 
   private FragmentActivity activity;
@@ -30,7 +30,7 @@ public class ConfirmationDialogFragment extends DialogFragment {
   @Override
   public void onAttach(Activity anActivity) {
     super.onAttach(anActivity);
-    //callback = getArguments().getParcelable(CALLBACK_KEY);
+    callback = getArguments().getParcelable(CALLBACK_KEY);
     confirmationMessage = callback.getConfirmationMessage(anActivity);
   }
 
@@ -57,17 +57,11 @@ public class ConfirmationDialogFragment extends DialogFragment {
     if (callback == null) {
       throw new IllegalArgumentException("callback cannot be null");
     }
-//    Bundle bundle = new Bundle();
-//    bundle.putParcelable(CALLBACK_KEY, callback);
-    ConfirmationDialogFragment confirmationDialogFragment = new ConfirmationDialogFragment(callback);
-    //confirmationDialogFragment.setArguments(bundle);
+    Bundle bundle = new Bundle();
+    bundle.putParcelable(CALLBACK_KEY, callback);
+    ConfirmationDialogFragment confirmationDialogFragment = new ConfirmationDialogFragment();
+    confirmationDialogFragment.setArguments(bundle);
     return confirmationDialogFragment;
   }
-  
-  
-  public ConfirmationDialogFragment(DialogCallback callback) {
-    this.callback = callback;
-  }
-  
 
 }
