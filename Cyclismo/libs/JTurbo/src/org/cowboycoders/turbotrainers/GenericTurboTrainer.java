@@ -45,7 +45,7 @@ public abstract class GenericTurboTrainer implements TurboTrainerInterface {
 	/**
 	 * Weak set
 	 */
-	protected Set<TurboTrainerDataListener> dataChangeListeners = Collections
+	protected final Set<TurboTrainerDataListener> dataChangeListeners = Collections
 				.newSetFromMap(new WeakHashMap<TurboTrainerDataListener, Boolean>());
 
 	protected Set<TurboTrainerDataListener> getDataChangeListeners() {

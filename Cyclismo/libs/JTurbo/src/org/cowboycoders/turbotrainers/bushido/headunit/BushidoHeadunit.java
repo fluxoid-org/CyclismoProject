@@ -88,7 +88,7 @@ public class BushidoHeadunit extends AntTurboTrainer {
 //  private static final MessageCondition AntUtils.CONDITION_CHANNEL_TX = 
 //      MessageConditionFactory.newResponseCondition(MessageId.EVENT, ResponseCode.EVENT_TX);
   
-  private ArrayList<BroadcastListener<? extends ChannelMessage>> listeners = 
+  private final ArrayList<BroadcastListener<? extends ChannelMessage>> listeners =
       new ArrayList<BroadcastListener<? extends ChannelMessage>>();
   
   private Node node;
@@ -112,7 +112,7 @@ public class BushidoHeadunit extends AntTurboTrainer {
   /**
    * Weak set 
    */
-  private Set<BushidoButtonPressListener> buttonPressListeners = Collections.newSetFromMap(new WeakHashMap<BushidoButtonPressListener,Boolean>());
+  private final Set<BushidoButtonPressListener> buttonPressListeners = Collections.newSetFromMap(new WeakHashMap<BushidoButtonPressListener,Boolean>());
   
   
   boolean distanceUpdated = false;
@@ -157,7 +157,7 @@ public class BushidoHeadunit extends AntTurboTrainer {
   
   public class BushidoUpdatesListener implements BushidoInternalListener {
     
-    private AbstractBushidoModel data;
+    private final AbstractBushidoModel data;
         
     /**
      * Only route responses through this member

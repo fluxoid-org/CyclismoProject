@@ -192,7 +192,7 @@ public class BushidoBrakeTest {
   
   boolean send = true;
   
-  Thread sendData = new Thread() {
+  final Thread sendData = new Thread() {
     
     public void run() {
       

@@ -393,7 +393,7 @@ public class TrackRecordingServiceTest extends ServiceTestCase<TestRecordingServ
    */
   private class BlockingBroadcastReceiver extends BroadcastReceiver {
     private static final long MAX_WAIT_TIME_MS = 10000;
-    private List<Intent> receivedIntents = new ArrayList<Intent>();
+    private final List<Intent> receivedIntents = new ArrayList<Intent>();
 
     public List<Intent> getReceivedIntents() {
       return receivedIntents;

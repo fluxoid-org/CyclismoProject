@@ -20,7 +20,7 @@ public class PidController implements PidParameterController {
 	private double elapsedTime;
 	private ProcessVariableProvider processVariable;
 	private OutputController output;
-	private Set<PidUpdateListener> listeners = new HashSet<PidUpdateListener>();
+	private final Set<PidUpdateListener> listeners = new HashSet<PidUpdateListener>();
 	private GainController gainController;
 	
 	
