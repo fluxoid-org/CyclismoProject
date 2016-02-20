@@ -44,7 +44,7 @@ import org.cowboycoders.cyclismo.io.sendtogoogle.UploadResultActivity;
 
 /**
  * Tests the {@link SendMapsActivity}.
- * 
+ *
  * @author Youtao Liu
  */
 public class SendMapsActivityTest extends AndroidTestCase {
@@ -75,14 +75,14 @@ public class SendMapsActivityTest extends AndroidTestCase {
    * Tests the method
    * {@link SendMapsActivity#getNextClass(SendRequest, boolean)}. Sets the flags
    * of "sendFusionTables","sendDocs" and "cancel" to false, true and false.
-  */
+   */
   public void testGetNextClass_notCancelSendDocs() {
     sendRequest.setSendFusionTables(false);
     sendRequest.setSendDocs(true);
     Class<?> next = sendMapsActivity.getNextClass(sendRequest, false);
     assertEquals(SendDocsActivity.class, next);
   }
-  
+
   /**
    * Tests the method
    * {@link SendMapsActivity#getNextClass(SendRequest, boolean)}. Sets the flags

@@ -18,16 +18,16 @@
 *    along with Cyclismo.  If not, see <http://www.gnu.org/licenses/>.
 */
 package org.fluxoid.utils;
+
 import java.util.Iterator;
 import java.util.List;
 
 
+public class LoopingListIterator<V> implements Iterator<V> {
 
-public class LoopingListIterator <V> implements Iterator<V>{
-  
   private List<V> list;
   private int currentIndex = 0;
-  
+
   private int getCurrentIndex() {
     int index = currentIndex;
     currentIndex++;
@@ -36,9 +36,8 @@ public class LoopingListIterator <V> implements Iterator<V>{
     }
     return index;
   }
-  
+
   /**
-   * 
    * @param list to iterate on
    */
   public LoopingListIterator(List<V> list) {
@@ -58,7 +57,7 @@ public class LoopingListIterator <V> implements Iterator<V>{
   @Override
   public void remove() {
     throw new UnsupportedOperationException();
-    
+
   }
 
 }

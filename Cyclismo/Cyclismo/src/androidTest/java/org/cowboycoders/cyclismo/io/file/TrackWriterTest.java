@@ -63,10 +63,10 @@ public class TrackWriterTest extends AndroidTestCase {
      * Constructor.
      *
      * @param stream the stream to return from
-     *        {@link TrackWriterImpl#newOutputStream}, or null to throw a
-     *        {@link FileNotFoundException}
+     * {@link TrackWriterImpl#newOutputStream}, or null to throw a
+     * {@link FileNotFoundException}
      * @param canWrite the value that {@link TrackWriterImpl#canWriteFile} will
-     *        return
+     * return
      */
     private OpenFileTrackWriter(Context context,
         MyTracksProviderUtils providerUtils, Track track,
@@ -76,7 +76,7 @@ public class TrackWriterTest extends AndroidTestCase {
 
       this.stream = stream;
       this.canWrite = canWrite;
-      
+
       // The directory is set in the canWriteFile. However, this class
       // overwrites canWriteFile, thus needs to set it.
       setDirectory(new File("/"));
@@ -262,7 +262,7 @@ public class TrackWriterTest extends AndroidTestCase {
   public void testWriteDocument_oneInvalidLocation() throws Exception {
     writer = new TrackWriterImpl(getContext(), providerUtils, track, formatWriter);
 
-    Location[] locs = { new Location("fake0") };
+    Location[] locs = {new Location("fake0")};
     fillLocations(locs);
 
     // Make location invalid
@@ -294,7 +294,7 @@ public class TrackWriterTest extends AndroidTestCase {
         new Location("fake4"),
         new Location("fake5")
     };
-    Waypoint[] wps = { new Waypoint(), new Waypoint(), new Waypoint() };
+    Waypoint[] wps = {new Waypoint(), new Waypoint(), new Waypoint()};
 
     // Fill locations with valid values
     fillLocations(locs);
@@ -303,7 +303,7 @@ public class TrackWriterTest extends AndroidTestCase {
     locs[2].setLatitude(100);
 
     assertEquals(locs.length, providerUtils.bulkInsertTrackPoint(locs, locs.length, TRACK_ID));
-    for (int i = 0;  i < wps.length; ++i) {
+    for (int i = 0; i < wps.length; ++i) {
       Waypoint wpt = wps[i];
       wpt.setTrackId(TRACK_ID);
       assertNotNull(providerUtils.insertWaypoint(wpt));

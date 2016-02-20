@@ -8,7 +8,8 @@ import android.net.Uri;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CyclimsoProviderUtilsImpl extends MyTracksProviderUtilsImpl implements CyclismoProviderUtils {
+public class CyclimsoProviderUtilsImpl extends MyTracksProviderUtilsImpl implements
+    CyclismoProviderUtils {
 
   public CyclimsoProviderUtilsImpl(ContentResolver contentResolver) {
     super(contentResolver);
@@ -16,10 +17,10 @@ public class CyclimsoProviderUtilsImpl extends MyTracksProviderUtilsImpl impleme
 
   @Override
   public User createUser(Cursor cursor, boolean allFieldsMustBePresent) {
-  
+
     int idIndex = cursor.getColumnIndexOrThrow(UserInfoColumns._ID);
     int nameIndex;
-    int weightIndex; 
+    int weightIndex;
     int currentBikeIndex;
     int settingsIndex;
     if (allFieldsMustBePresent) {
@@ -33,7 +34,7 @@ public class CyclimsoProviderUtilsImpl extends MyTracksProviderUtilsImpl impleme
       currentBikeIndex = cursor.getColumnIndex(UserInfoColumns.CURRENT_BIKE);
       settingsIndex = cursor.getColumnIndex(UserInfoColumns.SETTINGS);
     }
-    
+
     User user = new User();
     if (!cursor.isNull(idIndex)) {
       user.setId(cursor.getLong(idIndex));
@@ -59,24 +60,23 @@ public class CyclimsoProviderUtilsImpl extends MyTracksProviderUtilsImpl impleme
     Cursor cursor = null;
     List<User> users = null;
     try {
-      String [] projection = new String[] {UserInfoColumns._ID};
+      String[] projection = new String[]{UserInfoColumns._ID};
       cursor = getUserCursor(projection, null, null, UserInfoColumns._ID);
       if (cursor != null && cursor.moveToNext()) {
-        users = getAllUsers(cursor,false);
+        users = getAllUsers(cursor, false);
       }
     } finally {
       if (cursor != null) {
         cursor.close();
       }
     }
-    
+
     if (users != null) {
       for (User user : users) {
         deleteUser(user.getId());
       }
     }
   }
-  
 
 
   private void cleanupUserDelete(long userId) {
@@ -84,56 +84,56 @@ public class CyclimsoProviderUtilsImpl extends MyTracksProviderUtilsImpl impleme
     List<Track> tracks = null;
     try {
       String selection = TracksColumns.OWNER + "=?";
-      String [] projection = new String [] {TracksColumns._ID};
-      String [] args = new String[] {Long.toString(userId)};
+      String[] projection = new String[]{TracksColumns._ID};
+      String[] args = new String[]{Long.toString(userId)};
       cursor = getTrackCursor(projection, selection, args, TracksColumns._ID);
       if (cursor != null && cursor.moveToNext()) {
-        tracks = getAllTracks(cursor,false);
+        tracks = getAllTracks(cursor, false);
       }
     } finally {
       if (cursor != null) {
         cursor.close();
       }
     }
-    
+
     if (tracks != null) {
       for (Track track : tracks) {
         deleteTrack(track.getId());
       }
     }
-    
+
     List<Bike> bikes = null;
     try {
-      String selection = BikeInfoColumns.OWNER  + "=?";
-      String [] projection = new String [] {BikeInfoColumns._ID};
-      String [] args = new String[] {Long.toString(userId)};
+      String selection = BikeInfoColumns.OWNER + "=?";
+      String[] projection = new String[]{BikeInfoColumns._ID};
+      String[] args = new String[]{Long.toString(userId)};
       cursor = getBikeCursor(projection, selection, args, BikeInfoColumns._ID);
       if (cursor != null && cursor.moveToNext()) {
-        bikes = getAllBikes(cursor,false);
+        bikes = getAllBikes(cursor, false);
       }
     } finally {
       if (cursor != null) {
         cursor.close();
       }
     }
-    
+
     if (bikes != null) {
       for (Bike bike : bikes) {
         deleteBike(bike.getId());
       }
     }
 
- 
+
   }
 
   @Override
   public void deleteUser(long userId) {
     contentResolver.delete(UserInfoColumns.CONTENT_URI, UserInfoColumns._ID + "=?",
-        new String[] { Long.toString(userId) });
+        new String[]{Long.toString(userId)});
     cleanupUserDelete(userId);
-    
+
   }
-  
+
   private List<User> getAllUsers(Cursor cursor, boolean allFieldsMustBePresent) {
     ArrayList<User> users = new ArrayList<User>();
     if (cursor != null) {
@@ -165,9 +165,9 @@ public class CyclimsoProviderUtilsImpl extends MyTracksProviderUtilsImpl impleme
     Cursor cursor = null;
     try {
       cursor = getUserCursor(null, UserInfoColumns._ID + "=?",
-          new String[] { Long.toString(userId) }, UserInfoColumns._ID);
+          new String[]{Long.toString(userId)}, UserInfoColumns._ID);
       if (cursor != null && cursor.moveToNext()) {
-        return createUser(cursor,true);
+        return createUser(cursor, true);
       }
     } finally {
       if (cursor != null) {
@@ -181,13 +181,13 @@ public class CyclimsoProviderUtilsImpl extends MyTracksProviderUtilsImpl impleme
   public Cursor getUserCursor(String selection, String[] selectionArgs, String sortOrder) {
     return getUserCursor(null, selection, selectionArgs, sortOrder);
   }
-  
+
   private Cursor getUserCursor(
       String[] projection, String selection, String[] selectionArgs, String sortOrder) {
     return contentResolver.query(
         UserInfoColumns.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
   }
-  
+
   private ContentValues createContentValues(User user) {
     ContentValues values = new ContentValues();
 
@@ -198,8 +198,8 @@ public class CyclimsoProviderUtilsImpl extends MyTracksProviderUtilsImpl impleme
     values.put(UserInfoColumns.NAME, user.getName());
     values.put(UserInfoColumns.WEIGHT, user.getWeight());
     values.put(UserInfoColumns.CURRENT_BIKE, user.getCurrentlySelectedBike());
-    values.put(UserInfoColumns.SETTINGS,user.getSettings());
-    
+    values.put(UserInfoColumns.SETTINGS, user.getSettings());
+
     return values;
   }
 
@@ -208,7 +208,7 @@ public class CyclimsoProviderUtilsImpl extends MyTracksProviderUtilsImpl impleme
     validateUser(user);
     return contentResolver.insert(UserInfoColumns.CONTENT_URI, createContentValues(user));
   }
-  
+
   protected void validateUser(User user) {
     if (user.getName() == null) {
       throw new IllegalArgumentException("user must have a name");
@@ -222,14 +222,14 @@ public class CyclimsoProviderUtilsImpl extends MyTracksProviderUtilsImpl impleme
   public void updateUser(User user) {
     validateUser(user);
     contentResolver.update(UserInfoColumns.CONTENT_URI, createContentValues(user),
-        UserInfoColumns._ID + "=?", new String[] { Long.toString(user.getId()) });
+        UserInfoColumns._ID + "=?", new String[]{Long.toString(user.getId())});
   }
 
   @Override
   public Bike createBike(Cursor cursor, boolean allFieldsMustBePresent) {
     int idIndex = cursor.getColumnIndexOrThrow(BikeInfoColumns._ID);
     int nameIndex;
-    int weightIndex; 
+    int weightIndex;
     int sharedIndex;
     int ownerIndex;
     if (allFieldsMustBePresent) {
@@ -243,7 +243,7 @@ public class CyclimsoProviderUtilsImpl extends MyTracksProviderUtilsImpl impleme
       sharedIndex = cursor.getColumnIndex(BikeInfoColumns.SHARED);
       ownerIndex = cursor.getColumnIndex(BikeInfoColumns.OWNER);
     }
-    
+
     Bike bike = new Bike();
     if (!cursor.isNull(idIndex)) {
       bike.setId(cursor.getLong(idIndex));
@@ -254,7 +254,7 @@ public class CyclimsoProviderUtilsImpl extends MyTracksProviderUtilsImpl impleme
     if (weightIndex > 0 && !cursor.isNull(weightIndex)) {
       bike.setWeight(cursor.getFloat(weightIndex));
     }
-    
+
     if (sharedIndex > 0 && !cursor.isNull(sharedIndex)) {
       bike.setShared(cursor.getInt(sharedIndex));
     }
@@ -269,50 +269,49 @@ public class CyclimsoProviderUtilsImpl extends MyTracksProviderUtilsImpl impleme
   public void deleteAllBikes() {
     contentResolver.delete(BikeInfoColumns.CONTENT_URI, null, null);
   }
-  
+
   @Override
   public void deleteAllBikes(User user) {
     if (user == null) {
       throw new NullPointerException("user cannot be null");
     }
-    String selection = BikeInfoColumns.OWNER  + "=?";
-    String [] args = new String[] {Long.toString(user.getId())};
+    String selection = BikeInfoColumns.OWNER + "=?";
+    String[] args = new String[]{Long.toString(user.getId())};
     contentResolver.delete(BikeInfoColumns.CONTENT_URI, selection, args);
   }
 
   @Override
   public void deleteBike(long bikeId) {
     contentResolver.delete(BikeInfoColumns.CONTENT_URI, BikeInfoColumns._ID + "=?",
-        new String[] { Long.toString(bikeId) });
-    
+        new String[]{Long.toString(bikeId)});
+
   }
 
   @Override
   public List<Bike> getAllBikes() {
     Cursor cursor = getBikeCursor(null, null, null, BikeInfoColumns._ID);
-    return getAllBikes(cursor,true);
+    return getAllBikes(cursor, true);
   }
-  
+
   @Override
   public List<Bike> getAllSharedBikes() {
-    String selection = BikeInfoColumns.SHARED  + "=?";
+    String selection = BikeInfoColumns.SHARED + "=?";
     // 1 true, 0 false
-    String [] args = new String[] {Integer.toString(1)};
+    String[] args = new String[]{Integer.toString(1)};
     Cursor cursor = getBikeCursor(null, selection, args, BikeInfoColumns._ID);
-    return getAllBikes(cursor,true);
+    return getAllBikes(cursor, true);
   }
-  
-  
+
+
   @Override
   public List<Bike> getAllBikes(User user) {
-    String selection = BikeInfoColumns.OWNER  + "=?";
-    String [] args = new String[] {Long.toString(user.getId())};
+    String selection = BikeInfoColumns.OWNER + "=?";
+    String[] args = new String[]{Long.toString(user.getId())};
     Cursor cursor = getBikeCursor(null, selection, args, BikeInfoColumns._ID);
-    return getAllBikes(cursor,true);
+    return getAllBikes(cursor, true);
   }
-  
-  
-  
+
+
   private List<Bike> getAllBikes(Cursor cursor, boolean allFieldsMustBePresent) {
     ArrayList<Bike> bikes = new ArrayList<Bike>();
     if (cursor != null) {
@@ -329,7 +328,7 @@ public class CyclimsoProviderUtilsImpl extends MyTracksProviderUtilsImpl impleme
     }
     return bikes;
   }
-  
+
   private Cursor getBikeCursor(
       String[] projection, String selection, String[] selectionArgs, String sortOrder) {
     return contentResolver.query(
@@ -345,9 +344,9 @@ public class CyclimsoProviderUtilsImpl extends MyTracksProviderUtilsImpl impleme
     Cursor cursor = null;
     try {
       cursor = getBikeCursor(null, BikeInfoColumns._ID + "=?",
-          new String[] { Long.toString(bikeId) }, BikeInfoColumns._ID);
+          new String[]{Long.toString(bikeId)}, BikeInfoColumns._ID);
       if (cursor != null && cursor.moveToNext()) {
-        return createBike(cursor,true);
+        return createBike(cursor, true);
       }
     } finally {
       if (cursor != null) {
@@ -356,18 +355,18 @@ public class CyclimsoProviderUtilsImpl extends MyTracksProviderUtilsImpl impleme
     }
     return null;
   }
-  
+
   private boolean validateBike(Bike bike) {
     // if unowned must be shared
     if (bike.getOwnerId() == -1L) {
-       return bike.isShared();
+      return bike.isShared();
     }
     return true;
   }
 
   @Override
   public Cursor getBikeCursor(String selection, String[] selectionArgs, String sortOrder) {
-    return getBikeCursor(null,selection, selectionArgs, sortOrder);
+    return getBikeCursor(null, selection, selectionArgs, sortOrder);
   }
 
   @Override
@@ -387,7 +386,7 @@ public class CyclimsoProviderUtilsImpl extends MyTracksProviderUtilsImpl impleme
     values.put(BikeInfoColumns.WEIGHT, bike.getWeight());
     values.put(BikeInfoColumns.SHARED, bike.isShared() ? 1 : 0);
     values.put(BikeInfoColumns.OWNER, bike.getOwnerId());
-    
+
     return values;
   }
 
@@ -395,9 +394,9 @@ public class CyclimsoProviderUtilsImpl extends MyTracksProviderUtilsImpl impleme
   public void updateBike(Bike bike) {
     if (!validateBike(bike)) throw new IllegalArgumentException("Bike did not pass validation");
     contentResolver.update(BikeInfoColumns.CONTENT_URI, createContentValues(bike),
-        BikeInfoColumns._ID + "=?", new String[] { Long.toString(bike.getId()) });
+        BikeInfoColumns._ID + "=?", new String[]{Long.toString(bike.getId())});
   }
-  
+
 
   @Override
   protected void validateTrack(Track track) {
@@ -410,10 +409,10 @@ public class CyclimsoProviderUtilsImpl extends MyTracksProviderUtilsImpl impleme
 
   @Override
   public List<Track> getAllTracks(User user) {
-    String selection = TracksColumns.OWNER  + "=?";
-    String [] args = new String[] {Long.toString(user.getId())};
+    String selection = TracksColumns.OWNER + "=?";
+    String[] args = new String[]{Long.toString(user.getId())};
     Cursor cursor = getTrackCursor(null, selection, args, TracksColumns._ID);
-    return getAllTracks(cursor,true);
+    return getAllTracks(cursor, true);
   }
 
   @Override

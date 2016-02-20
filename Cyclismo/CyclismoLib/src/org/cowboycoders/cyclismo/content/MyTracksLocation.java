@@ -77,7 +77,7 @@ public class MyTracksLocation extends Location {
   public void setId(int id) {
     this.id = id;
   }
-  
+
   public void reset() {
     super.reset();
     sensorDataSet = null;

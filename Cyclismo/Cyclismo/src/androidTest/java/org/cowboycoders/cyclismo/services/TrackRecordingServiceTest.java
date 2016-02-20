@@ -78,10 +78,10 @@ import static org.cowboycoders.cyclismo.Constants.RESUME_TRACK_EXTRA_NAME;
  *
  * @author Bartlomiej Niechwiej
  *
- * TODO: The original class, ServiceTestCase, has a few limitations, e.g.
- * it's not possible to properly shutdown the service, unless tearDown()
- * is called, which prevents from testing multiple scenarios in a single
- * test (see runFunctionTest for more details).
+ *         TODO: The original class, ServiceTestCase, has a few limitations, e.g.
+ *         it's not possible to properly shutdown the service, unless tearDown()
+ *         is called, which prevents from testing multiple scenarios in a single
+ *         test (see runFunctionTest for more details).
  */
 public class TrackRecordingServiceTest extends ServiceTestCase<TestRecordingService> {
 
@@ -162,49 +162,54 @@ public class TrackRecordingServiceTest extends ServiceTestCase<TestRecordingServ
     MyTracksProvider myTracksProvider = new MyTracksProvider();
     myTracksProvider.attachInfo(context, null);
     mockContentResolver.addProvider(MyTracksProviderUtils.AUTHORITY, myTracksProvider);
-    
+
     MockContentProvider settingsProvider = new MockContentProvider(context) {
-        @Override
+      @Override
       public Bundle call(String method, String arg, Bundle extras) {
         return null;
       }
-        @Override
+
+      @Override
       public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
           String sortOrder) {
         return null;
       }
     };
     mockContentResolver.addProvider(Settings.AUTHORITY, settingsProvider);
-    
+
     MockContentProvider googleSettingsProvider = new MockContentProvider(context) {
-        @Override
+      @Override
       public Bundle call(String method, String arg, Bundle extras) {
         return null;
       }
-        @Override
+
+      @Override
       public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
           String sortOrder) {
         MockCursor mockCursor = new MockCursor() {
-            @Override
+          @Override
           public int getCount() {
             return 1;
           }
-            @Override
+
+          @Override
           public boolean moveToNext() {
             return true;
           }
-            @Override
+
+          @Override
           public String getString(int columnIndex) {
             return MyTracksLocationManager.USE_LOCATION_FOR_SERVICES_ON;
           }
-            @Override
+
+          @Override
           public void close() {}
         };
         return mockCursor;
       }
     };
     mockContentResolver.addProvider("com.google.settings", googleSettingsProvider);
-    
+
     // Set the context
     setContext(context);
 
@@ -447,7 +452,8 @@ public class TrackRecordingServiceTest extends ServiceTestCase<TestRecordingServ
     assertNotNull(track);
     assertEquals(id, track.getId());
     assertEquals(PreferencesUtils.getString(
-        context, R.string.default_activity_key, PreferencesUtils.getDefaultActivityDefault(context)),
+            context, R.string.default_activity_key, PreferencesUtils.getDefaultActivityDefault
+                (context)),
         track.getCategory());
     assertEquals(id, PreferencesUtils.getLong(context, R.string.recording_track_id_key));
     assertEquals(id, service.getRecordingTrackId());
@@ -612,7 +618,7 @@ public class TrackRecordingServiceTest extends ServiceTestCase<TestRecordingServ
     PreferencesUtils.setInt(context, R.string.voice_frequency_key, 1);
     fullRecordingSession();
   }
-  
+
   @MediumTest
   public void testWithProperties_maxRecordingDistanceDefault() throws Exception {
     PreferencesUtils.setInt(context, R.string.max_recording_distance_key,
@@ -795,10 +801,10 @@ public class TrackRecordingServiceTest extends ServiceTestCase<TestRecordingServ
     assertTrue(tripStatistics.getStartTime() > 0);
     assertTrue(tripStatistics.getStopTime() >= tripStatistics.getStartTime());
   }
-  
+
   /**
    * Inserts a location and waits for 100ms.
-   * 
+   *
    * @param trackRecordingService the track recording service
    */
   private void insertLocation(ITrackRecordingService trackRecordingService)

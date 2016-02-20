@@ -5,9 +5,11 @@ package org.cowboycoders.cyclismo.content;
 
 public final class Sensor {
   private Sensor() {}
+
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistryLite registry) {
   }
+
   /**
    * Protobuf enum {@code org.cowboycoders.cyclismo.content.SensorState}
    *
@@ -56,8 +58,7 @@ public final class Sensor {
      * This is the only state where the sensor data can be used.
      * </pre>
      */
-    SENDING(4, 5),
-    ;
+    SENDING(4, 5),;
 
     /**
      * <code>NONE = 1;</code>
@@ -105,26 +106,33 @@ public final class Sensor {
 
     public static SensorState valueOf(int value) {
       switch (value) {
-        case 1: return NONE;
-        case 2: return CONNECTING;
-        case 3: return CONNECTED;
-        case 4: return DISCONNECTED;
-        case 5: return SENDING;
-        default: return null;
+        case 1:
+          return NONE;
+        case 2:
+          return CONNECTING;
+        case 3:
+          return CONNECTED;
+        case 4:
+          return DISCONNECTED;
+        case 5:
+          return SENDING;
+        default:
+          return null;
       }
     }
 
     public static com.google.protobuf.Internal.EnumLiteMap<SensorState>
-        internalGetValueMap() {
+    internalGetValueMap() {
       return internalValueMap;
     }
+
     private static com.google.protobuf.Internal.EnumLiteMap<SensorState>
         internalValueMap =
-          new com.google.protobuf.Internal.EnumLiteMap<SensorState>() {
-            public SensorState findValueByNumber(int number) {
-              return SensorState.valueOf(number);
-            }
-          };
+        new com.google.protobuf.Internal.EnumLiteMap<SensorState>() {
+          public SensorState findValueByNumber(int number) {
+            return SensorState.valueOf(number);
+          }
+        };
 
     private final int value;
 
@@ -139,16 +147,21 @@ public final class Sensor {
       extends com.google.protobuf.MessageLiteOrBuilder {
 
     // required .org.cowboycoders.cyclismo.content.SensorState state = 1 [default = NONE];
+
     /**
-     * <code>required .org.cowboycoders.cyclismo.content.SensorState state = 1 [default = NONE];</code>
+     * <code>required .org.cowboycoders.cyclismo.content.SensorState state = 1 [default = NONE];
+     * </code>
      */
     boolean hasState();
+
     /**
-     * <code>required .org.cowboycoders.cyclismo.content.SensorState state = 1 [default = NONE];</code>
+     * <code>required .org.cowboycoders.cyclismo.content.SensorState state = 1 [default = NONE];
+     * </code>
      */
     org.cowboycoders.cyclismo.content.Sensor.SensorState getState();
 
     // optional float value = 2;
+
     /**
      * <code>optional float value = 2;</code>
      *
@@ -157,6 +170,7 @@ public final class Sensor {
      * </pre>
      */
     boolean hasValue();
+
     /**
      * <code>optional float value = 2;</code>
      *
@@ -166,6 +180,7 @@ public final class Sensor {
      */
     float getValue();
   }
+
   /**
    * Protobuf type {@code org.cowboycoders.cyclismo.content.SensorData}
    *
@@ -181,9 +196,11 @@ public final class Sensor {
       super(builder);
 
     }
+
     private SensorData(boolean noInit) {}
 
     private static final SensorData defaultInstance;
+
     public static SensorData getDefaultInstance() {
       return defaultInstance;
     }
@@ -208,14 +225,15 @@ public final class Sensor {
               break;
             default: {
               if (!parseUnknownField(input,
-                                     extensionRegistry, tag)) {
+                  extensionRegistry, tag)) {
                 done = true;
               }
               break;
             }
             case 8: {
               int rawValue = input.readEnum();
-              org.cowboycoders.cyclismo.content.Sensor.SensorState value = org.cowboycoders.cyclismo.content.Sensor.SensorState.valueOf(rawValue);
+              org.cowboycoders.cyclismo.content.Sensor.SensorState value = org.cowboycoders
+                  .cyclismo.content.Sensor.SensorState.valueOf(rawValue);
               if (value != null) {
                 bitField0_ |= 0x00000001;
                 state_ = value;
@@ -238,15 +256,16 @@ public final class Sensor {
         makeExtensionsImmutable();
       }
     }
+
     public static com.google.protobuf.Parser<SensorData> PARSER =
         new com.google.protobuf.AbstractParser<SensorData>() {
-      public SensorData parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new SensorData(input, extensionRegistry);
-      }
-    };
+          public SensorData parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new SensorData(input, extensionRegistry);
+          }
+        };
 
     @java.lang.Override
     public com.google.protobuf.Parser<SensorData> getParserForType() {
@@ -257,14 +276,18 @@ public final class Sensor {
     // required .org.cowboycoders.cyclismo.content.SensorState state = 1 [default = NONE];
     public static final int STATE_FIELD_NUMBER = 1;
     private org.cowboycoders.cyclismo.content.Sensor.SensorState state_;
+
     /**
-     * <code>required .org.cowboycoders.cyclismo.content.SensorState state = 1 [default = NONE];</code>
+     * <code>required .org.cowboycoders.cyclismo.content.SensorState state = 1 [default = NONE];
+     * </code>
      */
     public boolean hasState() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
+
     /**
-     * <code>required .org.cowboycoders.cyclismo.content.SensorState state = 1 [default = NONE];</code>
+     * <code>required .org.cowboycoders.cyclismo.content.SensorState state = 1 [default = NONE];
+     * </code>
      */
     public org.cowboycoders.cyclismo.content.Sensor.SensorState getState() {
       return state_;
@@ -273,6 +296,7 @@ public final class Sensor {
     // optional float value = 2;
     public static final int VALUE_FIELD_NUMBER = 2;
     private float value_;
+
     /**
      * <code>optional float value = 2;</code>
      *
@@ -283,6 +307,7 @@ public final class Sensor {
     public boolean hasValue() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
+
     /**
      * <code>optional float value = 2;</code>
      *
@@ -298,7 +323,9 @@ public final class Sensor {
       state_ = org.cowboycoders.cyclismo.content.Sensor.SensorState.NONE;
       value_ = 0F;
     }
+
     private byte memoizedIsInitialized = -1;
+
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized != -1) return isInitialized == 1;
@@ -312,7 +339,7 @@ public final class Sensor {
     }
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
+        throws java.io.IOException {
       getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         output.writeEnum(1, state_.getNumber());
@@ -323,6 +350,7 @@ public final class Sensor {
     }
 
     private int memoizedSerializedSize = -1;
+
     public int getSerializedSize() {
       int size = memoizedSerializedSize;
       if (size != -1) return size;
@@ -330,17 +358,18 @@ public final class Sensor {
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeEnumSize(1, state_.getNumber());
+            .computeEnumSize(1, state_.getNumber());
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeFloatSize(2, value_);
+            .computeFloatSize(2, value_);
       }
       memoizedSerializedSize = size;
       return size;
     }
 
     private static final long serialVersionUID = 0L;
+
     @java.lang.Override
     protected java.lang.Object writeReplace()
         throws java.io.ObjectStreamException {
@@ -352,47 +381,58 @@ public final class Sensor {
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
+
     public static org.cowboycoders.cyclismo.content.Sensor.SensorData parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
+
     public static org.cowboycoders.cyclismo.content.Sensor.SensorData parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
+
     public static org.cowboycoders.cyclismo.content.Sensor.SensorData parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.cowboycoders.cyclismo.content.Sensor.SensorData parseFrom(java.io.InputStream input)
+
+    public static org.cowboycoders.cyclismo.content.Sensor.SensorData parseFrom(java.io
+        .InputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
+
     public static org.cowboycoders.cyclismo.content.Sensor.SensorData parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
-    public static org.cowboycoders.cyclismo.content.Sensor.SensorData parseDelimitedFrom(java.io.InputStream input)
+
+    public static org.cowboycoders.cyclismo.content.Sensor.SensorData parseDelimitedFrom(java.io
+        .InputStream input)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input);
     }
+
     public static org.cowboycoders.cyclismo.content.Sensor.SensorData parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
+
     public static org.cowboycoders.cyclismo.content.Sensor.SensorData parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
+
     public static org.cowboycoders.cyclismo.content.Sensor.SensorData parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -401,10 +441,14 @@ public final class Sensor {
     }
 
     public static Builder newBuilder() { return Builder.create(); }
+
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(org.cowboycoders.cyclismo.content.Sensor.SensorData prototype) {
+
+    public static Builder newBuilder(org.cowboycoders.cyclismo.content.Sensor.SensorData
+        prototype) {
       return newBuilder().mergeFrom(prototype);
     }
+
     public Builder toBuilder() { return newBuilder(this); }
 
     /**
@@ -416,7 +460,7 @@ public final class Sensor {
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageLite.Builder<
-          org.cowboycoders.cyclismo.content.Sensor.SensorData, Builder>
+            org.cowboycoders.cyclismo.content.Sensor.SensorData, Builder>
         implements org.cowboycoders.cyclismo.content.Sensor.SensorDataOrBuilder {
       // Construct using org.cowboycoders.cyclismo.content.Sensor.SensorData.newBuilder()
       private Builder() {
@@ -425,6 +469,7 @@ public final class Sensor {
 
       private void maybeForceBuilderInitialization() {
       }
+
       private static Builder create() {
         return new Builder();
       }
@@ -455,7 +500,8 @@ public final class Sensor {
       }
 
       public org.cowboycoders.cyclismo.content.Sensor.SensorData buildPartial() {
-        org.cowboycoders.cyclismo.content.Sensor.SensorData result = new org.cowboycoders.cyclismo.content.Sensor.SensorData(this);
+        org.cowboycoders.cyclismo.content.Sensor.SensorData result = new org.cowboycoders
+            .cyclismo.content.Sensor.SensorData(this);
         int from_bitField0_ = bitField0_;
         int to_bitField0_ = 0;
         if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
@@ -471,7 +517,8 @@ public final class Sensor {
       }
 
       public Builder mergeFrom(org.cowboycoders.cyclismo.content.Sensor.SensorData other) {
-        if (other == org.cowboycoders.cyclismo.content.Sensor.SensorData.getDefaultInstance()) return this;
+        if (other == org.cowboycoders.cyclismo.content.Sensor.SensorData.getDefaultInstance())
+          return this;
         if (other.hasState()) {
           setState(other.getState());
         }
@@ -483,7 +530,7 @@ public final class Sensor {
 
       public final boolean isInitialized() {
         if (!hasState()) {
-          
+
           return false;
         }
         return true;
@@ -497,7 +544,8 @@ public final class Sensor {
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.cowboycoders.cyclismo.content.Sensor.SensorData) e.getUnfinishedMessage();
+          parsedMessage = (org.cowboycoders.cyclismo.content.Sensor.SensorData) e
+              .getUnfinishedMessage();
           throw e;
         } finally {
           if (parsedMessage != null) {
@@ -506,24 +554,32 @@ public final class Sensor {
         }
         return this;
       }
+
       private int bitField0_;
 
       // required .org.cowboycoders.cyclismo.content.SensorState state = 1 [default = NONE];
-      private org.cowboycoders.cyclismo.content.Sensor.SensorState state_ = org.cowboycoders.cyclismo.content.Sensor.SensorState.NONE;
+      private org.cowboycoders.cyclismo.content.Sensor.SensorState state_ = org.cowboycoders
+          .cyclismo.content.Sensor.SensorState.NONE;
+
       /**
-       * <code>required .org.cowboycoders.cyclismo.content.SensorState state = 1 [default = NONE];</code>
+       * <code>required .org.cowboycoders.cyclismo.content.SensorState state = 1 [default =
+       * NONE];</code>
        */
       public boolean hasState() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
+
       /**
-       * <code>required .org.cowboycoders.cyclismo.content.SensorState state = 1 [default = NONE];</code>
+       * <code>required .org.cowboycoders.cyclismo.content.SensorState state = 1 [default =
+       * NONE];</code>
        */
       public org.cowboycoders.cyclismo.content.Sensor.SensorState getState() {
         return state_;
       }
+
       /**
-       * <code>required .org.cowboycoders.cyclismo.content.SensorState state = 1 [default = NONE];</code>
+       * <code>required .org.cowboycoders.cyclismo.content.SensorState state = 1 [default =
+       * NONE];</code>
        */
       public Builder setState(org.cowboycoders.cyclismo.content.Sensor.SensorState value) {
         if (value == null) {
@@ -531,21 +587,24 @@ public final class Sensor {
         }
         bitField0_ |= 0x00000001;
         state_ = value;
-        
+
         return this;
       }
+
       /**
-       * <code>required .org.cowboycoders.cyclismo.content.SensorState state = 1 [default = NONE];</code>
+       * <code>required .org.cowboycoders.cyclismo.content.SensorState state = 1 [default =
+       * NONE];</code>
        */
       public Builder clearState() {
         bitField0_ = (bitField0_ & ~0x00000001);
         state_ = org.cowboycoders.cyclismo.content.Sensor.SensorState.NONE;
-        
+
         return this;
       }
 
       // optional float value = 2;
-      private float value_ ;
+      private float value_;
+
       /**
        * <code>optional float value = 2;</code>
        *
@@ -556,6 +615,7 @@ public final class Sensor {
       public boolean hasValue() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
+
       /**
        * <code>optional float value = 2;</code>
        *
@@ -566,6 +626,7 @@ public final class Sensor {
       public float getValue() {
         return value_;
       }
+
       /**
        * <code>optional float value = 2;</code>
        *
@@ -576,9 +637,10 @@ public final class Sensor {
       public Builder setValue(float value) {
         bitField0_ |= 0x00000002;
         value_ = value;
-        
+
         return this;
       }
+
       /**
        * <code>optional float value = 2;</code>
        *
@@ -589,7 +651,7 @@ public final class Sensor {
       public Builder clearValue() {
         bitField0_ = (bitField0_ & ~0x00000002);
         value_ = 0F;
-        
+
         return this;
       }
 
@@ -608,6 +670,7 @@ public final class Sensor {
       extends com.google.protobuf.MessageLiteOrBuilder {
 
     // optional uint64 creation_time = 1 [default = 0];
+
     /**
      * <code>optional uint64 creation_time = 1 [default = 0];</code>
      *
@@ -616,6 +679,7 @@ public final class Sensor {
      * </pre>
      */
     boolean hasCreationTime();
+
     /**
      * <code>optional uint64 creation_time = 1 [default = 0];</code>
      *
@@ -626,85 +690,102 @@ public final class Sensor {
     long getCreationTime();
 
     // optional .org.cowboycoders.cyclismo.content.SensorData heart_rate = 2;
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData heart_rate = 2;</code>
      */
     boolean hasHeartRate();
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData heart_rate = 2;</code>
      */
     org.cowboycoders.cyclismo.content.Sensor.SensorData getHeartRate();
 
     // optional .org.cowboycoders.cyclismo.content.SensorData cadence = 3;
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData cadence = 3;</code>
      */
     boolean hasCadence();
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData cadence = 3;</code>
      */
     org.cowboycoders.cyclismo.content.Sensor.SensorData getCadence();
 
     // optional .org.cowboycoders.cyclismo.content.SensorData power = 4;
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData power = 4;</code>
      */
     boolean hasPower();
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData power = 4;</code>
      */
     org.cowboycoders.cyclismo.content.Sensor.SensorData getPower();
 
     // optional .org.cowboycoders.cyclismo.content.SensorData battery_level = 5;
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData battery_level = 5;</code>
      */
     boolean hasBatteryLevel();
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData battery_level = 5;</code>
      */
     org.cowboycoders.cyclismo.content.Sensor.SensorData getBatteryLevel();
 
     // optional .org.cowboycoders.cyclismo.content.SensorData speed = 6;
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData speed = 6;</code>
      */
     boolean hasSpeed();
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData speed = 6;</code>
      */
     org.cowboycoders.cyclismo.content.Sensor.SensorData getSpeed();
 
     // optional .org.cowboycoders.cyclismo.content.SensorData distance = 7;
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData distance = 7;</code>
      */
     boolean hasDistance();
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData distance = 7;</code>
      */
     org.cowboycoders.cyclismo.content.Sensor.SensorData getDistance();
 
     // optional .org.cowboycoders.cyclismo.content.SensorData power_b = 8;
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData power_b = 8;</code>
      */
     boolean hasPowerB();
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData power_b = 8;</code>
      */
     org.cowboycoders.cyclismo.content.Sensor.SensorData getPowerB();
 
     // optional .org.cowboycoders.cyclismo.content.SensorData temperature = 9;
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData temperature = 9;</code>
      */
     boolean hasTemperature();
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData temperature = 9;</code>
      */
     org.cowboycoders.cyclismo.content.Sensor.SensorData getTemperature();
   }
+
   /**
    * Protobuf type {@code org.cowboycoders.cyclismo.content.SensorDataSet}
    *
@@ -720,9 +801,11 @@ public final class Sensor {
       super(builder);
 
     }
+
     private SensorDataSet(boolean noInit) {}
 
     private static final SensorDataSet defaultInstance;
+
     public static SensorDataSet getDefaultInstance() {
       return defaultInstance;
     }
@@ -747,7 +830,7 @@ public final class Sensor {
               break;
             default: {
               if (!parseUnknownField(input,
-                                     extensionRegistry, tag)) {
+                  extensionRegistry, tag)) {
                 done = true;
               }
               break;
@@ -762,7 +845,8 @@ public final class Sensor {
               if (((bitField0_ & 0x00000002) == 0x00000002)) {
                 subBuilder = heartRate_.toBuilder();
               }
-              heartRate_ = input.readMessage(org.cowboycoders.cyclismo.content.Sensor.SensorData.PARSER, extensionRegistry);
+              heartRate_ = input.readMessage(org.cowboycoders.cyclismo.content.Sensor.SensorData
+                  .PARSER, extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom(heartRate_);
                 heartRate_ = subBuilder.buildPartial();
@@ -775,7 +859,8 @@ public final class Sensor {
               if (((bitField0_ & 0x00000004) == 0x00000004)) {
                 subBuilder = cadence_.toBuilder();
               }
-              cadence_ = input.readMessage(org.cowboycoders.cyclismo.content.Sensor.SensorData.PARSER, extensionRegistry);
+              cadence_ = input.readMessage(org.cowboycoders.cyclismo.content.Sensor.SensorData
+                  .PARSER, extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom(cadence_);
                 cadence_ = subBuilder.buildPartial();
@@ -788,7 +873,8 @@ public final class Sensor {
               if (((bitField0_ & 0x00000008) == 0x00000008)) {
                 subBuilder = power_.toBuilder();
               }
-              power_ = input.readMessage(org.cowboycoders.cyclismo.content.Sensor.SensorData.PARSER, extensionRegistry);
+              power_ = input.readMessage(org.cowboycoders.cyclismo.content.Sensor.SensorData
+                  .PARSER, extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom(power_);
                 power_ = subBuilder.buildPartial();
@@ -801,7 +887,8 @@ public final class Sensor {
               if (((bitField0_ & 0x00000010) == 0x00000010)) {
                 subBuilder = batteryLevel_.toBuilder();
               }
-              batteryLevel_ = input.readMessage(org.cowboycoders.cyclismo.content.Sensor.SensorData.PARSER, extensionRegistry);
+              batteryLevel_ = input.readMessage(org.cowboycoders.cyclismo.content.Sensor
+                  .SensorData.PARSER, extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom(batteryLevel_);
                 batteryLevel_ = subBuilder.buildPartial();
@@ -814,7 +901,8 @@ public final class Sensor {
               if (((bitField0_ & 0x00000020) == 0x00000020)) {
                 subBuilder = speed_.toBuilder();
               }
-              speed_ = input.readMessage(org.cowboycoders.cyclismo.content.Sensor.SensorData.PARSER, extensionRegistry);
+              speed_ = input.readMessage(org.cowboycoders.cyclismo.content.Sensor.SensorData
+                  .PARSER, extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom(speed_);
                 speed_ = subBuilder.buildPartial();
@@ -827,7 +915,8 @@ public final class Sensor {
               if (((bitField0_ & 0x00000040) == 0x00000040)) {
                 subBuilder = distance_.toBuilder();
               }
-              distance_ = input.readMessage(org.cowboycoders.cyclismo.content.Sensor.SensorData.PARSER, extensionRegistry);
+              distance_ = input.readMessage(org.cowboycoders.cyclismo.content.Sensor.SensorData
+                  .PARSER, extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom(distance_);
                 distance_ = subBuilder.buildPartial();
@@ -840,7 +929,8 @@ public final class Sensor {
               if (((bitField0_ & 0x00000080) == 0x00000080)) {
                 subBuilder = powerB_.toBuilder();
               }
-              powerB_ = input.readMessage(org.cowboycoders.cyclismo.content.Sensor.SensorData.PARSER, extensionRegistry);
+              powerB_ = input.readMessage(org.cowboycoders.cyclismo.content.Sensor.SensorData
+                  .PARSER, extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom(powerB_);
                 powerB_ = subBuilder.buildPartial();
@@ -853,7 +943,8 @@ public final class Sensor {
               if (((bitField0_ & 0x00000100) == 0x00000100)) {
                 subBuilder = temperature_.toBuilder();
               }
-              temperature_ = input.readMessage(org.cowboycoders.cyclismo.content.Sensor.SensorData.PARSER, extensionRegistry);
+              temperature_ = input.readMessage(org.cowboycoders.cyclismo.content.Sensor
+                  .SensorData.PARSER, extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom(temperature_);
                 temperature_ = subBuilder.buildPartial();
@@ -872,15 +963,16 @@ public final class Sensor {
         makeExtensionsImmutable();
       }
     }
+
     public static com.google.protobuf.Parser<SensorDataSet> PARSER =
         new com.google.protobuf.AbstractParser<SensorDataSet>() {
-      public SensorDataSet parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new SensorDataSet(input, extensionRegistry);
-      }
-    };
+          public SensorDataSet parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new SensorDataSet(input, extensionRegistry);
+          }
+        };
 
     @java.lang.Override
     public com.google.protobuf.Parser<SensorDataSet> getParserForType() {
@@ -891,6 +983,7 @@ public final class Sensor {
     // optional uint64 creation_time = 1 [default = 0];
     public static final int CREATION_TIME_FIELD_NUMBER = 1;
     private long creationTime_;
+
     /**
      * <code>optional uint64 creation_time = 1 [default = 0];</code>
      *
@@ -901,6 +994,7 @@ public final class Sensor {
     public boolean hasCreationTime() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
+
     /**
      * <code>optional uint64 creation_time = 1 [default = 0];</code>
      *
@@ -915,12 +1009,14 @@ public final class Sensor {
     // optional .org.cowboycoders.cyclismo.content.SensorData heart_rate = 2;
     public static final int HEART_RATE_FIELD_NUMBER = 2;
     private org.cowboycoders.cyclismo.content.Sensor.SensorData heartRate_;
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData heart_rate = 2;</code>
      */
     public boolean hasHeartRate() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData heart_rate = 2;</code>
      */
@@ -931,12 +1027,14 @@ public final class Sensor {
     // optional .org.cowboycoders.cyclismo.content.SensorData cadence = 3;
     public static final int CADENCE_FIELD_NUMBER = 3;
     private org.cowboycoders.cyclismo.content.Sensor.SensorData cadence_;
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData cadence = 3;</code>
      */
     public boolean hasCadence() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData cadence = 3;</code>
      */
@@ -947,12 +1045,14 @@ public final class Sensor {
     // optional .org.cowboycoders.cyclismo.content.SensorData power = 4;
     public static final int POWER_FIELD_NUMBER = 4;
     private org.cowboycoders.cyclismo.content.Sensor.SensorData power_;
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData power = 4;</code>
      */
     public boolean hasPower() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
     }
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData power = 4;</code>
      */
@@ -963,12 +1063,14 @@ public final class Sensor {
     // optional .org.cowboycoders.cyclismo.content.SensorData battery_level = 5;
     public static final int BATTERY_LEVEL_FIELD_NUMBER = 5;
     private org.cowboycoders.cyclismo.content.Sensor.SensorData batteryLevel_;
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData battery_level = 5;</code>
      */
     public boolean hasBatteryLevel() {
       return ((bitField0_ & 0x00000010) == 0x00000010);
     }
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData battery_level = 5;</code>
      */
@@ -979,12 +1081,14 @@ public final class Sensor {
     // optional .org.cowboycoders.cyclismo.content.SensorData speed = 6;
     public static final int SPEED_FIELD_NUMBER = 6;
     private org.cowboycoders.cyclismo.content.Sensor.SensorData speed_;
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData speed = 6;</code>
      */
     public boolean hasSpeed() {
       return ((bitField0_ & 0x00000020) == 0x00000020);
     }
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData speed = 6;</code>
      */
@@ -995,12 +1099,14 @@ public final class Sensor {
     // optional .org.cowboycoders.cyclismo.content.SensorData distance = 7;
     public static final int DISTANCE_FIELD_NUMBER = 7;
     private org.cowboycoders.cyclismo.content.Sensor.SensorData distance_;
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData distance = 7;</code>
      */
     public boolean hasDistance() {
       return ((bitField0_ & 0x00000040) == 0x00000040);
     }
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData distance = 7;</code>
      */
@@ -1011,12 +1117,14 @@ public final class Sensor {
     // optional .org.cowboycoders.cyclismo.content.SensorData power_b = 8;
     public static final int POWER_B_FIELD_NUMBER = 8;
     private org.cowboycoders.cyclismo.content.Sensor.SensorData powerB_;
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData power_b = 8;</code>
      */
     public boolean hasPowerB() {
       return ((bitField0_ & 0x00000080) == 0x00000080);
     }
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData power_b = 8;</code>
      */
@@ -1027,12 +1135,14 @@ public final class Sensor {
     // optional .org.cowboycoders.cyclismo.content.SensorData temperature = 9;
     public static final int TEMPERATURE_FIELD_NUMBER = 9;
     private org.cowboycoders.cyclismo.content.Sensor.SensorData temperature_;
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData temperature = 9;</code>
      */
     public boolean hasTemperature() {
       return ((bitField0_ & 0x00000100) == 0x00000100);
     }
+
     /**
      * <code>optional .org.cowboycoders.cyclismo.content.SensorData temperature = 9;</code>
      */
@@ -1051,7 +1161,9 @@ public final class Sensor {
       powerB_ = org.cowboycoders.cyclismo.content.Sensor.SensorData.getDefaultInstance();
       temperature_ = org.cowboycoders.cyclismo.content.Sensor.SensorData.getDefaultInstance();
     }
+
     private byte memoizedIsInitialized = -1;
+
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized != -1) return isInitialized == 1;
@@ -1109,7 +1221,7 @@ public final class Sensor {
     }
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
+        throws java.io.IOException {
       getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         output.writeUInt64(1, creationTime_);
@@ -1141,6 +1253,7 @@ public final class Sensor {
     }
 
     private int memoizedSerializedSize = -1;
+
     public int getSerializedSize() {
       int size = memoizedSerializedSize;
       if (size != -1) return size;
@@ -1148,45 +1261,46 @@ public final class Sensor {
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeUInt64Size(1, creationTime_);
+            .computeUInt64Size(1, creationTime_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(2, heartRate_);
+            .computeMessageSize(2, heartRate_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(3, cadence_);
+            .computeMessageSize(3, cadence_);
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(4, power_);
+            .computeMessageSize(4, power_);
       }
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(5, batteryLevel_);
+            .computeMessageSize(5, batteryLevel_);
       }
       if (((bitField0_ & 0x00000020) == 0x00000020)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(6, speed_);
+            .computeMessageSize(6, speed_);
       }
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(7, distance_);
+            .computeMessageSize(7, distance_);
       }
       if (((bitField0_ & 0x00000080) == 0x00000080)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(8, powerB_);
+            .computeMessageSize(8, powerB_);
       }
       if (((bitField0_ & 0x00000100) == 0x00000100)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(9, temperature_);
+            .computeMessageSize(9, temperature_);
       }
       memoizedSerializedSize = size;
       return size;
     }
 
     private static final long serialVersionUID = 0L;
+
     @java.lang.Override
     protected java.lang.Object writeReplace()
         throws java.io.ObjectStreamException {
@@ -1198,47 +1312,58 @@ public final class Sensor {
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
+
     public static org.cowboycoders.cyclismo.content.Sensor.SensorDataSet parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
+
     public static org.cowboycoders.cyclismo.content.Sensor.SensorDataSet parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
+
     public static org.cowboycoders.cyclismo.content.Sensor.SensorDataSet parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.cowboycoders.cyclismo.content.Sensor.SensorDataSet parseFrom(java.io.InputStream input)
+
+    public static org.cowboycoders.cyclismo.content.Sensor.SensorDataSet parseFrom(java.io
+        .InputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
+
     public static org.cowboycoders.cyclismo.content.Sensor.SensorDataSet parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
-    public static org.cowboycoders.cyclismo.content.Sensor.SensorDataSet parseDelimitedFrom(java.io.InputStream input)
+
+    public static org.cowboycoders.cyclismo.content.Sensor.SensorDataSet parseDelimitedFrom(java
+        .io.InputStream input)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input);
     }
+
     public static org.cowboycoders.cyclismo.content.Sensor.SensorDataSet parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
+
     public static org.cowboycoders.cyclismo.content.Sensor.SensorDataSet parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
+
     public static org.cowboycoders.cyclismo.content.Sensor.SensorDataSet parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -1247,10 +1372,14 @@ public final class Sensor {
     }
 
     public static Builder newBuilder() { return Builder.create(); }
+
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(org.cowboycoders.cyclismo.content.Sensor.SensorDataSet prototype) {
+
+    public static Builder newBuilder(org.cowboycoders.cyclismo.content.Sensor.SensorDataSet
+        prototype) {
       return newBuilder().mergeFrom(prototype);
     }
+
     public Builder toBuilder() { return newBuilder(this); }
 
     /**
@@ -1262,7 +1391,7 @@ public final class Sensor {
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageLite.Builder<
-          org.cowboycoders.cyclismo.content.Sensor.SensorDataSet, Builder>
+            org.cowboycoders.cyclismo.content.Sensor.SensorDataSet, Builder>
         implements org.cowboycoders.cyclismo.content.Sensor.SensorDataSetOrBuilder {
       // Construct using org.cowboycoders.cyclismo.content.Sensor.SensorDataSet.newBuilder()
       private Builder() {
@@ -1271,6 +1400,7 @@ public final class Sensor {
 
       private void maybeForceBuilderInitialization() {
       }
+
       private static Builder create() {
         return new Builder();
       }
@@ -1315,7 +1445,8 @@ public final class Sensor {
       }
 
       public org.cowboycoders.cyclismo.content.Sensor.SensorDataSet buildPartial() {
-        org.cowboycoders.cyclismo.content.Sensor.SensorDataSet result = new org.cowboycoders.cyclismo.content.Sensor.SensorDataSet(this);
+        org.cowboycoders.cyclismo.content.Sensor.SensorDataSet result = new org.cowboycoders
+            .cyclismo.content.Sensor.SensorDataSet(this);
         int from_bitField0_ = bitField0_;
         int to_bitField0_ = 0;
         if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
@@ -1359,7 +1490,8 @@ public final class Sensor {
       }
 
       public Builder mergeFrom(org.cowboycoders.cyclismo.content.Sensor.SensorDataSet other) {
-        if (other == org.cowboycoders.cyclismo.content.Sensor.SensorDataSet.getDefaultInstance()) return this;
+        if (other == org.cowboycoders.cyclismo.content.Sensor.SensorDataSet.getDefaultInstance())
+          return this;
         if (other.hasCreationTime()) {
           setCreationTime(other.getCreationTime());
         }
@@ -1393,49 +1525,49 @@ public final class Sensor {
       public final boolean isInitialized() {
         if (hasHeartRate()) {
           if (!getHeartRate().isInitialized()) {
-            
+
             return false;
           }
         }
         if (hasCadence()) {
           if (!getCadence().isInitialized()) {
-            
+
             return false;
           }
         }
         if (hasPower()) {
           if (!getPower().isInitialized()) {
-            
+
             return false;
           }
         }
         if (hasBatteryLevel()) {
           if (!getBatteryLevel().isInitialized()) {
-            
+
             return false;
           }
         }
         if (hasSpeed()) {
           if (!getSpeed().isInitialized()) {
-            
+
             return false;
           }
         }
         if (hasDistance()) {
           if (!getDistance().isInitialized()) {
-            
+
             return false;
           }
         }
         if (hasPowerB()) {
           if (!getPowerB().isInitialized()) {
-            
+
             return false;
           }
         }
         if (hasTemperature()) {
           if (!getTemperature().isInitialized()) {
-            
+
             return false;
           }
         }
@@ -1450,7 +1582,8 @@ public final class Sensor {
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.cowboycoders.cyclismo.content.Sensor.SensorDataSet) e.getUnfinishedMessage();
+          parsedMessage = (org.cowboycoders.cyclismo.content.Sensor.SensorDataSet) e
+              .getUnfinishedMessage();
           throw e;
         } finally {
           if (parsedMessage != null) {
@@ -1459,10 +1592,12 @@ public final class Sensor {
         }
         return this;
       }
+
       private int bitField0_;
 
       // optional uint64 creation_time = 1 [default = 0];
-      private long creationTime_ ;
+      private long creationTime_;
+
       /**
        * <code>optional uint64 creation_time = 1 [default = 0];</code>
        *
@@ -1473,6 +1608,7 @@ public final class Sensor {
       public boolean hasCreationTime() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
+
       /**
        * <code>optional uint64 creation_time = 1 [default = 0];</code>
        *
@@ -1483,6 +1619,7 @@ public final class Sensor {
       public long getCreationTime() {
         return creationTime_;
       }
+
       /**
        * <code>optional uint64 creation_time = 1 [default = 0];</code>
        *
@@ -1493,9 +1630,10 @@ public final class Sensor {
       public Builder setCreationTime(long value) {
         bitField0_ |= 0x00000001;
         creationTime_ = value;
-        
+
         return this;
       }
+
       /**
        * <code>optional uint64 creation_time = 1 [default = 0];</code>
        *
@@ -1506,24 +1644,28 @@ public final class Sensor {
       public Builder clearCreationTime() {
         bitField0_ = (bitField0_ & ~0x00000001);
         creationTime_ = 0L;
-        
+
         return this;
       }
 
       // optional .org.cowboycoders.cyclismo.content.SensorData heart_rate = 2;
-      private org.cowboycoders.cyclismo.content.Sensor.SensorData heartRate_ = org.cowboycoders.cyclismo.content.Sensor.SensorData.getDefaultInstance();
+      private org.cowboycoders.cyclismo.content.Sensor.SensorData heartRate_ = org.cowboycoders
+          .cyclismo.content.Sensor.SensorData.getDefaultInstance();
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData heart_rate = 2;</code>
        */
       public boolean hasHeartRate() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData heart_rate = 2;</code>
        */
       public org.cowboycoders.cyclismo.content.Sensor.SensorData getHeartRate() {
         return heartRate_;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData heart_rate = 2;</code>
        */
@@ -1536,6 +1678,7 @@ public final class Sensor {
         bitField0_ |= 0x00000002;
         return this;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData heart_rate = 2;</code>
        */
@@ -1546,14 +1689,17 @@ public final class Sensor {
         bitField0_ |= 0x00000002;
         return this;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData heart_rate = 2;</code>
        */
       public Builder mergeHeartRate(org.cowboycoders.cyclismo.content.Sensor.SensorData value) {
         if (((bitField0_ & 0x00000002) == 0x00000002) &&
-            heartRate_ != org.cowboycoders.cyclismo.content.Sensor.SensorData.getDefaultInstance()) {
+            heartRate_ != org.cowboycoders.cyclismo.content.Sensor.SensorData.getDefaultInstance
+                ()) {
           heartRate_ =
-            org.cowboycoders.cyclismo.content.Sensor.SensorData.newBuilder(heartRate_).mergeFrom(value).buildPartial();
+              org.cowboycoders.cyclismo.content.Sensor.SensorData.newBuilder(heartRate_)
+                  .mergeFrom(value).buildPartial();
         } else {
           heartRate_ = value;
         }
@@ -1561,6 +1707,7 @@ public final class Sensor {
         bitField0_ |= 0x00000002;
         return this;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData heart_rate = 2;</code>
        */
@@ -1572,19 +1719,23 @@ public final class Sensor {
       }
 
       // optional .org.cowboycoders.cyclismo.content.SensorData cadence = 3;
-      private org.cowboycoders.cyclismo.content.Sensor.SensorData cadence_ = org.cowboycoders.cyclismo.content.Sensor.SensorData.getDefaultInstance();
+      private org.cowboycoders.cyclismo.content.Sensor.SensorData cadence_ = org.cowboycoders
+          .cyclismo.content.Sensor.SensorData.getDefaultInstance();
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData cadence = 3;</code>
        */
       public boolean hasCadence() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData cadence = 3;</code>
        */
       public org.cowboycoders.cyclismo.content.Sensor.SensorData getCadence() {
         return cadence_;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData cadence = 3;</code>
        */
@@ -1597,6 +1748,7 @@ public final class Sensor {
         bitField0_ |= 0x00000004;
         return this;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData cadence = 3;</code>
        */
@@ -1607,6 +1759,7 @@ public final class Sensor {
         bitField0_ |= 0x00000004;
         return this;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData cadence = 3;</code>
        */
@@ -1614,7 +1767,8 @@ public final class Sensor {
         if (((bitField0_ & 0x00000004) == 0x00000004) &&
             cadence_ != org.cowboycoders.cyclismo.content.Sensor.SensorData.getDefaultInstance()) {
           cadence_ =
-            org.cowboycoders.cyclismo.content.Sensor.SensorData.newBuilder(cadence_).mergeFrom(value).buildPartial();
+              org.cowboycoders.cyclismo.content.Sensor.SensorData.newBuilder(cadence_).mergeFrom
+                  (value).buildPartial();
         } else {
           cadence_ = value;
         }
@@ -1622,6 +1776,7 @@ public final class Sensor {
         bitField0_ |= 0x00000004;
         return this;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData cadence = 3;</code>
        */
@@ -1633,19 +1788,23 @@ public final class Sensor {
       }
 
       // optional .org.cowboycoders.cyclismo.content.SensorData power = 4;
-      private org.cowboycoders.cyclismo.content.Sensor.SensorData power_ = org.cowboycoders.cyclismo.content.Sensor.SensorData.getDefaultInstance();
+      private org.cowboycoders.cyclismo.content.Sensor.SensorData power_ = org.cowboycoders
+          .cyclismo.content.Sensor.SensorData.getDefaultInstance();
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData power = 4;</code>
        */
       public boolean hasPower() {
         return ((bitField0_ & 0x00000008) == 0x00000008);
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData power = 4;</code>
        */
       public org.cowboycoders.cyclismo.content.Sensor.SensorData getPower() {
         return power_;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData power = 4;</code>
        */
@@ -1658,6 +1817,7 @@ public final class Sensor {
         bitField0_ |= 0x00000008;
         return this;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData power = 4;</code>
        */
@@ -1668,6 +1828,7 @@ public final class Sensor {
         bitField0_ |= 0x00000008;
         return this;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData power = 4;</code>
        */
@@ -1675,7 +1836,8 @@ public final class Sensor {
         if (((bitField0_ & 0x00000008) == 0x00000008) &&
             power_ != org.cowboycoders.cyclismo.content.Sensor.SensorData.getDefaultInstance()) {
           power_ =
-            org.cowboycoders.cyclismo.content.Sensor.SensorData.newBuilder(power_).mergeFrom(value).buildPartial();
+              org.cowboycoders.cyclismo.content.Sensor.SensorData.newBuilder(power_).mergeFrom
+                  (value).buildPartial();
         } else {
           power_ = value;
         }
@@ -1683,6 +1845,7 @@ public final class Sensor {
         bitField0_ |= 0x00000008;
         return this;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData power = 4;</code>
        */
@@ -1694,19 +1857,23 @@ public final class Sensor {
       }
 
       // optional .org.cowboycoders.cyclismo.content.SensorData battery_level = 5;
-      private org.cowboycoders.cyclismo.content.Sensor.SensorData batteryLevel_ = org.cowboycoders.cyclismo.content.Sensor.SensorData.getDefaultInstance();
+      private org.cowboycoders.cyclismo.content.Sensor.SensorData batteryLevel_ = org
+          .cowboycoders.cyclismo.content.Sensor.SensorData.getDefaultInstance();
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData battery_level = 5;</code>
        */
       public boolean hasBatteryLevel() {
         return ((bitField0_ & 0x00000010) == 0x00000010);
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData battery_level = 5;</code>
        */
       public org.cowboycoders.cyclismo.content.Sensor.SensorData getBatteryLevel() {
         return batteryLevel_;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData battery_level = 5;</code>
        */
@@ -1719,6 +1886,7 @@ public final class Sensor {
         bitField0_ |= 0x00000010;
         return this;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData battery_level = 5;</code>
        */
@@ -1729,14 +1897,17 @@ public final class Sensor {
         bitField0_ |= 0x00000010;
         return this;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData battery_level = 5;</code>
        */
       public Builder mergeBatteryLevel(org.cowboycoders.cyclismo.content.Sensor.SensorData value) {
         if (((bitField0_ & 0x00000010) == 0x00000010) &&
-            batteryLevel_ != org.cowboycoders.cyclismo.content.Sensor.SensorData.getDefaultInstance()) {
+            batteryLevel_ != org.cowboycoders.cyclismo.content.Sensor.SensorData
+                .getDefaultInstance()) {
           batteryLevel_ =
-            org.cowboycoders.cyclismo.content.Sensor.SensorData.newBuilder(batteryLevel_).mergeFrom(value).buildPartial();
+              org.cowboycoders.cyclismo.content.Sensor.SensorData.newBuilder(batteryLevel_)
+                  .mergeFrom(value).buildPartial();
         } else {
           batteryLevel_ = value;
         }
@@ -1744,6 +1915,7 @@ public final class Sensor {
         bitField0_ |= 0x00000010;
         return this;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData battery_level = 5;</code>
        */
@@ -1755,19 +1927,23 @@ public final class Sensor {
       }
 
       // optional .org.cowboycoders.cyclismo.content.SensorData speed = 6;
-      private org.cowboycoders.cyclismo.content.Sensor.SensorData speed_ = org.cowboycoders.cyclismo.content.Sensor.SensorData.getDefaultInstance();
+      private org.cowboycoders.cyclismo.content.Sensor.SensorData speed_ = org.cowboycoders
+          .cyclismo.content.Sensor.SensorData.getDefaultInstance();
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData speed = 6;</code>
        */
       public boolean hasSpeed() {
         return ((bitField0_ & 0x00000020) == 0x00000020);
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData speed = 6;</code>
        */
       public org.cowboycoders.cyclismo.content.Sensor.SensorData getSpeed() {
         return speed_;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData speed = 6;</code>
        */
@@ -1780,6 +1956,7 @@ public final class Sensor {
         bitField0_ |= 0x00000020;
         return this;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData speed = 6;</code>
        */
@@ -1790,6 +1967,7 @@ public final class Sensor {
         bitField0_ |= 0x00000020;
         return this;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData speed = 6;</code>
        */
@@ -1797,7 +1975,8 @@ public final class Sensor {
         if (((bitField0_ & 0x00000020) == 0x00000020) &&
             speed_ != org.cowboycoders.cyclismo.content.Sensor.SensorData.getDefaultInstance()) {
           speed_ =
-            org.cowboycoders.cyclismo.content.Sensor.SensorData.newBuilder(speed_).mergeFrom(value).buildPartial();
+              org.cowboycoders.cyclismo.content.Sensor.SensorData.newBuilder(speed_).mergeFrom
+                  (value).buildPartial();
         } else {
           speed_ = value;
         }
@@ -1805,6 +1984,7 @@ public final class Sensor {
         bitField0_ |= 0x00000020;
         return this;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData speed = 6;</code>
        */
@@ -1816,19 +1996,23 @@ public final class Sensor {
       }
 
       // optional .org.cowboycoders.cyclismo.content.SensorData distance = 7;
-      private org.cowboycoders.cyclismo.content.Sensor.SensorData distance_ = org.cowboycoders.cyclismo.content.Sensor.SensorData.getDefaultInstance();
+      private org.cowboycoders.cyclismo.content.Sensor.SensorData distance_ = org.cowboycoders
+          .cyclismo.content.Sensor.SensorData.getDefaultInstance();
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData distance = 7;</code>
        */
       public boolean hasDistance() {
         return ((bitField0_ & 0x00000040) == 0x00000040);
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData distance = 7;</code>
        */
       public org.cowboycoders.cyclismo.content.Sensor.SensorData getDistance() {
         return distance_;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData distance = 7;</code>
        */
@@ -1841,6 +2025,7 @@ public final class Sensor {
         bitField0_ |= 0x00000040;
         return this;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData distance = 7;</code>
        */
@@ -1851,6 +2036,7 @@ public final class Sensor {
         bitField0_ |= 0x00000040;
         return this;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData distance = 7;</code>
        */
@@ -1858,7 +2044,8 @@ public final class Sensor {
         if (((bitField0_ & 0x00000040) == 0x00000040) &&
             distance_ != org.cowboycoders.cyclismo.content.Sensor.SensorData.getDefaultInstance()) {
           distance_ =
-            org.cowboycoders.cyclismo.content.Sensor.SensorData.newBuilder(distance_).mergeFrom(value).buildPartial();
+              org.cowboycoders.cyclismo.content.Sensor.SensorData.newBuilder(distance_).mergeFrom
+                  (value).buildPartial();
         } else {
           distance_ = value;
         }
@@ -1866,6 +2053,7 @@ public final class Sensor {
         bitField0_ |= 0x00000040;
         return this;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData distance = 7;</code>
        */
@@ -1877,19 +2065,23 @@ public final class Sensor {
       }
 
       // optional .org.cowboycoders.cyclismo.content.SensorData power_b = 8;
-      private org.cowboycoders.cyclismo.content.Sensor.SensorData powerB_ = org.cowboycoders.cyclismo.content.Sensor.SensorData.getDefaultInstance();
+      private org.cowboycoders.cyclismo.content.Sensor.SensorData powerB_ = org.cowboycoders
+          .cyclismo.content.Sensor.SensorData.getDefaultInstance();
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData power_b = 8;</code>
        */
       public boolean hasPowerB() {
         return ((bitField0_ & 0x00000080) == 0x00000080);
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData power_b = 8;</code>
        */
       public org.cowboycoders.cyclismo.content.Sensor.SensorData getPowerB() {
         return powerB_;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData power_b = 8;</code>
        */
@@ -1902,6 +2094,7 @@ public final class Sensor {
         bitField0_ |= 0x00000080;
         return this;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData power_b = 8;</code>
        */
@@ -1912,6 +2105,7 @@ public final class Sensor {
         bitField0_ |= 0x00000080;
         return this;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData power_b = 8;</code>
        */
@@ -1919,7 +2113,8 @@ public final class Sensor {
         if (((bitField0_ & 0x00000080) == 0x00000080) &&
             powerB_ != org.cowboycoders.cyclismo.content.Sensor.SensorData.getDefaultInstance()) {
           powerB_ =
-            org.cowboycoders.cyclismo.content.Sensor.SensorData.newBuilder(powerB_).mergeFrom(value).buildPartial();
+              org.cowboycoders.cyclismo.content.Sensor.SensorData.newBuilder(powerB_).mergeFrom
+                  (value).buildPartial();
         } else {
           powerB_ = value;
         }
@@ -1927,6 +2122,7 @@ public final class Sensor {
         bitField0_ |= 0x00000080;
         return this;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData power_b = 8;</code>
        */
@@ -1938,19 +2134,23 @@ public final class Sensor {
       }
 
       // optional .org.cowboycoders.cyclismo.content.SensorData temperature = 9;
-      private org.cowboycoders.cyclismo.content.Sensor.SensorData temperature_ = org.cowboycoders.cyclismo.content.Sensor.SensorData.getDefaultInstance();
+      private org.cowboycoders.cyclismo.content.Sensor.SensorData temperature_ = org.cowboycoders
+          .cyclismo.content.Sensor.SensorData.getDefaultInstance();
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData temperature = 9;</code>
        */
       public boolean hasTemperature() {
         return ((bitField0_ & 0x00000100) == 0x00000100);
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData temperature = 9;</code>
        */
       public org.cowboycoders.cyclismo.content.Sensor.SensorData getTemperature() {
         return temperature_;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData temperature = 9;</code>
        */
@@ -1963,6 +2163,7 @@ public final class Sensor {
         bitField0_ |= 0x00000100;
         return this;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData temperature = 9;</code>
        */
@@ -1973,14 +2174,17 @@ public final class Sensor {
         bitField0_ |= 0x00000100;
         return this;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData temperature = 9;</code>
        */
       public Builder mergeTemperature(org.cowboycoders.cyclismo.content.Sensor.SensorData value) {
         if (((bitField0_ & 0x00000100) == 0x00000100) &&
-            temperature_ != org.cowboycoders.cyclismo.content.Sensor.SensorData.getDefaultInstance()) {
+            temperature_ != org.cowboycoders.cyclismo.content.Sensor.SensorData
+                .getDefaultInstance()) {
           temperature_ =
-            org.cowboycoders.cyclismo.content.Sensor.SensorData.newBuilder(temperature_).mergeFrom(value).buildPartial();
+              org.cowboycoders.cyclismo.content.Sensor.SensorData.newBuilder(temperature_)
+                  .mergeFrom(value).buildPartial();
         } else {
           temperature_ = value;
         }
@@ -1988,6 +2192,7 @@ public final class Sensor {
         bitField0_ |= 0x00000100;
         return this;
       }
+
       /**
        * <code>optional .org.cowboycoders.cyclismo.content.SensorData temperature = 9;</code>
        */

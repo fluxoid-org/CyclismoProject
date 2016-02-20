@@ -39,7 +39,7 @@ import android.os.Parcelable;
 
 /**
  * A request for the service to create a waypoint at the current location.
- * 
+ *
  * @author Sandor Dornbush
  */
 public class WaypointCreationRequest implements Parcelable {

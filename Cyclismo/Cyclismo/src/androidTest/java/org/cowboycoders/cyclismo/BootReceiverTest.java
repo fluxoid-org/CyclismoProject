@@ -48,11 +48,12 @@ import java.util.List;
 
 /**
  * Tests for the BootReceiver.
- * 
+ *
  * @author Youtao Liu
  */
 public class BootReceiverTest extends AndroidTestCase {
-  private static final String SERVICE_NAME = "org.cowboycoders.cyclismo.services.TrackRecordingService";
+  private static final String SERVICE_NAME = "org.cowboycoders.cyclismo.services" +
+      ".TrackRecordingService";
 
   /**
    * Tests the behavior when receive notification which is the phone boot.
@@ -90,7 +91,7 @@ public class BootReceiverTest extends AndroidTestCase {
 
   /**
    * Checks if a service is started in a context.
-   * 
+   *
    * @param context the context for checking a service
    * @param serviceName the service name to find if existed
    */
@@ -102,8 +103,8 @@ public class BootReceiverTest extends AndroidTestCase {
     for (int i = 0; i < serviceList.size(); i++) {
       RunningServiceInfo serviceInfo = serviceList.get(i);
       ComponentName componentName = serviceInfo.service;
-      if (componentName.getClassName().equals(serviceName)) { 
-        return true; 
+      if (componentName.getClassName().equals(serviceName)) {
+        return true;
       }
     }
     return false;

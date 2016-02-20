@@ -37,7 +37,7 @@ package org.cowboycoders.cyclismo.stats;
 
 /**
  * A helper class that tracks a minimum and a maximum of a variable.
- * 
+ *
  * @author Sandor Dornbush
  */
 public class ExtremityMonitor {
@@ -76,7 +76,7 @@ public class ExtremityMonitor {
 
   /**
    * Updates the min and the max with a new value.
-   * 
+   *
    * @param value the new value
    * @return true if an extremity was found
    */
@@ -95,7 +95,7 @@ public class ExtremityMonitor {
 
   /**
    * Sets the minimum and maximum values.
-   * 
+   *
    * @param min the minimum value
    * @param max the maximum value
    */
@@ -106,7 +106,7 @@ public class ExtremityMonitor {
 
   /**
    * Sets the minimum value.
-   * 
+   *
    * @param min the minimum value
    */
   public void setMin(double min) {
@@ -115,7 +115,7 @@ public class ExtremityMonitor {
 
   /**
    * Sets the maximum value.
-   * 
+   *
    * @param max the maximum value
    */
   public void setMax(double max) {

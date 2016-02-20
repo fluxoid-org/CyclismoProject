@@ -38,7 +38,7 @@ import android.test.AndroidTestCase;
 
 /**
  * Tests {@link ChartValueSeries}.
- * 
+ *
  * @author Sandor Dornbush
  */
 public class ChartValueSeriesTest extends AndroidTestCase {
@@ -49,7 +49,7 @@ public class ChartValueSeriesTest extends AndroidTestCase {
     series = new ChartValueSeries(getContext(),
         Integer.MIN_VALUE,
         Integer.MAX_VALUE,
-        new int[] {100, 1000 },
+        new int[]{100, 1000},
         R.string.description_elevation_metric,
         R.string.description_elevation_imperial,
         R.color.elevation_fill,

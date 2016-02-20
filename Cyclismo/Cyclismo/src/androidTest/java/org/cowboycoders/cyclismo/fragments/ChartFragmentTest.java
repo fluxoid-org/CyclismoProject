@@ -69,7 +69,7 @@ public class ChartFragmentTest extends AndroidTestCase {
    */
   public void testFillDataPoint_sensorIncorrect() {
     MyTracksLocation myTracksLocation = TrackStubUtils.createMyTracksLocation();
-    
+
     // No input.
     double[] point = fillDataPointTestHelper(myTracksLocation);
     assertEquals(Double.NaN, point[ChartView.HEART_RATE_SERIES + 1]);
@@ -119,7 +119,7 @@ public class ChartFragmentTest extends AndroidTestCase {
         .setValue(101).setState(Sensor.SensorState.SENDING);
     Sensor.SensorData.Builder powerData = Sensor.SensorData.newBuilder()
         .setValue(102).setState(Sensor.SensorState.SENDING);
-    
+
     // Creates SensorDataSet.
     SensorDataSet sensorDataSet = myTracksLocation.getSensorDataSet();
     sensorDataSet = sensorDataSet.toBuilder()
@@ -156,7 +156,7 @@ public class ChartFragmentTest extends AndroidTestCase {
     MyTracksLocation myTracksLocation3 = TrackStubUtils.createMyTracksLocation();
     myTracksLocation3.setLatitude(23);
     point = fillDataPointTestHelper(myTracksLocation3);
-    
+
     // Computes the distance between Latitude 22 and 23.
     float[] results = new float[4];
     Location.distanceBetween(myTracksLocation2.getLatitude(), myTracksLocation2.getLongitude(),
@@ -168,7 +168,7 @@ public class ChartFragmentTest extends AndroidTestCase {
     MyTracksLocation myTracksLocation4 = TrackStubUtils.createMyTracksLocation();
     myTracksLocation4.setLatitude(24);
     point = fillDataPointTestHelper(myTracksLocation4);
-    
+
     // Computes the distance between Latitude 23 and 24.
     Location.distanceBetween(myTracksLocation3.getLatitude(), myTracksLocation3.getLongitude(),
         myTracksLocation4.getLatitude(), myTracksLocation4.getLongitude(), results);
@@ -302,13 +302,13 @@ public class ChartFragmentTest extends AndroidTestCase {
   public void testFillDataPoint_speedImperial() {
     // Setups to use imperial.
     chartFragment.setMetricUnits(false);
-    
+
     // First data point is not added to the speed buffer
     MyTracksLocation myTracksLocation1 = TrackStubUtils.createMyTracksLocation();
     myTracksLocation1.setSpeed(100.0f);
     double[] point = fillDataPointTestHelper(myTracksLocation1);
     assertEquals(0.0, point[ChartView.SPEED_SERIES + 1]);
-    
+
     MyTracksLocation myTracksLocation2 = TrackStubUtils.createMyTracksLocation();
     
     /*
@@ -332,13 +332,13 @@ public class ChartFragmentTest extends AndroidTestCase {
   public void testFillDataPoint_pace_nonZeroSpeed() {
     // Setups reportSpeed to false.
     chartFragment.setReportSpeed(false);
-    
+
     // First data point is not added to the speed buffer
     MyTracksLocation myTracksLocation1 = TrackStubUtils.createMyTracksLocation();
     myTracksLocation1.setSpeed(100.0f);
     double[] point = fillDataPointTestHelper(myTracksLocation1);
     assertEquals(0.0, point[ChartView.SPEED_SERIES + 1]);
-    
+
     MyTracksLocation myTracksLocation2 = TrackStubUtils.createMyTracksLocation();
 
     /*

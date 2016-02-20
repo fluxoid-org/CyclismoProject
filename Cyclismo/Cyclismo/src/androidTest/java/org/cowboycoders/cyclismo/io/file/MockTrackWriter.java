@@ -41,7 +41,6 @@ import java.io.File;
  * Tests are expected to override {@link #writeTrack}.
  *
  * @author Matthew Simmons
- *
  */
 public class MockTrackWriter implements TrackWriter {
   public OnWriteListener onWriteListener;

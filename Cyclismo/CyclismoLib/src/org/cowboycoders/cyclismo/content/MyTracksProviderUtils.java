@@ -46,18 +46,17 @@ import java.util.List;
 
 /**
  * Utilities to access data from the My Tracks content provider.
- * 
+ *
  * @author Rodrigo Damazio
  */
 public interface MyTracksProviderUtils {
-  
+
   /**
    * Given a keyId of a preference, this method will return true if the
    * provider believes it should be set. Auxiliary providers are likely
    * to return false for keys associated with the primary provider.
-   * 
+   *
    * @param keyId for preference
-   * @return
    */
   public boolean shouldSetPreference(int keyId);
 
@@ -69,7 +68,7 @@ public interface MyTracksProviderUtils {
 
   /**
    * Creates a {@link Track} from a cursor.
-   * 
+   *
    * @param cursor the cursor pointing to the track
    */
   public Track createTrack(Cursor cursor);
@@ -81,7 +80,7 @@ public interface MyTracksProviderUtils {
 
   /**
    * Deletes a track.
-   * 
+   *
    * @param trackId the track id
    */
   public void deleteTrack(long trackId);
@@ -92,7 +91,7 @@ public interface MyTracksProviderUtils {
    * Note that the returned tracks do not have any track points attached.
    */
   public List<Track> getAllTracks();
-  
+
 
   /**
    * Gets the last track. Returns null if doesn't exist.
@@ -103,7 +102,7 @@ public interface MyTracksProviderUtils {
    * Gets a track by a track id. Returns null if not found.
    * <p>
    * Note that the returned track doesn't have any track points attached.
-   * 
+   *
    * @param trackId the track id.
    */
   public Track getTrack(long trackId);
@@ -111,7 +110,7 @@ public interface MyTracksProviderUtils {
   /**
    * Gets a track cursor. The caller owns the returned cursor and is responsible
    * for closing it.
-   * 
+   *
    * @param selection the selection
    * @param selectionArgs the selection arguments
    * @param sortOrder the sort order
@@ -122,7 +121,7 @@ public interface MyTracksProviderUtils {
    * Inserts a track.
    * <p>
    * Note: This doesn't insert any track points.
-   * 
+   *
    * @param track the track
    * @return the content provider URI of the inserted track.
    */
@@ -132,14 +131,14 @@ public interface MyTracksProviderUtils {
    * Updates a track.
    * <p>
    * Note: This doesn't update any track points.
-   * 
+   *
    * @param track the track
    */
   public void updateTrack(Track track);
 
   /**
    * Creates a waypoint from a cursor.
-   * 
+   *
    * @param cursor the cursor pointing to the waypoint
    */
   public Waypoint createWaypoint(Cursor cursor);
@@ -148,7 +147,7 @@ public interface MyTracksProviderUtils {
    * Deletes a waypoint. If deleting a statistics waypoint, this will also
    * correct the next statistics waypoint after the deleted one to reflect the
    * deletion. The generator is used to update the next statistics waypoint.
-   * 
+   *
    * @param waypointId the waypoint id
    * @param descriptionGenerator the description generator
    */
@@ -158,14 +157,14 @@ public interface MyTracksProviderUtils {
    * Gets the first waypoint id for a track. The first waypoint is special as it
    * contains the stats for the current segment. Returns -1L if it doesn't
    * exist.
-   * 
+   *
    * @param trackId the track id
    */
   public long getFirstWaypointId(long trackId);
 
   /**
    * Gets the last statistics waypoint for a track. Returns null if it doesn't exist.
-   * 
+   *
    * @param trackId the track id
    */
   public Waypoint getLastStatisticsWaypoint(long trackId);
@@ -173,7 +172,7 @@ public interface MyTracksProviderUtils {
   /**
    * Gets the next waypoint number. Returns -1 if not able to get the next
    * waypoint number.
-   * 
+   *
    * @param trackId the track id
    * @param statistics true for statistics marker, false for waypoint marker
    */
@@ -181,7 +180,7 @@ public interface MyTracksProviderUtils {
 
   /**
    * Gets a waypoint from a waypoint id. Returns null if not found.
-   * 
+   *
    * @param waypointId the waypoint id
    */
   public Waypoint getWaypoint(long waypointId);
@@ -189,7 +188,7 @@ public interface MyTracksProviderUtils {
   /**
    * Gets a waypoint cursor. The caller owns the returned cursor and is
    * responsible for closing it.
-   * 
+   *
    * @param selection the selection
    * @param selectionArgs the selection arguments
    * @param sortOrder the sort order
@@ -201,7 +200,7 @@ public interface MyTracksProviderUtils {
   /**
    * Gets a waypoint cursor for a track. The caller owns the returned cursor and
    * is responsible for closing it.
-   * 
+   *
    * @param trackId the track id
    * @param minWaypointId the minimum waypoint id
    * @param maxWaypoints the maximum number of waypoints to return
@@ -210,7 +209,7 @@ public interface MyTracksProviderUtils {
 
   /**
    * Inserts a waypoint.
-   * 
+   *
    * @param waypoint the waypoint
    * @return the content provider URI of the inserted waypoint.
    */
@@ -218,17 +217,17 @@ public interface MyTracksProviderUtils {
 
   /**
    * Updates a waypoint. Returns true if successful.
-   * 
+   *
    * @param waypoint the waypoint
    */
   public boolean updateWaypoint(Waypoint waypoint);
 
   /**
    * Inserts multiple track points.
-   * 
+   *
    * @param locations an array of locations
    * @param length the number of locations (from the beginning of the array) to
-   *          insert, or -1 for all of them
+   * insert, or -1 for all of them
    * @param trackId the track id
    * @return the number of points inserted
    */
@@ -236,28 +235,28 @@ public interface MyTracksProviderUtils {
 
   /**
    * Creates a location object from a cursor.
-   * 
+   *
    * @param cursor the cursor pointing to the location
    */
   public Location createTrackPoint(Cursor cursor);
 
   /**
    * Gets the first location id for a track. Returns -1L if it doesn't exist.
-   * 
+   *
    * @param trackId the track id
    */
   public long getFirstTrackPointId(long trackId);
 
   /**
    * Gets the last location id for a track. Returns -1L if it doesn't exist.
-   * 
+   *
    * @param trackId the track id
    */
   public long getLastTrackPointId(long trackId);
 
   /**
    * Gets the last valid location for a track. Returns null if it doesn't exist.
-   * 
+   *
    * @param trackId the track id
    */
   public Location getLastValidTrackPoint(long trackId);
@@ -270,12 +269,12 @@ public interface MyTracksProviderUtils {
   /**
    * Creates a location cursor. The caller owns the returned cursor and is
    * responsible for closing it.
-   * 
+   *
    * @param trackId the track id
    * @param startTrackPointId the starting track point id
    * @param maxLocations maximum number of locations to return
    * @param descending true to sort the result in descending order (latest
-   *          location first)
+   * location first)
    */
   public Cursor getTrackPointCursor(
       long trackId, long startTrackPointId, int maxLocations, boolean descending);
@@ -290,12 +289,12 @@ public interface MyTracksProviderUtils {
    * so, the iterator calls {@link LocationFactory#createLocation()} and
    * populates it with information retrieved from the record. When done with
    * iteration, {@link LocationIterator#close()} must be called.
-   * 
+   *
    * @param trackId the track id
    * @param startTrackPointId the start track point id or -1L to start from the
-   *          first point
+   * first point
    * @param descending true to sort the result in descending order (latest
-   *          location first)
+   * location first)
    * @param locationFactory the location factory
    */
   public LocationIterator getTrackPointLocationIterator(
@@ -303,7 +302,7 @@ public interface MyTracksProviderUtils {
 
   /**
    * Inserts a track point.
-   * 
+   *
    * @param location the location
    * @param trackId the track id
    * @return the content provider URI of the inserted track point
@@ -343,7 +342,7 @@ public interface MyTracksProviderUtils {
    * The default {@link LocationFactory} which creates a location each time.
    */
   public LocationFactory DEFAULT_LOCATION_FACTORY = new LocationFactory() {
-      @Override
+    @Override
     public Location createLocation() {
       return new MyTracksLocation(LocationManager.GPS_PROVIDER);
     }
@@ -359,21 +358,21 @@ public interface MyTracksProviderUtils {
 
     /**
      * Creates an instance of {@link MyTracksProviderUtils}.
-     * 
+     *
      * @param context the context
      */
     public static MyTracksProviderUtils get(Context context) {
       return instance.newForContext(context);
     }
-    
+
     public static CyclismoProviderUtils getCyclimso(Context context) {
       return instance.newCyclimsoForContext(context);
     }
-    
+
     public static MyTracksCourseProviderUtils getCourseProvider(Context context) {
       return instance.newCourseUtilsForContext(context);
     }
-    
+
 
     /**
      * Returns the factory instance.
@@ -385,7 +384,7 @@ public interface MyTracksProviderUtils {
     /**
      * Overrides the factory instance for testing. Don't forget to set it back
      * to the original value after testing.
-     * 
+     *
      * @param factory the factory
      */
     public static void overrideInstance(Factory factory) {
@@ -395,17 +394,17 @@ public interface MyTracksProviderUtils {
     /**
      * Creates an instance of {@link MyTracksProviderUtils}. Allows subclasses
      * to override for testing.
-     * 
+     *
      * @param context the context
      */
     protected MyTracksProviderUtils newForContext(Context context) {
       return new MyTracksProviderUtilsImpl(context.getContentResolver());
     }
-    
+
     protected CyclismoProviderUtils newCyclimsoForContext(Context context) {
       return new CyclimsoProviderUtilsImpl(context.getContentResolver());
     }
-    
+
     protected MyTracksCourseProviderUtils newCourseUtilsForContext(Context context) {
       return new MyTracksCourseProviderUtils(context.getContentResolver());
     }

@@ -36,8 +36,6 @@ package org.cowboycoders.cyclismo.io.sendtogoogle;
 
 /**
  * Tests the {@link SendToGoogleUtils}.
- * 
- * @author Youtao Liu
  */
 
 import android.location.Location;

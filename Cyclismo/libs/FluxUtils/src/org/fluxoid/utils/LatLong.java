@@ -20,42 +20,42 @@
 package org.fluxoid.utils;
 
 public class LatLong {
-	
-	private double latitude;
-	private double longitude;
 
-    /**
-     * @param latitude - Latitude (decimal degrees)
-     * @param longitude - Longitude (decimal degrees)
-     */
-	public LatLong(double latitude, double longitude) {
-		this.latitude = latitude;
-		this.longitude = longitude;
-	}
+  private double latitude;
+  private double longitude;
 
-	public double getLatitude() {
-		return latitude;
-	}
+  /**
+   * @param latitude - Latitude (decimal degrees)
+   * @param longitude - Longitude (decimal degrees)
+   */
+  public LatLong(double latitude, double longitude) {
+    this.latitude = latitude;
+    this.longitude = longitude;
+  }
 
-	public double getLongitude() {
-		return longitude;
-	}
+  public double getLatitude() {
+    return latitude;
+  }
 
-    /**
-     * Converts lat/long in micro decimal degrees to decimal degrees.
-     *
-     * @param uLatitude Latitude in micro decimal degrees
-     * @param uLongitude Longitude in micro decimal degrees
-     * @return Lat/long in decimal degrees
-     */
-	public static LatLong fromMicroDegrees(int uLatitude, int uLongitude) {
-		double latitude = (uLatitude / Math.pow(10, 6));
-		double longitude = (uLongitude / Math.pow(10, 6));
-		return new LatLong(latitude,longitude);
-	}
-	
-	public static int toMicroDegrees(double number) {
-		return (int) Math.round(number * Math.pow(10, 6));
-	}
+  public double getLongitude() {
+    return longitude;
+  }
+
+  /**
+   * Converts lat/long in micro decimal degrees to decimal degrees.
+   *
+   * @param uLatitude Latitude in micro decimal degrees
+   * @param uLongitude Longitude in micro decimal degrees
+   * @return Lat/long in decimal degrees
+   */
+  public static LatLong fromMicroDegrees(int uLatitude, int uLongitude) {
+    double latitude = (uLatitude / Math.pow(10, 6));
+    double longitude = (uLongitude / Math.pow(10, 6));
+    return new LatLong(latitude, longitude);
+  }
+
+  public static int toMicroDegrees(double number) {
+    return (int) Math.round(number * Math.pow(10, 6));
+  }
 
 }

@@ -44,7 +44,7 @@ import org.cowboycoders.cyclismo.content.Track;
 /**
  * Commons utilities for creating stubs of track, location. The class will be
  * enriched if needs more similar stubs for test.
- * 
+ *
  * @author Youtao Liu
  */
 public class TrackStubUtils {
@@ -62,7 +62,7 @@ public class TrackStubUtils {
 
   /**
    * Gets a a {@link Track} stub with specified number of locations.
-   * 
+   *
    * @param numberOfLocations the number of locations for the track
    * @return a track stub.
    */
@@ -78,7 +78,7 @@ public class TrackStubUtils {
 
   /**
    * Create a MyTracks location with default values.
-   * 
+   *
    * @return a track stub.
    */
   public static MyTracksLocation createMyTracksLocation() {
@@ -87,7 +87,7 @@ public class TrackStubUtils {
 
   /**
    * Creates a {@link MyTracksLocation} stub with specified values.
-   * 
+   *
    * @return a MyTracksLocation stub.
    */
   public static MyTracksLocation createMyTracksLocation(double latitude, double longitude,

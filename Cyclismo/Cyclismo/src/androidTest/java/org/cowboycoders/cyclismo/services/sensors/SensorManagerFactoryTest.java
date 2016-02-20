@@ -59,7 +59,7 @@ public class SensorManagerFactoryTest extends AndroidTestCase {
 
   @SmallTest
   public void testCreateTurbo() throws Exception {
-      assertClassForName(TurboSensorManager.class, R.string.sensor_type_value_turbo);
+    assertClassForName(TurboSensorManager.class, R.string.sensor_type_value_turbo);
   }
 
   private void assertClassForName(Class<?> c, int i) {

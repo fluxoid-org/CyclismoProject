@@ -43,7 +43,7 @@ import org.cowboycoders.cyclismo.io.sendtogoogle.UploadResultActivity;
 
 /**
  * Tests the {@link SendFusionTablesActivity}.
- * 
+ *
  * @author Youtao Liu
  */
 public class SendFusionTablesActivityTest extends AndroidTestCase {
@@ -82,7 +82,7 @@ public class SendFusionTablesActivityTest extends AndroidTestCase {
 
   /**
    * Tests the method
-   * {@link SendFusionTablesActivity#getNextClass(SendRequest,boolean)}. Sets
+   * {@link SendFusionTablesActivity#getNextClass(SendRequest, boolean)}. Sets
    * the flags of "sendDocs" and "cancel" to true and true.
    */
   public void testGetNextClass_cancelSendDocs() {
@@ -93,7 +93,7 @@ public class SendFusionTablesActivityTest extends AndroidTestCase {
 
   /**
    * Tests the method
-   * {@link SendFusionTablesActivity#getNextClass(SendRequest,boolean)}. Sets
+   * {@link SendFusionTablesActivity#getNextClass(SendRequest, boolean)}. Sets
    * the flags of "sendDocs" and "cancel" to false and true.
    */
   public void testGetNextClass_cancelNotSendDocs() {

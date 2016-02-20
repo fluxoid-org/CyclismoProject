@@ -38,7 +38,7 @@ import junit.framework.TestCase;
 
 /**
  * Tests the {@link AdaptiveLocationListenerPolicy}.
- * 
+ *
  * @author youtaol
  */
 public class AdaptiveLocationListenerPolicyTest extends TestCase {

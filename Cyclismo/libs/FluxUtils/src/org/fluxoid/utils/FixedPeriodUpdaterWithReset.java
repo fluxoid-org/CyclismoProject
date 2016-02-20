@@ -11,13 +11,14 @@ public abstract class FixedPeriodUpdaterWithReset extends FixedPeriodUpdater {
   private final long timeout;
   private Timer t;
 
-   /*
-   *
-   * @param initialValue will be rest with this value after timeout has elapsed
-   * @param callback polled at regular intervals
-   * @param period polling period
-   */
-  public FixedPeriodUpdaterWithReset(Object initialValue, UpdateCallback callback, long period, long timeout) {
+  /*
+  *
+  * @param initialValue will be rest with this value after timeout has elapsed
+  * @param callback polled at regular intervals
+  * @param period polling period
+  */
+  public FixedPeriodUpdaterWithReset(Object initialValue, UpdateCallback callback, long period,
+      long timeout) {
     super(initialValue, callback, period);
     t = new Timer(true);
     this.timeout = timeout;

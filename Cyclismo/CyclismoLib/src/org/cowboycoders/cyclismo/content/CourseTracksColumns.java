@@ -40,7 +40,7 @@ import android.provider.BaseColumns;
 
 /**
  * Constants for the tracks table.
- * 
+ *
  * @author Leif Hendrik Wilden
  */
 public interface CourseTracksColumns extends BaseColumns {
@@ -98,38 +98,38 @@ public interface CourseTracksColumns extends BaseColumns {
   public static final String MAPID = "mapid"; // Google Maps id
   public static final String TABLEID = "tableid"; // Google Fusion Tables id
   public static final String ICON = "icon"; // track activity type icon
-  
-  public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" 
-      + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " 
-      + NAME + " STRING, " 
+
+  public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " ("
+      + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+      + NAME + " STRING, "
       + DESCRIPTION + " STRING, "
-      + CATEGORY + " STRING, " 
-      + STARTID + " INTEGER, " 
-      + STOPID + " INTEGER, " 
-      + STARTTIME + " INTEGER, " 
-      + STOPTIME + " INTEGER, " 
-      + NUMPOINTS + " INTEGER, " 
-      + TOTALDISTANCE + " FLOAT, " 
-      + TOTALTIME + " INTEGER, " 
-      + MOVINGTIME + " INTEGER, " 
+      + CATEGORY + " STRING, "
+      + STARTID + " INTEGER, "
+      + STOPID + " INTEGER, "
+      + STARTTIME + " INTEGER, "
+      + STOPTIME + " INTEGER, "
+      + NUMPOINTS + " INTEGER, "
+      + TOTALDISTANCE + " FLOAT, "
+      + TOTALTIME + " INTEGER, "
+      + MOVINGTIME + " INTEGER, "
       + MINLAT + " INTEGER, "
-      + MAXLAT + " INTEGER, " 
-      + MINLON + " INTEGER, " 
-      + MAXLON + " INTEGER, " 
-      + AVGSPEED + " FLOAT, " 
+      + MAXLAT + " INTEGER, "
+      + MINLON + " INTEGER, "
+      + MAXLON + " INTEGER, "
+      + AVGSPEED + " FLOAT, "
       + AVGMOVINGSPEED + " FLOAT, "
       + TOTALWORKDONE + " FLOAT, "
       + TOTALCRANKROTATIONS + " FLOAT, "
       + TOTALHEARTBEATS + " FLOAT, "
       + MAXSPEED + " FLOAT, "
       + MINELEVATION + " FLOAT, "
-      + MAXELEVATION + " FLOAT, " 
-      + ELEVATIONGAIN + " FLOAT, " 
-      + MINGRADE + " FLOAT, " 
-      + MAXGRADE + " FLOAT, " 
-      + MAPID + " STRING, " 
-      + TABLEID + " STRING, " 
-      + ICON + " STRING" 
+      + MAXELEVATION + " FLOAT, "
+      + ELEVATIONGAIN + " FLOAT, "
+      + MINGRADE + " FLOAT, "
+      + MAXGRADE + " FLOAT, "
+      + MAPID + " STRING, "
+      + TABLEID + " STRING, "
+      + ICON + " STRING"
       + ");";
 
   public static final String[] COLUMNS = {
@@ -196,5 +196,5 @@ public interface CourseTracksColumns extends BaseColumns {
       ContentTypeIds.STRING_TYPE_ID, // map id
       ContentTypeIds.STRING_TYPE_ID, // table id
       ContentTypeIds.STRING_TYPE_ID // icon
-    };
+  };
 }

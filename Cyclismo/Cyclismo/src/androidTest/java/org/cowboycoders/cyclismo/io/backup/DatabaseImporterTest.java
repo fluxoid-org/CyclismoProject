@@ -89,7 +89,7 @@ public class DatabaseImporterTest extends TestCase {
   public void testImportAllRows_readNullFields() throws Exception {
     testImportAllRows(true);
   }
-  
+
   private void testImportAllRows(boolean readNullFields) throws Exception {
     // Create a fake data stream to be read
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1024);
@@ -150,7 +150,7 @@ public class DatabaseImporterTest extends TestCase {
     assertValue("lolcat", "col3", value);
     assertValue(2.72, "col5", value);
   }
-  
+
   public void testImportAllRows_noRows() throws Exception {
     // Create a fake data stream to be read
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1024);
@@ -304,8 +304,8 @@ public class DatabaseImporterTest extends TestCase {
     assertNotNull(value);
     assertEquals(expectedValue, value);
   }
-  
-  private void assertBlobValue(String expectedValue, String name, ContentValues values ){
+
+  private void assertBlobValue(String expectedValue, String name, ContentValues values) {
     byte[] blob = values.getAsByteArray(name);
     assertEquals(expectedValue, new String(blob));
   }
