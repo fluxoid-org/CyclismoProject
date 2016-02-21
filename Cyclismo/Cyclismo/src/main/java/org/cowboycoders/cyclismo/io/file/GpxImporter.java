@@ -439,7 +439,7 @@ public class GpxImporter extends DefaultHandler {
 
       // check for negative time change
       if (timeDifference <= 0) {
-        Log.w(TAG, "Time difference not postive.");
+        Log.w(TAG, "Time difference not positive.");
       } else {
 
         /*
