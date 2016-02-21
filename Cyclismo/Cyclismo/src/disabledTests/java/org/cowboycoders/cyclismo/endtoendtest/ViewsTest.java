@@ -40,7 +40,7 @@ import android.widget.TextView;
 
 import org.cowboycoders.cyclismo.R;
 import org.cowboycoders.cyclismo.TrackListActivity;
-import org.cowboycoders.cyclismo.fragments.MyTracksMapFragment;
+import org.cowboycoders.cyclismo.fragments.MapFragment;
 
 /**
  * Tests switching views and the menu list of each view.
@@ -65,8 +65,8 @@ public class ViewsTest extends ActivityInstrumentationTestCase2<TrackListActivit
   }
 
   /**
-   * Switches view from {@link MyTracksMapFragment} to @ ChartFragment} , then
-   * changes to @ StatsFragment} . Finally back to {@link MyTracksMapFragment}.
+   * Switches view from {@link MapFragment} to @ ChartFragment} , then
+   * changes to @ StatsFragment} . Finally back to {@link MapFragment}.
    * And check some menus in these views. In MapFragment, the menu should
    * contain satellite/map mode. In ChartFragment and StatsFragment, the menu
    * should not contain satellite/map mode.

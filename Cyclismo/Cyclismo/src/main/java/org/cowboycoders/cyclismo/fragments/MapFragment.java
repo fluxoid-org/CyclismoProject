@@ -123,20 +123,17 @@ import static org.mapsforge.core.util.LatLongUtils.zoomForBounds;
  * @author Leif Hendrik Wilden
  * @author Rodrigo Damazio
  */
-public class MyTracksMapFragment extends Fragment implements TrackDataListener {
+public class MapFragment extends Fragment implements TrackDataListener {
   
-  private static final String TAG = "MyTracksMapFragment";
-
-  public static final String MAP_FRAGMENT_TAG = "mapFragment";
+  public static final String TAG = MapFragment.class.getSimpleName();
 
   private static final String CURRENT_LOCATION_KEY = "current_location_key";
   private static final String
       KEEP_CURRENT_LOCATION_VISIBLE_KEY = "keep_current_location_visible_key";
   private static final String ZOOM_TO_CURRENT_LOCATION_KEY = "zoom_to_current_location_key";
 
-  // Google's latitude and longitude
-  private static final double DEFAULT_LATITUDE = 37.423;
-  private static final double DEFAULT_LONGITUDE = -122.084;
+  private static final double DEFAULT_LATITUDE = 52.15;
+  private static final double DEFAULT_LONGITUDE = 93.916667;
 
   private static final long COURSE_LOAD_TIMEOUT_NS = TimeUnit.SECONDS.toNanos(10);
 
@@ -212,7 +209,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
 
     @Override
     public void onSelectedTrackChanged(final Track track) {
-      synchronized (MyTracksMapFragment.this) {
+      synchronized (MapFragment.this) {
       if (isResumed()) {
         if (courseMode) {
           Log.d(TAG,"in courseTrackDataListener : onSelectedTrackChanged");
@@ -254,7 +251,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
 
     @Override
     public void clearTrackPoints() {
-      synchronized (MyTracksMapFragment.this) {
+      synchronized (MapFragment.this) {
       if (isResumed()) {
         //courseDummyOverlay.clearPoints();
         //reloadPaths = true;
@@ -263,7 +260,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
 
     @Override
     public void onSampledInTrackPoint(final Location location) {
-      synchronized (MyTracksMapFragment.this) { if (isResumed()) {
+      synchronized (MapFragment.this) { if (isResumed()) {
         courseDummyOverlay.addLocation(location);
       } }
     }
@@ -275,7 +272,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
 
     @Override
     public void onSegmentSplit(Location location) {
-      synchronized (MyTracksMapFragment.this) {
+      synchronized (MapFragment.this) {
       if (isResumed()) {
         courseDummyOverlay.addSegmentSplit();
       }}
@@ -284,23 +281,23 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
     @Override
     public void onNewTrackPointsDone() {
       // we have our data
-      synchronized (MyTracksMapFragment.this) {
+      synchronized (MapFragment.this) {
         if (isResumed()) {
           if (courseDataHub != null) courseDataHub.unregisterTrackDataListener(this);
           getActivity().runOnUiThread(new Runnable() {
 
             public void run() {
-              synchronized (MyTracksMapFragment.this) {
+              synchronized (MapFragment.this) {
                 if (isResumed() && mapView != null) {
 
                   courseDummyOverlay.update(null, null, true);
 
 
                   if (courseOverlay == null && courseMode) {
-                    courseOverlay = new StaticOverlay(MyTracksMapFragment.this.getActivity(),
+                    courseOverlay = new StaticOverlay(MapFragment.this.getActivity(),
                             courseDummyOverlay.getLocations());
                     Log.d(TAG, "new courseOverlay");
-                    MyTracksMapFragment.this.notifyAll();
+                    MapFragment.this.notifyAll();
                   }
 
                 }
@@ -320,7 +317,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
 
     @Override
     public void onNewWaypoint(Waypoint waypoint) {
-      synchronized (MyTracksMapFragment.this) {
+      synchronized (MapFragment.this) {
       if (isResumed() && waypoint != null && LocationUtils.isValidLocation(waypoint.getLocation())) {
         courseDummyOverlay.addWaypoint(waypoint);
       }}
@@ -328,7 +325,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
 
     @Override
     public void onNewWaypointsDone() {
-      synchronized (MyTracksMapFragment.this) {
+      synchronized (MapFragment.this) {
         if (isResumed()) {
           getActivity().runOnUiThread(new Runnable() {
             public void run() {
@@ -562,7 +559,7 @@ public class MyTracksMapFragment extends Fragment implements TrackDataListener {
         resumeCourseDataHub();
       }
       else { // use locations courseDummy overlay if available
-        courseOverlay = new StaticOverlay(MyTracksMapFragment.this.getActivity(),
+        courseOverlay = new StaticOverlay(MapFragment.this.getActivity(),
                 courseDummyOverlay.getLocations());
         mapOverlay.addUnderlay(courseOverlay);
       }
