@@ -35,12 +35,14 @@
 
 package org.cowboycoders.cyclismo.settings;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 
 import org.cowboycoders.cyclismo.R;
+import org.cowboycoders.cyclismo.util.IntentUtils;
 import org.cowboycoders.cyclismo.util.PreferencesUtils;
 
 /**
@@ -61,17 +63,17 @@ public class CourseSetupActivity extends AbstractSettingsActivity {
     addPreferencesFromResource(R.xml.course_settings);
     ListPreference trackColorModeListPreference = (ListPreference) findPreference(
         getString(R.string.course_mode));
+
     OnPreferenceChangeListener listener = new OnPreferenceChangeListener() {
-        @Override
+      @Override
       public boolean onPreferenceChange(Preference preference, Object newValue) {
         updateUiByTrackColorMode((String) newValue);
         return true;
       }
 
-        private void updateUiByTrackColorMode(String newValue) {
-          // TODO Auto-generated method stub
-          
-        }
+      private void updateUiByTrackColorMode(String newValue) {
+        // TODO Auto-generated method stub
+      }
     };
     String trackColorModeValue = PreferencesUtils.getString(
         this, R.string.course_mode, PreferencesUtils.COURSE_MODE_DEFAULT);
@@ -80,8 +82,15 @@ public class CourseSetupActivity extends AbstractSettingsActivity {
         getResources().getStringArray(R.array.course_mode_select_values),
         R.string.settings_courses_mode_summary, trackColorModeValue, listener);
 
-
+    Preference turboPreference = findPreference(getString(R.string.settings_generic_turbo_key));
+    turboPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+      @Override
+      public boolean onPreferenceClick(Preference preference) {
+        Intent intent = IntentUtils.newIntent(
+            CourseSetupActivity.this, TurboSettingsActivity.class);
+        startActivity(intent);
+        return true;
+      }
+    });
   }
-
-
 }

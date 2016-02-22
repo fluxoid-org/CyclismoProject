@@ -26,6 +26,16 @@ limitations under the License.
         android:title="@string/settings_courses_mode_title" />
 
     <PreferenceScreen
+        android:key="@string/settings_generic_turbo_key"
+        android:summary="@string/settings_turbotrainer_select_summary"
+        android:title="@string/settings_turbotrainer_select_title">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="org.cowboycoders.cyclismo.settings.TurboSettingsActivity"
+            android:targetPackage="org.cowboycoders.cyclismo" />
+    </PreferenceScreen>
+
+    <PreferenceScreen
         android:key="@string/course_bike_id"
         android:summary="@string/settings_courses_bike_select_summary"
         android:title="@string/settings_courses_bike_select_title" >
