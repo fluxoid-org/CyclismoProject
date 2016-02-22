@@ -3201,17 +3201,17 @@ limitations under the License.
     Select Route
   </string>
           <string name="settings_courses_route_section_title"
-    translation_description="In the 'Courses' settings, thes ection title for the route configuration options
+    translation_description="In the 'Courses' settings, the section title for the route configuration options
       Character limit: ~20 (1 line)">
     Route Configuration
   </string>
           <string name="settings_courses_route_summary"
-    translation_description="In the 'Courses' settings, the sumamry for the route select option
+    translation_description="In the 'Courses' settings, the summary for the route select option
       Character limit: ~20 (1 line)">
     Choose a GPX route to simulate
   </string>
             <string name="settings_courses_mode_summary"
-    translation_description="In the 'Courses' settings, the sumamry for the mode select option
+    translation_description="In the 'Courses' settings, the summary for the mode select option
       Character limit: ~20 (1 line)">
     Select a mode
   </string>
