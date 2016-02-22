@@ -57,52 +57,9 @@ public class AbstractSettingsFragment extends PreferenceFragment{
     super.onCreate(bundle);
   }
 
-
-
   @Override
   public void onDestroy() {
     super.onDestroy();
-  }
-  
-  /**
-   * Configures a preference.
-   * 
-   * @param preference the preference
-   * @param options the list of displayed options
-   * @param values the list of stored values
-   * @param summaryId the summary id
-   * @param value the stored value
-   * @param listener listener to invoke
-   * @param summarizer if you don't want to use toString()
-   * @return 
-   */
-  protected void configurePreference(final Preference preference, final String[] options,
-      final String[] values, final int summaryId, Object value,
-      final OnPreferenceChangeListener listener, final PreferencesUtils.SettingsSelectionSummarizer summarizer) {
-    if (options != null) {
-      ((ListPreference) preference).setEntries(options);
-    }
-    if (values != null) {
-      ((ListPreference) preference).setEntryValues(values);
-    }
-    preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-        @Override
-      public boolean onPreferenceChange(Preference pref, Object newValue) {
-        updatePreferenceSummary(pref, options, values, summaryId, newValue,summarizer);
-        if (listener != null) {
-          listener.onPreferenceChange(pref, newValue);
-        }
-        return true;
-      }
-    });
-    updatePreferenceSummary(preference, options, values, summaryId, value, summarizer);
-    if (listener != null) {
-      listener.onPreferenceChange(preference, value);
-    }
-    
-    //return new UpdateSummaryCaller(preference, options,
-     //  values, summaryId,
-       // summarizer);
   }
 
   /**
@@ -172,7 +129,4 @@ public class AbstractSettingsFragment extends PreferenceFragment{
       AbstractSettingsFragment.this.updatePreferenceSummary(preference, options, values, summaryId, value, summarizer);
     }
   }
-  
-
-  
 }

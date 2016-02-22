@@ -1,5 +1,6 @@
 package org.cowboycoders.turbotrainers.bushido.brake;
 
+import org.cowboycoders.turbotrainers.Mode;
 import org.cowboycoders.turbotrainers.TurboTrainerDataHooks;
 import org.fluxoid.utils.SimpleCsvLogger;
 
@@ -59,6 +60,11 @@ public abstract class AbstractController implements TurboTrainerDataHooks {
 		started = false;
 		onStop();
 	}
+
+  /**
+   * Each controller should return the training mode that it supports.
+   */
+  public abstract Mode getMode();
 	
 	/**
 	 * Guaranteed to only be called if not already started

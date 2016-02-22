@@ -1,13 +1,17 @@
 package org.cowboycoders.turbotrainers.bushido.brake;
 
+import org.cowboycoders.turbotrainers.Mode;
 import org.fluxoid.utils.SimpleCsvLogger;
 
 import java.io.File;
 
 public class ConstantResistanceController extends AbstractController {
 
+  // Doesn't support any of the current modes
+  private static final Mode SUPPORTED_MODE = null;
+
 	private SimpleCsvLogger logger;
-	private int resistance = 0;
+	private int resistance = 100;
 
 
 	@Override
@@ -32,8 +36,13 @@ public class ConstantResistanceController extends AbstractController {
 	public void setAbsoluteResistance(int newVal) {
 		this.resistance = newVal;
 	}
-	
-	@Override
+
+  @Override
+  public Mode getMode() {
+    return SUPPORTED_MODE;
+  }
+
+  @Override
 	public void onStart() {
 		getDataModel().setAbsoluteResistance(resistance);
 	}

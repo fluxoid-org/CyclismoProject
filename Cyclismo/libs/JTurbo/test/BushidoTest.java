@@ -156,10 +156,11 @@ public class BushidoTest {
   public void testBushido() throws InterruptedException, TimeoutException {
     Node n = new Node(BushidoTest.antchip);
     n.registerAntLogger(antLogger);
-    b = new BushidoHeadunit(n);
+    b = new BushidoHeadunit();
     b.registerButtonPressListener(buttonPressListener);
     b.registerDataListener(dataListener);
     b.setMode(Mode.TARGET_SLOPE);
+    b.setNode(n);
     b.startConnection();
     b.resetOdometer();
     b.startCycling();

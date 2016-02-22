@@ -52,6 +52,7 @@ public interface TurboTrainerInterface {
    * @throws IllegalArgumentException if mode not supported
    * @throws IllegalStateException if called after start() 
    */
+
   public void setMode(Mode mode) throws IllegalArgumentException;
   
   /**

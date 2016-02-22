@@ -176,8 +176,10 @@ public class BrakeCalibrationHackingArena {
     Node n = new Node(BrakeCalibrationHackingArena.antchip);
     ConstantResistanceController mapper = new ConstantResistanceController();
     mapper.setAbsoluteResistance(100);
-    b = new BushidoBrake(n,mapper);
+    b = new BushidoBrake();
     b.setMode(Mode.TARGET_SLOPE);
+    b.setNode(n);
+    b.overrideDefaultResistanceController(mapper);
     b.registerDataListener(dataListener);
     b.startConnection();
     

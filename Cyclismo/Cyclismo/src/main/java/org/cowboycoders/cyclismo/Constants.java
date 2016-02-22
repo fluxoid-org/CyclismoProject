@@ -137,7 +137,9 @@ public abstract class Constants {
   public static final String
       RESUME_TRACK_EXTRA_NAME = "org.cowboycoders.cyclismo.RESUME_TRACK";
 
-  public static final String SETTINGS_NAME = "SettingsActivity";
+  // This shouldn't be changed. Ultimately all preferences should use this by default, and it
+  // can then be deleted.
+  public static final String SETTINGS_NAME = "org.cowboycoders.cyclismo_preferences";
 
   public static final double RECORDING_DISTANCE_ACCURACY = 0.0000001;
 

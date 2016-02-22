@@ -34,6 +34,7 @@ import org.cowboycoders.ant.messages.data.BroadcastDataMessage;
 import org.cowboycoders.ant.messages.responses.ResponseCode;
 import org.cowboycoders.ant.utils.AntLoggerImpl;
 import org.cowboycoders.ant.utils.ArrayUtils;
+import org.cowboycoders.turbotrainers.Mode;
 import org.cowboycoders.turbotrainers.Parameters;
 import org.cowboycoders.turbotrainers.TurboTrainerDataListener;
 import org.cowboycoders.turbotrainers.bushido.brake.CalibrationState;
@@ -829,7 +830,9 @@ private SimpleCsvLogger log;
 	  public void startHeadunit() throws InterruptedException, TimeoutException {
 	    headunit = new Node(new AntTransceiver(1));
 	    n.registerAntLogger(antLogger);
-	    b = new BushidoHeadunit(headunit);
+	    b = new BushidoHeadunit();
+      b.setMode(Mode.TARGET_SLOPE);
+      b.setNode(headunit);
 	    b.registerDataListener(dataListener);
 	    b.startConnection();
 	    b.resetOdometer();

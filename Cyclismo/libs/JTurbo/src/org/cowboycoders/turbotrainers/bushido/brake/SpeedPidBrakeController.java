@@ -7,6 +7,7 @@ import org.cowboycoders.pid.OutputController;
 import org.cowboycoders.pid.PidController;
 import org.cowboycoders.pid.PidParameterController;
 import org.cowboycoders.pid.ProcessVariableProvider;
+import org.cowboycoders.turbotrainers.Mode;
 import org.cowboycoders.turbotrainers.PowerModel;
 import org.cowboycoders.turbotrainers.PowerModelManipulator;
 import org.fluxoid.utils.Conversions;
@@ -18,6 +19,8 @@ import org.fluxoid.utils.UpdateCallback;
 import java.io.File;
 
 public class SpeedPidBrakeController extends AbstractController {
+
+  private static final Mode SUPPORTED_MODE = Mode.TARGET_SPEED;
 
   private static final int POWER_MODEL_UPDATE_PERIOD_MS = 100; // milli-seconds
 
@@ -209,6 +212,11 @@ public class SpeedPidBrakeController extends AbstractController {
 
   public PidParameterController getPidParameterController() {
     return resistancePidController;
+  }
+
+  @Override
+  public Mode getMode() {
+    return SUPPORTED_MODE;
   }
 
   @Override

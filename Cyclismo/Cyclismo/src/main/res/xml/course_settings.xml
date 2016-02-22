@@ -17,13 +17,25 @@ limitations under the License.
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:title="@string/course_select_title" >
 
+    <PreferenceCategory android:title="@string/workout_courses_session_section_title" >
+
+    <PreferenceScreen
+        android:key="@string/course_track_id"
+        android:summary="@string/settings_courses_route_summary"
+        android:title="@string/settings_courses_route_title" >
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="org.cowboycoders.cyclismo.CourseListActivity"
+            android:targetPackage="org.cowboycoders.cyclismo" />
+    </PreferenceScreen>
+
+    <!--This list depends on what the selected turbo trainer supports and is retrieved in
+    TurboService. The default is also defined there. -->
     <ListPreference
-        android:defaultValue="@string/settings_courses_mode_simulation_value"
-        android:entries="@array/course_mode_select_options"
-        android:entryValues="@array/course_mode_select_values"
         android:key="@string/course_mode"
         android:summary="@string/settings_courses_mode_summary"
-        android:title="@string/settings_courses_mode_title" />
+        android:title="@string/settings_courses_mode_title"
+        android:defaultValue="@string/settings_courses_mode_simulation_value"/>
 
     <PreferenceScreen
         android:key="@string/course_bike_id"
@@ -35,16 +47,27 @@ limitations under the License.
             android:targetPackage="org.cowboycoders.cyclismo" />
     </PreferenceScreen>
 
-    <PreferenceCategory android:title="@string/settings_courses_route_section_title" >
-        <PreferenceScreen
-            android:key="@string/course_track_id"
-            android:summary="@string/settings_courses_route_summary"
-            android:title="@string/settings_courses_route_title" >
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:targetClass="org.cowboycoders.cyclismo.CourseListActivity"
-                android:targetPackage="org.cowboycoders.cyclismo" />
-        </PreferenceScreen>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/settings_courses_session_section_title" >
+
+    <PreferenceScreen
+        android:key="@string/settings_generic_turbo_key"
+        android:summary="@string/settings_turbotrainer_settings_summary"
+        android:title="@string/settings_turbotrainer_settings_title">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="org.cowboycoders.cyclismo.settings.TurboSettingsActivity"
+            android:targetPackage="org.cowboycoders.cyclismo" />
+    </PreferenceScreen>
+
+    <ListPreference
+        android:defaultValue="@string/turbotrainer_tacx_bushido_headunit_value"
+        android:entries="@array/turbotrainer_options"
+        android:entryValues="@array/turbotrainer_values"
+        android:key="@string/turbotrainer_selected"
+        android:summary="@string/settings_turbotrainer_select_summary"
+        android:title="@string/settings_turbotrainer_select_title" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

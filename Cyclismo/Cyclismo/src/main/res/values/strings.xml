@@ -3182,11 +3182,23 @@ limitations under the License.
     Shown after you press the red button.">
    Course Setup
   </string>
-    <string name="settings_courses_mode_simulation"
+  <string name="settings_courses_mode_simulation"
     translation_description="In the 'Courses' settings, for the 'Mode' dropdown, the option
       to simulate a track.
       Character limit: ~20 (1 line)">
     Simulation
+  </string>
+  <string name="settings_courses_mode_constant_power"
+    translation_description="In the 'Courses' settings, for the 'Mode' dropdown, the option
+      to use constant power simulation for a track.
+      Character limit: ~20 (1 line)">
+    Constant power
+  </string>
+  <string name="settings_courses_mode_constant_speed"
+    translation_description="In the 'Courses' settings, for the 'Mode' dropdown, the option
+      to use constant speed simulation for a track.
+      Character limit: ~20 (1 line)">
+    Constant speed
   </string>
       <string name="settings_courses_mode_title"
     translation_description="In the 'Courses' settings, for the title of the mode select
@@ -3198,24 +3210,29 @@ limitations under the License.
     translation_description="In the 'Courses' settings, for the title of the route select
     option
       Character limit: ~20 (1 line)">
-    Select Route
+    Route
   </string>
-          <string name="settings_courses_route_section_title"
-    translation_description="In the 'Courses' settings, thes ection title for the route configuration options
+  <string name="workout_courses_session_section_title"
+    translation_description="In the 'Courses' settings, the section title for the workout configuration options
+    Character limit: ~20 (1 line)">
+    Define workout
+  </string>
+          <string name="settings_courses_session_section_title"
+    translation_description="In the 'Courses' settings, the section title for the session configuration options
       Character limit: ~20 (1 line)">
-    Route Configuration
+    Simulation settings
   </string>
           <string name="settings_courses_route_summary"
-    translation_description="In the 'Courses' settings, the sumamry for the route select option
+    translation_description="In the 'Courses' settings, the summary for the route select option
       Character limit: ~20 (1 line)">
-    Choose a GPX route to simulate
+    Select a GPX route to simulate
   </string>
             <string name="settings_courses_mode_summary"
-    translation_description="In the 'Courses' settings, the sumamry for the mode select option
+    translation_description="In the 'Courses' settings, the summary for the mode select option
       Character limit: ~20 (1 line)">
     Select a mode
   </string>
-  <string name="course_not_selected">None Selected</string>
+  <string name="item_not_selected">Please select</string>
   
   <string name="turbo_mode_service_running_notification_title">Turbo trainer</string>
   <string name="turbo_mode_service_running_notification_text">Turbo trainer service connection established</string>
@@ -3253,11 +3270,12 @@ limitations under the License.
   <string name="generic_list_left_button_placeholder">Left button</string>
   <string name="generic_list_title_placeholder">Title</string>
   <string name="generic_list_empty_message">No items</string>
-  
-  <string name="settings_turbotrainer_generic">Turbo Trainer Settings</string>
+
+  <string name="settings_turbotrainer_select_title">Turbo Trainer</string>
+  <string name="settings_turbotrainer_settings_title">Settings</string>
   <string name="settings_turbotrainer_generic_scale_factor_summary">Multiplies positive gradients by this value</string>
   <string name="settings_turbotrainer_generic_scale_factor_title">Scale factor</string>
-  
+
   <string name="settings_select_user_title">Select User</string>
   
   <string name="user_list_right_button">Add new user</string>
@@ -3285,13 +3303,11 @@ limitations under the License.
   <string name="settings_turbo_scale_factor_help">Must be between 0.0 and 1.0</string>
   
     <string name="turbotrainer_tacx_bushido_headunit_option">Tacx Bushido Headunit</string>
-    <string name="turbotrainer_tacx_bushido_brake_headunit_simulation_option">Tacx Bushido Brake (Resistance curve)</string>
-    <string name="turbotrainer_tacx_bushido_brake_pid_speed_control_option">Tacx Bushido Brake Speed (PID)</string>
-    <string name="turbotrainer_tacx_bushido_brake_pid_power_control_option">Tacx Bushido Brake Power (PID)</string>
+    <string name="turbotrainer_tacx_bushido_brake_option">Tacx Bushido Brake</string>
     <string name="turbotrainer_dummy_option">Dummy Trainer (for testing)</string>
     
-    <string name="turbotrainer_select_title">Select Turbo Trainer</string>
-  	<string name="turbotrainer_select_summary">Choose a turbo trainer to use</string>
+  <string name="settings_turbotrainer_select_summary">Select a turbo trainer</string>
+  <string name="settings_turbotrainer_settings_summary">Turbo trainer specific settings</string>
   	<string name="bushido_brake_calibrate_status_message">Status message</string>
   	<string name="bushido_brake_calibrate_start">Speed up to 40km/h</string>
     <string name="bushido_brake_calibrate_failed">calibration failed</string>

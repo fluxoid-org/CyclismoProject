@@ -21,8 +21,8 @@ public abstract class GenericTurboTrainer implements TurboTrainerInterface {
 	}
 	
 	protected GenericTurboTrainer() {
-		setSupportedModes(new Mode[0]);
-	}
+    setSupportedModes(new Mode[0]);
+  }
 	
 	@Override
 	public Mode[] modesSupported() {
@@ -32,7 +32,7 @@ public abstract class GenericTurboTrainer implements TurboTrainerInterface {
 	@Override
 	public void setMode(Mode mode) throws IllegalArgumentException {
 		if (Arrays.binarySearch(supportedModes, mode) < 0) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Unsupported mode: " + mode + " supported modes: " + supportedModes.toString());
 		}
 		currentMode = mode;
 	}

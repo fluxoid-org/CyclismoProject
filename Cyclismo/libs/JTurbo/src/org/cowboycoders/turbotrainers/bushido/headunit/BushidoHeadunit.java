@@ -90,8 +90,7 @@ public class BushidoHeadunit extends AntTurboTrainer {
   
   private final ArrayList<BroadcastListener<? extends ChannelMessage>> listeners =
       new ArrayList<BroadcastListener<? extends ChannelMessage>>();
-  
-  private Node node;
+
   private Channel channel;
 //  private ExecutorService channelExecutorService = Executors.newSingleThreadExecutor();
   private EnqueuedMessageSender channelMessageSender;
@@ -364,11 +363,6 @@ public class BushidoHeadunit extends AntTurboTrainer {
       return model.getVirtualDistance();
     }
   }
- 
-  public BushidoHeadunit(Node node) {
-    super(node);
-    this.node = node;
-  }
   
   /**
    * Call after start.
@@ -402,7 +396,7 @@ public class BushidoHeadunit extends AntTurboTrainer {
 	if (currentMode == null) {
 		throw new IllegalStateException("must set a mode");
 	}   
-	  
+	  Node node = getNode();
     node.start();
     channel = node.getFreeChannel();
     
@@ -541,7 +535,7 @@ public class BushidoHeadunit extends AntTurboTrainer {
     disconnect();
     channel.close();
     channel.unassign();
-    node.freeChannel(channel);
+    getNode().freeChannel(channel);
     // let external controiller stop node
     //node.stop();
   }

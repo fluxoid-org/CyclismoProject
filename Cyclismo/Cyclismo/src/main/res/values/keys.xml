@@ -108,6 +108,8 @@ limitations under the License.
  <string name="settings_turbotrainer_generic_scale_factor_key">settingsGenericTurboScaleKey</string>
  <!--  generic turbo settings menu key -->
  <string name="settings_generic_turbo_key">settingsGenericTurboKey</string>
+ <!--  generic turbo select menu key -->
+ <string name="settings_turbo_select_key">settingsTurboSelectKey</string>
  
  <!-- Select user main settings menu key -->
  <string name="settings_select_user_key">settingsSelectUserMainMenuKey</string>
@@ -121,6 +123,5 @@ limitations under the License.
   
   <string name="turbotrainer_selected">turboTrainerSelected</string>
     <string name="settings_turbotrainer_bushido_calibrate_key">settingsTurboCalibrateBushidoKey</string>
-
 
 </resources>

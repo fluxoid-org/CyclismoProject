@@ -44,6 +44,7 @@ import org.fluxoid.utils.IterationUtils;
 import org.fluxoid.utils.UpdateCallback;
 
 import java.math.BigInteger;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.HashMap;
@@ -58,16 +59,20 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
-public class BushidoBrake extends AntTurboTrainer {
 
-  public static final Mode[] SUPPORTED_MODES = new Mode[]{Mode.TARGET_SLOPE};
+public class BushidoBrake extends AntTurboTrainer {
 
   private static final int UPDATE_PERIOD_MS = 1000;
   // must be > 2 seconds as this is the approximate update period from the brake
   private static final int RESET_PERIOD_MS = 5000;
 
+  public static final Mode[] SUPPORTED_MODES = new Mode[]{
+      Mode.TARGET_SLOPE,
+      Mode.TARGET_SPEED,
+      Mode.TARGET_POWER
+  };
+
   {
-    // switch on controller type (different controllers support diff modes)
     setSupportedModes(SUPPORTED_MODES);
   }
 
@@ -90,7 +95,6 @@ public class BushidoBrake extends AntTurboTrainer {
 
   private final ArrayList<BroadcastListener<? extends ChannelMessage>> listeners = new ArrayList<BroadcastListener<? extends ChannelMessage>>();
 
-  private Node node;
   private Channel channel;
   private EnqueuedMessageSender channelMessageSender;
   private BrakeModel model;
@@ -387,14 +391,6 @@ public class BushidoBrake extends AntTurboTrainer {
 
   }
 
-  ;
-
-  public BushidoBrake(Node node, AbstractController controller) {
-    super(node);
-    this.resistanceController = controller;
-    this.node = node;
-  }
-
   /**
    * Call after start.
    *
@@ -420,7 +416,15 @@ public class BushidoBrake extends AntTurboTrainer {
     // startCycling();
   }
 
+  private void validateController() {
+    if (resistanceController.getMode() != getCurrentMode()) {
+      throw new IllegalStateException(String.format("Invalid controller: %s for mode: %s. ",
+          resistanceController.toString(), getCurrentMode().toString()));
+    }
+  }
+
   public void startConnection() throws InterruptedException, TimeoutException {
+    Node node = getNode();
     node.start();
     channel = node.getFreeChannel();
 
@@ -443,13 +447,13 @@ public class BushidoBrake extends AntTurboTrainer {
 
     channelMessageSender = new EnqueuedMessageSender(channel);
 
-    // initConnection();
-
-    // startCycling();
-
-    if (getCurrentMode() == Mode.TARGET_SLOPE) {
-      this.model = new TargetSlopeModel();
+    model = new TargetSlopeModel();
+    Mode mode = getCurrentMode();
+    if (resistanceController == null) {
+      // This is normally the case unless the controller has been specifically set
+      resistanceController = getDefaultResistanceController(mode);
     }
+    validateController();
 
     BushidoUpdatesListener updatesListener = new BushidoUpdatesListener(
             model, this.getMessageSender());
@@ -466,6 +470,17 @@ public class BushidoBrake extends AntTurboTrainer {
     powerUpdater.start();
     cadenceUpdater.start();
 
+  }
+
+  /**
+   * Overrides the default resistance controller for the Bushido brake which is normally chosen
+   * automatically as a function of the turbo mode. This may be useful for testing, or providing
+   * alternative controllers to the defaults.
+   *
+   * @param resistanceController to override the default controller with.
+   */
+  public void overrideDefaultResistanceController(AbstractController resistanceController) {
+    this.resistanceController = resistanceController;
   }
 
   public static interface VersionRequestCallback {
@@ -1241,7 +1256,7 @@ public class BushidoBrake extends AntTurboTrainer {
     // disconnect();
     channel.close();
     channel.unassign();
-    node.freeChannel(channel);
+    getNode().freeChannel(channel);
     // let external controiller stop node
     // node.stop();
   }
@@ -1280,6 +1295,31 @@ public class BushidoBrake extends AntTurboTrainer {
     synchronized (model) {
       return model.getTarget();
     }
+  }
+
+  /**
+   * Returns a default controller for the specified turbo mode. These controllers are specific to
+   * the Bushido.
+   *
+   * @param mode is the turbo mode as selected in the UI.
+   * @return the controller for the turbo to realise the specified mode.
+   */
+  private AbstractController getDefaultResistanceController(Mode mode) {
+    AbstractController controller;
+    switch (mode) {
+      case TARGET_SLOPE:
+        controller = new SpeedResistanceMapper();
+        break;
+      case TARGET_SPEED:
+        controller = new SpeedPidBrakeController();
+        break;
+      case TARGET_POWER:
+        controller = new PowerPidBrakeController();
+        break;
+      default:
+        throw new InvalidParameterException("Invalid mode");
+    }
+    return controller;
   }
 
 }

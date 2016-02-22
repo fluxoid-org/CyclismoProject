@@ -31,16 +31,10 @@ public abstract class AntTurboTrainer extends GenericTurboTrainer {
 
 	private Node node;
 
-	public AntTurboTrainer(Node node) {
-		this.node = node;
-	}
-
-	/**
-	 * @return the node
-	 */
 	public Node getNode() {
 		return node;
 	}
+  public void setNode(Node node) { this.node = node; }
 
 	public abstract void start() throws TooFewAntChannelsAvailableException,
 			TurboCommunicationException, InterruptedException, TimeoutException;

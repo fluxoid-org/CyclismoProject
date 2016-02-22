@@ -1,5 +1,6 @@
 package org.cowboycoders.turbotrainers.bushido.brake;
 
+import org.cowboycoders.turbotrainers.Mode;
 import org.cowboycoders.turbotrainers.PowerModel;
 import org.fluxoid.utils.Conversions;
 import org.fluxoid.utils.FixedPeriodUpdater;
@@ -21,6 +22,7 @@ import java.io.File;
  */
 public class SpeedResistancePowerMapper extends AbstractController {
 
+  private static final Mode SUPPORTED_MODE = Mode.TARGET_SLOPE;
 
 	// Period at which the virtual speed will be updated (ms)
 	private static final int POWER_MODEL_UPDATE_PERIOD_MS = 100;
@@ -155,7 +157,12 @@ public class SpeedResistancePowerMapper extends AbstractController {
 		return getDataModel().getVirtualSpeed();
 	}
 
-	@Override
+  @Override
+  public Mode getMode() {
+    return SUPPORTED_MODE;
+  }
+
+  @Override
 	public final void onStart() {
 		getDataModel().setResistanceBounds(MINIMUM_BRAKE_RESISTANCE, MAXIMUM_BRAKE_RESISTANCE);
 		getDataModel().setResistance(INITIAL_BRAKE_RESISTANCE);
@@ -174,7 +181,5 @@ public class SpeedResistancePowerMapper extends AbstractController {
 		logger.append(true);
 		return logger;
 	}
-
-
 
 }

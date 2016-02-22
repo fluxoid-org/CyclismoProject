@@ -256,32 +256,19 @@ limitations under the License.
     <item>@string/waypoint_type_waterfall</item>
     <item>@string/waypoint_type_water_fountain</item>
     <item>@string/waypoint_type_waypoint</item>
+
+   <!-- TODO: Do we really need two lists?! These arrays should be populated depending on whats available for the turbo, PID etc-->
   </string-array>
-    <string-array name="course_mode_select_options">
-    <item>@string/settings_courses_mode_simulation</item>
-  </string-array>
-    <string-array name="course_mode_select_values">
-    <item>@string/settings_courses_mode_simulation_value</item>
-  </string-array>
-  
     <string-array name="turbotrainer_options">
     <item>@string/turbotrainer_tacx_bushido_headunit_option</item>
-    <item>@string/turbotrainer_tacx_bushido_brake_headunit_simulation_option</item>
-    <item>@string/turbotrainer_tacx_bushido_brake_pid_speed_control_option</item>
-    <item>@string/turbotrainer_tacx_bushido_brake_pid_power_control_option</item>
+    <item>@string/turbotrainer_tacx_bushido_brake_option</item>
     <item>@string/turbotrainer_dummy_option</item>
-  </string-array>  
-  
-   <string-array name="turbotrainer_values">
+  </string-array>
+
+    <string-array name="turbotrainer_values">
     <item>@string/turbotrainer_tacx_bushido_headunit_value</item>
-    <item>@string/turbotrainer_tacx_bushido_brake_headunit_simulation_value</item>
-    <item>@string/turbotrainer_tacx_bushido_brake_speed_pid_control_value</item>
-    <item>@string/turbotrainer_tacx_bushido_brake_power_pid_control_value</item>
+    <item>@string/turbotrainer_tacx_bushido_brake_value</item>
     <item>@string/turbotrainer_dummy_value</item>
-  </string-array>  
-    
-    
-    
-    
-    
-</resources>
+  </string-array>
+
+    </resources>

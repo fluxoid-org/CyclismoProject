@@ -137,8 +137,10 @@ public class BrakeControllerTest {
     Node n = new Node(BrakeControllerTest.antchip);
     n.registerAntLogger(antLogger);
     SpeedPidBrakeController pid = new SpeedPidBrakeController();
-    b = new BushidoBrake(n,pid);
+    b = new BushidoBrake();
     b.setMode(Mode.TARGET_SLOPE);
+    b.setNode(n);
+    b.overrideDefaultResistanceController(pid);
     b.registerDataListener(dataListener);
     b.startConnection();
     
@@ -167,13 +169,15 @@ public class BrakeControllerTest {
   };
   
   //@Test
-  public void testBrakeSlopeCOntroller() throws InterruptedException, TimeoutException {
+  public void testBrakeSlopeController() throws InterruptedException, TimeoutException {
     Node n = new Node(BrakeControllerTest.antchip);
     n.registerAntLogger(antLogger);
     SimplePidLogger pidLogger = new SimplePidLogger();
     SpeedPidBrakeController pid = new SpeedPidBrakeController();
-    b = new BushidoBrake(n,pid);
+    b = new BushidoBrake();
     b.setMode(Mode.TARGET_SLOPE);
+    b.setNode(n);
+    b.overrideDefaultResistanceController(pid);
     b.registerDataListener(dataListener);
     b.startConnection();
     pid.getPidParameterController().registerPidUpdateLister(pidLogger);
@@ -187,13 +191,15 @@ public class BrakeControllerTest {
   }
   
   @Test
-  public void testPolynomialCOntroller() throws InterruptedException, TimeoutException {
+  public void testPolynomialController() throws InterruptedException, TimeoutException {
     Node n = new Node(BrakeControllerTest.antchip);
     n.registerAntLogger(antLogger);
     SpeedResistanceMapper mapper = new SpeedResistanceMapper();
     mapper.enableLogging(new File("./logs/polylog"));
-    b = new BushidoBrake(n,mapper);
+    b = new BushidoBrake();
+    b.setNode(n);
     b.setMode(Mode.TARGET_SLOPE);
+    b.overrideDefaultResistanceController(mapper);
     b.registerDataListener(dataListener);
     b.startConnection();
 
@@ -203,14 +209,16 @@ public class BrakeControllerTest {
     n.stop();
   }
   
-  //@Test
+  //@Test This is broken, because the surface fit mapper isn't supported / working
   public void testSurfaceFitController() throws InterruptedException, TimeoutException {
 	    Node n = new Node(BrakeControllerTest.antchip);
 	    n.registerAntLogger(antLogger);
 	    SpeedResistancePowerMapper mapper = new SpeedResistancePowerMapper();
 	    mapper.enableLogging(new File("./logs/surfacelog_newbounds"));
-	    b = new BushidoBrake(n,mapper);
+	    b = new BushidoBrake();
 	    b.setMode(Mode.TARGET_SLOPE);
+      b.setNode(n);
+      b.overrideDefaultResistanceController(mapper);
 	    b.registerDataListener(dataListener);
 	    b.startConnection();
 
@@ -227,8 +235,10 @@ public class BrakeControllerTest {
     ConstantResistanceController mapper = new ConstantResistanceController();
     mapper.setAbsoluteResistance(1000);
     mapper.enableLogging(new File("./logs/constant_reslog"));
-    b = new BushidoBrake(n,mapper);
+    b = new BushidoBrake();
     b.setMode(Mode.TARGET_SLOPE);
+    b.setNode(n);
+    b.overrideDefaultResistanceController(mapper);
     b.registerDataListener(dataListener);
     b.startConnection();
 

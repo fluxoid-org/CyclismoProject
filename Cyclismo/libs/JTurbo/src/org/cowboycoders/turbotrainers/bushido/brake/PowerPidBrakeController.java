@@ -6,6 +6,7 @@ import org.cowboycoders.pid.OutputControlParameters;
 import org.cowboycoders.pid.OutputController;
 import org.cowboycoders.pid.PidController;
 import org.cowboycoders.pid.ProcessVariableProvider;
+import org.cowboycoders.turbotrainers.Mode;
 import org.fluxoid.utils.SimpleCsvLogger;
 
 import java.io.File;
@@ -13,6 +14,8 @@ import java.io.File;
 public class PowerPidBrakeController extends AbstractController {
 
   private static String TAG = PowerPidBrakeController.class.getSimpleName();
+
+  private static final Mode SUPPORTED_MODE = Mode.TARGET_POWER;
 
   private static final double PID_PROPORTIONAL_GAIN = 10.0;
   private static final double PID_INTEGRAL_GAIN = 4.0;
@@ -88,6 +91,11 @@ public class PowerPidBrakeController extends AbstractController {
     // Using normalised power, so this is always 1.
     pidController.adjustSetpoint(1.0);
     return power;
+  }
+
+  @Override
+  public Mode getMode() {
+    return SUPPORTED_MODE;
   }
 
   @Override

@@ -100,6 +100,8 @@ Google은 이용자에 대한 위치정보의 이용∙제공사실을 위치정
   <string name="track_action_start">org.cowboycoders.cyclismo.START_NEW_TRACK</string>
   <string name="value_unknown">-</string>
   <string name="settings_courses_mode_simulation_value">SIMULATION</string>
+  <string name="settings_courses_mode_constant_power_value">CONSTANT_POWER</string>
+  <string name="settings_courses_mode_constant_speed_value">CONSTANT_SPEED</string>
   <string name="anthub_action_shutdown">org.cowboycoders.cyclismo.SHUTDOWN_ANT</string>
   <string name="sensor_data_cadence">org.cowboycoders.cyclismo.SENSOR_DATA_CADENCE</string>
   <string name="sensor_data_power">org.cowboycoders.cyclismo.SENSOR_DATA_POWER</string>
@@ -110,7 +112,9 @@ Google은 이용자에 대한 위치정보의 이용∙제공사실을 위치정
   <string name="settings_bushido_antlog_filename">antlog</string>
   
   <string name="turbotrainer_tacx_bushido_headunit_value">TACX_BUSHIDO_HEADUNIT</string>
-  <string name="turbotrainer_tacx_bushido_brake_headunit_simulation_value">TACX_BUSHIDO_BRAKE_RESISTANCE</string>
+  <string name="turbotrainer_tacx_bushido_brake_value">TACX_BUSHIDO_BRAKE</string>
+
+    <!--TODO: Can we remove these two?-->
   <string name="turbotrainer_tacx_bushido_brake_speed_pid_control_value">TACX_BUSHIDO_BRAKE_SPEED_PID</string>
   <string name="turbotrainer_tacx_bushido_brake_power_pid_control_value">TACX_BUSHIDO_BRAKE_POWER_PID</string>
   <string name="turbotrainer_dummy_value">DUMMY_TURBO</string>
