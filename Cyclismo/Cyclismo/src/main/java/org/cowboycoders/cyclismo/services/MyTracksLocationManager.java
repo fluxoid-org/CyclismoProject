@@ -128,7 +128,7 @@ public class MyTracksLocationManager {
    * @see android.location.LocationManager#isProviderEnabled(java.lang.String)
    */
   public boolean isProviderEnabled(String provider) {
-    if (provider == SIMULATED_LOCATION) {
+    if (provider.equals(SIMULATED_LOCATION)) {
         return  simulatedLocManager.isProviderEnabled(provider);
     }
     return isAllowed ? locationManager.isProviderEnabled(provider) : false;
@@ -138,7 +138,7 @@ public class MyTracksLocationManager {
    * @see android.location.LocationManager#getProvider(java.lang.String)
    */
   public org.cowboycoders.cyclismo.services.LocationProvider getProvider(String name) {
-      if (name == SIMULATED_LOCATION) {
+      if (name.equals(SIMULATED_LOCATION)) {
           return  simulatedLocManager.getProvider(name);
       }
     return isAllowed ? new LocationProviderWrapper(locationManager.getProvider(name)) : null;
@@ -148,7 +148,7 @@ public class MyTracksLocationManager {
    * @see android.location.LocationManager#getLastKnownLocation(java.lang.String)
    */
   public Location getLastKnownLocation(String provider) {
-      if (provider == SIMULATED_LOCATION) {
+      if (provider.equals(SIMULATED_LOCATION)) {
           return  simulatedLocManager.getLastKnownLocation(provider);
       }
     return isAllowed ? locationManager.getLastKnownLocation(provider) : null;
@@ -160,7 +160,7 @@ public class MyTracksLocationManager {
    */
   public void requestLocationUpdates(
       String provider, long minTime, float minDistance, LocationListener listener) {
-      if (provider == SIMULATED_LOCATION) {
+      if (provider.equals(SIMULATED_LOCATION)) {
           simulatedLocManager.requestLocationUpdates(provider, minTime, minDistance, listener);
           return;
       }

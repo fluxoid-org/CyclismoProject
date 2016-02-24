@@ -70,7 +70,7 @@ import org.cowboycoders.cyclismo.fragments.DeleteOneTrackDialogFragment;
 import org.cowboycoders.cyclismo.fragments.DeleteOneTrackDialogFragment.DeleteOneTrackCaller;
 import org.cowboycoders.cyclismo.fragments.FrequencyDialogFragment;
 import org.cowboycoders.cyclismo.fragments.InstallEarthDialogFragment;
-import org.cowboycoders.cyclismo.fragments.MyTracksMapFragment;
+import org.cowboycoders.cyclismo.fragments.MapFragment;
 import org.cowboycoders.cyclismo.fragments.StatsFragment;
 import org.cowboycoders.cyclismo.io.file.SaveActivity;
 import org.cowboycoders.cyclismo.io.file.TrackWriterFactory.TrackFileFormat;
@@ -290,9 +290,9 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
     extras.putLong(TrackDetailActivity.EXTRA_COURSE_TRACK_ID, getCourseTrackId());
 
     // Map tab
-    TabSpec mapTabSpec = tabHost.newTabSpec(MyTracksMapFragment.MAP_FRAGMENT_TAG).setIndicator(
+    TabSpec mapTabSpec = tabHost.newTabSpec(MapFragment.TAG).setIndicator(
         getString(R.string.track_detail_map_tab), getResources().getDrawable(R.drawable.tab_map));
-    tabManager.addTab(mapTabSpec, MyTracksMapFragment.class, extras);
+    tabManager.addTab(mapTabSpec, MapFragment.class, extras);
     // Stats tab
     TabSpec statsTabSpec = tabHost.newTabSpec(StatsFragment.STATS_FRAGMENT_TAG).setIndicator(
         getString(R.string.track_detail_stats_tab),
@@ -614,12 +614,11 @@ public class TrackDetailActivity extends AbstractMyTracksActivity implements Del
    */
   private void showMarker() {
     if (markerId != -1L) {
-      MyTracksMapFragment mapFragmet = (MyTracksMapFragment) getSupportFragmentManager()
-          .findFragmentByTag(MyTracksMapFragment.MAP_FRAGMENT_TAG);
-
-      if (mapFragmet != null) {
-        tabHost.setCurrentTabByTag(MyTracksMapFragment.MAP_FRAGMENT_TAG);
-        mapFragmet.showMarker(trackId, markerId);
+      MapFragment mapFragment = (MapFragment) getSupportFragmentManager()
+          .findFragmentByTag(MapFragment.TAG);
+      if (mapFragment != null) {
+        tabHost.setCurrentTabByTag(MapFragment.TAG);
+        mapFragment.showMarker(trackId, markerId);
       } else {
         Log.e(TAG, "MapFragment is null");
       }

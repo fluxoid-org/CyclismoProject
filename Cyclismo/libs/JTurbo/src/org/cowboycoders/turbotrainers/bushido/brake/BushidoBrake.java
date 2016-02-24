@@ -88,7 +88,7 @@ public class BushidoBrake extends AntTurboTrainer {
 
   private static final Byte[] PARTIAL_PACKET_CALIBRATION_STATUS = new Byte[]{0x22};
 
-  private ArrayList<BroadcastListener<? extends ChannelMessage>> listeners = new ArrayList<BroadcastListener<? extends ChannelMessage>>();
+  private final ArrayList<BroadcastListener<? extends ChannelMessage>> listeners = new ArrayList<BroadcastListener<? extends ChannelMessage>>();
 
   private Node node;
   private Channel channel;
@@ -270,7 +270,7 @@ public class BushidoBrake extends AntTurboTrainer {
 
   public class BushidoUpdatesListener implements BushidoBrakeInternalListener {
 
-    private BrakeModel model;
+    private final BrakeModel model;
 
 
     /**
@@ -1063,7 +1063,7 @@ public class BushidoBrake extends AntTurboTrainer {
     }
 
 
-    private BroadcastListener<BroadcastDataMessage> replyListener = new BroadcastListener<BroadcastDataMessage>() {
+    private final BroadcastListener<BroadcastDataMessage> replyListener = new BroadcastListener<BroadcastDataMessage>() {
 
       @Override
       public void receiveMessage(BroadcastDataMessage message) {

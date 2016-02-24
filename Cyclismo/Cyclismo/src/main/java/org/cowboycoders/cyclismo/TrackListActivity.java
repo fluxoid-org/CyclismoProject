@@ -55,6 +55,7 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.ResourceCursorAdapter;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -175,7 +176,7 @@ public class TrackListActivity extends FragmentActivity implements DeleteOneTrac
     @Override
     public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
       
-      if (key == getString(R.string.settings_select_user_current_selection_key)) {
+      if (TextUtils.equals(key, getString(R.string.settings_select_user_current_selection_key))) {
         updateCurrentUserId();
         restart();
       }

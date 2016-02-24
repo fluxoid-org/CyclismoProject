@@ -69,7 +69,7 @@ public class UserEditActivity extends AbstractMyTracksActivity {
 
   private static final String TAG = UserEditActivity.class.getSimpleName();
   
-  private Object unitsLock = new Object();
+  private final Object unitsLock = new Object();
 
   private EditText name;
   private EditText weight;

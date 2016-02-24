@@ -70,7 +70,7 @@ public class BikeEditActivity extends AbstractMyTracksActivity {
 
   private static final String TAG = BikeEditActivity.class.getSimpleName();
   
-  private Object unitsLock = new Object();
+  private final Object unitsLock = new Object();
 
   private EditText name;
   private EditText weight;
