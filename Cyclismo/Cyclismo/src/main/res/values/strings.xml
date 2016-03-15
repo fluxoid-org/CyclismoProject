@@ -3201,17 +3201,17 @@ limitations under the License.
     Select Route
   </string>
           <string name="settings_courses_route_section_title"
-    translation_description="In the 'Courses' settings, thes ection title for the route configuration options
+    translation_description="In the 'Courses' settings, the section title for the route configuration options
       Character limit: ~20 (1 line)">
     Route Configuration
   </string>
           <string name="settings_courses_route_summary"
-    translation_description="In the 'Courses' settings, the sumamry for the route select option
+    translation_description="In the 'Courses' settings, the summary for the route select option
       Character limit: ~20 (1 line)">
     Choose a GPX route to simulate
   </string>
             <string name="settings_courses_mode_summary"
-    translation_description="In the 'Courses' settings, the sumamry for the mode select option
+    translation_description="In the 'Courses' settings, the summary for the mode select option
       Character limit: ~20 (1 line)">
     Select a mode
   </string>
@@ -3254,7 +3254,7 @@ limitations under the License.
   <string name="generic_list_title_placeholder">Title</string>
   <string name="generic_list_empty_message">No items</string>
   
-  <string name="settings_turbotrainer_generic">Turbo Trainer Settings</string>
+  <string name="settings_turbotrainer_select_title">Turbo Trainer</string>
   <string name="settings_turbotrainer_generic_scale_factor_summary">Multiplies positive gradients by this value</string>
   <string name="settings_turbotrainer_generic_scale_factor_title">Scale factor</string>
   
@@ -3291,7 +3291,8 @@ limitations under the License.
     <string name="turbotrainer_dummy_option">Dummy Trainer (for testing)</string>
     
     <string name="turbotrainer_select_title">Select Turbo Trainer</string>
-  	<string name="turbotrainer_select_summary">Choose a turbo trainer to use</string>
+  	<string name="settings_turbotrainer_select_summary">Choose a turbo trainer</string>
+    <string name="settings_turbotrainer_setup_summary">Setup turbo trainer</string>
   	<string name="bushido_brake_calibrate_status_message">Status message</string>
   	<string name="bushido_brake_calibrate_start">Speed up to 40km/h</string>
     <string name="bushido_brake_calibrate_failed">calibration failed</string>
