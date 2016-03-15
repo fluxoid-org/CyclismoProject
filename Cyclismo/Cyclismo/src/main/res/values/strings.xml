@@ -3292,6 +3292,7 @@ limitations under the License.
     
     <string name="turbotrainer_select_title">Select Turbo Trainer</string>
   	<string name="settings_turbotrainer_select_summary">Choose a turbo trainer</string>
+    <string name="settings_turbotrainer_setup_summary">Setup turbo trainer</string>
   	<string name="bushido_brake_calibrate_status_message">Status message</string>
   	<string name="bushido_brake_calibrate_start">Speed up to 40km/h</string>
     <string name="bushido_brake_calibrate_failed">calibration failed</string>

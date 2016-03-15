@@ -27,7 +27,7 @@ limitations under the License.
 
     <PreferenceScreen
         android:key="@string/settings_generic_turbo_key"
-        android:summary="@string/settings_turbotrainer_select_summary"
+        android:summary="@string/settings_turbotrainer_setup_summary"
         android:title="@string/settings_turbotrainer_select_title">
         <intent
             android:action="android.intent.action.VIEW"
