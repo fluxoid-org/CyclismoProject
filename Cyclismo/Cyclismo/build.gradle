@@ -28,7 +28,7 @@ dependencies {
     compile project(':JTurbo')
     androidTestCompile fileTree(include: '*.jar', dir: 'test_libs')
     androidTestCompile 'org.mockito:mockito-all:1.10.19'
-    compile 'com.android.support:support-v4:22.0.0'
+    compile 'com.android.support:support-v4:23.1.1'
     compile 'org.usb4java:usb4java:1.2.0'
 
     // For MapForge
@@ -38,7 +38,7 @@ dependencies {
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "22"
+    buildToolsVersion "24"
 
     defaultConfig {
         minSdkVersion 14
