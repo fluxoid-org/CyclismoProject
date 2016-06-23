@@ -82,7 +82,7 @@ public class CourseSetupFragment extends AbstractSettingsFragment {
     courseModeListPreference.setEntries(courseModes.getEntries());
     courseModeListPreference.setEntryValues(courseModes.getEntryValues());
 
-    String courseModeValue = PreferencesUtils.getString(context, R.string.course_mode, "None");
+    String courseModeValue = PreferencesUtils.getString(context, R.string.course_mode, null);
     if (!Arrays.asList(courseModes.getEntryValues()).contains(courseModeValue)) {
       Log.d(TAG, "course mode: " + courseModeValue + " not available from turbo: " +
           turboSelectValue + ", resetting to default.");
@@ -124,7 +124,7 @@ public class CourseSetupFragment extends AbstractSettingsFragment {
         R.string.settings_turbotrainer_select_summary,
         turboTrainerSummarizer);
 
-    return PreferencesUtils.getString(context, R.string.turbotrainer_selected, "None");
+    return PreferencesUtils.getString(context, R.string.turbotrainer_selected, null);
   }
 
   private Long setupTrackSelector(Context context) {
@@ -207,7 +207,7 @@ public class CourseSetupFragment extends AbstractSettingsFragment {
       @Override
       public void onSharedPreferenceChanged(SharedPreferences sharedPreferencesIn, String key) {
         if (key.equals(PreferencesUtils.getKey(getActivity(), R.string.course_mode))) {
-          String newValue = sharedPreferences.getString(key, "None");
+          String newValue = sharedPreferences.getString(key, null);
           updateCourseMode(newValue);
         } else if (key.equals(PreferencesUtils.getKey(getActivity(), R.string.course_track_id))) {
           Long newValue = sharedPreferences.getLong(key, -1l);
@@ -218,7 +218,7 @@ public class CourseSetupFragment extends AbstractSettingsFragment {
           updateBike(newValue);
         } else if (key.equals(PreferencesUtils.getKey(getActivity(), R.string
             .turbotrainer_selected))) {
-          String newValue = sharedPreferences.getString(key, "None");
+          String newValue = sharedPreferences.getString(key, null);
           updateTurbo(newValue);
           setupCourseModeSelector(context, newValue);
         }

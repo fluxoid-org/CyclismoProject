@@ -368,11 +368,11 @@ public class TurboService extends Service {
 
     syncScaleFactor();
 
-    // Get selections from preferences.
-    this.selectedTurboTrainer = preferences.getString(this.getApplication().getString(R.string.turbotrainer_selected),
-        this.getApplication().getString(R.string.turbotrainer_tacx_bushido_headunit_value));
-    this.selectedCourseMode = preferences.getString(this.getApplication().getString(R.string.course_mode),
-        "TODO: Default for the selected turbo");
+    // Get selections from preferences. Don't use defaults because the UI enforces a selection.
+    selectedTurboTrainer = preferences.getString(getApplication().getString(
+        R.string.turbotrainer_selected), null);
+    selectedCourseMode = preferences.getString(getApplication().getString(
+        R.string.course_mode), null);
 
     // accessing database so should be put into a task
     double userWeight;
