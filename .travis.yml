@@ -1,6 +1,7 @@
 language: android
 
 cache: false
+sudo: false
 
 jdk:
   - oraclejdk7
