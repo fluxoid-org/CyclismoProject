@@ -90,8 +90,11 @@ import org.cowboycoders.cyclismo.util.TrackNameUtils;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static org.cowboycoders.cyclismo.Constants.RESUME_TRACK_EXTRA_NAME;
 
@@ -146,6 +149,9 @@ public class TrackRecordingService extends Service {
   private final Handler handler = new Handler();
 
   private ServiceBinder binder = new ServiceBinder(this);
+
+  private final ReentrantLock lastLocationFutureLock = new ReentrantLock();
+  private Future<?> lastLocationFuture;
 
   /*
    * Note that sharedPreferenceChangeListener cannot be an anonymous inner
@@ -259,12 +265,17 @@ public class TrackRecordingService extends Service {
           || executorService.isTerminated()) {
         return;
       }
-      executorService.submit(new Runnable() {
-          @Override
-        public void run() {
-          onLocationChangedAsync(location);
+        lastLocationFutureLock.lock();
+        try {
+          lastLocationFuture = executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+              onLocationChangedAsync(location);
+            }
+          });
+        } finally {
+          lastLocationFutureLock.unlock();
         }
-      });
     }
   };
 
@@ -474,6 +485,19 @@ public class TrackRecordingService extends Service {
     int type = isStatistics ? Waypoint.TYPE_STATISTICS : Waypoint.TYPE_WAYPOINT;
     long duration;
     double length;
+    lastLocationFutureLock.lock();
+    try {
+      if (lastLocationFuture != null) {
+        // Block until the last asynchronous location update is complete
+        lastLocationFuture.get();
+      }
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    } catch (ExecutionException e) {
+      e.printStackTrace();
+    } finally {
+      lastLocationFutureLock.unlock();
+    }
     Location location = getLastValidTrackPointInCurrentSegment(recordingTrackId);
     if (location != null && trackTripStatisticsUpdater != null) {
       TripStatistics stats = trackTripStatisticsUpdater.getTripStatistics();
@@ -737,6 +761,8 @@ public class TrackRecordingService extends Service {
 
   /**
    * Gets the last valid track point in the current segment. Returns null if not available.
+   * This may happen, for example, when the asynchronous location update hasn't finished and there
+   * is no prior location.
    * 
    * @param trackId the track id
    */
