@@ -385,11 +385,8 @@ public class CourseSetupFragment extends AbstractSettingsFragment {
 
   public interface CourseSetupObserver {
     void onTrackIdUpdate(Long trackId);
-
     void onBikeUpdate(Bike bike);
-
     void onCourseModeUpdate(String modeString);
-
     void onTurboUpdate(String turbo);
   }
 }
