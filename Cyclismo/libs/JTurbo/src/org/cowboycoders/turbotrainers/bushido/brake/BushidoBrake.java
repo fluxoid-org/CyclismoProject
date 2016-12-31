@@ -77,23 +77,24 @@ public class BushidoBrake extends AntTurboTrainer {
   }
 
   public final static Logger LOGGER = Logger.getLogger(BushidoBrake.class
-          .getName());
+      .getName());
 
   public static final byte[] PACKET_REQUEST_VERSION = AntUtils
-          .padToDataLength(new int[]{(byte) 0xAc, 0x02});
+      .padToDataLength(new int[]{(byte) 0xAc, 0x02});
 
   public static final byte[] PACKET_START_CALIBRATION = AntUtils
-          .padToDataLength(new int[]{(byte) 0x23, 0x63});
+      .padToDataLength(new int[]{(byte) 0x23, 0x63});
   //	public static final byte[] PACKET_REQUEST_CALIBRATION_STATUS = AntUtils
 //			.padToDataLength(new int[] { (byte) 0x23, 0x58 });
   public static final byte[] PACKET_REQUEST_CALIBRATION_VALUE = AntUtils
-          .padToDataLength(new int[]{0x23, 0x4d});
+      .padToDataLength(new int[]{0x23, 0x4d});
   public static final byte[] PACKET_POST_RESTART_CALIBRATION_RERSUME =
-          AntUtils.padToDataLength(new int[]{0x23, 0x58});
+      AntUtils.padToDataLength(new int[]{0x23, 0x58});
 
   private static final Byte[] PARTIAL_PACKET_CALIBRATION_STATUS = new Byte[]{0x22};
 
-  private final ArrayList<BroadcastListener<? extends ChannelMessage>> listeners = new ArrayList<BroadcastListener<? extends ChannelMessage>>();
+  private final ArrayList<BroadcastListener<? extends ChannelMessage>> listeners = new
+      ArrayList<BroadcastListener<? extends ChannelMessage>>();
 
   private Channel channel;
   private EnqueuedMessageSender channelMessageSender;
@@ -138,14 +139,14 @@ public class BushidoBrake extends AntTurboTrainer {
 
       synchronized (dataChangeListeners) {
         IterationUtils.operateOnAll(dataChangeListeners,
-                new IterationOperator<TurboTrainerDataListener>() {
-                  @Override
-                  public void performOperation(
-                          TurboTrainerDataListener dcl) {
-                    dcl.onSpeedChange(speedToSend);
-                  }
+            new IterationOperator<TurboTrainerDataListener>() {
+              @Override
+              public void performOperation(
+                  TurboTrainerDataListener dcl) {
+                dcl.onSpeedChange(speedToSend);
+              }
 
-                });
+            });
       }
 
       // We are integrating for distance. As onDistanceChange() doesn't
@@ -166,15 +167,15 @@ public class BushidoBrake extends AntTurboTrainer {
       }
       synchronized (dataChangeListeners) {
         IterationUtils.operateOnAll(dataChangeListeners,
-                new IterationOperator<TurboTrainerDataListener>() {
-                  @Override
-                  public void performOperation(
-                          TurboTrainerDataListener dcl) {
-                    double powerToSend = resistanceController.onPowerChange(power);
-                    dcl.onPowerChange(powerToSend);
-                  }
+            new IterationOperator<TurboTrainerDataListener>() {
+              @Override
+              public void performOperation(
+                  TurboTrainerDataListener dcl) {
+                double powerToSend = resistanceController.onPowerChange(power);
+                dcl.onPowerChange(powerToSend);
+              }
 
-                });
+            });
       }
 
     }
@@ -189,15 +190,15 @@ public class BushidoBrake extends AntTurboTrainer {
       }
       synchronized (dataChangeListeners) {
         IterationUtils.operateOnAll(dataChangeListeners,
-                new IterationOperator<TurboTrainerDataListener>() {
-                  @Override
-                  public void performOperation(
-                          TurboTrainerDataListener dcl) {
-                    double cadenceToSend = resistanceController.onCadenceChange(cadence);
-                    dcl.onCadenceChange(cadenceToSend);
-                  }
+            new IterationOperator<TurboTrainerDataListener>() {
+              @Override
+              public void performOperation(
+                  TurboTrainerDataListener dcl) {
+                double cadenceToSend = resistanceController.onCadenceChange(cadence);
+                dcl.onCadenceChange(cadenceToSend);
+              }
 
-                });
+            });
       }
     }
 
@@ -209,17 +210,17 @@ public class BushidoBrake extends AntTurboTrainer {
       // called from onSpeedChange
       synchronized (dataChangeListeners) {
         IterationUtils.operateOnAll(dataChangeListeners,
-                new IterationOperator<TurboTrainerDataListener>() {
-                  @Override
-                  public void performOperation(
-                          TurboTrainerDataListener dcl) {
-                    synchronized (model) {
-                      double distanceToSend = resistanceController.onDistanceChange(distance);
-                      dcl.onDistanceChange(distanceToSend);
-                    }
-                  }
+            new IterationOperator<TurboTrainerDataListener>() {
+              @Override
+              public void performOperation(
+                  TurboTrainerDataListener dcl) {
+                synchronized (model) {
+                  double distanceToSend = resistanceController.onDistanceChange(distance);
+                  dcl.onDistanceChange(distanceToSend);
+                }
+              }
 
-                });
+            });
       }
     }
 
@@ -232,7 +233,8 @@ public class BushidoBrake extends AntTurboTrainer {
     }
   };
 
-  private FixedPeriodUpdater speedUpdater = new FixedPeriodUpdaterWithReset(0.0, new UpdateCallback() {
+  private FixedPeriodUpdater speedUpdater = new FixedPeriodUpdaterWithReset(0.0, new
+      UpdateCallback() {
 
     @Override
     public void onUpdate(Object newValue) {
@@ -246,7 +248,8 @@ public class BushidoBrake extends AntTurboTrainer {
   };
 
 
-  private FixedPeriodUpdater powerUpdater = new FixedPeriodUpdaterWithReset(0.0, new UpdateCallback() {
+  private FixedPeriodUpdater powerUpdater = new FixedPeriodUpdaterWithReset(0.0, new
+      UpdateCallback() {
 
     @Override
     public void onUpdate(Object newValue) {
@@ -259,7 +262,8 @@ public class BushidoBrake extends AntTurboTrainer {
     }
   };
 
-  private FixedPeriodUpdater cadenceUpdater = new FixedPeriodUpdaterWithReset(0.0, new UpdateCallback() {
+  private FixedPeriodUpdater cadenceUpdater = new FixedPeriodUpdaterWithReset(0.0, new
+      UpdateCallback() {
 
     @Override
     public void onUpdate(Object newValue) {
@@ -283,7 +287,7 @@ public class BushidoBrake extends AntTurboTrainer {
     private ChannelMessageSender channelSender;
 
     public BushidoUpdatesListener(BrakeModel model,
-                                  ChannelMessageSender channelSender) {
+        ChannelMessageSender channelSender) {
       this.model = model;
       this.channelSender = channelSender;
     }
@@ -309,7 +313,7 @@ public class BushidoBrake extends AntTurboTrainer {
       }
 
       channelSender.sendMessage(AntUtils.buildBroadcastMessage(bytes),
-              requestDataCallback);
+          requestDataCallback);
     }
 
     @Override
@@ -393,12 +397,9 @@ public class BushidoBrake extends AntTurboTrainer {
 
   /**
    * Call after start.
-   *
-   * @param listener
-   * @param clazz
    */
   private <V extends ChannelMessage> void registerChannelRxListener(
-          BroadcastListener<V> listener, Class<V> clazz) {
+      BroadcastListener<V> listener, Class<V> clazz) {
     synchronized (listeners) {
       listeners.add(listener);
       channel.registerRxListener(listener, clazz);
@@ -406,7 +407,7 @@ public class BushidoBrake extends AntTurboTrainer {
   }
 
   private <V extends ChannelMessage> void unregisterRxListener(
-          BroadcastListener<? extends ChannelMessage> listener) {
+      BroadcastListener<? extends ChannelMessage> listener) {
     channel.removeRxListener(listener);
   }
 
@@ -456,9 +457,9 @@ public class BushidoBrake extends AntTurboTrainer {
     validateController();
 
     BushidoUpdatesListener updatesListener = new BushidoUpdatesListener(
-            model, this.getMessageSender());
+        model, this.getMessageSender());
     BushidoBrakeBroadcastDataListener dataListener = new BushidoBrakeBroadcastDataListener(
-            updatesListener);
+        updatesListener);
     this.registerChannelRxListener(dataListener, BroadcastDataMessage.class);
 
     resistanceController.start(model);
@@ -501,7 +502,7 @@ public class BushidoBrake extends AntTurboTrainer {
       BroadcastDataMessage msg = new BroadcastDataMessage();
       msg.setData(BushidoBrake.PACKET_REQUEST_VERSION);
       channel.sendAndWaitForMessage(msg, AntUtils.CONDITION_CHANNEL_TX,
-              10L, TimeUnit.SECONDS, null);
+          10L, TimeUnit.SECONDS, null);
 
     } catch (InterruptedException e) {
       LOGGER.warning("interrupted waiting for version");
@@ -549,14 +550,12 @@ public class BushidoBrake extends AntTurboTrainer {
      * Only called if calibration fails
      *
      * @param exception reason for failure, may be caused by:
-     *                  InterruptedException, TimeoutException
+     * InterruptedException, TimeoutException
      */
     void onFailure(CalibrationException exception);
 
     /**
      * Called when below speed
-     *
-     * @param speed
      */
     void onBelowSpeedReminder(double speed);
 
@@ -590,7 +589,8 @@ public class BushidoBrake extends AntTurboTrainer {
   }
 
   /**
-   * Compound class that controls CalibrationState transitions, as well as the "actions" that can be performed
+   * Compound class that controls CalibrationState transitions, as well as the "actions" that can
+   * be performed
    * on that state.
    *
    * @author will
@@ -635,12 +635,11 @@ public class BushidoBrake extends AntTurboTrainer {
      * @throws IllegalStateException thrown if unexpected state is encountered.
      */
     public abstract boolean onPerformTransition(
-            org.cowboycoders.turbotrainers.bushido.brake.CalibrationState newState) throws IllegalStateException;
+        org.cowboycoders.turbotrainers.bushido.brake.CalibrationState newState) throws
+        IllegalStateException;
 
     /**
      * State dependent behaviour. Called once when transition to this state is first made.
-     *
-     * @param data
      */
     public abstract void onStateSelected(Byte[] data);
   }
@@ -668,7 +667,7 @@ public class BushidoBrake extends AntTurboTrainer {
       private Executor singleThreadPool = Executors.newSingleThreadExecutor();
 
       public abstract void doSend() throws InterruptedException,
-              TimeoutException;
+          TimeoutException;
 
       public void send() {
         try {
@@ -701,7 +700,7 @@ public class BushidoBrake extends AntTurboTrainer {
     private class CalibrationStateMachine {
 
       private final Map<CalibrationState, CalibrationStateAction> wrappedStates =
-              new HashMap<CalibrationState, CalibrationStateAction>();
+          new HashMap<CalibrationState, CalibrationStateAction>();
       private CalibrationState currentState = null;
 
       {
@@ -709,8 +708,8 @@ public class BushidoBrake extends AntTurboTrainer {
 
           @Override
           public boolean onPerformTransition(
-                  org.cowboycoders.turbotrainers.bushido.brake.CalibrationState newState)
-                  throws IllegalStateException {
+              org.cowboycoders.turbotrainers.bushido.brake.CalibrationState newState)
+              throws IllegalStateException {
 
             // if not in calibration we need to request to switch to calibration mode
             if (newState == CalibrationState.NON_CALIBRATION_MODE) {
@@ -723,10 +722,10 @@ public class BushidoBrake extends AntTurboTrainer {
 
                 @Override
                 public void doSend() throws InterruptedException,
-                        TimeoutException {
+                    TimeoutException {
                   channel.sendAndWaitForMessage(msg,
-                          AntUtils.CONDITION_CHANNEL_TX, duration,
-                          TimeUnit.NANOSECONDS, null);
+                      AntUtils.CONDITION_CHANNEL_TX, duration,
+                      TimeUnit.NANOSECONDS, null);
 
                 }
 
@@ -749,12 +748,13 @@ public class BushidoBrake extends AntTurboTrainer {
         });
 
 
-        addState(CalibrationState.CALIBRATION_MODE, new CalibrationStateAction(CalibrationState.CALIBRATION_MODE) {
+        addState(CalibrationState.CALIBRATION_MODE, new CalibrationStateAction(CalibrationState
+            .CALIBRATION_MODE) {
 
           @Override
           public boolean onPerformTransition(
-                  org.cowboycoders.turbotrainers.bushido.brake.CalibrationState newState)
-                  throws IllegalStateException {
+              org.cowboycoders.turbotrainers.bushido.brake.CalibrationState newState)
+              throws IllegalStateException {
             if (newState != CalibrationState.CALIBRATION_REQUESTED)
               throw new IllegalStateException();
             return true;
@@ -767,12 +767,13 @@ public class BushidoBrake extends AntTurboTrainer {
         });
 
 
-        addState(CalibrationState.CALIBRATION_REQUESTED, new CalibrationStateAction(CalibrationState.CALIBRATION_REQUESTED) {
+        addState(CalibrationState.CALIBRATION_REQUESTED, new CalibrationStateAction
+            (CalibrationState.CALIBRATION_REQUESTED) {
 
           @Override
           public boolean onPerformTransition(
-                  org.cowboycoders.turbotrainers.bushido.brake.CalibrationState newState)
-                  throws IllegalStateException {
+              org.cowboycoders.turbotrainers.bushido.brake.CalibrationState newState)
+              throws IllegalStateException {
             if (newState != CalibrationState.UP_TO_SPEED) throw new IllegalStateException();
             return true;
           }
@@ -786,12 +787,13 @@ public class BushidoBrake extends AntTurboTrainer {
         });
 
 
-        addState(CalibrationState.UP_TO_SPEED, new CalibrationStateAction(CalibrationState.UP_TO_SPEED) {
+        addState(CalibrationState.UP_TO_SPEED, new CalibrationStateAction(CalibrationState
+            .UP_TO_SPEED) {
 
           @Override
           public boolean onPerformTransition(
-                  org.cowboycoders.turbotrainers.bushido.brake.CalibrationState newState)
-                  throws IllegalStateException {
+              org.cowboycoders.turbotrainers.bushido.brake.CalibrationState newState)
+              throws IllegalStateException {
             if (newState != CalibrationState.NO_ERROR) throw new IllegalStateException();
             return true;
           }
@@ -808,8 +810,8 @@ public class BushidoBrake extends AntTurboTrainer {
 
           @Override
           public boolean onPerformTransition(
-                  org.cowboycoders.turbotrainers.bushido.brake.CalibrationState newState)
-                  throws IllegalStateException {
+              org.cowboycoders.turbotrainers.bushido.brake.CalibrationState newState)
+              throws IllegalStateException {
             if (newState != CalibrationState.STOPPED) throw new IllegalStateException();
             return true;
           }
@@ -831,8 +833,8 @@ public class BushidoBrake extends AntTurboTrainer {
 
           @Override
           public boolean onPerformTransition(
-                  org.cowboycoders.turbotrainers.bushido.brake.CalibrationState newState)
-                  throws IllegalStateException {
+              org.cowboycoders.turbotrainers.bushido.brake.CalibrationState newState)
+              throws IllegalStateException {
             if (newState != CalibrationState.NON_CALIBRATION_MODE)
               throw new IllegalStateException();
             return true;
@@ -846,12 +848,13 @@ public class BushidoBrake extends AntTurboTrainer {
 
         });
 
-        addState(CalibrationState.NON_CALIBRATION_MODE, new CalibrationStateAction(CalibrationState.NON_CALIBRATION_MODE) {
+        addState(CalibrationState.NON_CALIBRATION_MODE, new CalibrationStateAction
+            (CalibrationState.NON_CALIBRATION_MODE) {
 
           @Override
           public boolean onPerformTransition(
-                  org.cowboycoders.turbotrainers.bushido.brake.CalibrationState newState)
-                  throws IllegalStateException {
+              org.cowboycoders.turbotrainers.bushido.brake.CalibrationState newState)
+              throws IllegalStateException {
             if (newState != CalibrationState.CALIBRATION_VALUE_READY)
               throw new IllegalStateException();
             return true;
@@ -870,21 +873,23 @@ public class BushidoBrake extends AntTurboTrainer {
 
               @Override
               public void doSend() throws InterruptedException,
-                      TimeoutException {
+                  TimeoutException {
 
                 int RETRIES = 5;
-                long duration = CalibrationController.this.nanosRemaining(TimeUnit.SECONDS.toNanos(10L));
+                long duration = CalibrationController.this.nanosRemaining(TimeUnit.SECONDS
+                    .toNanos(10L));
                 duration = (long) ((double) duration / (double) RETRIES);
 
                 //set a min timeout
                 if (duration < TimeUnit.SECONDS.toNanos(1L)) {
                   RETRIES = 1;
-                  duration = CalibrationController.this.nanosRemaining(TimeUnit.SECONDS.toNanos(2L));
+                  duration = CalibrationController.this.nanosRemaining(TimeUnit.SECONDS.toNanos
+                      (2L));
                 }
 
                 sendAndRetry(msg,
-                        AntUtils.CONDITION_CHANNEL_TX, RETRIES, duration,
-                        TimeUnit.NANOSECONDS);
+                    AntUtils.CONDITION_CHANNEL_TX, RETRIES, duration,
+                    TimeUnit.NANOSECONDS);
 
               }
 
@@ -894,12 +899,13 @@ public class BushidoBrake extends AntTurboTrainer {
         });
 
 
-        addState(CalibrationState.CALIBRATION_VALUE_READY, new CalibrationStateAction(CalibrationState.CALIBRATION_VALUE_READY) {
+        addState(CalibrationState.CALIBRATION_VALUE_READY, new CalibrationStateAction
+            (CalibrationState.CALIBRATION_VALUE_READY) {
 
           @Override
           public boolean onPerformTransition(
-                  org.cowboycoders.turbotrainers.bushido.brake.CalibrationState newState)
-                  throws IllegalStateException {
+              org.cowboycoders.turbotrainers.bushido.brake.CalibrationState newState)
+              throws IllegalStateException {
             if (newState != CalibrationState.CALIBRATED) throw new IllegalStateException();
             return true;
           }
@@ -916,13 +922,14 @@ public class BushidoBrake extends AntTurboTrainer {
 
               @Override
               public void doSend() throws InterruptedException,
-                      TimeoutException {
+                  TimeoutException {
 
-                long duration = CalibrationController.this.nanosRemaining(TimeUnit.SECONDS.toNanos(2L));
+                long duration = CalibrationController.this.nanosRemaining(TimeUnit.SECONDS
+                    .toNanos(2L));
 
                 channel.sendAndWaitForMessage(msg,
-                        AntUtils.CONDITION_CHANNEL_TX, duration,
-                        TimeUnit.NANOSECONDS, null);
+                    AntUtils.CONDITION_CHANNEL_TX, duration,
+                    TimeUnit.NANOSECONDS, null);
 
               }
 
@@ -932,12 +939,13 @@ public class BushidoBrake extends AntTurboTrainer {
 
         });
 
-        addState(CalibrationState.CALIBRATED, new CalibrationStateAction(CalibrationState.CALIBRATED) {
+        addState(CalibrationState.CALIBRATED, new CalibrationStateAction(CalibrationState
+            .CALIBRATED) {
 
           @Override
           public boolean onPerformTransition(
-                  org.cowboycoders.turbotrainers.bushido.brake.CalibrationState newState)
-                  throws IllegalStateException {
+              org.cowboycoders.turbotrainers.bushido.brake.CalibrationState newState)
+              throws IllegalStateException {
             // final state : no transitions should occur
             throw new IllegalStateException();
           }
@@ -956,7 +964,8 @@ public class BushidoBrake extends AntTurboTrainer {
 
       }
 
-      private void addState(CalibrationState state, CalibrationStateAction wrappedState) throws IllegalArgumentException {
+      private void addState(CalibrationState state, CalibrationStateAction wrappedState) throws
+          IllegalArgumentException {
         if (wrappedState.getMappedState() != state)
           throw new IllegalArgumentException("wrapped state must match state it is wrapping");
         wrappedStates.put(state, wrappedState);
@@ -966,7 +975,8 @@ public class BushidoBrake extends AntTurboTrainer {
       private final void setTargetState(CalibrationState newState, Byte[] data) {
         CalibrationStateAction wrappedState = wrappedStates.get(currentState);
         if (wrappedState == null) {
-          throw new IllegalStateException("State must be mapped to a wrapped value. State: " + currentState);
+          throw new IllegalStateException("State must be mapped to a wrapped value. State: " +
+              currentState);
         }
         if (wrappedState.performTransition(newState)) {
           currentState = newState;
@@ -983,7 +993,7 @@ public class BushidoBrake extends AntTurboTrainer {
         CalibrationState newState = null;
 
         if (ArrayUtils.arrayStartsWith(
-                PARTIAL_PACKET_CALIBRATION_STATUS, data)) {
+            PARTIAL_PACKET_CALIBRATION_STATUS, data)) {
           if (data[1] == 0x06 && data[3] == 0x02) {
             newState = CalibrationState.CALIBRATION_MODE;
           } else if (data[1] == 0x06 && data[3] == 0x05) {
@@ -1011,7 +1021,7 @@ public class BushidoBrake extends AntTurboTrainer {
             }
 
             LOGGER.warning("unknown status packet: "
-                    + packet.toString());
+                + packet.toString());
           }
 //					String stateAsString = newState == null ? "null" : newState
 //							.toString();
@@ -1042,7 +1052,8 @@ public class BushidoBrake extends AntTurboTrainer {
         try {
           doStateChange();
         } catch (IllegalStateException e) {
-          // something went wrong which led to an unexpected state change. Assume calibration irreversably failed
+          // something went wrong which led to an unexpected state change. Assume calibration
+          // irreversably failed
           // and restart with remaining time
           LOGGER.info("Illegal state transition: restarting calibration");
           long timeLeft = CalibrationController.this.nanosRemaining(null);
@@ -1065,7 +1076,7 @@ public class BushidoBrake extends AntTurboTrainer {
 
             @Override
             protected void doStateChange()
-                    throws IllegalStateException {
+                throws IllegalStateException {
               stateMachine.setTargetState(CalibrationState.STOPPED);
             }
 
@@ -1078,7 +1089,8 @@ public class BushidoBrake extends AntTurboTrainer {
     }
 
 
-    private final BroadcastListener<BroadcastDataMessage> replyListener = new BroadcastListener<BroadcastDataMessage>() {
+    private final BroadcastListener<BroadcastDataMessage> replyListener = new
+        BroadcastListener<BroadcastDataMessage>() {
 
       @Override
       public void receiveMessage(BroadcastDataMessage message) {
@@ -1098,7 +1110,7 @@ public class BushidoBrake extends AntTurboTrainer {
 
           @Override
           protected void doStateChange()
-                  throws IllegalStateException {
+              throws IllegalStateException {
             stateMachine.setTargetState(data);
           }
 
@@ -1160,10 +1172,10 @@ public class BushidoBrake extends AntTurboTrainer {
     }
 
     public synchronized void start(final CalibrationCallback callback,
-                                   long timeout) {
+        long timeout) {
       if (started)
         throw new IllegalStateException(
-                "calibration already in progress");
+            "calibration already in progress");
       if (callback == null)
         throw new IllegalArgumentException("callback must be non null");
       this.timeout = timeout;
@@ -1183,11 +1195,11 @@ public class BushidoBrake extends AntTurboTrainer {
 
       };
       timer.schedule(timeOutMonitor,
-              TimeUnit.NANOSECONDS.toMillis(timeout));
+          TimeUnit.NANOSECONDS.toMillis(timeout));
       startTimeStamp = System.nanoTime();
 
       channel.registerRxListener(replyListener,
-              BroadcastDataMessage.class);
+          BroadcastDataMessage.class);
 
 
       callback.onRequestStartPedalling();
@@ -1215,23 +1227,23 @@ public class BushidoBrake extends AntTurboTrainer {
    * Asynchronously calibrates the brake.
    *
    * @param callback various calibration hooks {@link CalibrationCallback )
-   * @param timeout  timeout for calibration to complete (in seconds)
+   * @param timeout timeout for calibration to complete (in seconds)
    * @return new calibration value (as would be displayed on headunit)
    */
   public double calibrate(CalibrationCallback callback, long timeout) {
     double calibrationValue = 0;
     calibrationController
-            .start(callback, TimeUnit.SECONDS.toNanos(timeout));
+        .start(callback, TimeUnit.SECONDS.toNanos(timeout));
     return calibrationValue;
   }
 
 
   private StandardMessage sendAndRetry(final ChannelMessage msg,
-                                       final MessageCondition condition, final int maxRetries,
-                                       final long timeoutPerRetry, final TimeUnit timeoutUnit)
-          throws InterruptedException, TimeoutException {
+      final MessageCondition condition, final int maxRetries,
+      final long timeoutPerRetry, final TimeUnit timeoutUnit)
+      throws InterruptedException, TimeoutException {
     return AntUtils.sendAndRetry(channel, msg, condition, maxRetries,
-            timeoutPerRetry, timeoutUnit);
+        timeoutPerRetry, timeoutUnit);
   }
 
   public EnqueuedMessageSender getMessageSender() {
@@ -1283,7 +1295,7 @@ public class BushidoBrake extends AntTurboTrainer {
 
   @Override
   public void setParameters(CommonParametersInterface parameters)
-          throws IllegalArgumentException {
+      throws IllegalArgumentException {
     synchronized (model) {
       model.setParameters(parameters);
     }

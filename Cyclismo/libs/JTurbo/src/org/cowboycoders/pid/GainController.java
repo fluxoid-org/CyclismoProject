@@ -1,7 +1,7 @@
 package org.cowboycoders.pid;
 
 public interface GainController {
-	
-	GainParameters getGain(OutputControlParameters parameters);
+
+  GainParameters getGain(OutputControlParameters parameters);
 
 }

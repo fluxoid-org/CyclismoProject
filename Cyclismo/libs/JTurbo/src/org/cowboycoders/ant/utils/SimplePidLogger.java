@@ -20,7 +20,6 @@
 package org.cowboycoders.ant.utils;
 
 
-
 import org.cowboycoders.pid.PidParameterController;
 import org.cowboycoders.pid.PidUpdateListener;
 
@@ -36,18 +35,19 @@ import java.util.logging.Logger;
 public class SimplePidLogger implements PidUpdateListener {
 
   private static final String DIRECTORY_NAME = "logs";
-  private static final String FILE_NAME = "pidlog"; 
+  private static final String FILE_NAME = "pidlog";
   private static final Logger LOGGER = Logger.getLogger(SimplePidLogger.class.getSimpleName());
   private static final String HEADINGS = "time/seconds;setpoint;procesValue;output;error";
-  private static final String PARAMETERS = "proportionalGain %e : integralGain: %e : DerivativeGain %e ";
+  private static final String PARAMETERS = "proportionalGain %e : integralGain: %e : " +
+      "DerivativeGain %e ";
   private Long timeOffset;
-  
+
   private File directory;
   private File file;
   private boolean setupOk = false;
-private PidParameterController pidController;
-private boolean writeHeadings;
-  
+  private PidParameterController pidController;
+  private boolean writeHeadings;
+
   public SimplePidLogger() {
     File directory = new File(DIRECTORY_NAME);
     if (!directory.exists()) {
@@ -59,86 +59,86 @@ private boolean writeHeadings;
     //write(HEADINGS);
   }
 
-  
+
   /**
    * Creates a new output stream to write to the given filename.
-   * @throws IOException 
    */
   protected PrintWriter newPrintWriter()
       throws IOException {
     file = new File(directory, FILE_NAME);
-    return new PrintWriter(new FileWriter(file,true));
+    return new PrintWriter(new FileWriter(file, true));
   }
 
-@Override
-public synchronized void onPidUpdate(double setpoint, double processValue, double output,
-		double error) {
+  @Override
+  public synchronized void onPidUpdate(double setpoint, double processValue, double output,
+      double error) {
     if (!setupOk) {
-    	LOGGER.warning("newLog not called");
-        return;
-      }
-    
-      if(writeHeadings) {
-    	  writeHeadings = false;
-    	  writeHeadings();
-      }
-    
-    
-      if (timeOffset == null) {
-    	  timeOffset = System.nanoTime();
-      }
-      
-      double currentTimeStamp = (System.nanoTime() -timeOffset) / Math.pow(10, 9);
-    
-      StringBuilder outputText = new StringBuilder();
-      outputText.append(currentTimeStamp);
-      outputText.append(";");
-      outputText.append(setpoint);
-      outputText.append(";");
-      outputText.append(processValue);
-      outputText.append(";");
-      outputText.append(output);
-      outputText.append(";");
-      outputText.append(error);
-      outputText.append("\n");
-      
-      write(outputText);
-	
-}
+      LOGGER.warning("newLog not called");
+      return;
+    }
 
-public synchronized void newLog(PidParameterController pidController) {
-	//we need to write headings on next update as getters could refer to stale values
-	writeHeadings = true;
-	this.pidController = pidController;
+    if (writeHeadings) {
+      writeHeadings = false;
+      writeHeadings();
+    }
+
+
+    if (timeOffset == null) {
+      timeOffset = System.nanoTime();
+    }
+
+    double currentTimeStamp = (System.nanoTime() - timeOffset) / Math.pow(10, 9);
+
+    StringBuilder outputText = new StringBuilder();
+    outputText.append(currentTimeStamp);
+    outputText.append(";");
+    outputText.append(setpoint);
+    outputText.append(";");
+    outputText.append(processValue);
+    outputText.append(";");
+    outputText.append(output);
+    outputText.append(";");
+    outputText.append(error);
+    outputText.append("\n");
+
+    write(outputText);
+
+  }
+
+  public synchronized void newLog(PidParameterController pidController) {
+    //we need to write headings on next update as getters could refer to stale values
+    writeHeadings = true;
+    this.pidController = pidController;
     setupOk = true;
-}
+  }
 
-private void writeHeadings() {
+  private void writeHeadings() {
     StringBuilder outputText = new StringBuilder();
     outputText.append("\n");
     Formatter formatter = new Formatter(outputText);
-    formatter.format(PARAMETERS, pidController.getProportionalGain(),pidController.getIntegralGain(),pidController.getDerivativeGain());
+    formatter.format(PARAMETERS, pidController.getProportionalGain(), pidController
+        .getIntegralGain(), pidController.getDerivativeGain());
     outputText.append("\n");
     outputText.append(HEADINGS);
     outputText.append("\n");
     write(outputText);
-}
+  }
 
-private void write(CharSequence string) {
+  private void write(CharSequence string) {
     PrintWriter writer = null;
     try {
       writer = newPrintWriter();
       writer.append(string);
       writer.flush();
     } catch (FileNotFoundException e) {
-    	e.printStackTrace();
+      e.printStackTrace();
     } catch (IOException e) {
-    	e.printStackTrace();
+      e.printStackTrace();
     } finally {
-      if (writer!= null) {
+      if (writer != null) {
         writer.close();
       }
     }
-}
+  }
 
 }

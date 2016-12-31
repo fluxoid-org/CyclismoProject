@@ -27,18 +27,17 @@ import java.util.WeakHashMap;
 
 class Dave {
   String name;
-  
+
   Dave(String name) {
     this.name = name;
   }
 }
 
 public class TestQueue {
-  
 
-  
-  public static void main(String [] args) throws InterruptedException {
-	FixedSizeLifo<String> list = new FixedSizeLifo<String>(3);
+
+  public static void main(String[] args) throws InterruptedException {
+    FixedSizeLifo<String> list = new FixedSizeLifo<String>(3);
     list.offer("hi");
     System.out.println(list.size());
     list.offer("bye");
@@ -51,30 +50,30 @@ public class TestQueue {
 //    for (String s : reverse ) {
 //      System.out.println(s);
 //    }
-    for (String s : list ) {
+    for (String s : list) {
       System.out.println(s);
     }
-    
+
     System.out.println(list.poll());
-    
-    Set<Dave> strings = Collections.newSetFromMap(new WeakHashMap<Dave,Boolean>());
-    
+
+    Set<Dave> strings = Collections.newSetFromMap(new WeakHashMap<Dave, Boolean>());
+
     Dave d = new Dave("simon");
     strings.add(d);
-    
+
     d = new Dave("luke");
     strings.add(d);
-    
+
     d = new Dave("mark");
     strings.add(d);
-    
+
     d = new Dave("tom");
     strings.add(d);
-    
+
     strings.add(new Dave("bexley") {});
-    
+
     int count = 0;
-    
+
 //    while(true) {
 //    count++;
 //    System.out.println(count);
@@ -84,9 +83,8 @@ public class TestQueue {
 //    System.gc();
 //    Thread.sleep(1000);
 //    }
-    
+
   }
-  
 
 
 }

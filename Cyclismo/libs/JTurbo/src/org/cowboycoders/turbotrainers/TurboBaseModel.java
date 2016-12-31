@@ -176,15 +176,13 @@ abstract public class TurboBaseModel {
   }
 
   /**
-   * @param parameters
    * @throws IllegalArgumentException if cannot be cast to desired type
    */
-  public abstract void setParameters(CommonParametersInterface parameters) throws IllegalArgumentException;
+  public abstract void setParameters(CommonParametersInterface parameters) throws
+      IllegalArgumentException;
 
   /**
    * Returns latest bounded target
-   *
-   * @return
    */
   public abstract double getTarget();
 

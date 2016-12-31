@@ -18,7 +18,7 @@ public class DataSourceCombiner {
   private volatile int precedence = 100;
 
   /**
-   * @param merged        updated with latest value from source with lowest precedence
+   * @param merged updated with latest value from source with lowest precedence
    * @param timeoutMillis timeout until precedence resets
    */
   public DataSourceCombiner(HeartRateListener merged, int timeoutMillis) {
@@ -31,8 +31,9 @@ public class DataSourceCombiner {
   /**
    * Poll with latest values
    *
-   * @param value      latest sensor data
-   * @param precedence 0-100 inclusive; lower numbers have higher precedence (i.e are more believable)
+   * @param value latest sensor data
+   * @param precedence 0-100 inclusive; lower numbers have higher precedence (i.e are more
+   * believable)
    */
   public void update(int value, int precedence) {
     if (precedence < 0 || precedence > 100) {
@@ -43,12 +44,12 @@ public class DataSourceCombiner {
     timer.cancel();
     this.timer = new Timer(true);
     timer.schedule(
-            new TimerTask() {
-              @Override
-              public void run() {
-                DataSourceCombiner.this.precedence = 100;
-              }
-            }, timeout);
+        new TimerTask() {
+          @Override
+          public void run() {
+            DataSourceCombiner.this.precedence = 100;
+          }
+        }, timeout);
     this.precedence = precedence;
     listener.onValueChange(value);
   }

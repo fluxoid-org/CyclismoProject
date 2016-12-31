@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CourseTracker {
-  
+
   public static final double ZERO_CUTOFF = 0.0001;
   private final double resolution;
 
@@ -50,7 +50,7 @@ public class CourseTracker {
    * Maps absolute distance travelled to course points.
    *
    * @param coursePoints to map distance from.
-   * @param resolution   for interpolation
+   * @param resolution for interpolation
    */
   public CourseTracker(List<LatLongAlt> coursePoints, double resolution) {
     this.resolution = resolution;
@@ -58,7 +58,7 @@ public class CourseTracker {
     distanceLocationMap.put(totalDistance, coursePoints.get(0));
     for (int i = 1; i < coursePoints.size(); i++) {
       double distanceBetweenPoints = LocationUtils.getGradientCorrectedDistance(
-              coursePoints.get(i - 1), coursePoints.get(i));
+          coursePoints.get(i - 1), coursePoints.get(i));
       totalDistance += distanceBetweenPoints;
       if (distanceBetweenPoints < resolution) {
         // assume the same location
@@ -124,7 +124,8 @@ public class CourseTracker {
     }
     double timeDelta = currentTimeStamp - lastTimeStamp;
     LatLongAlt current;
-    while ((current = LocationUtils.getLocationBetweenPoints(previous, next, speed, timeDelta)) == null) {
+    while ((current = LocationUtils.getLocationBetweenPoints(previous, next, speed, timeDelta))
+        == null) {
       lastKnownDistanceMarkerIndex++;
       if (lastKnownDistanceMarkerIndex < distanceMarkers.length - 1) {
         nextKey = distanceMarkers[lastKnownDistanceMarkerIndex + 1];
@@ -167,14 +168,14 @@ public class CourseTracker {
     // as we are interpolating elevation data between markers, we don't gain any precision
     // by using the currentLocation (getCurrentLocation) compared to using the previous marker
     double gradient = LocationUtils
-            .getLocalisedGradient(previous, next);
+        .getLocalisedGradient(previous, next);
     if (gradient == Double.NaN) {
       //two points at same lat/long
       return 0.0;
     }
     return gradient;
   }
-  
+
   public static void main(String[] args) {
     LatLongAlt l1 = new LatLongAlt(50.066389, 5.715, 1000);
     LatLongAlt l2 = new LatLongAlt(58.643889, 3.07, 4000);

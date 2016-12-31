@@ -26,11 +26,11 @@ public class ExceptionWrapper {
     MID_OPERATION,
     STOPPING,
   }
-  
+
   private Exception wrappedException;
   private Context context;
-  
-  
+
+
   /**
    * @return the context
    */
@@ -55,9 +55,9 @@ public class ExceptionWrapper {
   public ExceptionWrapper(Exception e) {
     wrappedException = e;
   }
-  
+
   public boolean hasContext() {
-    if(context != null) return true;
+    if (context != null) return true;
     return false;
   }
 

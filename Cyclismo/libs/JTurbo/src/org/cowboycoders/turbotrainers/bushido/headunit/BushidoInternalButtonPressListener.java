@@ -30,35 +30,37 @@ import java.util.Map;
 import static org.cowboycoders.ant.utils.ArrayUtils.arrayStartsWith;
 
 class BushidoInternalButtonPressListener implements BroadcastListener<AcknowledgedDataMessage> {
-    Byte[] data;
-    public static Byte[] BUTTON_PRESS_SIGNATURE = {(byte) 0xdd, 0x10};
-    public static int BUTTON_PRESS_INDEX = 2;
-    private BushidoInternalListener bushidoListener;
-    
-    public BushidoInternalButtonPressListener(BushidoInternalListener bushidoListener) {
-      this.bushidoListener = bushidoListener;
-      initDispatcherMap();
+  Byte[] data;
+  public static Byte[] BUTTON_PRESS_SIGNATURE = {(byte) 0xdd, 0x10};
+  public static int BUTTON_PRESS_INDEX = 2;
+  private BushidoInternalListener bushidoListener;
+
+  public BushidoInternalButtonPressListener(BushidoInternalListener bushidoListener) {
+    this.bushidoListener = bushidoListener;
+    initDispatcherMap();
+  }
+
+  private Map<Button, ButtonPressDispatcher> dispatcherMap = new HashMap<Button,
+      ButtonPressDispatcher>();
+
+  public void initDispatcherMap() {
+    for (Button b : Button.values()) {
+      dispatcherMap.put(b, new ButtonPressDispatcher(bushidoListener));
     }
-    
-    private Map<Button,ButtonPressDispatcher> dispatcherMap= new HashMap<Button,ButtonPressDispatcher>();
-    
-    public void initDispatcherMap() {
-      for (Button b : Button.values()) {
-        dispatcherMap.put(b, new ButtonPressDispatcher(bushidoListener));
+  }
+
+
+  @Override
+  public void receiveMessage(AcknowledgedDataMessage message) {
+    data = message.getData();
+    if (arrayStartsWith(BUTTON_PRESS_SIGNATURE, data)) {
+      BushidoButtonPressDescriptor descriptor = BushidoButtonPressDescriptor.fromByte
+          (data[BUTTON_PRESS_INDEX]);
+      if (descriptor != null) {
+        dispatcherMap.get(descriptor.getButton()).submitButtonPress(descriptor);
       }
     }
-    
-    
-    @Override
-    public void receiveMessage(AcknowledgedDataMessage message) {
-        data = message.getData();
-        if (arrayStartsWith(BUTTON_PRESS_SIGNATURE, data)) {
-          BushidoButtonPressDescriptor descriptor = BushidoButtonPressDescriptor.fromByte(data[BUTTON_PRESS_INDEX]);
-          if (descriptor != null) {
-            dispatcherMap.get(descriptor.getButton()).submitButtonPress(descriptor);
-          }
-        }
-    }
-    
+  }
+
 
 }

@@ -26,33 +26,33 @@ import java.lang.annotation.Target;
 
 
 public class AnTest {
-  
-  @Target(value={ElementType.METHOD, ElementType.FIELD})
+
+  @Target(value = {ElementType.METHOD, ElementType.FIELD})
   @Retention(RetentionPolicy.RUNTIME)
-  public @interface WaitForMessageOpts  {
-      boolean clearBuffer() default true;
+  public @interface WaitForMessageOpts {
+    boolean clearBuffer() default true;
   }
-  
-  @WaitForMessageOpts 
+
+  @WaitForMessageOpts
   static void print() throws SecurityException, NoSuchMethodException {
-    
-    System.out.println((AnTest.class.getMethod("print").getAnnotation(WaitForMessageOpts.class)).clearBuffer());
+
+    System.out.println((AnTest.class.getMethod("print").getAnnotation(WaitForMessageOpts.class))
+        .clearBuffer());
   }
-  
-  @WaitForMessageOpts(clearBuffer=false)
+
+  @WaitForMessageOpts(clearBuffer = false)
   static void printFalse() throws SecurityException, NoSuchMethodException {
     print();
   }
-  
-  public static void main(String [] args) throws SecurityException, NoSuchMethodException {
-    
+
+  public static void main(String[] args) throws SecurityException, NoSuchMethodException {
+
     print();
-    
-    
+
+
     printFalse();
-    
-    
-    
+
+
   }
 
 }

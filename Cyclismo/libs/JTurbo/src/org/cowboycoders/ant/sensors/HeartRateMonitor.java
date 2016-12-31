@@ -111,7 +111,8 @@ public class HeartRateMonitor {
     // Arbitrary name : useful for identifying channel
     channel.setName("C:HRM");
 
-    // choose slave or master type. Constructors exist to set two-way/one-way and shared/non-shared variants.
+    // choose slave or master type. Constructors exist to set two-way/one-way and
+    // shared/non-shared variants.
     ChannelType channelType = new SlaveChannelType();
 
     // use ant network key "N:ANT+"

@@ -28,77 +28,72 @@ import java.math.BigInteger;
 import static org.cowboycoders.ant.utils.ArrayUtils.arrayStartsWith;
 
 public class BushidoBrakeBroadcastDataListener implements BroadcastListener<BroadcastDataMessage> {
-	
-    private Byte[] data;
-    
-    private double speed;
-    private double cadence;
-    private double power;
-    private double powerBalance = 50;
-    private double brakeTemperature;
-    private long counter = 0;
-    private double powerLeft; // currently unsure of exactly this is
-    private double powerRight;
-    
-    // Packet identifiers
-    private static final Byte[] PARTIAL_PACKET_VERSION_NUMBER = {(byte) 0xAD , 0x02 };
-    private static final Byte[] PARTIAL_PACKET_POWER = {(byte) 0x01};
-    private static final Byte[] PARTIAL_PACKET_SPEED_CADENCE_BALANCE = {(byte) 0x02};
-    private static final Byte[] PARTIAL_PACKET_COUNTER = {(byte) 0x08};
-    private static final Byte[] PARTIAL_PACKET_TEMPERATURE_STATUS = {(byte) 0x10};
-    private static Byte[] PARTIAL_PACKET_REQUEST_DATA = {(byte) 0xAD, 0x01};
-    private BushidoBrakeInternalListener bushidoListener;
-    
-    public BushidoBrakeBroadcastDataListener(BushidoBrakeInternalListener bushidoListener) {
-      this.bushidoListener = bushidoListener;
+
+  private Byte[] data;
+
+  private double speed;
+  private double cadence;
+  private double power;
+  private double powerBalance = 50;
+  private double brakeTemperature;
+  private long counter = 0;
+  private double powerLeft; // currently unsure of exactly this is
+  private double powerRight;
+
+  // Packet identifiers
+  private static final Byte[] PARTIAL_PACKET_VERSION_NUMBER = {(byte) 0xAD, 0x02};
+  private static final Byte[] PARTIAL_PACKET_POWER = {(byte) 0x01};
+  private static final Byte[] PARTIAL_PACKET_SPEED_CADENCE_BALANCE = {(byte) 0x02};
+  private static final Byte[] PARTIAL_PACKET_COUNTER = {(byte) 0x08};
+  private static final Byte[] PARTIAL_PACKET_TEMPERATURE_STATUS = {(byte) 0x10};
+  private static Byte[] PARTIAL_PACKET_REQUEST_DATA = {(byte) 0xAD, 0x01};
+  private BushidoBrakeInternalListener bushidoListener;
+
+  public BushidoBrakeBroadcastDataListener(BushidoBrakeInternalListener bushidoListener) {
+    this.bushidoListener = bushidoListener;
+  }
+
+  @Override
+  public void receiveMessage(BroadcastDataMessage message) {
+    data = message.getData();
+    int[] unsignedData = ByteUtils.unsignedBytesToInts(data);
+    if (arrayStartsWith(PARTIAL_PACKET_REQUEST_DATA, data)) {
+      bushidoListener.onRequestData(data);
+    } else if (arrayStartsWith(PARTIAL_PACKET_POWER, data)) {
+      BigInteger leftPower = new BigInteger(new byte[]{data[1], data[2]});
+      BigInteger power = new BigInteger(new byte[]{data[3], data[4]});
+      BigInteger rightPower = new BigInteger(new byte[]{data[5], data[6]});
+      bushidoListener.onChangeLeftPower(leftPower.doubleValue());
+      bushidoListener.onPowerChange(power.doubleValue());
+      bushidoListener.onChangeRightPower(rightPower.doubleValue());
+    } else if (arrayStartsWith(PARTIAL_PACKET_SPEED_CADENCE_BALANCE, data)) {
+      // speed * 10
+      BigInteger speed = new BigInteger(new byte[]{data[1], data[2]});
+      int cadence = unsignedData[3];
+      int balance = unsignedData[4];
+      bushidoListener.onSpeedChange(speed.doubleValue() / 10);
+      bushidoListener.onCadenceChange(cadence);
+      bushidoListener.onChangeBalance(balance);
+    } else if (arrayStartsWith(PARTIAL_PACKET_COUNTER, data)) {
+      // i have assumed byte one is part of this data
+      BigInteger counter = new BigInteger(new byte[]{data[1], data[2], data[3], data[4]});
+      bushidoListener.onChangeCounter((int) counter.longValue());
+    } else if (arrayStartsWith(PARTIAL_PACKET_TEMPERATURE_STATUS, data)) {
+      int temp = unsignedData[4];
+      int status = unsignedData[3];
+      bushidoListener.onChangeBrakeTemperature(temp);
+    } else if (arrayStartsWith(PARTIAL_PACKET_VERSION_NUMBER, data)) {
+      int major = unsignedData[2];
+      int minor = unsignedData[3];
+      BigInteger build = new BigInteger(new byte[]{data[4], data[5]});
+      StringBuilder versionString = new StringBuilder();
+      versionString.append(major + ".");
+      versionString.append(minor + ".");
+      versionString.append(build);
+      bushidoListener.onReceiveSoftwareVersion(versionString.toString());
     }
-    
-    @Override
-    public void receiveMessage(BroadcastDataMessage message) {
-        data = message.getData();
-        int [] unsignedData = ByteUtils.unsignedBytesToInts(data);
-        if (arrayStartsWith(PARTIAL_PACKET_REQUEST_DATA, data)) {
-        	bushidoListener.onRequestData(data);
-        }
-        else if (arrayStartsWith(PARTIAL_PACKET_POWER, data)) {
-        	BigInteger leftPower = new BigInteger(new byte [] {data[1],data[2]});
-        	BigInteger power = new BigInteger(new byte [] {data[3],data[4]});
-        	BigInteger rightPower = new BigInteger(new byte [] {data[5],data[6]});
-        	bushidoListener.onChangeLeftPower(leftPower.doubleValue());
-        	bushidoListener.onPowerChange(power.doubleValue());
-        	bushidoListener.onChangeRightPower(rightPower.doubleValue());
-        }
-        else if (arrayStartsWith(PARTIAL_PACKET_SPEED_CADENCE_BALANCE,data)) {
-        	// speed * 10
-        	BigInteger speed = new BigInteger(new byte[] {data[1],data[2]});
-        	int cadence = unsignedData[3];
-        	int balance = unsignedData[4];
-        	bushidoListener.onSpeedChange(speed.doubleValue() / 10);
-        	bushidoListener.onCadenceChange(cadence);
-        	bushidoListener.onChangeBalance(balance);
-        }
-        else if (arrayStartsWith(PARTIAL_PACKET_COUNTER,data)) {
-        	// i have assumed byte one is part of this data
-        	BigInteger counter = new BigInteger(new byte[] {data[1],data[2],data[3],data[4]});
-        	bushidoListener.onChangeCounter((int) counter.longValue());
-        }
-        else if (arrayStartsWith(PARTIAL_PACKET_TEMPERATURE_STATUS,data)) {
-        	int temp = unsignedData[4];
-        	int status = unsignedData[3];
-        	bushidoListener.onChangeBrakeTemperature(temp);
-        } 
-        else if (arrayStartsWith(PARTIAL_PACKET_VERSION_NUMBER,data)) {
-        	int major = unsignedData[2];
-        	int minor = unsignedData[3];
-        	BigInteger build = new BigInteger(new byte[] {data[4],data[5]});
-        	StringBuilder versionString = new StringBuilder();
-        	versionString.append(major + ".");
-        	versionString.append(minor + ".");
-        	versionString.append(build);
-        	bushidoListener.onReceiveSoftwareVersion(versionString.toString());
-        }
-        
-    }
-    
+
+  }
+
 
 }

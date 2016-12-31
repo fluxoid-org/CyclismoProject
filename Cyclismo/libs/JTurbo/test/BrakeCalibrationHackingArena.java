@@ -43,12 +43,11 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 
 
-
 public class BrakeCalibrationHackingArena {
-  
+
   private static AntTransceiver antchip = new AntTransceiver(0);
-  
-  @BeforeClass 
+
+  @BeforeClass
   public static void beforeClass() {
     AntTransceiver.LOGGER.setLevel(Level.SEVERE);
     ConsoleHandler handler = new ConsoleHandler();
@@ -64,113 +63,112 @@ public class BrakeCalibrationHackingArena {
     //antchip.send(msg.encode());
     //antchip.stop();
   }
-  
+
   @AfterClass
   public static void afterClass() {
     antchip.stop();
     //antchip.stop();
   }
-  
+
   @Before
   public void before() throws InterruptedException {
     //Thread.sleep(1000);
   }
-  
 
-  
+
   TurboTrainerDataListener dataListener = new TurboTrainerDataListener() {
 
     @Override
     public void onSpeedChange(double speed) {
-      System.out.println("speed: " +speed);
-      
+      System.out.println("speed: " + speed);
+
     }
 
     @Override
     public void onPowerChange(double power) {
-    	System.out.println("power: " + power);
-      
+      System.out.println("power: " + power);
+
     }
 
     @Override
     public void onCadenceChange(double cadence) {
       // TODO Auto-generated method stub
-      
+
     }
 
     @Override
     public void onDistanceChange(double distance) {
-     //System.out.println("Distance: " + distance);
-     //System.out.println("Distance real: " + b.getRealDistance());
-      
+      //System.out.println("Distance: " + distance);
+      //System.out.println("Distance real: " + b.getRealDistance());
+
     }
 
     @Override
     public void onHeartRateChange(double heartRate) {
       // TODO Auto-generated method stub
-      
+
     }
-    
-    
+
+
   };
 
   BushidoBrake b;
-  
+
   AntLoggerImpl antLogger = new AntLoggerImpl();
-  
+
   CalibrationCallback callback = new CalibrationCallback() {
 
-	@Override
-	public void onRequestStartPedalling() {
-		System.out.println("start pedalling");
-		
-	}
+    @Override
+    public void onRequestStartPedalling() {
+      System.out.println("start pedalling");
 
-	@Override
-	public void onReachedCalibrationSpeed() {
-		System.out.println("stop");
-		//java.awt.Toolkit.getDefaultToolkit().beep();
-		try {
-			linuxBeep();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
+    }
 
-	@Override
-	public void onRequestResumePedalling() {
-		System.out.println("resume");
-		
-	}
+    @Override
+    public void onReachedCalibrationSpeed() {
+      System.out.println("stop");
+      //java.awt.Toolkit.getDefaultToolkit().beep();
+      try {
+        linuxBeep();
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
 
-	@Override
-	public void onSuccess(double calibrationValue) {
-		System.out.println("sucess: "+ calibrationValue);
-		
-	}
+    }
 
-	@Override
-	public void onFailure(CalibrationException exception) {
-		System.out.println("failure");
-		exception.printStackTrace();
-		
-	}
+    @Override
+    public void onRequestResumePedalling() {
+      System.out.println("resume");
 
-	@Override
-	public void onBelowSpeedReminder(double speed) {
-		System.out.println("below speed");
-		
-	}
-	  
+    }
+
+    @Override
+    public void onSuccess(double calibrationValue) {
+      System.out.println("sucess: " + calibrationValue);
+
+    }
+
+    @Override
+    public void onFailure(CalibrationException exception) {
+      System.out.println("failure");
+      exception.printStackTrace();
+
+    }
+
+    @Override
+    public void onBelowSpeedReminder(double speed) {
+      System.out.println("below speed");
+
+    }
+
   };
-  
+
   byte[] PACKET_START_CALIBRATION = AntUtils.padToDataLength(new int[]{(byte) 0x23, 0x63});
   byte[] PACKET_REQUEST_CALIBRATION_STATUS = AntUtils.padToDataLength(new int[]{(byte) 0x23, 0x58});
-  byte[] PACKET_REQUEST_CALIBRATION_VALUE = AntUtils.padToDataLength(new int[]{0x23,0x4d});
+  byte[] PACKET_REQUEST_CALIBRATION_VALUE = AntUtils.padToDataLength(new int[]{0x23, 0x4d});
 
-  
+
   @Test
   public void testFixedResistanceCOntroller() throws InterruptedException, TimeoutException {
     Node n = new Node(BrakeCalibrationHackingArena.antchip);
@@ -182,47 +180,42 @@ public class BrakeCalibrationHackingArena {
     b.overrideDefaultResistanceController(mapper);
     b.registerDataListener(dataListener);
     b.startConnection();
-    
-	b.calibrate(callback, 100);
-    
+
+    b.calibrate(callback, 100);
+
 
     Thread.sleep(45000);
-    
+
     b.stop();
     n.stop();
   }
-  
+
   private void linuxBeep() throws IOException {
-	  // from http://marciowb.wordpress.com/2008/07/22/java-sound-at-my-linux-machine-its-ridiculous/
-	  String data = "09azaZ09azaZ09azaZ09azaZ";
-	  data += "09azaZ09azaZ09azaZ09azaZ09azaZ";
-	  data += "09azaZ09azaZ09azaZ09azaZ09azaZ";
-	  data += "09azaZ09azaZ09azaZ09azaZ09azaZ";
-	  data += "09azaZ09azaZ09azaZ09azaZ09azaZ";
-	  data += "09azaZ09azaZ09azaZ09azaZ09azaZ";
-	  data += "09azaZ09azaZ09azaZ09azaZ09azaZ";
-	  data += "09azaZ09azaZ09azaZ09azaZ09azaZ";
-	  data += "09azaZ09azaZ09azaZ09azaZ09azaZ";
-	  data += "09azaZ09azaZ09azaZ09azaZ09azAZ";
-	  data += "09aZAz09aZAz09aZAz09aZAz09aZAz";
-	  data += "09aZAz09aZAz09aZAz09aZAz09aZAz";
-	  String[] cmd = {"sh", "-c", "echo " + data + " | aplay -r 4"};
-	  Runtime.getRuntime().exec(cmd);
+    // from http://marciowb.wordpress.com/2008/07/22/java-sound-at-my-linux-machine-its-ridiculous/
+    String data = "09azaZ09azaZ09azaZ09azaZ";
+    data += "09azaZ09azaZ09azaZ09azaZ09azaZ";
+    data += "09azaZ09azaZ09azaZ09azaZ09azaZ";
+    data += "09azaZ09azaZ09azaZ09azaZ09azaZ";
+    data += "09azaZ09azaZ09azaZ09azaZ09azaZ";
+    data += "09azaZ09azaZ09azaZ09azaZ09azaZ";
+    data += "09azaZ09azaZ09azaZ09azaZ09azaZ";
+    data += "09azaZ09azaZ09azaZ09azaZ09azaZ";
+    data += "09azaZ09azaZ09azaZ09azaZ09azaZ";
+    data += "09azaZ09azaZ09azaZ09azaZ09azAZ";
+    data += "09aZAz09aZAz09aZAz09aZAz09aZAz";
+    data += "09aZAz09aZAz09aZAz09aZAz09aZAz";
+    String[] cmd = {"sh", "-c", "echo " + data + " | aplay -r 4"};
+    Runtime.getRuntime().exec(cmd);
   }
-  
+
   //@Test
   public void a() {
-	  byte [] data = new byte[8];
-	  data[4] = 0;
-	  data[5] = (byte) 0x92;
-	  BigInteger val = new BigInteger(new byte[] {0x00,data[4],data[5]});
-	  System.out.println(val.doubleValue()/ 10.0);
+    byte[] data = new byte[8];
+    data[4] = 0;
+    data[5] = (byte) 0x92;
+    BigInteger val = new BigInteger(new byte[]{0x00, data[4], data[5]});
+    System.out.println(val.doubleValue() / 10.0);
   }
-  
-
-  
-  
-  
 
 
 }

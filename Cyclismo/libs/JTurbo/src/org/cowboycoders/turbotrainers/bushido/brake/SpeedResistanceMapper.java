@@ -11,148 +11,142 @@ import java.io.File;
 
 /**
  * @author www.cowboycoders.org
- * 
+ *
  *         A brake resistance controller which maps a speed to a brake
  *         resistance.
- * 
+ *
  *         The mapping is implemented using a polynomial fit based on
  *         observations of the head unit behavior.
- * 
  */
 public class SpeedResistanceMapper extends AbstractController {
 
   private static final Mode SUPPORTED_MODE = Mode.TARGET_SLOPE;
 
-	// Period at which the virtual speed will be updated (ms)
-	private static final int POWER_MODEL_UPDATE_PERIOD_MS = 100;
-	
-	private static final int INITIAL_BRAKE_RESISTANCE = 20;
+  // Period at which the virtual speed will be updated (ms)
+  private static final int POWER_MODEL_UPDATE_PERIOD_MS = 100;
 
-	// Coefficients from polynomial fit to brake resistance -> speed
-	private static final double POLY_A = 8.728;
-	private static final double POLY_B = 2.92e-1;
-	private static final double POLY_C = 9.6e-1;
-	private static final double POLY_D = -7.7e-2;
-	private static final double POLY_E = 1.172e-1;
-	private static final double POLY_F = 7.203;
-	private static final double POLY_G = -2.55e-2;
-	private static final double POLY_H = 1.82e-3;
-	private static final double POLY_I = 4.917e-4;
+  private static final int INITIAL_BRAKE_RESISTANCE = 20;
 
-	// Model to estimate bike speed from power
-	private final PowerModel powerModel = new PowerModel();
-	
+  // Coefficients from polynomial fit to brake resistance -> speed
+  private static final double POLY_A = 8.728;
+  private static final double POLY_B = 2.92e-1;
+  private static final double POLY_C = 9.6e-1;
+  private static final double POLY_D = -7.7e-2;
+  private static final double POLY_E = 1.172e-1;
+  private static final double POLY_F = 7.203;
+  private static final double POLY_G = -2.55e-2;
+  private static final double POLY_H = 1.82e-3;
+  private static final double POLY_I = 4.917e-4;
 
-	
+  // Model to estimate bike speed from power
+  private final PowerModel powerModel = new PowerModel();
+
 
 //	public SpeedResistanceMapper(BrakeModel bushidoModel) {
 //		this.bushidoDataModel = bushidoModel;
 //		bushidoDataModel.setResistance(INITIAL_BRAKE_RESISTANCE);
 //	}
 
-	/**
-	 * Calculates a brake resistance from the current virtual speed.
-	 * 
-	 * The virtual speed is calculated using a power model taking into account
-	 * rider and bike weight (total weight), the current slope, etc.
-	 * 
-	 * The polynomial fit has been generated from data based on the relationship
-	 * between the brake resistance and the virtual speed on the head unit.
-	 * 
-	 * @return - estimated brake resistance
-	 */
-	public double getBrakeResistanceFromPolynomialFit() {
-		final BrakeModel bushidoDataModel = getDataModel();
-		final double slope = bushidoDataModel.getSlope();
-		final double totalWeight = bushidoDataModel.getTotalWeight();
-		final double actualSpeed = bushidoDataModel.getActualSpeed();
+  /**
+   * Calculates a brake resistance from the current virtual speed.
+   *
+   * The virtual speed is calculated using a power model taking into account
+   * rider and bike weight (total weight), the current slope, etc.
+   *
+   * The polynomial fit has been generated from data based on the relationship
+   * between the brake resistance and the virtual speed on the head unit.
+   *
+   * @return - estimated brake resistance
+   */
+  public double getBrakeResistanceFromPolynomialFit() {
+    final BrakeModel bushidoDataModel = getDataModel();
+    final double slope = bushidoDataModel.getSlope();
+    final double totalWeight = bushidoDataModel.getTotalWeight();
+    final double actualSpeed = bushidoDataModel.getActualSpeed();
 
-		// Use a polynomial fit to data ripped from the head unit to estimate
-		// brake resistance from total weight, speed and slope
-		final double brakeResistance = slope * POLY_A + totalWeight * POLY_B
-				+ totalWeight * slope * POLY_C + actualSpeed * POLY_D
-				+ Math.pow(actualSpeed, 2) * POLY_E + POLY_F + slope * actualSpeed * POLY_G
-				+ totalWeight * actualSpeed * POLY_H + slope * totalWeight * actualSpeed
-				* POLY_I;
+    // Use a polynomial fit to data ripped from the head unit to estimate
+    // brake resistance from total weight, speed and slope
+    final double brakeResistance = slope * POLY_A + totalWeight * POLY_B
+        + totalWeight * slope * POLY_C + actualSpeed * POLY_D
+        + Math.pow(actualSpeed, 2) * POLY_E + POLY_F + slope * actualSpeed * POLY_G
+        + totalWeight * actualSpeed * POLY_H + slope * totalWeight * actualSpeed
+        * POLY_I;
 
-		return brakeResistance;
-	}
+    return brakeResistance;
+  }
 
-	/**
-	 * Periodically updates the virtual speed which is required for estimating
-	 * the brake resistance
-	 * 
-	 * This is called frequently for two reasons:
-	 * 
-	 * 1. We want to ensure that the most recent resistance estimate is
-	 *    always available to be sent to the brake. 
-	 * 2. The power model requires
-	 *    updating in sub-second intervals for the integration technique to work
-	 *    with reasonable accuracy.
-	 * 
-	 */
-	private final UpdateCallback updateVirtualSpeed = new UpdateCallback() {
-		@Override
-		public void onUpdate(final Object newValue) {
-			final BrakeModel bushidoDataModel = getDataModel();
-			powerModel.setGradientAsPercentage(bushidoDataModel.getSlope());
-			final double virtualSpeed = powerModel.updatePower((Double) newValue) * Conversions.METRES_PER_SECOND_TO_KM_PER_HOUR;
-			bushidoDataModel.setVirtualSpeed(virtualSpeed);
-			// Update the brake resistance from the current virtual speed
-			bushidoDataModel
-					.setAbsoluteResistance((int)getBrakeResistanceFromPolynomialFit());
-			logToCsv(VIRTUAL_SPEED_HEADING, virtualSpeed);
-			logToCsv(ABSOLUTE_RESISTANCE_HEADING, bushidoDataModel.getAbsoluteResistance());
+  /**
+   * Periodically updates the virtual speed which is required for estimating
+   * the brake resistance
+   *
+   * This is called frequently for two reasons:
+   *
+   * 1. We want to ensure that the most recent resistance estimate is
+   * always available to be sent to the brake.
+   * 2. The power model requires
+   * updating in sub-second intervals for the integration technique to work
+   * with reasonable accuracy.
+   */
+  private final UpdateCallback updateVirtualSpeed = new UpdateCallback() {
+    @Override
+    public void onUpdate(final Object newValue) {
+      final BrakeModel bushidoDataModel = getDataModel();
+      powerModel.setGradientAsPercentage(bushidoDataModel.getSlope());
+      final double virtualSpeed = powerModel.updatePower((Double) newValue) * Conversions
+          .METRES_PER_SECOND_TO_KM_PER_HOUR;
+      bushidoDataModel.setVirtualSpeed(virtualSpeed);
+      // Update the brake resistance from the current virtual speed
+      bushidoDataModel
+          .setAbsoluteResistance((int) getBrakeResistanceFromPolynomialFit());
+      logToCsv(VIRTUAL_SPEED_HEADING, virtualSpeed);
+      logToCsv(ABSOLUTE_RESISTANCE_HEADING, bushidoDataModel.getAbsoluteResistance());
 
-		}
-	};
-	private final FixedPeriodUpdater powerModelUpdater = new FixedPeriodUpdater(
-			new Double(0), updateVirtualSpeed, POWER_MODEL_UPDATE_PERIOD_MS);
-
-
+    }
+  };
+  private final FixedPeriodUpdater powerModelUpdater = new FixedPeriodUpdater(
+      new Double(0), updateVirtualSpeed, POWER_MODEL_UPDATE_PERIOD_MS);
 
 
+  @Override
+  public double onPowerChange(final double power) {
 
-	@Override
-	public double onPowerChange(final double power) {
-		
-		// Update the power with which the power model is updated with
-		powerModelUpdater.update(new Double(power));
-		// Only starts once
-		powerModelUpdater.start();
-		
-		return power;
-	}
+    // Update the power with which the power model is updated with
+    powerModelUpdater.update(new Double(power));
+    // Only starts once
+    powerModelUpdater.start();
 
-	@Override
-	public double onSpeedChange(final double speed) {
-		logToCsv(ACTUAL_SPEED_HEADING, speed);
-		
-		final BrakeModel bushidoDataModel = getDataModel();
-		// return virtual speed instead!
-		return bushidoDataModel.getVirtualSpeed();
-	}
+    return power;
+  }
+
+  @Override
+  public double onSpeedChange(final double speed) {
+    logToCsv(ACTUAL_SPEED_HEADING, speed);
+
+    final BrakeModel bushidoDataModel = getDataModel();
+    // return virtual speed instead!
+    return bushidoDataModel.getVirtualSpeed();
+  }
 
   @Override
   public Mode getMode() {
     return SUPPORTED_MODE;
   }
-	
-	@Override
-	public void onStart() {
-		getDataModel().setResistance(INITIAL_BRAKE_RESISTANCE);
-	}
 
-	@Override
-	public void onStop() {
-		powerModelUpdater.stop();
-	}
+  @Override
+  public void onStart() {
+    getDataModel().setResistance(INITIAL_BRAKE_RESISTANCE);
+  }
 
-	@Override
-	protected SimpleCsvLogger getCsvLogger(File file) {
-		SimpleCsvLogger logger = new SimpleCsvLogger(file,ACTUAL_SPEED_HEADING,VIRTUAL_SPEED_HEADING,ABSOLUTE_RESISTANCE_HEADING);
-		logger.addTime(true);
-		logger.append(true);
-		return logger;
-	}
+  @Override
+  public void onStop() {
+    powerModelUpdater.stop();
+  }
+
+  @Override
+  protected SimpleCsvLogger getCsvLogger(File file) {
+    SimpleCsvLogger logger = new SimpleCsvLogger(file, ACTUAL_SPEED_HEADING, VIRTUAL_SPEED_HEADING, ABSOLUTE_RESISTANCE_HEADING);
+    logger.addTime(true);
+    logger.append(true);
+    return logger;
+  }
 }
