@@ -30,9 +30,7 @@ public class User implements Parcelable {
   private byte[] settings;
   private long currentlySelectedBike = -1l;
 
-  public User() {
-
-  }
+  public User() { }
 
   private User(Parcel in) {
     id = in.readLong();
