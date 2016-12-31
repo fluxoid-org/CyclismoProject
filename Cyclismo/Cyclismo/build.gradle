@@ -29,7 +29,6 @@ dependencies {
     androidTestCompile fileTree(include: '*.jar', dir: 'test_libs')
     androidTestCompile 'org.mockito:mockito-all:1.10.19'
     compile 'com.android.support:support-v4:23.1.1'
-    compile 'org.usb4java:usb4java:1.2.0'
 
     // For MapForge
     compile 'com.caverock:androidsvg:1.2.1'
