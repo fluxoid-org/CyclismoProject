@@ -11,7 +11,7 @@ public class ConstantResistanceController extends AbstractController {
   private static final Mode SUPPORTED_MODE = null;
 
   private SimpleCsvLogger logger;
-  private int resistance = 100;
+  private int resistance = 0;
 
 
   @Override

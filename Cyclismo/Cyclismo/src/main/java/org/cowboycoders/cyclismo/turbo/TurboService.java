@@ -72,6 +72,7 @@ import org.cowboycoders.turbotrainers.TurboCommunicationException;
 import org.cowboycoders.turbotrainers.TurboTrainerDataListener;
 import org.cowboycoders.turbotrainers.TurboTrainerInterface;
 import org.cowboycoders.turbotrainers.bushido.brake.BushidoBrake;
+import org.cowboycoders.turbotrainers.bushido.brake.ConstantResistanceController;
 import org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit;
 import org.fluxoid.utils.LatLongAlt;
 
@@ -518,9 +519,12 @@ public class TurboService extends Service {
     public void onServiceConnected(ComponentName className, IBinder binder) {
 
       initAntWireless((AntHubService.LocalBinder) binder);
+      ConstantResistanceController mapper = new ConstantResistanceController();
+      mapper.setAbsoluteResistance(100);
       final BushidoBrake bushidoBrake = new BushidoBrake();
       bushidoBrake.setMode(Mode.TARGET_SLOPE);
       bushidoBrake.setNode(antNode);
+      bushidoBrake.overrideDefaultResistanceController(mapper);
       TurboService.this.turboTrainer = bushidoBrake;
 
 
