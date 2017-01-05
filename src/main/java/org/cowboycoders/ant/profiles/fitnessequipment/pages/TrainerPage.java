@@ -1,19 +1,22 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
 import org.cowboycoders.ant.profiles.common.CounterUtils;
+import org.cowboycoders.ant.profiles.common.decode.power.PowerOnlyPage;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 import org.cowboycoders.ant.profiles.pages.VirtualPageGenerator;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.cowboycoders.ant.profiles.BitManipulation.*;
 
 /**
  * Created by fluxoid on 02/01/17.
  */
-public class TrainerData extends CommonPageData {
+public class TrainerPage extends CommonPageData implements PowerOnlyPage {
 
+    private static final long TIMEOUT_DELTA = TimeUnit.SECONDS.toNanos(12);
     public static final int POWER_OFFSET = 4;
     public static final int EVENT_OFFSET = 2;
     public static final int INSTANT_POWER_OFFSET = 6;
@@ -23,9 +26,10 @@ public class TrainerData extends CommonPageData {
     private final int instantPower;
     private final boolean powerAvailable;
     private final int events;
+    private final long timestamp;
 
     /**
-     * Accumulated power : running sum of instanteous power updated incremented on each update of event count
+     * Accumulated power : running sum of instanteous power updated on each increment of event count
      * @return
      */
     public int getSumPower() {
@@ -48,6 +52,14 @@ public class TrainerData extends CommonPageData {
         return events;
     }
 
+    @Override
+    public boolean isValidDelta(PowerOnlyPage old) {
+        if (getTimestamp() - old.getTimestamp() >= TIMEOUT_DELTA) {
+            return false;
+        }
+        return true;
+    }
+
     /**
      * @return in rpm
      */
@@ -63,8 +75,9 @@ public class TrainerData extends CommonPageData {
     private final EnumSet<Defines.TrainerStatusFlag> trainerStatus;
 
 
-    public TrainerData(byte [] packet) {
+    public TrainerPage(byte [] packet) {
         super(packet);
+        this.timestamp = System.nanoTime();
         power = UnsignedNumFrom2LeBytes(packet, POWER_OFFSET);
         events = UnsignedNumFrom1LeByte(packet[EVENT_OFFSET]);
         instantPower = 0xfff & UnsignedNumFrom2LeBytes(packet, INSTANT_POWER_OFFSET);
@@ -83,14 +96,20 @@ public class TrainerData extends CommonPageData {
 
     }
 
-    public long getSumPowerDelta(TrainerData old) {
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    @Override
+    public long getSumPowerDelta(PowerOnlyPage old) {
         return CounterUtils.calcDelta(old.getSumPower(), getSumPower(), UNSIGNED_INT16_MAX);
     }
 
-    public long getEventCountDelta(TrainerData old) {
+    @Override
+    public long getEventCountDelta(PowerOnlyPage old) {
         return CounterUtils.calcDelta(old.getEventCount(), getEventCount(), UNSIGNED_INT16_MAX);
     }
-
 
 
 }
