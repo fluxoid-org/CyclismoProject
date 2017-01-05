@@ -22,7 +22,7 @@ package org.cowboycoders.turbotrainers;
 public class TurboCommunicationException extends RuntimeException {
 
   /**
-   * 
+   *
    */
   private static final long serialVersionUID = 1L;
 
@@ -45,6 +45,6 @@ public class TurboCommunicationException extends RuntimeException {
     super(cause);
     // TODO Auto-generated constructor stub
   }
-  
+
 
 }

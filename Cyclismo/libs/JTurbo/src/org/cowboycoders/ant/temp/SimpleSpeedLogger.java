@@ -20,7 +20,6 @@
 package org.cowboycoders.ant.temp;
 
 
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -32,17 +31,17 @@ import java.util.logging.Logger;
 public class SimpleSpeedLogger {
 
   private static final String DIRECTORY_NAME = "logs";
-  private static final String FILE_NAME = "speedlog"; 
+  private static final String FILE_NAME = "speedlog";
   private static final Logger LOGGER = Logger.getLogger(SimpleSpeedLogger.class.getSimpleName());
   private static final String HEADINGS = "time/seconds;speed";
-  
+
   private Long timeOffset;
-  
+
   private File directory;
   private File file;
   private boolean setupOk = false;
-private boolean writeHeadings;
-  
+  private boolean writeHeadings;
+
   public SimpleSpeedLogger() {
     directory = new File(DIRECTORY_NAME);
     if (!directory.exists()) {
@@ -54,74 +53,73 @@ private boolean writeHeadings;
     //write(HEADINGS);
   }
 
-  
+
   /**
    * Creates a new output stream to write to the given filename.
-   * @throws IOException 
    */
   protected PrintWriter newPrintWriter()
       throws IOException {
     file = new File(directory, FILE_NAME);
-    return new PrintWriter(new FileWriter(file,true));
+    return new PrintWriter(new FileWriter(file, true));
   }
 
-public synchronized void onSpeedUpdate(double speed) {
+  public synchronized void onSpeedUpdate(double speed) {
     if (!setupOk) {
-    	LOGGER.warning("newLog not called");
-        return;
-      }
-    
-      if(writeHeadings) {
-    	  writeHeadings = false;
-    	  writeHeadings();
-      }
-    
-    
-      if (timeOffset == null) {
-    	  timeOffset = System.nanoTime();
-      }
-      
-      double currentTimeStamp = (System.nanoTime() -timeOffset) / Math.pow(10, 9);
-    
-      StringBuilder outputText = new StringBuilder();
-      outputText.append(currentTimeStamp);
-      outputText.append(";");
-      outputText.append(speed);
-      outputText.append("\n");
-      
-      write(outputText);
-	
-}
+      LOGGER.warning("newLog not called");
+      return;
+    }
 
-public synchronized void newLog() {
-	//we need to write headings on next update as getters could refer to stale values
-	writeHeadings = true;
+    if (writeHeadings) {
+      writeHeadings = false;
+      writeHeadings();
+    }
+
+
+    if (timeOffset == null) {
+      timeOffset = System.nanoTime();
+    }
+
+    double currentTimeStamp = (System.nanoTime() - timeOffset) / Math.pow(10, 9);
+
+    StringBuilder outputText = new StringBuilder();
+    outputText.append(currentTimeStamp);
+    outputText.append(";");
+    outputText.append(speed);
+    outputText.append("\n");
+
+    write(outputText);
+
+  }
+
+  public synchronized void newLog() {
+    //we need to write headings on next update as getters could refer to stale values
+    writeHeadings = true;
     setupOk = true;
-}
+  }
 
-private void writeHeadings() {
+  private void writeHeadings() {
     StringBuilder outputText = new StringBuilder();
     outputText.append("\n");
     outputText.append(HEADINGS);
     outputText.append("\n");
     write(outputText);
-}
+  }
 
-private void write(CharSequence string) {
+  private void write(CharSequence string) {
     PrintWriter writer = null;
     try {
       writer = newPrintWriter();
       writer.append(string);
       writer.flush();
     } catch (FileNotFoundException e) {
-    	e.printStackTrace();
+      e.printStackTrace();
     } catch (IOException e) {
-    	e.printStackTrace();
+      e.printStackTrace();
     } finally {
-      if (writer!= null) {
+      if (writer != null) {
         writer.close();
       }
     }
-}
+  }
 
 }

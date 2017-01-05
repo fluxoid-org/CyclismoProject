@@ -30,45 +30,44 @@ import java.util.List;
 
 /**
  * Model for current settings
- * 
+ *
  * @author will
  */
 public abstract class AbstractBushidoModel extends TurboBaseModel {
-	
-	private List<DataPacketProvider> packetProviders = new ArrayList<DataPacketProvider>();
-	private Iterator<DataPacketProvider> packetProvidersIterator = new LoopingListIterator<DataPacketProvider>(
-			packetProviders);
+
+  private List<DataPacketProvider> packetProviders = new ArrayList<DataPacketProvider>();
+  private Iterator<DataPacketProvider> packetProvidersIterator = new
+      LoopingListIterator<DataPacketProvider>(
+      packetProviders);
 
 
-	/**
-	 * Provides a data packet containing current slope
-	 */
-	protected final DataPacketProvider keepAliveProvider = new DataPacketProvider() {
+  /**
+   * Provides a data packet containing current slope
+   */
+  protected final DataPacketProvider keepAliveProvider = new DataPacketProvider() {
 
-		@Override
-		public byte[] getDataPacket() {
-			return keepAlive();
-		}
+    @Override
+    public byte[] getDataPacket() {
+      return keepAlive();
+    }
 
-	};
+  };
 
-	protected void addPacketProvider(DataPacketProvider provider) {
-		packetProviders.add(provider);
-	}
+  protected void addPacketProvider(DataPacketProvider provider) {
+    packetProviders.add(provider);
+  }
 
-	private byte[] keepAlive() {
-		byte[] dc02Packet = BushidoUtils.getDc02Prototype();
-		return dc02Packet;
-	}
+  private byte[] keepAlive() {
+    byte[] dc02Packet = BushidoUtils.getDc02Prototype();
+    return dc02Packet;
+  }
 
-	/**
-	 * Send data packets in order specified by packetProvders
-	 * 
-	 * @return
-	 */
-	public byte[] getDataPacket() {
-		return packetProvidersIterator.next().getDataPacket();
-	}
-	
+  /**
+   * Send data packets in order specified by packetProvders
+   */
+  public byte[] getDataPacket() {
+    return packetProvidersIterator.next().getDataPacket();
+  }
+
 
 }

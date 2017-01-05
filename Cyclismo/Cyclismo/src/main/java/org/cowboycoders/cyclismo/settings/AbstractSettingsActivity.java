@@ -153,6 +153,7 @@ public class AbstractSettingsActivity extends PreferenceActivity {
    * @param summaryId the summary id
    * @param value the stored value
    */
+  // FIXME There is a lot of similar code in AbstractSettingsFragment
   private void updatePreferenceSummary(
       Preference preference, String[] options, String[] values, int summaryId, String value) {
     String summary = getString(summaryId);

@@ -30,7 +30,10 @@ If compiling from android studio, set the `project byte code version` to `1.7` i
 
 ###Android studio has missing dependency on JTurbo after initial import###
 
-temporarily delete `Cyclismo/libs/JTurbo/settings.gradle`, reimport the the project,
+Temporarily delete `Cyclismo/libs/JTurbo/settings.gradle`, reimport the the project,
 and then restore `Cyclismo/libs/JTurbo/settings.gradle`
+
+As an alternative to reimporting the project, you can mouse over an unresolved
+dependency and add JTurbo in the drop down menu.
 
 See: [this bug](https://code.google.com/p/android/issues/detail?id=52962) for more info

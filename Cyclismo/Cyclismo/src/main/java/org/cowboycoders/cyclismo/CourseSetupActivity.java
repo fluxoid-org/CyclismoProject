@@ -49,7 +49,17 @@ public class CourseSetupActivity extends Activity {
     super();
   }
 
-  private static final String TAG = CourseSetupFragment.class.getSimpleName();
+  private static final String TAG = CourseSetupActivity.class.getSimpleName();
+
+  protected Long trackId;
+  protected String modeString;
+  private Bike bike;
+  private String turboString;
+  private Button goButton;
+  private boolean startNewRecording = false;
+  private boolean mIsBound;
+
+  TurboService turboService;
 
   CourseSetupObserver courseSetupObserver = new CourseSetupFragment.CourseSetupObserver() {
 
@@ -67,9 +77,13 @@ public class CourseSetupActivity extends Activity {
 
     @Override
     public void onBikeUpdate(Bike bikeIn) {
-      String bikeDesc = bikeIn == null ? "null" : bikeIn.getName();
-      Log.d(TAG, "new bike: " + bikeDesc);
       setBike(bikeIn);
+      validate();
+    }
+
+    @Override
+    public void onTurboUpdate(String turbo) {
+      setTurboString(turbo);
       validate();
     }
   };
@@ -93,37 +107,26 @@ public class CourseSetupActivity extends Activity {
     this.trackId = trackId;
   }
 
-  /**
-   * @return the modeString
-   */
+  private String getTurboString() { return turboString; }
+
+  private void setTurboString(String turboString) { this.turboString = turboString; }
+
   private String getModeString() {
     return modeString;
   }
 
-  /**
-   * @param modeString the modeString to set
-   */
   private void setModeString(String modeString) {
     this.modeString = modeString;
   }
 
-  protected Long trackId;
-  protected String modeString;
-  private Button goButton;
-  private boolean mIsBound;
-
   private ServiceConnection mConnection = new ServiceConnection() {
 
     public void onServiceConnected(ComponentName className, IBinder binder) {
-      TurboService s = ((TurboService.TurboBinder) binder).getService();
-      PreferencesUtils.setLong(CourseSetupActivity.this.getApplicationContext(),
-          R.string.recording_course_track_id_key, getTrackId());
-      s.start(getTrackId(), CourseSetupActivity.this);
+      turboService = ((TurboService.TurboBinder) binder).getService();
       Toast.makeText(CourseSetupActivity.this, "Connected to turbo service",
           Toast.LENGTH_SHORT).show();
-      // no longer needed
-      doUnbindService();
-      startRecording();
+      getFragmentManager().beginTransaction().replace(R.id.course_select_preferences,
+          new CourseSetupFragment().addObserver(courseSetupObserver)).commit();
     }
 
     public void onServiceDisconnected(ComponentName className) {
@@ -132,13 +135,21 @@ public class CourseSetupActivity extends Activity {
     }
   };
 
-  void doBindService() {
-    bindService(new Intent(this, TurboService.class), mConnection,
-        Context.BIND_AUTO_CREATE);
-    mIsBound = true;
+  void startTurboService() {
+    if (mIsBound) {
+      Log.d(TAG, "Starting turbo service");
+      PreferencesUtils.setLong(CourseSetupActivity.this.getApplicationContext(),
+          R.string.recording_course_track_id_key, getTrackId());
+      turboService.start(getTrackId(), CourseSetupActivity.this);
+      // no longer needed
+      doUnbindTurboService();
+      startRecording();
+    } else {
+      Log.e(TAG, "Turbo service not bound when attempting to start");
+    }
   }
 
-  void doUnbindService() {
+  void doUnbindTurboService() {
     if (mIsBound) {
       // Detach our existing connection.
       unbindService(mConnection);
@@ -191,8 +202,6 @@ public class CourseSetupActivity extends Activity {
     }
 
   };
-  private boolean startNewRecording = false;
-  private Bike bike;
 
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -208,7 +217,7 @@ public class CourseSetupActivity extends Activity {
       @Override
       public void onClick(View v) {
         startServiceInBackround();
-        doBindService();
+        startTurboService();
       }
     });
     Button cancelButton = (Button) this.findViewById(R.id.course_select_cancel);
@@ -219,8 +228,6 @@ public class CourseSetupActivity extends Activity {
       }
     });
 
-    getFragmentManager().beginTransaction().replace(R.id.course_select_preferences,
-        new CourseSetupFragment().addObserver(courseSetupObserver)).commit();
   }
 
   private synchronized void setBike(Bike bike) {
@@ -231,12 +238,12 @@ public class CourseSetupActivity extends Activity {
     return bike;
   }
 
-  /* (non-Javadoc)
-   * @see android.app.Activity#onStart()
-   */
   @Override
   protected void onStart() {
     super.onStart();
+    Log.d(TAG, "started");
+    bindService(new Intent(this, TurboService.class), mConnection, Context.BIND_AUTO_CREATE);
+    mIsBound = true;
   }
 
   protected void finish(boolean trackStarted) {
@@ -254,21 +261,19 @@ public class CourseSetupActivity extends Activity {
    * this disables/enables the go button
    */
   private void validate() {
-    String mode = getModeString();
-
     boolean valid = true;
 
-    // must have selected a bike
-    if (getBike() == null) {
+    if (getModeString() == null || getTurboString() == null || getBike() == null) {
       updateUi(false);
       return;
     }
 
-    if (mode.equals(getString(R.string.settings_courses_mode_simulation_value))) {
-      if (!validateSimulationMode()) {
-        valid = false;
-      }
+    // At the moment, all modes require a track. Later on we may have other modes which don't.
+    Long localTrackId = getTrackId();
+    if (localTrackId == null || localTrackId.equals(-1L)) {
+      valid = false;
     }
+
     updateUi(valid);
   }
 
@@ -293,6 +298,7 @@ public class CourseSetupActivity extends Activity {
   @Override
   protected void onStop() {
     super.onStop();
+    doUnbindTurboService();
     trackRecordingServiceConnection.unbind();
   }
 
@@ -307,14 +313,11 @@ public class CourseSetupActivity extends Activity {
     });
   }
 
-  private boolean validateSimulationMode() {
-    Long localTrackId = getTrackId();
-
-    if (localTrackId == null) {
-      return false;
-    } else if (localTrackId.equals(-1L)) {
-      return false;
+  public TurboService getTurboService() {
+    if (mIsBound) {
+      return turboService;
+    } else {
+      return null;
     }
-    return true;
   }
 }

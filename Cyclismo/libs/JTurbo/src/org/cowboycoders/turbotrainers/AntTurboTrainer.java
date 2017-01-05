@@ -26,26 +26,21 @@ import java.util.logging.Logger;
 
 public abstract class AntTurboTrainer extends GenericTurboTrainer {
 
-	public final static Logger LOGGER = Logger.getLogger(AntTurboTrainer.class
-			.getName());
+  public final static Logger LOGGER = Logger.getLogger(AntTurboTrainer.class
+      .getName());
 
-	private Node node;
+  private Node node;
 
-	public AntTurboTrainer(Node node) {
-		this.node = node;
-	}
+  public Node getNode() {
+    return node;
+  }
 
-	/**
-	 * @return the node
-	 */
-	public Node getNode() {
-		return node;
-	}
+  public void setNode(Node node) { this.node = node; }
 
-	public abstract void start() throws TooFewAntChannelsAvailableException,
-			TurboCommunicationException, InterruptedException, TimeoutException;
+  public abstract void start() throws TooFewAntChannelsAvailableException,
+      TurboCommunicationException, InterruptedException, TimeoutException;
 
-	// dangerous at moment as we are using dataChangeListeners directly
+  // dangerous at moment as we are using dataChangeListeners directly
 //	protected void setDataChangeListeners(
 //			Set<TurboTrainerDataListener> dataChangeListeners) {
 //		this.dataChangeListeners = dataChangeListeners;

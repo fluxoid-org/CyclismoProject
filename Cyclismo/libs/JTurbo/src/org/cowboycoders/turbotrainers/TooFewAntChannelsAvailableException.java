@@ -18,23 +18,22 @@
 *    along with Cyclismo.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
- * 
+ *
  */
 package org.cowboycoders.turbotrainers;
 
 /**
  * @author will
- *
  */
 public class TooFewAntChannelsAvailableException extends TurboCommunicationException {
 
   /**
-   * 
+   *
    */
   private static final long serialVersionUID = 1L;
 
   /**
-   * 
+   *
    */
   public TooFewAntChannelsAvailableException() {
     // TODO Auto-generated constructor stub

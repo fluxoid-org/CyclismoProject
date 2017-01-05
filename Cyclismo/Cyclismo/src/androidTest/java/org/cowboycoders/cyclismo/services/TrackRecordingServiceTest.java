@@ -547,7 +547,8 @@ public class TrackRecordingServiceTest extends ServiceTestCase<TestRecordingServ
 
   @MediumTest
   public void testInsertStatisticsMarker_validLocation() throws Exception {
-    createDummyTrack(123L, -1L, true);
+    long trackId = 123l;
+    createDummyTrack(trackId, -1L, true);
 
     ITrackRecordingService service = bindAndGetService(createStartIntent());
     assertTrue(service.isRecording());
@@ -561,7 +562,7 @@ public class TrackRecordingServiceTest extends ServiceTestCase<TestRecordingServ
     assertEquals(getContext().getString(R.string.marker_statistics_icon_url), wpt.getIcon());
     assertEquals(getContext().getString(R.string.marker_split_name_format, 1), wpt.getName());
     assertEquals(Waypoint.TYPE_STATISTICS, wpt.getType());
-    assertEquals(123L, wpt.getTrackId());
+    assertEquals(trackId, wpt.getTrackId());
     assertEquals(0.0, wpt.getLength());
     assertNotNull(wpt.getLocation());
     assertNotNull(wpt.getTripStatistics());
@@ -579,10 +580,10 @@ public class TrackRecordingServiceTest extends ServiceTestCase<TestRecordingServ
     assertEquals(-1L, waypointId);
   }
 
-  // FIXME(doug): Fails on Travis about 20% of the time, why?
   @MediumTest
-  public void _testInsertWaypointMarker_validWaypoint() throws Exception {
-    createDummyTrack(123L, -1L, true);
+  public void testInsertWaypointMarker_validWaypoint() throws Exception {
+    long trackId = 123l;
+    createDummyTrack(trackId, -1L, true);
 
     ITrackRecordingService service = bindAndGetService(createStartIntent());
     assertTrue(service.isRecording());
@@ -594,7 +595,7 @@ public class TrackRecordingServiceTest extends ServiceTestCase<TestRecordingServ
         wpt.getIcon());
     assertEquals(getContext().getString(R.string.marker_name_format, 1), wpt.getName());
     assertEquals(Waypoint.TYPE_WAYPOINT, wpt.getType());
-    assertEquals(123L, wpt.getTrackId());
+    assertEquals(trackId, wpt.getTrackId());
     assertEquals(0.0, wpt.getLength());
     assertNotNull(wpt.getLocation());
     assertNull(wpt.getTripStatistics());
@@ -803,7 +804,7 @@ public class TrackRecordingServiceTest extends ServiceTestCase<TestRecordingServ
   }
 
   /**
-   * Inserts a location and waits for 100ms.
+   * Inserts a location
    *
    * @param trackRecordingService the track recording service
    */
@@ -817,6 +818,5 @@ public class TrackRecordingServiceTest extends ServiceTestCase<TestRecordingServ
     location.setTime(System.currentTimeMillis());
     location.setBearing(3.0f);
     trackRecordingService.insertTrackPoint(location);
-    Thread.sleep(100);
   }
 }

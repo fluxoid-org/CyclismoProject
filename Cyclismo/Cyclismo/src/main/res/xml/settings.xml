@@ -20,10 +20,6 @@ limitations under the License.
     android:key="@string/settings_select_user_key"
     android:persistent="false"
     android:title="@string/settings_select_user_title" />
-    <Preference
-    android:key="@string/settings_generic_turbo_key"
-    android:persistent="false"
-    android:title="@string/settings_turbotrainer_generic" />
   <Preference
     android:key="@string/settings_map_key"
     android:persistent="false"

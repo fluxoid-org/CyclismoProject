@@ -33,40 +33,42 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Only dispatches a button press when duration is known
- * @author will
  *
+ * @author will
  */
 public class ButtonPressDispatcher {
-  
-  
-  // I have left a 500 ms window to catch the repeated transmissions - may need tuning for reliability / response time
+
+
+  // I have left a 500 ms window to catch the repeated transmissions - may need tuning for
+  // reliability / response time
   /**
    * Maximum time to listen for a new button press
    */
   private static long TIMEOUT_NANO_SECONDS = TimeUnit.MILLISECONDS.toNanos(525);
-  
+
   /**
    * If an another button press is received within this period, it is deem to be independent
    * and thus triggers another event (channel period is 8hz).
-   * 
+   *
    * Note : this may no be needed as you should not get too @code {Duration.Short}'s in a row.
    */
   private static long INDEPENDENT_MESSAGE_CUTOFF_NANO_SECONDS = TimeUnit.MILLISECONDS.toNanos(200);
-  
+
   private BushidoInternalListener listener;
   private Lock lock = new ReentrantLock();
   private Condition newPressCondition = lock.newCondition();
   private BushidoButtonPressDescriptor currentDescriptor;
   private BushidoButtonPressDescriptor lastDescriptor;
-  private LinkedBlockingQueue<BushidoButtonPressDescriptor> oldDescriptors = 
+  private LinkedBlockingQueue<BushidoButtonPressDescriptor> oldDescriptors =
       new LinkedBlockingQueue<BushidoButtonPressDescriptor>();
-  private ArrayList<BushidoButtonPressDescriptor> descriptorDrain = new ArrayList<BushidoButtonPressDescriptor>();
+  private ArrayList<BushidoButtonPressDescriptor> descriptorDrain = new
+      ArrayList<BushidoButtonPressDescriptor>();
   private boolean newSubmit = false;
 
   public ButtonPressDispatcher(BushidoInternalListener listener) {
     this.listener = listener;
   }
-  
+
   public void submitButtonPress(BushidoButtonPressDescriptor descriptor) {
     try {
       lock.lock();
@@ -74,22 +76,23 @@ public class ButtonPressDispatcher {
         currentDescriptor = descriptor;
         startAwaitSubmissionThread();
         return;
-      };
-      
+      }
+      ;
+
       // notify a button press is active
       listener.onButtonPressActive(descriptor);
-      
+
       lastDescriptor = currentDescriptor;
       oldDescriptors.add(lastDescriptor);
       currentDescriptor = descriptor;
       newSubmit = true;
       newPressCondition.signalAll();
-      
+
     } finally {
       lock.unlock();
     }
   }
-  
+
   private void processOldDescriptors() {
     int numberDrained = oldDescriptors.drainTo(descriptorDrain);
     if (numberDrained < 1) {
@@ -105,36 +108,39 @@ public class ButtonPressDispatcher {
         continue;
       }
       //check duration is progressing in time
-      if (current.getDuration().ordinal() <  last.getDuration().ordinal()) {
+      if (current.getDuration().ordinal() < last.getDuration().ordinal()) {
         listener.onButtonPressFinished(last);
-      } else if (current.getDuration() == Duration.SHORT && last.getDuration() == Duration.SHORT)  
-          //&& current.getRecievedTimestamp() - last.getRecievedTimestamp() < INDEPENDENT_MESSAGE_CUTOFF_NANO_SECONDS) 
+      } else if (current.getDuration() == Duration.SHORT && last.getDuration() == Duration.SHORT)
+      //&& current.getRecievedTimestamp() - last.getRecievedTimestamp() <
+      // INDEPENDENT_MESSAGE_CUTOFF_NANO_SECONDS)
       {
         listener.onButtonPressFinished(last);
       }
-      
+
       last = current;
-      
+
     }
     //check very last value
     if (last != null && currentDescriptor.getDuration().ordinal() < last.getDuration().ordinal()) {
       listener.onButtonPressFinished(last);
-    } else if (currentDescriptor.getDuration() == Duration.SHORT && last.getDuration() == Duration.SHORT)  
-        //&& currentDescriptor.getRecievedTimestamp() - last.getRecievedTimestamp() < INDEPENDENT_MESSAGE_CUTOFF_NANO_SECONDS) 
+    } else if (currentDescriptor.getDuration() == Duration.SHORT && last.getDuration() ==
+        Duration.SHORT)
+    //&& currentDescriptor.getRecievedTimestamp() - last.getRecievedTimestamp() <
+    // INDEPENDENT_MESSAGE_CUTOFF_NANO_SECONDS)
     {
       listener.onButtonPressFinished(last);
     }
-    
+
   }
-  
+
   /**
    * Submits if no other button presses received before timeout
+   *
    * @return true if submitted, otherwise false
-   * @throws InterruptedException
    */
   private boolean awaitNewSubmit() throws InterruptedException {
     long startTimeStamp = System.nanoTime();
-    while(!newSubmit) {
+    while (!newSubmit) {
       long currentTimeStamp = System.nanoTime();
       long timeLeft = TIMEOUT_NANO_SECONDS - (currentTimeStamp - startTimeStamp);
       boolean status = newPressCondition.await(timeLeft, TimeUnit.NANOSECONDS);
@@ -143,20 +149,20 @@ public class ButtonPressDispatcher {
         return true;
       }
     }
-    
+
     processOldDescriptors();
-    
+
     newSubmit = false;
     return false;
   }
-  
+
   private void startAwaitSubmissionThread() {
     new Thread() {
       @Override
       public void run() {
         try {
           lock.lock();
-          while(!awaitNewSubmit());
+          while (!awaitNewSubmit()) ;
           reset();
         } catch (InterruptedException e) {
           throw new TurboCommunicationException(e);
@@ -167,7 +173,7 @@ public class ButtonPressDispatcher {
     }.start();
 
   }
-  
+
   private void reset() {
     currentDescriptor = null;
     lastDescriptor = null;

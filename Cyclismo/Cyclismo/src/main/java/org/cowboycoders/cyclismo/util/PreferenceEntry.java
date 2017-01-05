@@ -1,6 +1,6 @@
 /*
-*    Copyright (c) 2013, Will Szumski
-*    Copyright (c) 2013, Doug Szumski
+*    Copyright (c) 2016, Will Szumski
+*    Copyright (c) 2016, Doug Szumski
 *
 *    This file is part of Cyclismo.
 *
@@ -17,25 +17,26 @@
 *    You should have received a copy of the GNU General Public License
 *    along with Cyclismo.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.cowboycoders.turbotrainers.bushido;
+package org.cowboycoders.cyclismo.util;
 
-public class BushidoUtils {
-  private BushidoUtils() {
+import java.util.ArrayList;
+import java.util.List;
 
+public class PreferenceEntry {
+
+  private List<String> entries = new ArrayList<>();
+  private List<String> entryValues = new ArrayList<>();
+
+  public void addPreferenceEntry(final String entry, final String entryValue) {
+    entries.add(entry);
+    entryValues.add(entryValue);
   }
 
-  // GENERATE FREQUENTLY MODIFED PACKETS
-
-  public static byte[] getDc01Prototype() {
-    //DC01 Packet prototype
-    byte[] dc01Packet = {(byte) 0xdc, 0x01, 0x00, 0x00, 0x00, 0x4d, 0x00, 0x00};
-    return dc01Packet;
+  public String[] getEntries() {
+    return entries.toArray(new String[entries.size()]);
   }
 
-  public static byte[] getDc02Prototype() {
-    byte[] dc02Packet = {(byte) 0xdc, 0x02, 0x00, (byte) 0x99, 0x00, 0x00,
-        0x00, 0x00};
-    return dc02Packet;
+  public String[] getEntryValues() {
+    return entryValues.toArray(new String[entryValues.size()]);
   }
-
 }

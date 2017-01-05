@@ -43,12 +43,11 @@ import java.util.logging.Level;
 import static org.junit.Assert.assertTrue;
 
 
-
 public class BushidoTest {
-  
+
   private static AntTransceiver antchip = new AntTransceiver(0);
-  
-  @BeforeClass 
+
+  @BeforeClass
   public static void beforeClass() {
     AntTransceiver.LOGGER.setLevel(Level.SEVERE);
     ConsoleHandler handler = new ConsoleHandler();
@@ -64,106 +63,107 @@ public class BushidoTest {
     //antchip.send(msg.encode());
     //antchip.stop();
   }
-  
+
   @AfterClass
   public static void afterClass() {
     antchip.stop();
     //antchip.stop();
   }
-  
+
   @Before
   public void before() throws InterruptedException {
     //Thread.sleep(1000);
   }
-  
-  Parameters.Builder builder = new Parameters.Builder(65,10);
-  
+
+  Parameters.Builder builder = new Parameters.Builder(65, 10);
+
   double oldSlope = 0;
-  
+
   BushidoButtonPressListener buttonPressListener = new BushidoButtonPressListener() {
 
     @Override
     public void onButtonPressFinished(BushidoButtonPressDescriptor descriptor) {
       System.out.println("Button :" + descriptor.getButton());
       System.out.println("Duration :" + descriptor.getDuration());
-      if(descriptor.getButton() == Button.UP) {
-    	double slope = 5 + oldSlope;
+      if (descriptor.getButton() == Button.UP) {
+        double slope = 5 + oldSlope;
         b.setParameters(builder.buildTargetSlope(slope));
         oldSlope = slope;
         printSlope();
       } else if (descriptor.getButton() == Button.DOWN) {
-    	  double slope = -5 + oldSlope;
-          b.setParameters(builder.buildTargetSlope(slope));
-          oldSlope = slope;
+        double slope = -5 + oldSlope;
+        b.setParameters(builder.buildTargetSlope(slope));
+        oldSlope = slope;
         printSlope();
       }
-      
+
     }
 
     @Override
     public void onButtonPressActive(BushidoButtonPressDescriptor descriptor) {
       System.out.println("Duration active :" + descriptor.getDuration());
     }
-    
+
     public void printSlope() {
       System.out.println("Slope: " + oldSlope);
-  }
+    }
 
-    
+
   };
-  
+
   TurboTrainerDataListener dataListener = new TurboTrainerDataListener() {
 
     @Override
     public void onSpeedChange(double speed) {
       System.out.println(speed);
-      
+
     }
 
     @Override
     public void onPowerChange(double power) {
       // TODO Auto-generated method stub
-      
+
     }
 
     @Override
     public void onCadenceChange(double cadence) {
       // TODO Auto-generated method stub
-      
+
     }
 
     @Override
     public void onDistanceChange(double distance) {
-     //System.out.println("Distance: " + distance);
-     //System.out.println("Distance real: " + b.getRealDistance());
-      
+      //System.out.println("Distance: " + distance);
+      //System.out.println("Distance real: " + b.getRealDistance());
+
     }
 
     @Override
     public void onHeartRateChange(double heartRate) {
       // TODO Auto-generated method stub
-      
+
     }
-    
-    
+
+
   };
 
   BushidoHeadunit b;
-  
+
   AntLoggerImpl antLogger = new AntLoggerImpl();
-  
+
   @Test
   public void testBushido() throws InterruptedException, TimeoutException {
     Node n = new Node(BushidoTest.antchip);
     n.registerAntLogger(antLogger);
-    b = new BushidoHeadunit(n);
+    b = new BushidoHeadunit();
     b.registerButtonPressListener(buttonPressListener);
     b.registerDataListener(dataListener);
     b.setMode(Mode.TARGET_SLOPE);
+    b.setNode(n);
     b.startConnection();
     b.resetOdometer();
     b.startCycling();
-    
+
     //Thread.sleep(200);
     //BroadcastDataMessage msg = new BroadcastDataMessage();
     //msg.setData(new byte [] {(byte) 0xac,0x03,0x03,0x00,0x00,0x00,0x00,0x00});
@@ -174,17 +174,17 @@ public class BushidoTest {
     b.stop();
     n.stop();
   }
-  
+
   //@Test
   public void testByteShift() {
-    Byte [] data = new Byte [] {(byte) 255,(byte) 255,(byte) 255,(byte) 255,(byte) 255,(byte) 255,(byte) 255};
-    int [] unsignedData = ByteUtils.unsignedBytesToInts(data);
-    double distance = ((long)unsignedData [2] << 24) + (unsignedData [3] << 16) + (unsignedData [4] << 8) + unsignedData [5];
+    Byte[] data = new Byte[]{(byte) 255, (byte) 255, (byte) 255, (byte) 255, (byte) 255, (byte)
+        255, (byte) 255};
+    int[] unsignedData = ByteUtils.unsignedBytesToInts(data);
+    double distance = ((long) unsignedData[2] << 24) + (unsignedData[3] << 16) + (unsignedData[4]
+        << 8) + unsignedData[5];
     System.out.println(distance);
     assertTrue(distance > 0);
   }
-  
-  
 
 
 }

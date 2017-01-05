@@ -35,6 +35,7 @@
 package org.cowboycoders.cyclismo.content;
 
 
+import android.annotation.SuppressLint;
 import android.location.Location;
 
 import org.cowboycoders.cyclismo.content.Sensor.SensorDataSet;
@@ -44,6 +45,8 @@ import org.cowboycoders.cyclismo.content.Sensor.SensorDataSet;
  *
  * @author Sandor Dornbush
  */
+// FIXME
+@SuppressLint("ParcelCreator")
 public class MyTracksLocation extends Location {
 
   private SensorDataSet sensorDataSet = null;

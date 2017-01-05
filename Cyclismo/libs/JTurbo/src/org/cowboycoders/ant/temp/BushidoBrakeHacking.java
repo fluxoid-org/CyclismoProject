@@ -22,11 +22,11 @@ package org.cowboycoders.ant.temp;
 import java.math.BigInteger;
 
 public class BushidoBrakeHacking {
-  
-  
-  public static void main(String [] args) {
-    BigInteger bi = new BigInteger(new byte[] {(byte) 0xfe,(byte) 0x00});
-    BigInteger bi2 = new BigInteger(new byte[] {0,(byte) 0x12,(byte) 0xff});
+
+
+  public static void main(String[] args) {
+    BigInteger bi = new BigInteger(new byte[]{(byte) 0xfe, (byte) 0x00});
+    BigInteger bi2 = new BigInteger(new byte[]{0, (byte) 0x12, (byte) 0xff});
     System.out.println(bi.longValue());
     System.out.println(bi2.longValue());
   }

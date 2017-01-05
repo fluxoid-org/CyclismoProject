@@ -58,15 +58,13 @@ import org.cowboycoders.cyclismo.content.MyTracksProviderUtils;
 import org.cowboycoders.cyclismo.content.User;
 import org.cowboycoders.cyclismo.services.TrackRecordingServiceConnection;
 import org.cowboycoders.cyclismo.util.IntentUtils;
+import org.cowboycoders.cyclismo.util.PreferenceEntry;
 import org.cowboycoders.cyclismo.util.PreferencesUtils;
 import org.cowboycoders.cyclismo.util.TrackRecordingServiceConnectionUtils;
 import org.cowboycoders.cyclismo.util.UnitConversions;
-import org.cowboycoders.turbotrainers.DummyTrainer;
-import org.cowboycoders.turbotrainers.bushido.brake.ConstantResistanceController;
-import org.cowboycoders.turbotrainers.bushido.brake.PowerPidBrakeController;
-import org.cowboycoders.turbotrainers.bushido.brake.SpeedPidBrakeController;
-import org.fluxoid.utils.LatLongAlt;
+import org.cowboycoders.turbotrainers.AntTurboTrainer;
 import org.cowboycoders.turbotrainers.CourseTracker;
+import org.cowboycoders.turbotrainers.DummyTrainer;
 import org.cowboycoders.turbotrainers.Mode;
 import org.cowboycoders.turbotrainers.Parameters;
 import org.cowboycoders.turbotrainers.TooFewAntChannelsAvailableException;
@@ -74,12 +72,15 @@ import org.cowboycoders.turbotrainers.TurboCommunicationException;
 import org.cowboycoders.turbotrainers.TurboTrainerDataListener;
 import org.cowboycoders.turbotrainers.TurboTrainerInterface;
 import org.cowboycoders.turbotrainers.bushido.brake.BushidoBrake;
-import org.cowboycoders.turbotrainers.bushido.brake.SpeedResistanceMapper;
+import org.cowboycoders.turbotrainers.bushido.brake.ConstantResistanceController;
 import org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit;
+import org.fluxoid.utils.LatLongAlt;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -109,6 +110,8 @@ public class TurboService extends Service {
   public static double TARGET_TRACKPOINT_DISTANCE_METRES = 0.1;
 
   protected AntLoggerImpl antLogger;
+
+  private TurboRegistry turboRegistry;
 
   // FIXME: Something must be checking for GPS_PROVIDER only?
   // we want to use SimulatedLocationProvider.NAME
@@ -316,6 +319,7 @@ public class TurboService extends Service {
   private SharedPreferences preferences;
 
   private String selectedTurboTrainer;
+  private String selectedCourseMode;
 
   public void doFinish() {
     // FIXME: preferences is a bad choice for the guard
@@ -365,8 +369,11 @@ public class TurboService extends Service {
 
     syncScaleFactor();
 
-    this.selectedTurboTrainer = preferences.getString(this.getApplication().getString(R.string.turbotrainer_selected),
-        this.getApplication().getString(R.string.turbotrainer_tacx_bushido_headunit_value));
+    // Get selections from preferences. Don't use defaults because the UI enforces a selection.
+    selectedTurboTrainer = preferences.getString(getApplication().getString(
+        R.string.turbotrainer_selected), null);
+    selectedCourseMode = preferences.getString(getApplication().getString(
+        R.string.course_mode), null);
 
     // accessing database so should be put into a task
     double userWeight;
@@ -511,13 +518,13 @@ public class TurboService extends Service {
 
     public void onServiceConnected(ComponentName className, IBinder binder) {
 
+      initAntWireless((AntHubService.LocalBinder) binder);
       ConstantResistanceController mapper = new ConstantResistanceController();
       mapper.setAbsoluteResistance(100);
-
-      initAntWireless((AntHubService.LocalBinder) binder);
-      final BushidoBrake bushidoBrake = new BushidoBrake(antNode, mapper);
+      final BushidoBrake bushidoBrake = new BushidoBrake();
       bushidoBrake.setMode(Mode.TARGET_SLOPE);
-
+      bushidoBrake.setNode(antNode);
+      bushidoBrake.overrideDefaultResistanceController(mapper);
       TurboService.this.turboTrainer = bushidoBrake;
 
 
@@ -546,8 +553,6 @@ public class TurboService extends Service {
 
   }
 
-  ;
-
   private class TurboConnection implements ServiceConnection {
 
     public void onServiceConnected(ComponentName className, IBinder binder) {
@@ -566,7 +571,10 @@ public class TurboService extends Service {
             turboTrainer.setMode(Mode.TARGET_SLOPE);
             // slight hack to get around timeout errors on my tablet
             retryErrorProneCall(startTurbo, 10);
-            retryErrorProneCall(startHrm, 10);
+            if (hrm != null) {
+              // ANT has been initialised
+              retryErrorProneCall(startHrm, 10);
+            }
             turboTrainer.registerDataListener(dataListener);
             unpauseRecording();
             LatLongAlt loc = courseTracker.getNearestLocation();
@@ -587,8 +595,6 @@ public class TurboService extends Service {
     }
 
   }
-
-  ;
 
   private void unpauseRecording() {
     Intent intent = new Intent().setAction(this
@@ -642,42 +648,109 @@ public class TurboService extends Service {
     mIsBound = true;
   }
 
+  /**
+   * Returns modes supported by the Turbo trainer for use in the turbo
+   * mode selection menu. This is used to display the modes supported
+   * by the turbo in the UI.
+   *
+   * @param jTurboModes the modes supported by the turbo in JTurbo.
+   * @return modes as preference entries for use in the UI.
+   */
+  private PreferenceEntry getUiModesForTurbo(final Mode [] jTurboModes) {
+    PreferenceEntry uiModes = new PreferenceEntry();
+    for (Mode mode: jTurboModes) {
+      switch(mode) {
+        case TARGET_SLOPE:
+          uiModes.addPreferenceEntry(
+              getString(R.string.settings_courses_mode_simulation),
+              getString(R.string.settings_courses_mode_simulation_value)
+          );
+          break;
+        case TARGET_SPEED:
+          uiModes.addPreferenceEntry(
+              getString(R.string.settings_courses_mode_constant_speed),
+              getString(R.string.settings_courses_mode_constant_speed_value)
+          );
+          break;
+        case TARGET_POWER:
+          uiModes.addPreferenceEntry(
+              getString(R.string.settings_courses_mode_constant_power),
+              getString(R.string.settings_courses_mode_constant_power_value)
+          );
+          break;
+      }
+    }
+    return uiModes;
+  }
+
+  private Map<String, Mode> getUiModeToJTurboModeMap() {
+    Map<String, Mode> uiModeToTurboMode = new HashMap<>();
+    uiModeToTurboMode.put(
+        getString(R.string.settings_courses_mode_simulation_value),
+        Mode.TARGET_SLOPE);
+    uiModeToTurboMode.put(
+        getString(R.string.settings_courses_mode_constant_speed_value),
+        Mode.TARGET_SPEED);
+    uiModeToTurboMode.put(
+        getString(R.string.settings_courses_mode_constant_power_value),
+        Mode.TARGET_POWER);
+    return uiModeToTurboMode;
+  }
+
+  private TurboRegistry getTurboRegistry() {
+    if (turboRegistry == null) {
+      turboRegistry = new TurboRegistry();
+      registerTurbos();
+    }
+    return turboRegistry;
+   }
+
+  private void registerTurbos() {
+    turboRegistry.register(
+        getString(R.string.turbotrainer_tacx_bushido_headunit_value),
+        new BushidoHeadunit()
+    );
+    turboRegistry.register(
+        getString(R.string.turbotrainer_tacx_bushido_brake_value),
+        new BushidoBrake()
+    );
+    turboRegistry.register(
+        getString(R.string.turbotrainer_dummy_value),
+        new DummyTrainer()
+    );
+  }
+
+  /**
+   * Get the supported turbo modes for the UI.
+   *
+   * @param turboSelectValue is the mode selected in the UI.
+   * @return turbo capabilities from JTurbo. Can be null if turbo not supported.
+   */
+  public PreferenceEntry getCourseModesForTurbo(final String turboSelectValue) {
+    TurboTrainerInterface turboSelected = getTurboRegistry().getTurboTrainer(turboSelectValue);
+    Mode[] modes = turboSelected.modesSupported();
+    return getUiModesForTurbo(modes);
+  }
 
   protected TurboTrainerInterface getTurboTrainer(AntHubService.LocalBinder binder) {
-
     Log.d(TAG, selectedTurboTrainer);
-
-    initAnt(binder);     // TODO: iff ant sensors are enabled
-
-
-    if (selectedTurboTrainer.equals(getString(R.string.turbotrainer_tacx_bushido_headunit_value))) {
-      return new BushidoHeadunit(antNode);
-    } else if (selectedTurboTrainer.equals(getString(R.string.turbotrainer_tacx_bushido_brake_headunit_simulation_value))) {
-      SpeedResistanceMapper mapper = new SpeedResistanceMapper();
-      return new BushidoBrake(antNode, mapper);
-    } else if (selectedTurboTrainer.equals(getString(R.string.turbotrainer_tacx_bushido_brake_speed_pid_control_value))) {
-      SpeedPidBrakeController pid = new SpeedPidBrakeController();
-      return new BushidoBrake(antNode, pid);
-    } else if (selectedTurboTrainer.equals(getString(R.string.turbotrainer_tacx_bushido_brake_power_pid_control_value))) {
-      PowerPidBrakeController pid = new PowerPidBrakeController() {
-        @Override
-        protected void log(String msg) {
-          Log.d(PowerPidBrakeController.class.getSimpleName(), msg);
-        }
-      };
-      return new BushidoBrake(antNode, pid);
-    } else if (selectedTurboTrainer.equals(getString(R.string.turbotrainer_dummy_value))) {
-      return new DummyTrainer();
+    Map<String, Mode> uiModeToTurboMode = getUiModeToJTurboModeMap();
+    Mode mode = uiModeToTurboMode.get(selectedCourseMode);
+    TurboRegistry turboRegistry = getTurboRegistry();
+    TurboTrainerInterface turbo = turboRegistry.getTurboTrainer(selectedTurboTrainer);
+    turbo.setMode(mode);
+    if (turboRegistry.usesAnt(selectedTurboTrainer)) {
+      initAnt(binder);
+      AntTurboTrainer antTurbo = (AntTurboTrainer) turbo;
+      antTurbo.setNode(antNode);
     }
-
-    return null;
+    return turbo;
   }
 
   private void startServiceInBackround() {
     Intent intent = new Intent(this, AntHubService.class);
     this.startService(intent);
   }
-
 
   private synchronized void updateLocation(LatLongAlt pos) {
     try {
@@ -744,7 +817,9 @@ public class TurboService extends Service {
       try {
         turboTrainer.unregisterDataListener(dataListener);
         turboTrainer.stop();
-        hrm.stop();
+        if (hrm != null) {
+          hrm.stop();
+        }
       } catch (Exception e) {
         handleException(e, "Error shutting down turbo", false, NOTIFCATION_ID_SHUTDOWN);
         shutDownSuccess = false;
@@ -924,10 +999,10 @@ public class TurboService extends Service {
           if (key.equals(getString(R.string.settings_turbotrainer_generic_scale_factor_key))) {
             syncScaleFactor();
           } else if (key.equals(getString(R.string.turbotrainer_selected))) {
-            selectedTurboTrainer =
-                preferences.getString(getString(R.string.turbotrainer_selected), getString(R.string.turbotrainer_tacx_bushido_headunit_value));
+            selectedTurboTrainer = preferences.getString(
+                getString(R.string.turbotrainer_selected),
+                getString(R.string.turbotrainer_tacx_bushido_headunit_value));
           }
-
         }
 
       };

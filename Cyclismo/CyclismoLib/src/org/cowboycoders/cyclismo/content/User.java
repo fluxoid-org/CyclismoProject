@@ -1,3 +1,22 @@
+/*
+*    Copyright (c) 2013,2016, Will Szumski
+*    Copyright (c) 2013,2016, Doug Szumski
+*
+*    This file is part of Cyclismo.
+*
+*    Cyclismo is free software: you can redistribute it and/or modify
+*    it under the terms of the GNU General Public License as published by
+*    the Free Software Foundation, either version 3 of the License, or
+*    (at your option) any later version.
+*
+*    Cyclismo is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*    GNU General Public License for more details.
+*
+*    You should have received a copy of the GNU General Public License
+*    along with Cyclismo.  If not, see <http://www.gnu.org/licenses/>.
+*/
 package org.cowboycoders.cyclismo.content;
 
 import android.os.Parcel;
@@ -5,19 +24,13 @@ import android.os.Parcelable;
 
 public class User implements Parcelable {
 
-  public User() {
-
-  }
-
   private String name;
-
   private long id = -1L;
-
   private double weight = -1l;
-
   private byte[] settings;
-
   private long currentlySelectedBike = -1l;
+
+  public User() { }
 
   private User(Parcel in) {
     id = in.readLong();
@@ -30,7 +43,6 @@ public class User implements Parcelable {
       in.readByteArray(settings);
     }
   }
-
 
   @Override
   public int describeContents() {
@@ -48,7 +60,6 @@ public class User implements Parcelable {
     if (settings != null) {
       dest.writeByteArray(settings);
     }
-
   }
 
   public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
@@ -62,19 +73,12 @@ public class User implements Parcelable {
       return new User[size];
     }
 
-
   };
 
-  /**
-   * User name
-   */
   public String getName() {
     return name;
   }
 
-  /**
-   * Username
-   */
   public void setName(String name) {
     this.name = name;
   }
@@ -95,21 +99,17 @@ public class User implements Parcelable {
     this.weight = weight;
   }
 
-
   public long getId() {
     return id;
   }
-
 
   public void setId(long id) {
     this.id = id;
   }
 
-
   public long getCurrentlySelectedBike() {
     return currentlySelectedBike;
   }
-
 
   public void setCurrentlySelectedBike(long currentlySelectedBike) {
     this.currentlySelectedBike = currentlySelectedBike;
@@ -122,5 +122,4 @@ public class User implements Parcelable {
   public void setSettings(byte[] newSettings) {
     this.settings = newSettings;
   }
-
 }

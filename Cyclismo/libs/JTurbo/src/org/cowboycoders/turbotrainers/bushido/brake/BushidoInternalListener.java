@@ -23,23 +23,23 @@ import org.cowboycoders.turbotrainers.TurboTrainerDataListener;
 
 /**
  * All bushido events
- * @author will
  *
+ * @author will
  */
 interface BushidoBrakeInternalListener extends TurboTrainerDataListener {
-  
-  void onRequestData(Byte [] data);
-  
+
+  void onRequestData(Byte[] data);
+
   void onChangeCounter(int counter);
-  
+
   void onChangeLeftPower(double power);
-  
+
   void onChangeRightPower(double power);
-  
+
   void onReceiveSoftwareVersion(String version);
-  
+
   void onChangeBrakeTemperature(double temp);
-  
+
   void onChangeBalance(int balance);
-  
+
 }

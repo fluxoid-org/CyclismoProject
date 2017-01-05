@@ -30,16 +30,15 @@ import java.io.PrintWriter;
 import java.util.Formatter;
 
 
-
 public class AntLoggerImpl extends AntLogger {
 
   private static final String DIRECTORY_NAME = "logs";
   public static final String TAG = AntLoggerImpl.class.getSimpleName();
-  private static final String FILE_NAME = "antlog";  
+  private static final String FILE_NAME = "antlog";
   private File directory;
   private File file;
   private boolean setupOk = false;
-  
+
   public AntLoggerImpl() {
     File directory = new File(DIRECTORY_NAME);
     if (!directory.exists()) {
@@ -62,19 +61,19 @@ public class AntLoggerImpl extends AntLogger {
     outputText.append(";");
     outputText.append(data.getMessageClass().getSimpleName());
     outputText.append(";");
-    
+
     Formatter formatter = new Formatter(outputText);
-    byte [] packet = data.getPacket();
-    for (int i = 0 ; i< packet.length ; i++) {
+    byte[] packet = data.getPacket();
+    for (int i = 0; i < packet.length; i++) {
       if (i == 0) {
         formatter.format("%02x", packet[i]);
         continue;
-      } 
+      }
       formatter.format(":%02x", packet[i]);
     }
-    
+
     outputText.append("\n");
-    
+
     PrintWriter writer = null;
     try {
       writer = newPrintWriter();
@@ -83,23 +82,21 @@ public class AntLoggerImpl extends AntLogger {
     } catch (FileNotFoundException e) {
     } catch (IOException e) {
     } finally {
-      if (writer!= null) {
+      if (writer != null) {
         writer.close();
       }
     }
-    
 
 
   }
-  
+
   /**
    * Creates a new output stream to write to the given filename.
-   * @throws IOException 
    */
   protected PrintWriter newPrintWriter()
       throws IOException {
     file = new File(directory, FILE_NAME);
-    return new PrintWriter(new FileWriter(file,true));
+    return new PrintWriter(new FileWriter(file, true));
   }
 
 }

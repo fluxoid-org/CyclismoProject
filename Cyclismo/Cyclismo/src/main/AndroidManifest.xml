@@ -240,11 +240,6 @@ limitations under the License.
         </activity>
         <activity android:name=".BikeEditActivity" />
 
-        <!-- <activity -->
-        <!-- android:name="org.cowboycoders.cyclismo.TurboTrainerListActivity" -->
-        <!-- android:launchMode="singleTop" > -->
-
-
         <!-- <intent-filter> -->
         <!-- <action android:name="android.intent.action.MAIN" /> -->
         <!-- <category android:name="android.intent.category.LAUNCHER" /> -->

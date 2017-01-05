@@ -34,7 +34,7 @@ public class TestUtils {
     test.add(3);
     System.out.println(test);
     test2.add(9);
-    ListUtils.prefixList(test, new Integer [] {1,2,4,5});
+    ListUtils.prefixList(test, new Integer[]{1, 2, 4, 5});
     ListUtils.prefixList(test, test2, Integer.class);
     System.out.println(test);
 

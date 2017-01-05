@@ -7,6 +7,7 @@ import org.cowboycoders.pid.OutputController;
 import org.cowboycoders.pid.PidController;
 import org.cowboycoders.pid.PidParameterController;
 import org.cowboycoders.pid.ProcessVariableProvider;
+import org.cowboycoders.turbotrainers.Mode;
 import org.cowboycoders.turbotrainers.PowerModel;
 import org.cowboycoders.turbotrainers.PowerModelManipulator;
 import org.fluxoid.utils.Conversions;
@@ -18,6 +19,8 @@ import org.fluxoid.utils.UpdateCallback;
 import java.io.File;
 
 public class SpeedPidBrakeController extends AbstractController {
+
+  private static final Mode SUPPORTED_MODE = Mode.TARGET_SPEED;
 
   private static final int POWER_MODEL_UPDATE_PERIOD_MS = 100; // milli-seconds
 
@@ -36,7 +39,8 @@ public class SpeedPidBrakeController extends AbstractController {
   private static final int MIN_SLOPE_SAMPLES = 5;
 
   // Don't try and simulate speeds below this due to inaccuracies in readings at low speed
-  // Rolling resistance on turbo becomes excessively large such that lowest resistance setting is unrealistically hard
+  // Rolling resistance on turbo becomes excessively large such that lowest resistance setting is
+  // unrealistically hard
   private static final double LOW_SPEED_LIMIT = 1.8; // m/s ~ 4 mph
 
   private PowerModel powerModel = new PowerModel();
@@ -52,7 +56,8 @@ public class SpeedPidBrakeController extends AbstractController {
 //	public SpeedPidBrakeController(BrakeModel bushidoModel) {
 //		this.bushidoDataModel = bushidoModel;
 //		bushidoDataModel.setResistance(getEstimatedResistance());
-//		actualSpeedSlopeAverager.setThreshold(ACTUAL_SPEED_STEADY_STATE_THRESHOLD, -ACTUAL_SPEED_STEADY_STATE_THRESHOLD);
+//		actualSpeedSlopeAverager.setThreshold(ACTUAL_SPEED_STEADY_STATE_THRESHOLD,
+// -ACTUAL_SPEED_STEADY_STATE_THRESHOLD);
 //	}
 
   private UpdateCallback powerModelUpdateCallback = new UpdateCallback() {
@@ -68,7 +73,8 @@ public class SpeedPidBrakeController extends AbstractController {
 
   };
 
-  private FixedPeriodUpdater powerModelUpdater = new FixedPeriodUpdater(new Double(0), powerModelUpdateCallback, POWER_MODEL_UPDATE_PERIOD_MS);
+  private FixedPeriodUpdater powerModelUpdater = new FixedPeriodUpdater(new Double(0),
+      powerModelUpdateCallback, POWER_MODEL_UPDATE_PERIOD_MS);
 
   private ProcessVariableProvider actualSpeedProvider = new ProcessVariableProvider() {
 
@@ -119,13 +125,15 @@ public class SpeedPidBrakeController extends AbstractController {
 
     @Override
     public GainParameters getGain(OutputControlParameters parameters) {
-      GainParameters defaultParameters = new GainParameters(PID_PROPORTIONAL_GAIN, PID_INTEGRAL_GAIN, PID_DERIVATIVE_GAIN);
+      GainParameters defaultParameters = new GainParameters(PID_PROPORTIONAL_GAIN,
+          PID_INTEGRAL_GAIN, PID_DERIVATIVE_GAIN);
       return defaultParameters;
     }
 
   };
 
-  private PidController resistancePidController = new PidController(actualSpeedProvider, resistanceOutputController, resistanceGainController);
+  private PidController resistancePidController = new PidController(actualSpeedProvider,
+      resistanceOutputController, resistanceGainController);
 
   private boolean needsSync = true;
 
@@ -139,7 +147,8 @@ public class SpeedPidBrakeController extends AbstractController {
     // speed is on average increasing and is below our threshold
     if (predictedSpeed <= LOW_SPEED_LIMIT
         && predictedSpeedSlopeAverager.getAverage() > 0) {
-      // only sync if actualSpeed is higher : actualSpeed will be lower than predicted if slowing down
+      // only sync if actualSpeed is higher : actualSpeed will be lower than predicted if slowing
+      // down
       // as real speed drops faster than model predicts
       //if (actualSpeed > predictedSpeed) {
       // resync
@@ -151,7 +160,8 @@ public class SpeedPidBrakeController extends AbstractController {
 
     }
     // don't mess with brake resistance until reached steady state
-    if (!needsSync || actualSpeedSlopeAverager.getNumberOfSamples() >= MIN_SLOPE_SAMPLES && actualSpeedSlopeAverager.isWithinThreshold()) {
+    if (!needsSync || actualSpeedSlopeAverager.getNumberOfSamples() >= MIN_SLOPE_SAMPLES &&
+        actualSpeedSlopeAverager.isWithinThreshold()) {
       if (needsSync) {
         double spd = actualSpeed;
         powerModel.setVelocity(spd);
@@ -166,8 +176,6 @@ public class SpeedPidBrakeController extends AbstractController {
 
   /**
    * Estimated resistance for given gradient
-   *
-   * @return
    */
   protected double getEstimatedResistance() {
     return STARTING_RESISTANCE + powerModel.getGradientAsPercentage();
@@ -212,10 +220,16 @@ public class SpeedPidBrakeController extends AbstractController {
   }
 
   @Override
+  public Mode getMode() {
+    return SUPPORTED_MODE;
+  }
+
+  @Override
   public void onStart() {
     BrakeModel bushidoDataModel = getDataModel();
     bushidoDataModel.setResistance(getEstimatedResistance());
-    actualSpeedSlopeAverager.setThreshold(ACTUAL_SPEED_STEADY_STATE_THRESHOLD, -ACTUAL_SPEED_STEADY_STATE_THRESHOLD);
+    actualSpeedSlopeAverager.setThreshold(ACTUAL_SPEED_STEADY_STATE_THRESHOLD,
+        -ACTUAL_SPEED_STEADY_STATE_THRESHOLD);
   }
 
   @Override
