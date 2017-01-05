@@ -8,7 +8,7 @@ import java.io.File;
 public class ConstantResistanceController extends AbstractController {
 
   // Doesn't support any of the current modes
-  private static final Mode SUPPORTED_MODE = null;
+  private static final Mode SUPPORTED_MODE = Mode.TARGET_SLOPE;
 
   private SimpleCsvLogger logger;
   private int resistance = 0;
