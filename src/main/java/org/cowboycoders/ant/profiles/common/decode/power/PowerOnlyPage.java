@@ -32,4 +32,6 @@ public interface PowerOnlyPage extends AbstractPowerPage {
     public int getEventCount();
 
     public boolean isValidDelta(PowerOnlyPage old);
+
+    public int getInstantPower();
 }
