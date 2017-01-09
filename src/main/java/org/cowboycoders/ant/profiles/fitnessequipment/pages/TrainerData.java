@@ -1,6 +1,7 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
 import org.cowboycoders.ant.profiles.common.CounterUtils;
+import org.cowboycoders.ant.profiles.common.decode.CounterBasedPage;
 import org.cowboycoders.ant.profiles.common.decode.power.PowerOnlyPage;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 import org.cowboycoders.ant.profiles.pages.VirtualPageGenerator;
@@ -14,7 +15,7 @@ import static org.cowboycoders.ant.profiles.BitManipulation.*;
 /**
  * Created by fluxoid on 02/01/17.
  */
-public class TrainerPage extends CommonPageData implements PowerOnlyPage {
+public class TrainerData extends CommonPageData implements PowerOnlyPage {
 
     private static final long TIMEOUT_DELTA = TimeUnit.SECONDS.toNanos(12);
     public static final int POWER_OFFSET = 4;
@@ -75,7 +76,7 @@ public class TrainerPage extends CommonPageData implements PowerOnlyPage {
     private final EnumSet<Defines.TrainerStatusFlag> trainerStatus;
 
 
-    public TrainerPage(byte [] packet) {
+    public TrainerData(byte [] packet) {
         super(packet);
         this.timestamp = System.nanoTime();
         power = UnsignedNumFrom2LeBytes(packet, POWER_OFFSET);
@@ -107,7 +108,7 @@ public class TrainerPage extends CommonPageData implements PowerOnlyPage {
     }
 
     @Override
-    public long getEventCountDelta(PowerOnlyPage old) {
+    public long getEventCountDelta(CounterBasedPage old) {
         return CounterUtils.calcDelta(old.getEventCount(), getEventCount(), UNSIGNED_INT16_MAX);
     }
 

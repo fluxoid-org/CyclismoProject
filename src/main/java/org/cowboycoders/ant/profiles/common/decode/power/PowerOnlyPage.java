@@ -14,24 +14,10 @@ public interface PowerOnlyPage extends AbstractPowerPage {
 
 
     /**
-     *  Number of event 'ticks' since last update
-     */
-    public long getEventCountDelta(PowerOnlyPage old);
-
-
-    /**
      * Accumulated power : running sum of instanteous power updated on each increment of event count
      * @return accumulated power
      */
     public int getSumPower();
-
-    /**
-     * Number of updates of accumulated power such that {@code getSumPower / getEventCount} is
-     * the average power of that interval
-     */
-    public int getEventCount();
-
-    public boolean isValidDelta(PowerOnlyPage old);
 
     public int getInstantPower();
 }

@@ -11,7 +11,7 @@ public class CoastDetector {
 
     private long coastStart;
     private boolean coastWindowOpen;
-    private static final long COAST_WINDOW = TimeUnit.MILLISECONDS.toNanos(2875);
+    public static final long COAST_WINDOW = TimeUnit.MILLISECONDS.toNanos(2875);
 
     private TelemetryPage latest;
     private TelemetryPage previous;

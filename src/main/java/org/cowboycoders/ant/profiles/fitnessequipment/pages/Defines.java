@@ -238,6 +238,38 @@ public class Defines {
 
     }
 
+    public enum TorqueSource
+    {
+
+        UNRECOGNIZED(-3),
+        TRAINER_TORQUE_DATA(26),
+
+        // seperate power monitors (normally separated in ant+ code)
+        CRANK_TORQUE_DATA(18),
+        WHEEL_TORQUE_DATA(17),
+        CTF_DATA(32); // Crank Torque Frequnency - eg. SRM
+
+        private int intValue;
+
+        private TorqueSource(final int intValue) {
+            this.intValue = intValue;
+        }
+
+        public static TorqueSource getValueFromInt(final int intValue) {
+            for (final TorqueSource torqueSource : values()) {
+                if (torqueSource.getIntValue() == intValue) {
+                    return torqueSource;
+                }
+            }
+            final TorqueSource unrecognized = TorqueSource.UNRECOGNIZED;
+            return unrecognized;
+        }
+
+        public int getIntValue() {
+            return this.intValue;
+        }
+    }
+
 
 
 

@@ -21,4 +21,11 @@ public class AveragedPowerUpdate implements TelemetryEvent {
         this.events = events;
     }
 
+    public long getEvents() {
+        return events;
+    }
+
+    public long getSumPower() {
+        return accumPower;
+    }
 }
