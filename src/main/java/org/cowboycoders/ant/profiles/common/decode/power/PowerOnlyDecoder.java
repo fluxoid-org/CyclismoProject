@@ -2,10 +2,9 @@ package org.cowboycoders.ant.profiles.common.decode.power;
 
 import org.cowboycoders.ant.events.BroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.decode.CounterBasedDecoder;
-import org.cowboycoders.ant.profiles.common.decode.CounterBasedPage;
 import org.cowboycoders.ant.profiles.common.decode.Decoder;
 import org.cowboycoders.ant.profiles.common.telemetry.AveragedPowerUpdate;
-import org.cowboycoders.ant.profiles.common.telemetry.PowerUpdate;
+import org.cowboycoders.ant.profiles.common.telemetry.InstantPowerUpdate;
 import org.cowboycoders.ant.profiles.common.telemetry.TelemetryEvent;
 
 import java.math.BigDecimal;
@@ -39,7 +38,7 @@ public class PowerOnlyDecoder implements Decoder<PowerOnlyPage> {
 
         @Override
         protected void onUpdate() {
-            bus.sendMessage(new PowerUpdate(new BigDecimal(getCurrentPage().getInstantPower())));
+            bus.sendMessage(new InstantPowerUpdate(new BigDecimal(getCurrentPage().getInstantPower())));
         }
 
         @Override

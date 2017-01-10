@@ -1,5 +1,6 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
+import org.cowboycoders.ant.profiles.TimeOutDeltaValidator;
 import org.cowboycoders.ant.profiles.common.CounterUtils;
 import org.cowboycoders.ant.profiles.common.decode.CounterBasedPage;
 import org.cowboycoders.ant.profiles.common.decode.power.PowerOnlyPage;
@@ -55,10 +56,7 @@ public class TrainerData extends CommonPageData implements PowerOnlyPage {
 
     @Override
     public boolean isValidDelta(CounterBasedPage old) {
-        if (getTimestamp() - old.getTimestamp() >= TIMEOUT_DELTA) {
-            return false;
-        }
-        return true;
+        return timeOutDeltaValidator.isValidDelta(old, this);
     }
 
     /**
@@ -74,6 +72,7 @@ public class TrainerData extends CommonPageData implements PowerOnlyPage {
 
     private final Integer cadence;
     private final EnumSet<Defines.TrainerStatusFlag> trainerStatus;
+    private final TimeOutDeltaValidator timeOutDeltaValidator = new TimeOutDeltaValidator(TIMEOUT_DELTA);
 
 
     public TrainerData(byte [] packet) {
@@ -109,7 +108,7 @@ public class TrainerData extends CommonPageData implements PowerOnlyPage {
 
     @Override
     public long getEventCountDelta(CounterBasedPage old) {
-        return CounterUtils.calcDelta(old.getEventCount(), getEventCount(), UNSIGNED_INT16_MAX);
+        return CounterUtils.calcDelta(old.getEventCount(), getEventCount(), UNSIGNED_INT8_MAX);
     }
 
 

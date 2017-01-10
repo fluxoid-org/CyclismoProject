@@ -15,6 +15,7 @@ public abstract class CounterBasedDecoder<T extends CounterBasedPage> {
     private T prev;
     private T currentPage;
     private long events;
+    private long eventDelta;
 
     public T getPreviousPage() {
         return prev;
@@ -34,6 +35,10 @@ public abstract class CounterBasedDecoder<T extends CounterBasedPage> {
     private void initializeCounters(T next) {
         events = next.getEventCount();
         onInitializeCounters();
+    }
+
+    public long getEventDelta() {
+        return eventDelta;
     }
 
     protected long getEvents() {
@@ -58,6 +63,7 @@ public abstract class CounterBasedDecoder<T extends CounterBasedPage> {
         }
 
         events += next.getEventCountDelta(prev);
+        eventDelta = next.getEventCountDelta(prev);
         onValidDelta();
 
         if (next.getEventCountDelta(prev) == 0) {

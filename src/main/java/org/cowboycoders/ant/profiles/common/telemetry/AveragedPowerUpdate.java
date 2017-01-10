@@ -6,7 +6,7 @@ import java.math.RoundingMode;
 /**
  * Created by fluxoid on 05/01/17.
  */
-public class AveragedPowerUpdate implements TelemetryEvent {
+public class AveragedPowerUpdate implements PowerUpdate {
     private final long events;
     private final long accumPower;
 
