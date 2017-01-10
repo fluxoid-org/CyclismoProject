@@ -1,10 +1,8 @@
 package org.cowboycoders.ant.profiles.common.decode;
 
 import org.cowboycoders.ant.events.BroadcastMessenger;
-import org.cowboycoders.ant.profiles.common.telemetry.CoastDetectedEvent;
-import org.cowboycoders.ant.profiles.common.telemetry.TelemetryEvent;
-
-import java.math.BigDecimal;
+import org.cowboycoders.ant.profiles.common.events.CoastDetectedEvent;
+import org.cowboycoders.ant.profiles.common.events.TelemetryEvent;
 
 /**
  * Created by fluxoid on 05/01/17.

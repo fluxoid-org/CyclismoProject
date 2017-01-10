@@ -4,9 +4,9 @@ import org.cowboycoders.ant.events.BroadcastListener;
 import org.cowboycoders.ant.events.BroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.decode.CoastDetector;
 import org.cowboycoders.ant.profiles.common.decode.CounterBasedPage;
-import org.cowboycoders.ant.profiles.common.telemetry.AveragedPowerUpdate;
-import org.cowboycoders.ant.profiles.common.telemetry.CoastDetectedEvent;
-import org.cowboycoders.ant.profiles.common.telemetry.TelemetryEvent;
+import org.cowboycoders.ant.profiles.common.events.AveragedPowerUpdate;
+import org.cowboycoders.ant.profiles.common.events.CoastDetectedEvent;
+import org.cowboycoders.ant.profiles.common.events.TelemetryEvent;
 import org.junit.Test;
 
 import java.math.BigDecimal;

@@ -1,4 +1,4 @@
-package org.cowboycoders.ant.profiles.common.telemetry;
+package org.cowboycoders.ant.profiles.common.events;
 
 import java.math.BigDecimal;
 

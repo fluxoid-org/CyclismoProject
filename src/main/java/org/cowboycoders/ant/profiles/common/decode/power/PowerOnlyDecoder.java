@@ -3,9 +3,9 @@ package org.cowboycoders.ant.profiles.common.decode.power;
 import org.cowboycoders.ant.events.BroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.decode.CounterBasedDecoder;
 import org.cowboycoders.ant.profiles.common.decode.Decoder;
-import org.cowboycoders.ant.profiles.common.telemetry.AveragedPowerUpdate;
-import org.cowboycoders.ant.profiles.common.telemetry.InstantPowerUpdate;
-import org.cowboycoders.ant.profiles.common.telemetry.TelemetryEvent;
+import org.cowboycoders.ant.profiles.common.events.AveragedPowerUpdate;
+import org.cowboycoders.ant.profiles.common.events.InstantPowerUpdate;
+import org.cowboycoders.ant.profiles.common.events.TelemetryEvent;
 
 import java.math.BigDecimal;
 
