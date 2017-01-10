@@ -1,10 +1,10 @@
 package org.cowboycoders.ant.profiles.common.decode.power;
 
 import org.cowboycoders.ant.events.BroadcastMessenger;
-import org.cowboycoders.ant.profiles.common.decode.CoastDetector;
+import org.cowboycoders.ant.profiles.common.decode.CounterBasedDecoder;
 import org.cowboycoders.ant.profiles.common.decode.CounterBasedPage;
+import org.cowboycoders.ant.profiles.common.decode.Decoder;
 import org.cowboycoders.ant.profiles.common.telemetry.AveragedPowerUpdate;
-import org.cowboycoders.ant.profiles.common.telemetry.CoastDetectedEvent;
 import org.cowboycoders.ant.profiles.common.telemetry.PowerUpdate;
 import org.cowboycoders.ant.profiles.common.telemetry.TelemetryEvent;
 
@@ -14,29 +14,49 @@ import java.math.BigDecimal;
  * Gets Power data from an ant+ page that only contains power data. i.e not dervived from torque
  * Created by fluxoid on 04/01/17.
  */
-public class PowerOnlyDecoder extends org.cowboycoders.ant.profiles.common.decode.CounterBasedDecoder {
+public class PowerOnlyDecoder implements Decoder<PowerOnlyPage> {
 
+    private final MyCounterBasedDecoder counterBasedDecoder;
     private long powerSum;
 
     PowerOnlyDecoder(BroadcastMessenger<TelemetryEvent> updateHub) {
-        super(updateHub);
+        counterBasedDecoder = new MyCounterBasedDecoder(updateHub);
     }
 
-    @Override
-    protected void onInitializeCounters(CounterBasedPage newPage) {
-        powerSum = ((PowerOnlyPage)newPage).getSumPower();
+    public void update(PowerOnlyPage next) {
+        counterBasedDecoder.update(next);
     }
 
-    @Override
-    protected void onValidDelta(CounterBasedPage newPage, CounterBasedPage oldPage) {
-        PowerOnlyPage next = (PowerOnlyPage) newPage;
-        PowerOnlyPage prev = (PowerOnlyPage) oldPage;
-        powerSum += next.getSumPowerDelta(prev);
+    public void invalidate() {
+        counterBasedDecoder.invalidate();
     }
 
-    @Override
-    protected void onUpdate() {
-        bus.sendMessage(new AveragedPowerUpdate(powerSum, getEvents()));
-    }
+    private class MyCounterBasedDecoder extends CounterBasedDecoder<PowerOnlyPage> {
+        public MyCounterBasedDecoder(BroadcastMessenger<TelemetryEvent> updateHub) {
+            super(updateHub);
+        }
 
+
+        @Override
+        protected void onUpdate() {
+            bus.sendMessage(new PowerUpdate(new BigDecimal(getCurrentPage().getInstantPower())));
+        }
+
+        @Override
+        protected void onInitializeCounters() {
+            powerSum = getCurrentPage().getSumPower();
+        }
+
+        @Override
+        protected void onValidDelta() {
+            PowerOnlyPage next = getCurrentPage();
+            PowerOnlyPage prev = getPreviousPage();
+            powerSum += next.getSumPowerDelta(prev);
+        }
+
+        @Override
+        protected void onNoCoast() {
+            bus.sendMessage(new AveragedPowerUpdate(powerSum, getEvents()));
+        }
+    }
 }

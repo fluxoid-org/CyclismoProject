@@ -8,6 +8,4 @@ import org.cowboycoders.ant.profiles.common.decode.CounterBasedPage;
  */
 public interface AbstractPowerPage extends CounterBasedPage {
 
-
-    boolean isValidDelta(PowerOnlyPage old);
 }

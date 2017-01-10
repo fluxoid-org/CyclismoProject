@@ -1,10 +1,7 @@
 package org.cowboycoders.ant.profiles.common.decode;
 
 import org.cowboycoders.ant.events.BroadcastMessenger;
-import org.cowboycoders.ant.profiles.common.decode.power.PowerOnlyPage;
-import org.cowboycoders.ant.profiles.common.telemetry.AveragedPowerUpdate;
 import org.cowboycoders.ant.profiles.common.telemetry.CoastDetectedEvent;
-import org.cowboycoders.ant.profiles.common.telemetry.PowerUpdate;
 import org.cowboycoders.ant.profiles.common.telemetry.TelemetryEvent;
 
 import java.math.BigDecimal;
@@ -12,11 +9,20 @@ import java.math.BigDecimal;
 /**
  * Created by fluxoid on 05/01/17.
  */
-public abstract class CounterBasedDecoder {
+public abstract class CounterBasedDecoder<T extends CounterBasedPage> {
     protected final BroadcastMessenger<TelemetryEvent> bus;
     private CoastDetector coastDetector = new CoastDetector();
-    private PowerOnlyPage prev;
+    private T prev;
+    private T currentPage;
     private long events;
+
+    public T getPreviousPage() {
+        return prev;
+    }
+
+    public T getCurrentPage() {
+        return currentPage;
+    }
 
     public CounterBasedDecoder(BroadcastMessenger<TelemetryEvent> updateHub) {
         if (updateHub == null) {
@@ -25,24 +31,25 @@ public abstract class CounterBasedDecoder {
         this.bus = updateHub;
     }
 
-    private void initializeCounters(CounterBasedPage next) {
+    private void initializeCounters(T next) {
         events = next.getEventCount();
-        onInitializeCounters(next);
+        onInitializeCounters();
     }
 
     protected long getEvents() {
         return events;
     }
 
-    protected abstract void onInitializeCounters(CounterBasedPage newPage);
+    protected abstract void onInitializeCounters();
 
-    protected abstract void onValidDelta(CounterBasedPage newPage, CounterBasedPage oldPage);
+    protected abstract void onValidDelta();
 
-    protected abstract void onUpdate();
+    protected abstract void onNoCoast();
 
-    public void update(PowerOnlyPage next) {
+    public void update(T next) {
+        this.currentPage = next;
+        onUpdate();
         coastDetector.update(next);
-        bus.sendMessage(new PowerUpdate(new BigDecimal(next.getInstantPower())));
         if (!next.isValidDelta(prev) || prev == null) {
             coastDetector.startCoast(next);
             prev = next;
@@ -51,7 +58,7 @@ public abstract class CounterBasedDecoder {
         }
 
         events += next.getEventCountDelta(prev);
-        onValidDelta(next, prev);
+        onValidDelta();
 
         if (next.getEventCountDelta(prev) == 0) {
             coastDetector.startCoast(prev);
@@ -61,10 +68,12 @@ public abstract class CounterBasedDecoder {
         if (coastDetector.isCoasting()) {
             bus.sendMessage(new CoastDetectedEvent());
         } else {
-            onUpdate();
+            onNoCoast();
         }
         prev = next;
     }
+
+    protected abstract void onUpdate();
 
     public void invalidate() {
         prev = null;

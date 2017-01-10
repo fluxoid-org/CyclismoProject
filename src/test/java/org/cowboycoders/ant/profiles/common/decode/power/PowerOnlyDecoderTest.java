@@ -59,7 +59,7 @@ public class PowerOnlyDecoderTest {
                 return 0;
             }
 
-            public boolean isValidDelta(PowerOnlyPage old) {
+            public boolean isValidDelta(CounterBasedPage old) {
                 return true;
             }
 
@@ -89,7 +89,7 @@ public class PowerOnlyDecoderTest {
                 return 0;
             }
 
-            public boolean isValidDelta(PowerOnlyPage old) {
+            public boolean isValidDelta(CounterBasedPage old) {
                 return true;
             }
 
@@ -153,7 +153,7 @@ public class PowerOnlyDecoderTest {
                 return 0;
             }
 
-            public boolean isValidDelta(PowerOnlyPage old) {
+            public boolean isValidDelta(CounterBasedPage old) {
                 return true;
             }
 
@@ -182,7 +182,7 @@ public class PowerOnlyDecoderTest {
                 return 0;
             }
 
-            public boolean isValidDelta(PowerOnlyPage old) {
+            public boolean isValidDelta(CounterBasedPage old) {
                 return true;
             }
 

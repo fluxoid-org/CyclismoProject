@@ -54,7 +54,7 @@ public class TrainerData extends CommonPageData implements PowerOnlyPage {
     }
 
     @Override
-    public boolean isValidDelta(PowerOnlyPage old) {
+    public boolean isValidDelta(CounterBasedPage old) {
         if (getTimestamp() - old.getTimestamp() >= TIMEOUT_DELTA) {
             return false;
         }
