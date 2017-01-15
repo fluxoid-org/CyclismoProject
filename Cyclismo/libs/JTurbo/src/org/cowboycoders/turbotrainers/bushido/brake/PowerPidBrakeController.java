@@ -25,9 +25,11 @@ public class PowerPidBrakeController extends AbstractController {
 
   // TODO(doug): Make this configurable
   private static final double POWER_THRESHOLD_W = 50;
+  private static final double TINY_POWER_W = 1;
 
-  // TODO(doug): We could also calculate this from the course speed, to simulate a previous ride
-  private static final double TARGET_POWER = 330;
+  // Choose a low default so the resistance stays low until this is updated externally.
+  private double targetPowerW = POWER_THRESHOLD_W;
+
   // This is accessed concurrently
   private volatile double actualPower = -1.0;
 
@@ -56,8 +58,7 @@ public class PowerPidBrakeController extends AbstractController {
     @Override
     public double getProcessVariable() {
       // Using normalised power
-      // TODO: make this dynamic - from course points and from some interval ui?
-      return actualPower / TARGET_POWER;
+      return (targetPowerW < TINY_POWER_W) ? 0.0 : actualPower / targetPowerW;
     }
   };
 
@@ -77,6 +78,11 @@ public class PowerPidBrakeController extends AbstractController {
     logToCsv(POWER_HEADING, power);
     log("setActualPower: " + power);
     actualPower = power;
+  }
+
+  public void setTargetPower(double power) {
+    log("setTargetPower: " + power);
+    targetPowerW = power;
   }
 
   @Override
@@ -119,4 +125,5 @@ public class PowerPidBrakeController extends AbstractController {
   @Override
   public void onStop() {
   }
+
 }

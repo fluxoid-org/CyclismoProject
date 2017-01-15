@@ -129,6 +129,8 @@ public class TurboService extends Service {
 
   private AndroidAntTransceiver transceiver;
 
+  private Map<String, Mode> uiModeToTurboMode;
+
   // private double distanceBetweenPoints;
 
   // private double lastSubmittedDistance = 0;
@@ -149,6 +151,8 @@ public class TurboService extends Service {
   double lastRecordedSpeed = 0.0; // kmh
 
   private TurboTrainerInterface turboTrainer;
+
+  private Integer targetPower;
 
   private Lock parameterBuilderLock = new ReentrantLock();
 
@@ -281,9 +285,20 @@ public class TurboService extends Service {
         gradient = gradient * scaleFactor;
       }
 
+      Mode mode = uiModeToTurboMode.get(selectedCourseMode);
       try {
         parameterBuilderLock.lock();
-        turboTrainer.setParameters(parameterBuilder.buildTargetSlope(gradient));
+        switch (mode) {
+          case TARGET_POWER:
+            // TODO: Add course tracking power here, like for distance
+            turboTrainer.setParameters(parameterBuilder.buildTargetPower(targetPower));
+            break;
+          case TARGET_SPEED:
+            // TODO
+          case TARGET_SLOPE:
+          default:
+            turboTrainer.setParameters(parameterBuilder.buildTargetSlope(gradient));
+        }
       } finally {
         parameterBuilderLock.unlock();
       }
@@ -362,7 +377,7 @@ public class TurboService extends Service {
       return;
     }
     running = true;
-
+    uiModeToTurboMode = getUiModeToJTurboModeMap();
     preferences = context.getSharedPreferences(Constants.SETTINGS_NAME, Context.MODE_PRIVATE);
 
     preferences.registerOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
@@ -374,6 +389,9 @@ public class TurboService extends Service {
         R.string.turbotrainer_selected), null);
     selectedCourseMode = preferences.getString(getApplication().getString(
         R.string.course_mode), null);
+    targetPower = preferences.getInt(getApplication().getString(
+        R.string.constant_course_power), 0);
+    Log.d(TAG, "Constant course power: " + targetPower);
 
     // accessing database so should be put into a task
     double userWeight;
@@ -482,6 +500,7 @@ public class TurboService extends Service {
 
     @Override
     public void call() throws TurboCommunicationException, InterruptedException, TimeoutException {
+      // TODO: Catch exception when this fails and print a toast
       turboTrainer.start();
     }
 
@@ -568,7 +587,6 @@ public class TurboService extends Service {
       new Thread() {
         public void run() {
           try {
-            turboTrainer.setMode(Mode.TARGET_SLOPE);
             // slight hack to get around timeout errors on my tablet
             retryErrorProneCall(startTurbo, 10);
             if (hrm != null) {
@@ -734,7 +752,6 @@ public class TurboService extends Service {
 
   protected TurboTrainerInterface getTurboTrainer(AntHubService.LocalBinder binder) {
     Log.d(TAG, selectedTurboTrainer);
-    Map<String, Mode> uiModeToTurboMode = getUiModeToJTurboModeMap();
     Mode mode = uiModeToTurboMode.get(selectedCourseMode);
     TurboRegistry turboRegistry = getTurboRegistry();
     TurboTrainerInterface turbo = turboRegistry.getTurboTrainer(selectedTurboTrainer);

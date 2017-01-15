@@ -3230,7 +3230,12 @@ limitations under the License.
             <string name="settings_courses_mode_summary"
     translation_description="In the 'Courses' settings, the summary for the mode select option
       Character limit: ~20 (1 line)">
-    Select a mode
+    Select a trainer mode
+  </string>
+  <string name="settings_constant_course_power_summary"
+        translation_description="In the 'Courses' settings, the summary for the constant course power
+      Character limit: ~20 (1 line)">
+    Cycle at constant power
   </string>
   <string name="item_not_selected">Please select</string>
   

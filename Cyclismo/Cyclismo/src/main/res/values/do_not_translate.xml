@@ -100,6 +100,9 @@ Google은 이용자에 대한 위치정보의 이용∙제공사실을 위치정
   <string name="track_action_start">org.cowboycoders.cyclismo.START_NEW_TRACK</string>
   <string name="value_unknown">-</string>
   <string name="settings_courses_mode_simulation_value">SIMULATION</string>
+  <integer name="settings_courses_mode_power_value">900</integer>
+  <integer name="settings_courses_mode_min_power_value">50</integer>
+  <integer name="settings_courses_mode_max_power_value">999</integer>
   <string name="settings_courses_mode_constant_power_value">CONSTANT_POWER</string>
   <string name="settings_courses_mode_constant_speed_value">CONSTANT_SPEED</string>
   <string name="anthub_action_shutdown">org.cowboycoders.cyclismo.SHUTDOWN_ANT</string>

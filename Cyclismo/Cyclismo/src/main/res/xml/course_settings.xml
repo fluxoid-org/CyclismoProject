@@ -15,6 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:title="@string/course_select_title" >
 
     <PreferenceCategory android:title="@string/workout_courses_session_section_title" >
@@ -29,13 +30,23 @@ limitations under the License.
             android:targetPackage="org.cowboycoders.cyclismo" />
     </PreferenceScreen>
 
-    <!--This list depends on what the selected turbo trainer supports and is retrieved in
-    TurboService. The default is also defined there. -->
-    <ListPreference
-        android:key="@string/course_mode"
+    <PreferenceScreen
         android:summary="@string/settings_courses_mode_summary"
-        android:title="@string/settings_courses_mode_title"
-        android:defaultValue="@string/settings_courses_mode_simulation_value"/>
+        android:title="@string/settings_courses_mode_title" >
+        <!--This list depends on what the selected turbo trainer supports and is retrieved in
+        TurboService. The default is also defined there. -->
+        <ListPreference
+            android:key="@string/course_mode"
+            android:summary="@string/settings_courses_mode_summary"
+            android:title="@string/settings_courses_mode_title"
+            android:defaultValue="@string/settings_courses_mode_simulation_value"/>
+        <org.cowboycoders.cyclismo.widgets.TripletPickerPreference
+            android:key="@string/constant_course_power"
+            android:title="Power level"
+            custom:min="@integer/settings_courses_mode_min_power_value"
+            custom:max="@integer/settings_courses_mode_max_power_value"
+            android:defaultValue="@integer/settings_courses_mode_power_value"/>
+    </PreferenceScreen>
 
     <PreferenceScreen
         android:key="@string/course_bike_id"

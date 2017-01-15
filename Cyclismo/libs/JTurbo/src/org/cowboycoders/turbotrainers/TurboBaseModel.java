@@ -19,6 +19,7 @@ abstract public class TurboBaseModel {
   private double cadence;
   private double heartRate;
   private double power;
+  private double targetPowerW;
   private double slope;
 
   //Integrators for calculating distance travelled from virtual and actual speeds
@@ -114,6 +115,14 @@ abstract public class TurboBaseModel {
    */
   public void setPower(double power) {
     this.power = power;
+  }
+
+  public void setTargetPower(double powerW) {
+    this.targetPowerW = powerW;
+  }
+
+  public double getTargetPower() {
+    return targetPowerW;
   }
 
   /**
