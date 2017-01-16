@@ -20,6 +20,9 @@ public class TargetPower implements AntPage {
         targetPower = new BigDecimal(raw).divide(new BigDecimal(4), 2, RoundingMode.HALF_UP);
     }
 
+    /**
+     * Target power (w) in range 0-1000, resolution: 0.25
+     */
     public BigDecimal getTargetPower() {
         return targetPower;
     }
