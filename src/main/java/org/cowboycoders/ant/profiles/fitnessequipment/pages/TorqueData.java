@@ -1,10 +1,8 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
 import org.cowboycoders.ant.profiles.TimeOutDeltaValidator;
-import org.cowboycoders.ant.profiles.common.decode.interfaces.DistanceDecodable;
+import org.cowboycoders.ant.profiles.common.decode.interfaces.*;
 import org.cowboycoders.ant.profiles.common.utils.CounterUtils;
-import org.cowboycoders.ant.profiles.common.decode.interfaces.CounterBasedDecodable;
-import org.cowboycoders.ant.profiles.common.decode.interfaces.TorqueDecodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 
 import java.util.concurrent.TimeUnit;
@@ -14,7 +12,7 @@ import static org.cowboycoders.ant.profiles.BitManipulation.*;
 /**
  * Created by fluxoid on 09/01/17.
  */
-public class TorqueData extends CommonPageData implements AntPage, TorqueDecodable, DistanceDecodable {
+public class TorqueData extends CommonPageData implements AntPage, TorqueDecodable, DistanceDecodable, SpeedDecodable {
 
     private static final int EVENT_OFFSET = 2;
     private static final int ROTATION_OFFSET = 3;
@@ -54,15 +52,6 @@ public class TorqueData extends CommonPageData implements AntPage, TorqueDecodab
         return torqueSum;
     }
 
-    @Override
-    public int getPeriod() {
-        return period;
-    }
-
-    @Override
-    public long getPeriodDelta(TorqueDecodable old) {
-        return CounterUtils.calcDelta(UNSIGNED_INT16_MAX, old.getPeriod(), getPeriod());
-    }
 
     @Override
     public long getTimestamp() {
@@ -92,5 +81,15 @@ public class TorqueData extends CommonPageData implements AntPage, TorqueDecodab
     @Override
     public long getWheelRotationsDelta(DistanceDecodable old) {
         return CounterUtils.calcDelta(UNSIGNED_INT8_MAX, old.getWheelRotations(), getWheelRotations());
+    }
+
+    @Override
+    public int getRotationPeriod() {
+        return period;
+    }
+
+    @Override
+    public long getRotationPeriodDelta(RotationDecodable old) {
+        return CounterUtils.calcDelta(UNSIGNED_INT16_MAX, old.getRotationPeriod(), getRotationPeriod());
     }
 }
