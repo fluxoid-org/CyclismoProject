@@ -1,6 +1,6 @@
 package org.cowboycoders.ant.profiles;
 
-import org.cowboycoders.ant.profiles.common.decode.CounterBasedPage;
+import org.cowboycoders.ant.profiles.common.decode.interfaces.CounterBasedDecodable;
 
 public class TimeOutDeltaValidator {
     private final long delta;
@@ -9,7 +9,7 @@ public class TimeOutDeltaValidator {
         this.delta = delta;
     }
 
-    public boolean isValidDelta(CounterBasedPage old, CounterBasedPage latest) {
+    public boolean isValidDelta(CounterBasedDecodable old, CounterBasedDecodable latest) {
         if (latest.getTimestamp() - old.getTimestamp() >= delta) {
             return false;
         }

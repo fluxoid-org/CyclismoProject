@@ -1,11 +1,5 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
-import org.cowboycoders.ant.profiles.common.ToggleCounter;
-import org.cowboycoders.ant.profiles.pages.AntPage;
-
-import java.util.Collections;
-import java.util.List;
-
 /**
  * Created by fluxoid on 29/12/16.
  */

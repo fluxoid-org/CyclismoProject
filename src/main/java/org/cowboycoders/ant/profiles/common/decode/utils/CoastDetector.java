@@ -1,4 +1,4 @@
-package org.cowboycoders.ant.profiles.common.decode;
+package org.cowboycoders.ant.profiles.common.decode.utils;
 
 import org.cowboycoders.ant.profiles.common.TelemetryPage;
 

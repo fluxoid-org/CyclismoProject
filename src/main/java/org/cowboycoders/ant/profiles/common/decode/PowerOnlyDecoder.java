@@ -1,11 +1,11 @@
-package org.cowboycoders.ant.profiles.common.decode.power;
+package org.cowboycoders.ant.profiles.common.decode;
 
 import org.cowboycoders.ant.events.BroadcastMessenger;
-import org.cowboycoders.ant.profiles.common.decode.CounterBasedDecoder;
-import org.cowboycoders.ant.profiles.common.decode.Decoder;
+import org.cowboycoders.ant.profiles.common.decode.utils.CounterBasedDecoder;
+import org.cowboycoders.ant.profiles.common.decode.interfaces.PowerOnlyDecodable;
 import org.cowboycoders.ant.profiles.common.events.AveragedPowerUpdate;
 import org.cowboycoders.ant.profiles.common.events.InstantPowerUpdate;
-import org.cowboycoders.ant.profiles.common.events.TelemetryEvent;
+import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
 
 import java.math.BigDecimal;
 
@@ -13,16 +13,21 @@ import java.math.BigDecimal;
  * Gets Power data from an ant+ page that only contains power data. i.e not dervived from torque
  * Created by fluxoid on 04/01/17.
  */
-public class PowerOnlyDecoder implements Decoder<PowerOnlyPage> {
+public class PowerOnlyDecoder implements Decoder<PowerOnlyDecodable> {
 
     private final MyCounterBasedDecoder counterBasedDecoder;
     private long powerSum;
 
-    PowerOnlyDecoder(BroadcastMessenger<TelemetryEvent> updateHub) {
+    public PowerOnlyDecoder(BroadcastMessenger<TelemetryEvent> updateHub) {
         counterBasedDecoder = new MyCounterBasedDecoder(updateHub);
+        reset();
     }
 
-    public void update(PowerOnlyPage next) {
+    public void reset() {
+        powerSum = 0;
+    }
+
+    public void update(PowerOnlyDecodable next) {
         counterBasedDecoder.update(next);
     }
 
@@ -30,7 +35,7 @@ public class PowerOnlyDecoder implements Decoder<PowerOnlyPage> {
         counterBasedDecoder.invalidate();
     }
 
-    private class MyCounterBasedDecoder extends CounterBasedDecoder<PowerOnlyPage> {
+    private class MyCounterBasedDecoder extends CounterBasedDecoder<PowerOnlyDecodable> {
         public MyCounterBasedDecoder(BroadcastMessenger<TelemetryEvent> updateHub) {
             super(updateHub);
         }
@@ -43,13 +48,12 @@ public class PowerOnlyDecoder implements Decoder<PowerOnlyPage> {
 
         @Override
         protected void onInitializeCounters() {
-            powerSum = getCurrentPage().getSumPower();
         }
 
         @Override
         protected void onValidDelta() {
-            PowerOnlyPage next = getCurrentPage();
-            PowerOnlyPage prev = getPreviousPage();
+            PowerOnlyDecodable next = getCurrentPage();
+            PowerOnlyDecodable prev = getPreviousPage();
             powerSum += next.getSumPowerDelta(prev);
         }
 

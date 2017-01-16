@@ -1,9 +1,10 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
 import org.cowboycoders.ant.profiles.TimeOutDeltaValidator;
-import org.cowboycoders.ant.profiles.common.CounterUtils;
-import org.cowboycoders.ant.profiles.common.decode.CounterBasedPage;
-import org.cowboycoders.ant.profiles.common.decode.power.TorquePage;
+import org.cowboycoders.ant.profiles.common.decode.interfaces.DistanceDecodable;
+import org.cowboycoders.ant.profiles.common.utils.CounterUtils;
+import org.cowboycoders.ant.profiles.common.decode.interfaces.CounterBasedDecodable;
+import org.cowboycoders.ant.profiles.common.decode.interfaces.TorqueDecodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 
 import java.util.concurrent.TimeUnit;
@@ -13,7 +14,7 @@ import static org.cowboycoders.ant.profiles.BitManipulation.*;
 /**
  * Created by fluxoid on 09/01/17.
  */
-public class TorqueData extends CommonPageData implements AntPage, TorquePage {
+public class TorqueData extends CommonPageData implements AntPage, TorqueDecodable, DistanceDecodable {
 
     private static final int EVENT_OFFSET = 2;
     private static final int ROTATION_OFFSET = 3;
@@ -44,7 +45,7 @@ public class TorqueData extends CommonPageData implements AntPage, TorquePage {
     }
 
     @Override
-    public long getTorqueDelta(TorquePage old) {
+    public long getTorqueDelta(TorqueDecodable old) {
         return CounterUtils.calcDelta(UNSIGNED_INT16_MAX, old.getTorque(), getTorque());
     }
 
@@ -59,7 +60,7 @@ public class TorqueData extends CommonPageData implements AntPage, TorquePage {
     }
 
     @Override
-    public long getPeriodDelta(TorquePage old) {
+    public long getPeriodDelta(TorqueDecodable old) {
         return CounterUtils.calcDelta(UNSIGNED_INT16_MAX, old.getPeriod(), getPeriod());
     }
 
@@ -69,7 +70,7 @@ public class TorqueData extends CommonPageData implements AntPage, TorquePage {
     }
 
     @Override
-    public long getEventCountDelta(CounterBasedPage old) {
+    public long getEventCountDelta(CounterBasedDecodable old) {
         return CounterUtils.calcDelta(UNSIGNED_INT8_MAX, old.getEventCount(), getEventCount());
     }
 
@@ -79,7 +80,17 @@ public class TorqueData extends CommonPageData implements AntPage, TorquePage {
     }
 
     @Override
-    public boolean isValidDelta(CounterBasedPage old) {
+    public boolean isValidDelta(CounterBasedDecodable old) {
         return timeOutDeltaValidator.isValidDelta(old, this);
+    }
+
+    @Override
+    public int getWheelRotations() {
+        return rotations;
+    }
+
+    @Override
+    public long getWheelRotationsDelta(DistanceDecodable old) {
+        return CounterUtils.calcDelta(UNSIGNED_INT8_MAX, old.getWheelRotations(), getWheelRotations());
     }
 }

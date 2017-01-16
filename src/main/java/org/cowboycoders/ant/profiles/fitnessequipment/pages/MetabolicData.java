@@ -1,6 +1,6 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
-import org.cowboycoders.ant.profiles.common.CounterUtils;
+import org.cowboycoders.ant.profiles.common.utils.CounterUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

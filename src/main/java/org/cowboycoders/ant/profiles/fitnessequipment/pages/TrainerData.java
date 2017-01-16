@@ -1,14 +1,11 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
 import org.cowboycoders.ant.profiles.TimeOutDeltaValidator;
-import org.cowboycoders.ant.profiles.common.CounterUtils;
-import org.cowboycoders.ant.profiles.common.decode.CounterBasedPage;
-import org.cowboycoders.ant.profiles.common.decode.power.PowerOnlyPage;
-import org.cowboycoders.ant.profiles.pages.AntPage;
-import org.cowboycoders.ant.profiles.pages.VirtualPageGenerator;
+import org.cowboycoders.ant.profiles.common.utils.CounterUtils;
+import org.cowboycoders.ant.profiles.common.decode.interfaces.CounterBasedDecodable;
+import org.cowboycoders.ant.profiles.common.decode.interfaces.PowerOnlyDecodable;
 
 import java.util.EnumSet;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.cowboycoders.ant.profiles.BitManipulation.*;
@@ -16,7 +13,7 @@ import static org.cowboycoders.ant.profiles.BitManipulation.*;
 /**
  * Created by fluxoid on 02/01/17.
  */
-public class TrainerData extends CommonPageData implements PowerOnlyPage {
+public class TrainerData extends CommonPageData implements PowerOnlyDecodable {
 
     private static final long TIMEOUT_DELTA = TimeUnit.SECONDS.toNanos(12);
     public static final int POWER_OFFSET = 4;
@@ -55,7 +52,7 @@ public class TrainerData extends CommonPageData implements PowerOnlyPage {
     }
 
     @Override
-    public boolean isValidDelta(CounterBasedPage old) {
+    public boolean isValidDelta(CounterBasedDecodable old) {
         return timeOutDeltaValidator.isValidDelta(old, this);
     }
 
@@ -102,12 +99,12 @@ public class TrainerData extends CommonPageData implements PowerOnlyPage {
     }
 
     @Override
-    public long getSumPowerDelta(PowerOnlyPage old) {
+    public long getSumPowerDelta(PowerOnlyDecodable old) {
         return CounterUtils.calcDelta(old.getSumPower(), getSumPower(), UNSIGNED_INT16_MAX);
     }
 
     @Override
-    public long getEventCountDelta(CounterBasedPage old) {
+    public long getEventCountDelta(CounterBasedDecodable old) {
         return CounterUtils.calcDelta(old.getEventCount(), getEventCount(), UNSIGNED_INT8_MAX);
     }
 

@@ -1,15 +1,15 @@
-package org.cowboycoders.ant.profiles.common.decode;
+package org.cowboycoders.ant.profiles.common.decode.interfaces;
 
 import org.cowboycoders.ant.profiles.common.TelemetryPage;
 
 /**
  * Created by fluxoid on 09/01/17.
  */
-public interface CounterBasedPage extends TelemetryPage {
+public interface CounterBasedDecodable extends TelemetryPage {
         /**
          *  Number of event 'ticks' since last update
          */
-        long getEventCountDelta(CounterBasedPage old);
+        long getEventCountDelta(CounterBasedDecodable old);
 
         /**
          * Number of updates of accumulated power such that {@code getSumPower / getEventCount} is
@@ -17,5 +17,5 @@ public interface CounterBasedPage extends TelemetryPage {
          */
         int getEventCount();
 
-        boolean isValidDelta(CounterBasedPage old);
+        boolean isValidDelta(CounterBasedDecodable old);
 }

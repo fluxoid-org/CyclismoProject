@@ -1,5 +1,7 @@
 package org.cowboycoders.ant.profiles.common.events;
 
+import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
+
 import java.math.BigDecimal;
 
 /**

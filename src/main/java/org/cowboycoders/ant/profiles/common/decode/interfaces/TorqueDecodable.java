@@ -1,11 +1,11 @@
-package org.cowboycoders.ant.profiles.common.decode.power;
+package org.cowboycoders.ant.profiles.common.decode.interfaces;
 
 /**
  * Created by fluxoid on 09/01/17.
  */
-public interface TorquePage extends AbstractPowerPage {
+public interface TorqueDecodable extends AbstractPowerDecodable {
 
-    long getTorqueDelta(TorquePage old);
+    long getTorqueDelta(TorqueDecodable old);
     int getTorque();
 
     /**
@@ -18,6 +18,6 @@ public interface TorquePage extends AbstractPowerPage {
     /**
      * wheel rotation delta relative to old
      */
-    long getPeriodDelta(TorquePage old);
+    long getPeriodDelta(TorqueDecodable old);
 
 }

@@ -1,13 +1,14 @@
-package org.cowboycoders.ant.profiles.common.decode;
+package org.cowboycoders.ant.profiles.common.decode.utils;
 
 import org.cowboycoders.ant.events.BroadcastMessenger;
+import org.cowboycoders.ant.profiles.common.decode.interfaces.CounterBasedDecodable;
 import org.cowboycoders.ant.profiles.common.events.CoastDetectedEvent;
-import org.cowboycoders.ant.profiles.common.events.TelemetryEvent;
+import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
 
 /**
  * Created by fluxoid on 05/01/17.
  */
-public abstract class CounterBasedDecoder<T extends CounterBasedPage> {
+public abstract class CounterBasedDecoder<T extends CounterBasedDecodable> {
     protected final BroadcastMessenger<TelemetryEvent> bus;
     private CoastDetector coastDetector = new CoastDetector();
     private T prev;
@@ -28,10 +29,14 @@ public abstract class CounterBasedDecoder<T extends CounterBasedPage> {
             throw new IllegalArgumentException("this bus cannot be null");
         }
         this.bus = updateHub;
+        reset();
+    }
+
+    private void reset() {
+        events = 0;
     }
 
     private void initializeCounters(T next) {
-        events = next.getEventCount();
         onInitializeCounters();
     }
 

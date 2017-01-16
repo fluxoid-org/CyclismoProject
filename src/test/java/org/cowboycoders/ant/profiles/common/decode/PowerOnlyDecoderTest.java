@@ -1,12 +1,14 @@
-package org.cowboycoders.ant.profiles.common.decode.power;
+package org.cowboycoders.ant.profiles.common.decode;
 
 import org.cowboycoders.ant.events.BroadcastListener;
 import org.cowboycoders.ant.events.BroadcastMessenger;
-import org.cowboycoders.ant.profiles.common.decode.CoastDetector;
-import org.cowboycoders.ant.profiles.common.decode.CounterBasedPage;
+import org.cowboycoders.ant.profiles.common.decode.utils.CoastDetector;
+import org.cowboycoders.ant.profiles.common.decode.PowerOnlyDecoder;
+import org.cowboycoders.ant.profiles.common.decode.interfaces.CounterBasedDecodable;
+import org.cowboycoders.ant.profiles.common.decode.interfaces.PowerOnlyDecodable;
 import org.cowboycoders.ant.profiles.common.events.AveragedPowerUpdate;
 import org.cowboycoders.ant.profiles.common.events.CoastDetectedEvent;
-import org.cowboycoders.ant.profiles.common.events.TelemetryEvent;
+import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -42,12 +44,12 @@ public class PowerOnlyDecoderTest {
         CoastHelper listener = new CoastHelper();
         bus.addBroadcastListener(listener);
 
-        decoder.update(new PowerOnlyPage() {
-            public long getSumPowerDelta(PowerOnlyPage old) {
+        decoder.update(new PowerOnlyDecodable() {
+            public long getSumPowerDelta(PowerOnlyDecodable old) {
                 return 0;
             }
 
-            public long getEventCountDelta(CounterBasedPage old) {
+            public long getEventCountDelta(CounterBasedDecodable old) {
                 return 0;
             }
 
@@ -59,7 +61,7 @@ public class PowerOnlyDecoderTest {
                 return 0;
             }
 
-            public boolean isValidDelta(CounterBasedPage old) {
+            public boolean isValidDelta(CounterBasedDecodable old) {
                 return true;
             }
 
@@ -71,12 +73,12 @@ public class PowerOnlyDecoderTest {
                 return 0;
             }
         });
-        decoder.update(new PowerOnlyPage() {
-            public long getSumPowerDelta(PowerOnlyPage old) {
+        decoder.update(new PowerOnlyDecodable() {
+            public long getSumPowerDelta(PowerOnlyDecodable old) {
                 return 0;
             }
 
-            public long getEventCountDelta(CounterBasedPage old) {
+            public long getEventCountDelta(CounterBasedDecodable old) {
                 // must be zero to trigger coast detection
                 return 0;
             }
@@ -89,7 +91,7 @@ public class PowerOnlyDecoderTest {
                 return 0;
             }
 
-            public boolean isValidDelta(CounterBasedPage old) {
+            public boolean isValidDelta(CounterBasedDecodable old) {
                 return true;
             }
 
@@ -122,7 +124,7 @@ public class PowerOnlyDecoderTest {
                     return;
                 }
                 AveragedPowerUpdate casted = (AveragedPowerUpdate) event;
-                powersum = casted.getPower();
+                powersum = casted.getAveragePower();
                 events = casted.getEvents();
                 sum = casted.getSumPower();
             }
@@ -134,13 +136,13 @@ public class PowerOnlyDecoderTest {
         PowerSumListener listener = new PowerSumListener();
         bus.addBroadcastListener(listener);
 
-        decoder.update(new PowerOnlyPage() {
-            public long getSumPowerDelta(PowerOnlyPage old) {
+        decoder.update(new PowerOnlyDecodable() {
+            public long getSumPowerDelta(PowerOnlyDecodable old) {
                 //ignored
                 return 0;
             }
 
-            public long getEventCountDelta(CounterBasedPage old) {
+            public long getEventCountDelta(CounterBasedDecodable old) {
                 //ignored
                 return 0;
             }
@@ -153,7 +155,7 @@ public class PowerOnlyDecoderTest {
                 return 0;
             }
 
-            public boolean isValidDelta(CounterBasedPage old) {
+            public boolean isValidDelta(CounterBasedDecodable old) {
                 return true;
             }
 
@@ -165,12 +167,12 @@ public class PowerOnlyDecoderTest {
                 return 0;
             }
         });
-        decoder.update(new PowerOnlyPage() {
-            public long getSumPowerDelta(PowerOnlyPage old) {
+        decoder.update(new PowerOnlyDecodable() {
+            public long getSumPowerDelta(PowerOnlyDecodable old) {
                 return (long) (EVENTS * SIM_POWER);
             }
 
-            public long getEventCountDelta(CounterBasedPage old) {
+            public long getEventCountDelta(CounterBasedDecodable old) {
                 return EVENTS;
             }
 
@@ -182,7 +184,7 @@ public class PowerOnlyDecoderTest {
                 return 0;
             }
 
-            public boolean isValidDelta(CounterBasedPage old) {
+            public boolean isValidDelta(CounterBasedDecodable old) {
                 return true;
             }
 

@@ -1,4 +1,4 @@
-package org.cowboycoders.ant.profiles.common;
+package org.cowboycoders.ant.profiles.common.utils;
 
 /**
  * Created by fluxoid on 29/12/16.
