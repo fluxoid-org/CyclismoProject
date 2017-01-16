@@ -1,6 +1,7 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
 import org.cowboycoders.ant.profiles.BitManipulation;
+import org.cowboycoders.ant.profiles.pages.AntPage;
 
 import java.math.BigDecimal;
 
@@ -8,7 +9,7 @@ import java.math.BigDecimal;
  * Page 48
  * Created by fluxoid on 16/01/17.
  */
-public class PercentageResistance {
+public class PercentageResistance implements AntPage {
 
     private static final int RESITANCE_OFFSET = 8;
     private final BigDecimal resistance;
