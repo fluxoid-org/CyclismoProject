@@ -20,7 +20,7 @@ public class CommonCommandPage implements AntPage {
     private int lastCommandPage;
     private int lastSequenceNumber;
     private final byte[] responseData;
-    private Defines.CommandStatus status;
+    private Defines.GenericCommandStatus status;
 
     public int getLastCommandPage() {
         return lastCommandPage;
@@ -34,18 +34,18 @@ public class CommonCommandPage implements AntPage {
         return responseData;
     }
 
-    public Defines.CommandStatus getStatus() {
+    public Defines.GenericCommandStatus getStatus() {
         return status;
     }
 
     public CommonCommandPage(byte [] packet) {
         this.lastCommandPage = BitManipulation.UnsignedNumFrom1LeByte(packet[COMMAND_OFFSET]);
         this.lastSequenceNumber = BitManipulation.UnsignedNumFrom1LeByte(packet[SEQUENCE_OFFSET]);
-        status = Defines.CommandStatus.getValueFromInt(BitManipulation.UnsignedNumFrom1LeByte(packet[STATUS_OFFSET]));
+        status = Defines.GenericCommandStatus.getValueFromInt(BitManipulation.UnsignedNumFrom1LeByte(packet[STATUS_OFFSET]));
         responseData = Arrays.copyOfRange(packet, RESPONSE_OFFSET, RESPONSE_END);
     }
 
-    public static byte [] encode(int lastCommandPage, int lastSequenceNumber, Defines.CommandStatus status, final byte [] response) {
+    public static byte [] encode(int lastCommandPage, int lastSequenceNumber, Defines.GenericCommandStatus status, final byte [] response) {
         // -1 offset from decode is becuase we do not include the msg id
         final byte [] array = new byte[9];
         array[0] = 71;

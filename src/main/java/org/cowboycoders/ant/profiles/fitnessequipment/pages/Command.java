@@ -3,6 +3,7 @@ package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 import org.cowboycoders.ant.profiles.BitManipulation;
 import org.cowboycoders.ant.profiles.fitnessequipment.CommandStatus;
 import org.cowboycoders.ant.profiles.fitnessequipment.CommandStatusBuilder;
+import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
 import org.cowboycoders.ant.profiles.pages.CommonCommandPage;
 
 import java.math.BigDecimal;

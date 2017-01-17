@@ -1,11 +1,10 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
+import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Collections;
-import java.util.List;
 
 import static org.cowboycoders.ant.profiles.BitManipulation.*;
 

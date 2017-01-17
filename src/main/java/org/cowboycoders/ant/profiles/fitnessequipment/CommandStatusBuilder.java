@@ -1,7 +1,5 @@
 package org.cowboycoders.ant.profiles.fitnessequipment;
 
-import org.cowboycoders.ant.profiles.fitnessequipment.pages.Defines;
-
 import java.math.BigDecimal;
 
 public class CommandStatusBuilder {

@@ -3,6 +3,7 @@ package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 import org.cowboycoders.ant.profiles.TimeOutDeltaValidator;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.*;
 import org.cowboycoders.ant.profiles.common.utils.CounterUtils;
+import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 
 import java.util.concurrent.TimeUnit;

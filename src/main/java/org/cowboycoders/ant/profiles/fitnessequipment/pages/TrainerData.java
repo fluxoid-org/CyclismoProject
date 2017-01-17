@@ -4,6 +4,7 @@ import org.cowboycoders.ant.profiles.TimeOutDeltaValidator;
 import org.cowboycoders.ant.profiles.common.utils.CounterUtils;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.CounterBasedDecodable;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.PowerOnlyDecodable;
+import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
 
 import java.util.EnumSet;
 import java.util.concurrent.TimeUnit;

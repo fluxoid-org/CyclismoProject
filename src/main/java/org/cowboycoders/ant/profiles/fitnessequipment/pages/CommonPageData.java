@@ -1,5 +1,7 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
+import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
+
 /**
  * Created by fluxoid on 29/12/16.
  */

@@ -1,4 +1,4 @@
-package org.cowboycoders.ant.profiles.fitnessequipment.pages;
+package org.cowboycoders.ant.profiles.fitnessequipment;
 
 import java.util.EnumSet;
 

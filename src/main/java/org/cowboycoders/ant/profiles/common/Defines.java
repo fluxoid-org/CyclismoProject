@@ -2,7 +2,7 @@ package org.cowboycoders.ant.profiles.common;
 
 public class Defines {
 
-    public enum CommandStatus {
+    public enum GenericCommandStatus {
         FAIL(1),
         NOT_SUPPORTED(2),
         PASS(0),
@@ -13,17 +13,17 @@ public class Defines {
 
         private int intValue;
 
-        private CommandStatus(final int intValue) {
+        private GenericCommandStatus(final int intValue) {
             this.intValue = intValue;
         }
 
-        public static CommandStatus getValueFromInt(final int intValue) {
-            for (final CommandStatus commandStatus : values()) {
+        public static GenericCommandStatus getValueFromInt(final int intValue) {
+            for (final GenericCommandStatus commandStatus : values()) {
                 if (commandStatus.getIntValue() == intValue) {
                     return commandStatus;
                 }
             }
-            final CommandStatus unrecognized = CommandStatus.UNRECOGNIZED;
+            final GenericCommandStatus unrecognized = GenericCommandStatus.UNRECOGNIZED;
             unrecognized.intValue = intValue;
             return unrecognized;
         }

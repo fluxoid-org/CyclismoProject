@@ -1,6 +1,7 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
 import org.cowboycoders.ant.profiles.BitManipulation;
+import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -40,7 +41,7 @@ public class PayloadGen {
      *                        Units: %. Valid range: 0% - 100%. Resolution: 0.5%
      */
     public static byte[] getSetBasicResistance(final BigDecimal totalResistance) {
-        final byte[] array = { (byte)Defines.CommandId.BASIC_RESISTANCE.getIntValue(), NULL_BYTE, NULL_BYTE, NULL_BYTE, NULL_BYTE, NULL_BYTE, NULL_BYTE, NULL_BYTE };
+        final byte[] array = { (byte) Defines.CommandId.BASIC_RESISTANCE.getIntValue(), NULL_BYTE, NULL_BYTE, NULL_BYTE, NULL_BYTE, NULL_BYTE, NULL_BYTE, NULL_BYTE };
         array[7] = totalResistance.multiply(new BigDecimal("2")).setScale(0, RoundingMode.HALF_UP).byteValue();
         return array;
     }
