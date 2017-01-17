@@ -270,6 +270,38 @@ public class Defines {
         }
     }
 
+    public enum Status
+    {
+        FAIL(1),
+        NOT_SUPPORTED(2),
+        PASS(0),
+        PENDING(4),
+        REJECTED(3),
+        UNINITIALIZED(255),
+        UNRECOGNIZED(-1);
+
+        private int intValue;
+
+        private Status(final int intValue) {
+            this.intValue = intValue;
+        }
+
+        public static Status getValueFromInt(final int intValue) {
+            for (final Status status : values()) {
+                if (status.getIntValue() == intValue) {
+                    return status;
+                }
+            }
+            final Status unrecognized = Status.UNRECOGNIZED;
+            unrecognized.intValue = intValue;
+            return unrecognized;
+        }
+
+        public int getIntValue() {
+            return this.intValue;
+        }
+    }
+
 
 
 
