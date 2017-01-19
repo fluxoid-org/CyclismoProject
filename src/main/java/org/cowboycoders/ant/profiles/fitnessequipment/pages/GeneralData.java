@@ -14,12 +14,12 @@ import static org.cowboycoders.ant.profiles.BitManipulation.*;
 public class GeneralData extends CommonPageData implements AntPage {
 
     // these are counters that overflow
-    private static final int TIME_OFFSET = 3;
-    private static final int DISTANCE_OFFSET = 4;
+    private static final int TIME_OFFSET = 2;
+    private static final int DISTANCE_OFFSET = 3;
 
-    private static final int META_OFFSET = 8;
-    private static final int SPEED_OFFSET = 5;
-    private static final int HR_OFFSET = 7; // heart rate
+    private static final int META_OFFSET = 7;
+    private static final int SPEED_OFFSET = 4;
+    private static final int HR_OFFSET = 6; // heart rate
     private static final int HR_SOURCE_MASK = 0x3;
     private static final int DISTANCE_MASK = 0x4;
     private static final int VIRTUAL_SPEED_MASK = 0x8;

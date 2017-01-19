@@ -13,9 +13,9 @@ public class WindResistance implements AntPage {
 
     private final BigDecimal DEFAULT_WIND_COEFF = new BigDecimal(0.51);
     private final BigDecimal DEFAULT_DRAFTING_FACTOR = new BigDecimal(1.00);
-    private final int WIND_COEFFICENT_OFFSET = 6;
-    private final int WIND_SPEED_OFFSET = 7;
-    private final int DRAFTING_OFFSET = 8;
+    private final int WIND_COEFFICENT_OFFSET = 5;
+    private final int WIND_SPEED_OFFSET = 6;
+    private final int DRAFTING_OFFSET = 7;
     private final BigDecimal windResitanceCoeff;
     private final int windSpeed;
     private final BigDecimal draftingFactor;

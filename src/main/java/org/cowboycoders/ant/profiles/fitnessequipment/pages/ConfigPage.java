@@ -15,10 +15,10 @@ import static org.cowboycoders.ant.profiles.BitManipulation.*;
  */
 public class ConfigPage implements AntPage {
 
-    private static final int USER_WEIGHT_OFFSET = 2;
-    private static final int BIKE_WEIGHT_OFFSET = 5;
-    private static final int WHEEL_DIAMETER_OFFSET = 7;
-    private static final int GEAR_RATIO_OFFSET = 8;
+    private static final int USER_WEIGHT_OFFSET = 1;
+    private static final int BIKE_WEIGHT_OFFSET = 4;
+    private static final int WHEEL_DIAMETER_OFFSET = 6;
+    private static final int GEAR_RATIO_OFFSET = 7;
     private final Config config;
 
     public Config getConfig() {

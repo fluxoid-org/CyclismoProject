@@ -14,10 +14,10 @@ public class TrackResistance implements AntPage {
 
     private final BigDecimal DEFAULT_ROLLING_RESISTANCE = new BigDecimal(0.004);
     private final BigDecimal DEFAULT_GRADIENT = new BigDecimal(0.00);
-    private static final int GRADIENT_OFFSET = 6;
-    private static final int ROLLING_OFFSET = 8;
+    private static final int GRADIENT_OFFSET = 5;
+    private static final int ROLLING_OFFSET = 7;
     private final BigDecimal gradient;
-    private final BigDecimal coefficentRollingResistance;
+    private final BigDecimal coefficientRollingResistance;
 
     public TrackResistance(byte[] packet) {
         int gradRaw = BitManipulation.UnsignedNumFrom2LeBytes(packet, GRADIENT_OFFSET);
@@ -29,10 +29,10 @@ public class TrackResistance implements AntPage {
         }
         int rollingRaw = BitManipulation.UnsignedNumFrom1LeByte(packet[ROLLING_OFFSET]);
         if (rollingRaw != BitManipulation.UNSIGNED_INT8_MAX) {
-            coefficentRollingResistance = new BigDecimal(rollingRaw)
+            coefficientRollingResistance = new BigDecimal(rollingRaw)
                     .divide(new BigDecimal(20000), 5, RoundingMode.HALF_UP);
         } else {
-            coefficentRollingResistance = DEFAULT_ROLLING_RESISTANCE;
+            coefficientRollingResistance = DEFAULT_ROLLING_RESISTANCE;
         }
 
 
@@ -49,7 +49,7 @@ public class TrackResistance implements AntPage {
      * Used to calculate resistance due to friction. In range: 0 - 0.0127, resolution: 5x10^-5
      * @return
      */
-    public BigDecimal getCoefficentRollingResistance() {
-        return coefficentRollingResistance;
+    public BigDecimal getCoefficientRollingResistance() {
+        return coefficientRollingResistance;
     }
 }

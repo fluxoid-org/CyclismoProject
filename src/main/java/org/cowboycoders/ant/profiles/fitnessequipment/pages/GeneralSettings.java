@@ -15,9 +15,9 @@ import static org.cowboycoders.ant.profiles.BitManipulation.UnsignedNumFrom2LeBy
  */
 public class GeneralSettings extends CommonPageData implements AntPage {
 
-    private static final int CYCLE_LENGTH_OFFSET = 4;
-    private static final int INCLINE_OFFSET = 5;
-    private static final int RESISTANCE_OFFSET = 7;
+    private static final int CYCLE_LENGTH_OFFSET = 3;
+    private static final int INCLINE_OFFSET = 4;
+    private static final int RESISTANCE_OFFSET = 6;
 
     private final BigDecimal cycleLength;
     private final BigDecimal incline;

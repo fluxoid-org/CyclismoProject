@@ -8,8 +8,8 @@ import static org.cowboycoders.ant.profiles.BitManipulation.*;
  */
 public class BikeData extends CommonPageData {
 
-    public static final int CADENCE_OFFSET = 5;
-    public static final int POWER_OFFSET = 6;
+    public static final int CADENCE_OFFSET = 4;
+    public static final int POWER_OFFSET = 5;
 
     /**
      * @return in rpm

@@ -14,8 +14,8 @@ import static org.cowboycoders.ant.profiles.BitManipulation.UnsignedNumFrom2LeBy
  */
 public class CapabilitiesPage implements AntPage {
 
-    private static final int MAX_RESISTANCE_OFFSET = 6;
-    private static final int FLAGS_OFFSET = 8;
+    private static final int MAX_RESISTANCE_OFFSET = 5;
+    private static final int FLAGS_OFFSET = 7;
     public static final int RESISTANCE_MASK = 0x1;
     public static final int POWER_MASK = 0x2;
     public static final int SIM_MASK = 0x4;

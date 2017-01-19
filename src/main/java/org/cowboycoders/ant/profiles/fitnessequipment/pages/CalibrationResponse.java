@@ -19,11 +19,11 @@ public class CalibrationResponse implements AntPage {
 
     private static final int OFFSET_FLAG__MASK = 0x40;
     private static final int SPINDOWN_FLAG_MASK = 0x80;
-    private static final int SPINDOWN_FLAG_OFFSET = 2;
-    private static final int SPINDOWN_OFFSET = 7;
-    private static final int OFFSET_OFFSET = 5;
-    private static final int OFFSET_FLAG_OFFSET = 2;
-    private static final int TEMP_OFFSET = 4;
+    private static final int SPINDOWN_FLAG_OFFSET = 1;
+    private static final int SPINDOWN_OFFSET = 6;
+    private static final int OFFSET_OFFSET = 4;
+    private static final int OFFSET_FLAG_OFFSET = 1;
+    private static final int TEMP_OFFSET = 3;
 
 
     public boolean isZeroOffsetSuccess() {

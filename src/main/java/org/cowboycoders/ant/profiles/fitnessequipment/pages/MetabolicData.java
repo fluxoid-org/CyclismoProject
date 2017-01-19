@@ -12,11 +12,11 @@ import static org.cowboycoders.ant.profiles.BitManipulation.*;
  */
 public class MetabolicData extends CommonPageData {
 
-    private static final int META_OFFSET = 8;
+    private static final int META_OFFSET = 7;
     private static final int HAS_CALORIES_MASK = 0x1;
-    private static final int CALORIES_OFFSET = 7;
-    private static final int INSTANT_METABOLIC_EQUIVALENTS_OFFSET = 3;
-    private static final int INSTANT_CALORIE_OFFSET = 5;
+    private static final int CALORIES_OFFSET = 6;
+    private static final int INSTANT_METABOLIC_EQUIVALENTS_OFFSET = 2;
+    private static final int INSTANT_CALORIE_OFFSET = 4;
 
     private final boolean caloriesAvailable;
     private final Integer calorieCounter;

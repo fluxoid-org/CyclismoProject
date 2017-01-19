@@ -17,10 +17,10 @@ import static org.cowboycoders.ant.profiles.BitManipulation.*;
 public class TrainerData extends CommonPageData implements PowerOnlyDecodable {
 
     private static final long TIMEOUT_DELTA = TimeUnit.SECONDS.toNanos(12);
-    public static final int POWER_OFFSET = 4;
-    public static final int EVENT_OFFSET = 2;
-    public static final int INSTANT_POWER_OFFSET = 6;
-    public static final int CADENCE_OFFSET = 3;
+    public static final int POWER_OFFSET = 3;
+    public static final int EVENT_OFFSET = 1;
+    public static final int INSTANT_POWER_OFFSET = 5;
+    public static final int CADENCE_OFFSET = 2;
 
     private final int power;
     private final int instantPower;

@@ -12,7 +12,7 @@ import java.math.RoundingMode;
  */
 public class TargetPower implements AntPage {
 
-    private static final int POWER_OFFSET = 7;
+    private static final int POWER_OFFSET = 6;
     private final BigDecimal targetPower;
 
     public TargetPower(byte[] packet) {

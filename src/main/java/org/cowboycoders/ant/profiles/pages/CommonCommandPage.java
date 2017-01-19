@@ -10,10 +10,10 @@ import java.util.Arrays;
  * Created by fluxoid on 17/01/17.
  */
 public class CommonCommandPage implements AntPage {
-    private static final int COMMAND_OFFSET = 2;
-    private static final int SEQUENCE_OFFSET = 3;
-    private static final int STATUS_OFFSET = 4;
-    private static final int RESPONSE_OFFSET = 5;
+    private static final int COMMAND_OFFSET = 1;
+    private static final int SEQUENCE_OFFSET = 2;
+    private static final int STATUS_OFFSET = 3;
+    private static final int RESPONSE_OFFSET = 4;
     private static final int RESPONSE_LENGTH = 4;
     private static final int RESPONSE_END = RESPONSE_OFFSET + RESPONSE_LENGTH;
 

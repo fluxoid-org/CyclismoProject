@@ -55,15 +55,15 @@ public abstract class CommonPageData {
     private final Defines.EquipmentType equipmentType;
 
 
-    private static final int LAP_OFFSET = 8;
+    private static final int LAP_OFFSET = 7;
     private static final int LAP_MASK = 0x80;
     private static final int STATE_MASK = 0x70;
     private static final int STATE_SHIFT = 4;
-    private static final int STATE_OFFSET = 8;
-    private static final int TYPE_FLAG_OFFSET = 1;
+    private static final int STATE_OFFSET = 7;
+    private static final int TYPE_FLAG_OFFSET = 0;
     private static final int TYPE_FLAG = 16;
     private static final int TYPE_MASK = 0x1F;
-    private static final int TYPE_OFFSET = 2;
+    private static final int TYPE_OFFSET = 1;
 
     private static boolean intToBoolean(final int n) {
         return n != 0;

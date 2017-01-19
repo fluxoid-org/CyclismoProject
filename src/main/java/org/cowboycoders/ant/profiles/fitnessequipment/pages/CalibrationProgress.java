@@ -16,11 +16,11 @@ public class CalibrationProgress  implements AntPage {
 
     private static final int OFFSET_IN_PROGRESS_MASK = 0x40;
     private static final int SPINDOWN_IN_PROGRESS_MASK = 0x80;
-    private static final int CONDITION_OFFSET = 3;
-    private static final int FLAG_OFFSET = 2;
-    private static final int TEMP_OFFSET = 4;
-    private static final int SPEED_OFFSET = 5;
-    private static final int SPINDOWN_OFFSET = 7;
+    private static final int CONDITION_OFFSET = 2;
+    private static final int FLAG_OFFSET = 1;
+    private static final int TEMP_OFFSET = 3;
+    private static final int SPEED_OFFSET = 4;
+    private static final int SPINDOWN_OFFSET = 6;
 
     private final Defines.SpeedCondition speedState;
     private final Defines.TemperatureCondition tempState;

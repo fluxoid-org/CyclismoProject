@@ -15,11 +15,11 @@ import static org.cowboycoders.ant.profiles.BitManipulation.*;
  */
 public class TorqueData extends CommonPageData implements AntPage, TorqueDecodable, DistanceDecodable, SpeedDecodable {
 
-    private static final int EVENT_OFFSET = 2;
-    private static final int ROTATION_OFFSET = 3;
-    private static final int PERIOD_OFFSET = 4;
-    private static final int TORQUE_OFFSET = 6;
-    private static final int SOURCE_OFFSET = 1;
+    private static final int EVENT_OFFSET = 1;
+    private static final int ROTATION_OFFSET = 2;
+    private static final int PERIOD_OFFSET = 3;
+    private static final int TORQUE_OFFSET = 5;
+    private static final int SOURCE_OFFSET = 0;
     private static final long TIMEOUT_DELTA = TimeUnit.SECONDS.toNanos(12);
 
     private final int events;

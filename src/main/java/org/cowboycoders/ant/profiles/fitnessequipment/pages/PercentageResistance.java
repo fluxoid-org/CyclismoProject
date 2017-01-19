@@ -11,11 +11,11 @@ import java.math.BigDecimal;
  */
 public class PercentageResistance implements AntPage {
 
-    private static final int RESITANCE_OFFSET = 8;
+    private static final int RESISTANCE_OFFSET = 7;
     private final BigDecimal resistance;
 
     public PercentageResistance(byte[] packet) {
-        int raw = BitManipulation.UnsignedNumFrom1LeByte(packet[RESITANCE_OFFSET]);
+        int raw = BitManipulation.UnsignedNumFrom1LeByte(packet[RESISTANCE_OFFSET]);
         resistance = new BigDecimal(raw).divide(new BigDecimal(2));
     }
 
