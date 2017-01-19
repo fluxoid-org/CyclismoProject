@@ -47,7 +47,7 @@ public class CommonCommandPage implements AntPage {
 
     public static byte [] encode(int lastCommandPage, int lastSequenceNumber, Defines.GenericCommandStatus status, final byte [] response) {
         // -1 offset from decode is becuase we do not include the msg id
-        final byte [] array = new byte[9];
+        final byte [] array = new byte[8];
         array[0] = 71;
         array[1] = (byte)(0xFF & lastCommandPage);
         array[2] = (byte)(0xFF & lastSequenceNumber);

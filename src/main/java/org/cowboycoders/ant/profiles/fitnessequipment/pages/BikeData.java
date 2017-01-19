@@ -9,6 +9,7 @@ import static org.cowboycoders.ant.profiles.BitManipulation.*;
 public class BikeData extends CommonPageData {
 
     public static final int CADENCE_OFFSET = 5;
+    public static final int POWER_OFFSET = 6;
 
     /**
      * @return in rpm
@@ -36,7 +37,7 @@ public class BikeData extends CommonPageData {
         } else {
             cadence = 0;
         }
-        final int powerRaw = UnsignedNumFrom2LeBytes(data, 6);
+        final int powerRaw = UnsignedNumFrom2LeBytes(data, POWER_OFFSET);
         if (powerRaw != UNSIGNED_INT16_MAX) {
             power = powerRaw;
         } else {
