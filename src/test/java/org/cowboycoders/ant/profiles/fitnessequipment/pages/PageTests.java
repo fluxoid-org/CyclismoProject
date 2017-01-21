@@ -115,6 +115,31 @@ public class PageTests {
 
     }
 
+    @Test
+    public void encodeDecodeCalibrationInProgress() {
+        final BigDecimal temp =  new BigDecimal(75.5);
+        final BigDecimal speed = new BigDecimal(25.5);
+        final int spinDown = 2000; //ms
+        byte [] data = new byte[8];
+        new CalibrationProgress.CalibrationProgressPayload()
+                .setOffsetPending(true)
+                .setSpinDownPending(true)
+                .setTargetSpeed(speed)
+                .setTemp(temp)
+                .setTargetSpinDownTime(spinDown)
+                .setTempState(Defines.TemperatureCondition.CURRENT_TEMPERATURE_OK)
+                .setSpeedState(Defines.SpeedCondition.CURRENT_SPEED_OK)
+                .encode(data);
+        CalibrationProgress page = new CalibrationProgress(data);
+        assertEquals(true, page.isOffsetPending());
+        assertEquals(true, page.isSpinDownPending());
+        assertEquals(speed.doubleValue(), page.getTargetSpeed().doubleValue(), 0.1);
+        assertEquals(temp.doubleValue(), page.getTemp().doubleValue(), 0.5);
+        assertEquals(spinDown, (long) page.getTargetSpinDownTime());
+        assertEquals(Defines.SpeedCondition.CURRENT_SPEED_OK, page.getSpeedState());
+        assertEquals(Defines.TemperatureCondition.CURRENT_TEMPERATURE_OK, page.getTempState());
+    }
+
 
 
 

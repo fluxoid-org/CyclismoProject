@@ -4,6 +4,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import static org.cowboycoders.ant.profiles.BitManipulation.PutUnsignedNumInUpper2BitsOfUpperNibble;
+import static org.cowboycoders.ant.profiles.BitManipulation.UnsignedNumFromUpper2BitsOfUpperNibble;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -34,5 +36,13 @@ public class BitManipulationTests {
     public void testClearBitsOutofRangeLower() {
         thrown.expect(IllegalArgumentException.class);
         BitManipulation.clearMaskedBits((byte) 0xff, -1);
+    }
+
+    @Test
+    public void test1() {
+        byte [] data = new byte[1];
+        final int testVal = 2;
+        PutUnsignedNumInUpper2BitsOfUpperNibble(data, 0, testVal);
+        assertEquals(testVal, UnsignedNumFromUpper2BitsOfUpperNibble(data[0]));
     }
 }

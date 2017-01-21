@@ -121,6 +121,16 @@ public class BitManipulation
         return 0x3 & b >> 6;
     }
 
+    public static void PutUnsignedNumInUpper2BitsOfUpperNibble(final byte[] array, final int offset, int n) {
+        if (n < 0 || n > 0x3) { throw new IllegalArgumentException("number out of range");};
+        array[offset] |= n << 6;
+    }
+
+    public static void PutUnsignedNumInLower2BitsOfUpperNibble(final byte[] array, final int offset, int n) {
+        if (n < 0 || n > 0x3) { throw new IllegalArgumentException("number out of range");};
+        array[offset] |= n << 4;
+    }
+
     public static int UnsignedNumFromUpper4Bits(final byte b) {
         return 0xF & b >> 4;
     }
@@ -134,6 +144,14 @@ public class BitManipulation
             throw new IllegalArgumentException("mask out of range");
         }
         return (byte) ((b & 0xff) & (~mask));
+    }
+
+    public static void setFlag(boolean flag, byte[] packet, int off, int mask) {
+        if (flag) {
+            packet[off] |= mask;
+        } else {
+            packet[off] = clearMaskedBits(packet[off], mask);
+        }
     }
 
 }

@@ -70,6 +70,105 @@ public class CalibrationProgress  implements AntPage {
     private final BigDecimal targetSpeed;
     private final BigDecimal temp;
 
+    public static class CalibrationProgressPayload {
+        private Defines.SpeedCondition speedState = Defines.SpeedCondition.UNRECOGNIZED;
+        private Defines.TemperatureCondition tempState = Defines.TemperatureCondition.UNRECOGNIZED;
+        private boolean offsetPending = false;
+        private boolean spinDownPending = false;
+        private Integer targetSpinDownTime = null;
+        private BigDecimal targetSpeed = null;
+        private BigDecimal temp = null;
+
+        public Defines.SpeedCondition getSpeedState() {
+            return speedState;
+        }
+
+        public CalibrationProgressPayload setSpeedState(Defines.SpeedCondition speedState) {
+            this.speedState = speedState;
+            return this;
+        }
+
+        public Defines.TemperatureCondition getTempState() {
+            return tempState;
+        }
+
+        public CalibrationProgressPayload setTempState(Defines.TemperatureCondition tempState) {
+            this.tempState = tempState;
+            return this;
+        }
+
+        public boolean isOffsetPending() {
+            return offsetPending;
+        }
+
+        public CalibrationProgressPayload setOffsetPending(boolean offsetPending) {
+            this.offsetPending = offsetPending;
+            return this;
+        }
+
+        public boolean isSpinDownPending() {
+            return spinDownPending;
+        }
+
+        public CalibrationProgressPayload setSpinDownPending(boolean spinDownPending) {
+            this.spinDownPending = spinDownPending;
+            return this;
+        }
+
+        public Integer getTargetSpinDownTime() {
+            return targetSpinDownTime;
+        }
+
+        public CalibrationProgressPayload setTargetSpinDownTime(Integer targetSpinDownTime) {
+            this.targetSpinDownTime = targetSpinDownTime;
+            return this;
+        }
+
+        public BigDecimal getTargetSpeed() {
+            return targetSpeed;
+        }
+
+        public CalibrationProgressPayload setTargetSpeed(BigDecimal targetSpeed) {
+            this.targetSpeed = targetSpeed;
+            return this;
+        }
+
+        public BigDecimal getTemp() {
+            return temp;
+        }
+
+        public CalibrationProgressPayload setTemp(BigDecimal temp) {
+            this.temp = temp;
+            return this;
+        }
+
+        public void encode(final byte [] packet) {
+            setFlag(offsetPending, packet, FLAG_OFFSET, OFFSET_IN_PROGRESS_MASK);
+            setFlag(spinDownPending, packet, FLAG_OFFSET, SPINDOWN_IN_PROGRESS_MASK);
+            PutUnsignedNumInUpper2BitsOfUpperNibble(packet, CONDITION_OFFSET, speedState.getIntValue());
+            PutUnsignedNumInLower2BitsOfUpperNibble(packet, CONDITION_OFFSET, tempState.getIntValue());
+            if (temp == null) {
+                packet[TEMP_OFFSET] = (byte) (0xff & UNSIGNED_INT8_MAX);
+            } else {
+                BigDecimal n = temp.add(new BigDecimal(25)).multiply(new BigDecimal(2)).setScale(0, RoundingMode.HALF_UP);
+                packet[TEMP_OFFSET] = n.byteValue();
+            }
+            if (targetSpeed == null) {
+                PutUnsignedNumIn2LeBytes(packet, SPEED_OFFSET, UNSIGNED_INT16_MAX);
+            } else {
+                BigDecimal n = targetSpeed.multiply(new BigDecimal(1000)).setScale(0, RoundingMode.HALF_UP);
+                PutUnsignedNumIn2LeBytes(packet, SPEED_OFFSET, (int) n.longValue());
+            }
+            if (targetSpinDownTime == null) {
+                PutUnsignedNumIn2LeBytes(packet, SPINDOWN_OFFSET, UNSIGNED_INT16_MAX);
+            } else {
+                PutUnsignedNumIn2LeBytes(packet, SPINDOWN_OFFSET, targetSpinDownTime);
+            }
+        }
+
+
+    }
+
 
 
     public CalibrationProgress(byte[] data) {
