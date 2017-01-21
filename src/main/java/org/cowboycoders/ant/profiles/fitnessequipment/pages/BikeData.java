@@ -1,5 +1,7 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
+import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
+
 import static org.cowboycoders.ant.profiles.BitManipulation.*;
 
 /**
@@ -42,6 +44,50 @@ public class BikeData extends CommonPageData {
             power = powerRaw;
         } else {
             power = 0;
+        }
+    }
+
+    public static class BikeDataPayload  extends CommonPagePayload {
+        private int power = 0;
+        private int cadence = 0;
+
+        public BikeDataPayload setPower(int power) {
+            this.power = power;
+            return this;
+        }
+
+        public BikeDataPayload setCadence(int cadence) {
+            this.cadence = cadence;
+            return this;
+        }
+
+        public int getPower() {
+            return power;
+        }
+
+        public int getCadence() {
+            return cadence;
+        }
+
+        @Override
+        public BikeDataPayload setLapFlag(boolean state) {
+            return (BikeDataPayload) super.setLapFlag(state);
+        }
+
+        @Override
+        public BikeDataPayload setType(Defines.EquipmentType type) {
+            return (BikeDataPayload) super.setType(type);
+        }
+
+        @Override
+        public BikeDataPayload setState (Defines.EquipmentState state) {
+            return (BikeDataPayload) super.setState(state);
+        }
+
+        public void encode(final byte[] packet) {
+            super.encode(packet);
+            PutUnsignedNumIn2LeBytes(packet, POWER_OFFSET, power);
+            PutUnsignedNumIn1LeBytes(packet, CADENCE_OFFSET, cadence);
         }
     }
 }

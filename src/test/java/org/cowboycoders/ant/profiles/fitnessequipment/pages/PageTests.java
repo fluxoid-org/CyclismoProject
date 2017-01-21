@@ -1,6 +1,7 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
 import org.cowboycoders.ant.profiles.fitnessequipment.Config;
+import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -90,6 +91,28 @@ public class PageTests {
         assertEquals(coeff, page.getWindResitanceCoefficent().doubleValue(), 0.01);
         assertEquals(windspeed, page.getWindSpeed());
         assertEquals(draftingFactor, page.getDraftingFactor().doubleValue(), 0.001);
+    }
+
+    @Test
+    public void testBikeData() {
+        // encode-decode test
+        final int cadence = 123;
+        final int power = 755;
+        byte [] data = new byte[8];
+        new BikeData.BikeDataPayload()
+                .setLapFlag(true)
+                .setCadence(cadence)
+                .setState(Defines.EquipmentState.READY)
+                .setPower(power)
+                .setType(Defines.EquipmentType.BIKE)
+                .encode(data);
+        BikeData page = new BikeData(data);
+        assertEquals(cadence, page.getCadence());
+        assertEquals(power, page.getPower());
+        assertEquals(Defines.EquipmentState.READY, page.getState());
+        assertTrue(page.isLapToggled());
+        assertEquals(Defines.EquipmentType.BIKE, page.getEquipmentType());
+
     }
 
 

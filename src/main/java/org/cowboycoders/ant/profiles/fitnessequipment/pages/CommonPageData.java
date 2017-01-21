@@ -2,6 +2,8 @@ package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
 
+import static org.cowboycoders.ant.profiles.BitManipulation.clearMaskedBits;
+
 /**
  * Created by fluxoid on 29/12/16.
  */
@@ -64,6 +66,52 @@ public abstract class CommonPageData {
     private static final int TYPE_FLAG = 16;
     private static final int TYPE_MASK = 0x1F;
     private static final int TYPE_OFFSET = 1;
+
+    public static class CommonPagePayload {
+        private boolean lapFlag = false;
+        private Defines.EquipmentState state = Defines.EquipmentState.UNRECOGNIZED;
+        private Defines.EquipmentType type = Defines.EquipmentType.UNKNOWN;
+
+        public boolean isLapFlagSet() {
+            return lapFlag;
+        }
+
+        public Defines.EquipmentState getState() {
+            return state;
+        }
+
+        public Defines.EquipmentType getType() {
+            return type;
+        }
+
+        public CommonPagePayload setLapFlag(boolean lapflag) {
+            this.lapFlag = lapflag;
+            return this;
+        }
+
+        public CommonPagePayload setState(Defines.EquipmentState state) {
+            this.state = state;
+            return this;
+        }
+
+        public CommonPagePayload setType(Defines.EquipmentType type) {
+            this.type = type;
+            return this;
+        }
+
+        public void encode(final byte[] packet) {
+            if (lapFlag) {
+                packet[LAP_OFFSET] |= LAP_MASK;
+            } else {
+                packet[LAP_OFFSET] = clearMaskedBits(packet[LAP_OFFSET], LAP_MASK);
+            }
+            int stateRaw = (state.getIntValue() << STATE_SHIFT) & STATE_MASK;
+            packet[STATE_OFFSET] |= (byte) (0xff & stateRaw);
+            // we may need to make this configurable
+            packet[TYPE_FLAG_OFFSET] = TYPE_FLAG;
+            packet[TYPE_OFFSET] = (byte) (0xff & (type.getIntValue() & TYPE_MASK));
+        }
+    }
 
     private static boolean intToBoolean(final int n) {
         return n != 0;

@@ -129,4 +129,11 @@ public class BitManipulation
 
     public static boolean booleanFromU8(byte b, int mask) {return intToBoolean(b & mask);}
 
+    public static byte clearMaskedBits(byte b, int mask) {
+        if (mask < 0 || mask > 255) {
+            throw new IllegalArgumentException("mask out of range");
+        }
+        return (byte) ((b & 0xff) & (~mask));
+    }
+
 }
