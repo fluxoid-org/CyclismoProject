@@ -48,8 +48,8 @@ public class BikeData extends CommonPageData {
     }
 
     public static class BikeDataPayload  extends CommonPagePayload {
-        private int power = 0;
-        private int cadence = 0;
+        private Integer power;
+        private Integer cadence;
 
         public BikeDataPayload setPower(int power) {
             this.power = power;
@@ -86,8 +86,10 @@ public class BikeData extends CommonPageData {
 
         public void encode(final byte[] packet) {
             super.encode(packet);
-            PutUnsignedNumIn2LeBytes(packet, POWER_OFFSET, power);
-            PutUnsignedNumIn1LeBytes(packet, CADENCE_OFFSET, cadence);
+            int p = power == null ? UNSIGNED_INT16_MAX : power;
+            int c = cadence == null ? UNSIGNED_INT8_MAX: cadence;
+            PutUnsignedNumIn2LeBytes(packet, POWER_OFFSET, p);
+            PutUnsignedNumIn1LeBytes(packet, CADENCE_OFFSET, c);
         }
     }
 }
