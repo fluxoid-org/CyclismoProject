@@ -5,6 +5,7 @@ import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
 import org.cowboycoders.ant.profiles.fitnessequipment.Capabilities;
 import org.cowboycoders.ant.profiles.fitnessequipment.CapabilitiesBuilder;
 
+import org.cowboycoders.ant.profiles.pages.CommonCommandPage;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -183,6 +184,99 @@ public class PageTests {
          assertTrue(page.getCapabilites().isSimulationModeSupported());
          assertTrue(page.getCapabilites().isTargetPowerModeSupported());
 
+    }
+
+    @Test
+    public void encodeDecodeWindStatus() {
+        Command.WindStatusBuilder builder = new Command.WindStatusBuilder();
+        final double draftingFactor = 1.00;
+        final double windResist = 0.51;
+        final int windSpeed = -127;
+        final int seqNum = 123;
+        builder.setDraftingFactor(new BigDecimal(1.00));
+        builder.setWindResistanceCoefficient(new BigDecimal(windResist));
+        builder.setWindSpeed(windSpeed);
+        CommonCommandPage.CommandStatus status = new CommonCommandPage.CommandStatusBuilder()
+                .setStatus(Defines.Status.PASS)
+                .setLastReceivedSequenceNumber(seqNum)
+                .createCommandStatus();
+        builder.setStatus(status);
+        byte [] packet = new byte[8];
+        builder.encode(packet);
+        Command page = new Command(packet);
+        Command.WindStatus recv = (Command.WindStatus) page.getFitnessStatus();
+        assertEquals(draftingFactor, recv.getDraftingFactor().doubleValue(), 0.001);
+        assertEquals(windResist, recv.getWindResistanceCoefficient().doubleValue(), 0.001);
+        assertEquals(windSpeed, (int) recv.getWindSpeed());
+        assertEquals(Defines.Status.PASS, recv.getStatus());
+        assertEquals(seqNum, recv.getLastReceivedSequenceNumber());
+
+
+    }
+
+    @Test
+    public void encodeDecodeTerrainStatus() {
+        Command.TerrainStatusBuilder builder = new Command.TerrainStatusBuilder();
+        final double grade = 23.5;
+        final double coeff = 0.004;
+        final int seqNum = 123;
+        builder.setGrade(new BigDecimal(grade));
+        builder.setRollingResistanceCoefficient(new BigDecimal(coeff));
+        CommonCommandPage.CommandStatus status = new CommonCommandPage.CommandStatusBuilder()
+                .setStatus(Defines.Status.PASS)
+                .setLastReceivedSequenceNumber(seqNum)
+                .createCommandStatus();
+        builder.setStatus(status);
+        byte [] packet = new byte[8];
+        builder.encode(packet);
+        Command page = new Command(packet);
+        Command.TerrainStatus recv = (Command.TerrainStatus) page.getFitnessStatus();
+        assertEquals(grade, recv.getGrade().doubleValue(), 0.001);
+        assertEquals(coeff, recv.getRollingResistanceCoefficient().doubleValue(), 0.001);
+        assertEquals(Defines.Status.PASS, recv.getStatus());
+        assertEquals(seqNum, recv.getLastReceivedSequenceNumber());
+
+
+    }
+
+    @Test
+    public void encodeDecodeTargetPower() {
+        Command.TargetPowerStatusBuilder builder = new Command.TargetPowerStatusBuilder();
+        final int targetPower = 1337;
+        final int seqNum = 123;
+        builder.setTargetPower(new BigDecimal(targetPower));
+        CommonCommandPage.CommandStatus status = new CommonCommandPage.CommandStatusBuilder()
+                .setStatus(Defines.Status.PASS)
+                .setLastReceivedSequenceNumber(seqNum)
+                .createCommandStatus();
+        builder.setStatus(status);
+        byte [] packet = new byte[8];
+        builder.encode(packet);
+        Command page = new Command(packet);
+        Command.TargetPowerStatus recv = (Command.TargetPowerStatus) page.getFitnessStatus();
+        assertEquals((double) targetPower, recv.getTargetPower().doubleValue(), 0.01);
+        assertEquals(Defines.Status.PASS, recv.getStatus());
+        assertEquals(seqNum, recv.getLastReceivedSequenceNumber());
+    }
+
+    @Test
+    public void encodeDecodeResistance() {
+        Command.ResistanceStatusBuilder builder = new Command.ResistanceStatusBuilder();
+        final double resistance = 12.5;
+        final int seqNum = 123;
+        builder.setTotalResistance(new BigDecimal(resistance));
+        CommonCommandPage.CommandStatus status = new CommonCommandPage.CommandStatusBuilder()
+                .setStatus(Defines.Status.PASS)
+                .setLastReceivedSequenceNumber(seqNum)
+                .createCommandStatus();
+        builder.setStatus(status);
+        byte [] packet = new byte[8];
+        builder.encode(packet);
+        Command page = new Command(packet);
+        Command.ResistanceStatus recv = (Command.ResistanceStatus) page.getFitnessStatus();
+        assertEquals(resistance, recv.getTotalResistance().doubleValue(), 0.01);
+        assertEquals(Defines.Status.PASS, recv.getStatus());
+        assertEquals(seqNum, recv.getLastReceivedSequenceNumber());
     }
 
 
