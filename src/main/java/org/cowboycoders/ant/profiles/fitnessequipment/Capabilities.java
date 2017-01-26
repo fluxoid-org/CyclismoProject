@@ -16,7 +16,7 @@ public class Capabilities {
         this.targetPowerModeSupport = targetPowerModeSupport;
     }
 
-    public boolean isBasicResistanceModeSupport() {
+    public boolean isBasicResistanceModeSupported() {
         return basicResistanceModeSupport;
     }
 
@@ -24,11 +24,11 @@ public class Capabilities {
         return maximumResistance;
     }
 
-    public boolean isSimulationModeSupport() {
+    public boolean isSimulationModeSupported() {
         return simulationModeSupport;
     }
 
-    public boolean isTargetPowerModeSupport() {
+    public boolean isTargetPowerModeSupported() {
         return targetPowerModeSupport;
     }
 }

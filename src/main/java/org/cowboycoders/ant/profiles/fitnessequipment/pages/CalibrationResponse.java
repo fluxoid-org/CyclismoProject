@@ -4,12 +4,11 @@ import org.cowboycoders.ant.profiles.BitManipulation;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.List;
 
-import static org.cowboycoders.ant.profiles.BitManipulation.UNSIGNED_INT16_MAX;
-import static org.cowboycoders.ant.profiles.BitManipulation.UNSIGNED_INT8_MAX;
-import static org.cowboycoders.ant.profiles.BitManipulation.intToBoolean;
+import static org.cowboycoders.ant.profiles.BitManipulation.*;
 
 /**
  * Page 1
@@ -64,6 +63,91 @@ public class CalibrationResponse implements AntPage {
     private final Integer zeroOffset;
     private final Integer spinDownTime;
     private final BigDecimal temp;
+
+    public static class CalibrationResponsePayload {
+        private Integer zeroOffset = null;
+        private Integer spinDownTime = null;
+        private BigDecimal temp = null;
+        private boolean zeroOffsetSuccess = false;
+        private boolean spinDownSuccess = false;
+
+        public Integer getZeroOffset() {
+            return zeroOffset;
+        }
+
+        public CalibrationResponsePayload setZeroOffset(Integer zeroOffset) {
+            this.zeroOffset = zeroOffset;
+            return this;
+        }
+
+        public Integer getSpinDownTime() {
+            return spinDownTime;
+        }
+
+        public CalibrationResponsePayload setSpinDownTime(Integer spinDownTime) {
+            this.spinDownTime = spinDownTime;
+            return this;
+        }
+
+        public BigDecimal getTemp() {
+            return temp;
+        }
+
+        public CalibrationResponsePayload setTemp(BigDecimal temp) {
+            this.temp = temp;
+            return this;
+        }
+
+        public boolean isZeroOffsetSuccess() {
+            return zeroOffsetSuccess;
+        }
+
+        public CalibrationResponsePayload setZeroOffsetSuccess(boolean zeroOffsetSuccess) {
+            this.zeroOffsetSuccess = zeroOffsetSuccess;
+            return this;
+        }
+
+        public boolean isSpinDownSuccess() {
+            return spinDownSuccess;
+        }
+
+        public CalibrationResponsePayload setSpinDownSuccess(boolean spinDownSuccess) {
+            this.spinDownSuccess = spinDownSuccess;
+            return this;
+        }
+
+        public void encode(final byte[] packet) {
+            if (zeroOffsetSuccess) {
+                packet[OFFSET_FLAG_OFFSET] |= OFFSET_FLAG__MASK;
+            } else {
+                packet[OFFSET_FLAG_OFFSET] = clearMaskedBits(packet[OFFSET_FLAG_OFFSET], OFFSET_FLAG__MASK);
+            }
+            if (spinDownSuccess) {
+                packet[SPINDOWN_FLAG_OFFSET] |= SPINDOWN_FLAG_MASK;
+            } else {
+                packet[SPINDOWN_FLAG_OFFSET] = clearMaskedBits(packet[SPINDOWN_FLAG_OFFSET],SPINDOWN_FLAG_MASK);
+            }
+            if (temp == null) {
+                packet[TEMP_OFFSET] = (byte) (0xff & UNSIGNED_INT8_MAX);
+            } else {
+                BigDecimal n = temp.add(new BigDecimal(25))
+                        .multiply(new BigDecimal(2))
+                        .setScale(0, RoundingMode.HALF_UP);
+                packet[TEMP_OFFSET] = n.byteValue();
+            }
+            if (zeroOffset != null) {
+                PutUnsignedNumIn2LeBytes(packet, OFFSET_OFFSET, zeroOffset);
+            } else {
+                PutUnsignedNumIn2LeBytes(packet, OFFSET_OFFSET, UNSIGNED_INT16_MAX);
+            }
+            if (spinDownTime != null) {
+                PutUnsignedNumIn2LeBytes(packet, SPINDOWN_OFFSET, spinDownTime);
+            } else {
+                PutUnsignedNumIn2LeBytes(packet, SPINDOWN_OFFSET, UNSIGNED_INT16_MAX);
+
+            }
+        }
+    }
 
 
     public CalibrationResponse(byte[] packet) {

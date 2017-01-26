@@ -2,6 +2,9 @@ package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
 import org.cowboycoders.ant.profiles.fitnessequipment.Config;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
+import org.cowboycoders.ant.profiles.fitnessequipment.Capabilities;
+import org.cowboycoders.ant.profiles.fitnessequipment.CapabilitiesBuilder;
+
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -138,6 +141,48 @@ public class PageTests {
         assertEquals(spinDown, (long) page.getTargetSpinDownTime());
         assertEquals(Defines.SpeedCondition.CURRENT_SPEED_OK, page.getSpeedState());
         assertEquals(Defines.TemperatureCondition.CURRENT_TEMPERATURE_OK, page.getTempState());
+    }
+
+    @Test
+    public void encodeDecodeCalibrationResponse() {
+        final int spinDownTime = 1234;
+        final int zeroOffset = 5678;
+        final double temp = 75.5;
+        byte [] data = new byte[8];
+        new CalibrationResponse.CalibrationResponsePayload()
+                .setSpinDownSuccess(true)
+                .setZeroOffsetSuccess(true)
+                .setSpinDownTime(spinDownTime)
+                .setZeroOffset(zeroOffset)
+                .setTemp(new BigDecimal(temp))
+                .encode(data);
+        CalibrationResponse page = new CalibrationResponse(data);
+        assertEquals(temp, page.getTemp().doubleValue(), 0.25);
+        assertEquals(spinDownTime, (int) page.getSpinDownTime());
+        assertEquals(zeroOffset, (int) page.getZeroOffset());
+        assertTrue(page.isZeroOffsetSuccess());
+        assertTrue(page.isSpinDownSuccess());
+    }
+
+    @Test
+    public void encodeDecodeCapabilities() {
+        final int maxResistance = 1234;
+        Capabilities cap = new CapabilitiesBuilder()
+                .setMaximumResistance(maxResistance)
+                .setBasicResistanceModeSupport(true)
+                .setSimulationModeSupport(true)
+                .setTargetPowerModeSupport(true)
+                .createCapabilities();
+        byte [] packet = new byte[8];
+         new CapabilitiesPage.CapabilitiesPayload()
+                .setCapabilites(cap)
+                .encode(packet);
+         CapabilitiesPage page = new CapabilitiesPage(packet);
+         assertEquals(maxResistance, (int) page.getCapabilites().getMaximumResistance());
+         assertTrue(page.getCapabilites().isBasicResistanceModeSupported());
+         assertTrue(page.getCapabilites().isSimulationModeSupported());
+         assertTrue(page.getCapabilites().isTargetPowerModeSupported());
+
     }
 
 

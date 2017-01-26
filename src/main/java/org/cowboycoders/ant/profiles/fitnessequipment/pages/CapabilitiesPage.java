@@ -4,9 +4,7 @@ import org.cowboycoders.ant.profiles.fitnessequipment.Capabilities;
 import org.cowboycoders.ant.profiles.fitnessequipment.CapabilitiesBuilder;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 
-import static org.cowboycoders.ant.profiles.BitManipulation.UNSIGNED_INT16_MAX;
-import static org.cowboycoders.ant.profiles.BitManipulation.UnsignedNumFrom1LeByte;
-import static org.cowboycoders.ant.profiles.BitManipulation.UnsignedNumFrom2LeBytes;
+import static org.cowboycoders.ant.profiles.BitManipulation.*;
 
 /**
  * p 54
@@ -23,6 +21,38 @@ public class CapabilitiesPage implements AntPage {
 
     public Capabilities getCapabilites() {
         return capabilites;
+    }
+
+    public static class CapabilitiesPayload {
+        private Capabilities capabilites = new CapabilitiesBuilder().createCapabilities();
+
+        public Capabilities getCapabilites() {
+            return capabilites;
+        }
+
+        public CapabilitiesPayload setCapabilites(Capabilities capabilites) {
+            this.capabilites = capabilites;
+            return this;
+        }
+
+        public void encode(byte[] packet) {
+            if (capabilites.getMaximumResistance() != null) {
+                PutUnsignedNumIn2LeBytes(packet, MAX_RESISTANCE_OFFSET, capabilites.getMaximumResistance());
+            } else {
+                PutUnsignedNumIn2LeBytes(packet, MAX_RESISTANCE_OFFSET, UNSIGNED_INT16_MAX);
+            }
+            byte flags = 0;
+            if (capabilites.isBasicResistanceModeSupported()) {
+                flags |= RESISTANCE_MASK;
+            }
+            if (capabilites.isSimulationModeSupported()) {
+                flags |= SIM_MASK;
+            }
+            if (capabilites.isTargetPowerModeSupported()) {
+                flags |= POWER_MASK;
+            }
+            packet[FLAGS_OFFSET] = flags;
+        }
     }
 
     public CapabilitiesPage(byte[] packet) {
