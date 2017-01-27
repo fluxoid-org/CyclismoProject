@@ -14,6 +14,8 @@ import static org.cowboycoders.ant.profiles.BitManipulation.*;
  */
 public class CalibrationProgress  implements AntPage {
 
+    public static final int PAGE_NUMBER = 2;
+
     private static final int OFFSET_IN_PROGRESS_MASK = 0x40;
     private static final int SPINDOWN_IN_PROGRESS_MASK = 0x80;
     private static final int CONDITION_OFFSET = 2;
@@ -143,6 +145,7 @@ public class CalibrationProgress  implements AntPage {
         }
 
         public void encode(final byte [] packet) {
+            packet[0] = PAGE_NUMBER;
             setFlag(offsetPending, packet, FLAG_OFFSET, OFFSET_IN_PROGRESS_MASK);
             setFlag(spinDownPending, packet, FLAG_OFFSET, SPINDOWN_IN_PROGRESS_MASK);
             PutUnsignedNumInUpper2BitsOfUpperNibble(packet, CONDITION_OFFSET, speedState.getIntValue());

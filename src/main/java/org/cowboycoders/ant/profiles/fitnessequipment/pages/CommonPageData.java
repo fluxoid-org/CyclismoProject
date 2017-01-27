@@ -80,6 +80,7 @@ public abstract class CommonPageData {
             return state;
         }
 
+        // FIXME: this seems to want to be in the GeneralData class
         public Defines.EquipmentType getType() {
             return type;
         }

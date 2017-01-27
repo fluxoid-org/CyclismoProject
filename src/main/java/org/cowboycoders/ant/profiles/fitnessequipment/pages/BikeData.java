@@ -12,6 +12,7 @@ public class BikeData extends CommonPageData {
 
     public static final int CADENCE_OFFSET = 4;
     public static final int POWER_OFFSET = 5;
+    public static final int PAGE_NUMBER = 12;
 
     /**
      * @return in rpm
@@ -86,6 +87,7 @@ public class BikeData extends CommonPageData {
 
         public void encode(final byte[] packet) {
             super.encode(packet);
+            packet[0] = PAGE_NUMBER;
             int p = power == null ? UNSIGNED_INT16_MAX : power;
             int c = cadence == null ? UNSIGNED_INT8_MAX: cadence;
             PutUnsignedNumIn2LeBytes(packet, POWER_OFFSET, p);

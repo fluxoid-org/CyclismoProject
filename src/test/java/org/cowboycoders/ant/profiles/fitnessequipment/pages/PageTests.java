@@ -108,7 +108,7 @@ public class PageTests {
                 .setCadence(cadence)
                 .setState(Defines.EquipmentState.READY)
                 .setPower(power)
-                .setType(Defines.EquipmentType.BIKE)
+                //.setType(Defines.EquipmentType.BIKE) setType only works on GeneralData
                 .encode(data);
         BikeData page = new BikeData(data);
         assertEquals(cadence, page.getCadence());
@@ -116,7 +116,6 @@ public class PageTests {
         assertEquals(Defines.EquipmentState.READY, page.getState());
         assertTrue(page.isLapToggled());
         assertEquals(Defines.EquipmentType.BIKE, page.getEquipmentType());
-
     }
 
     @Test

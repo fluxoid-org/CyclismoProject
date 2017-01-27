@@ -16,6 +16,8 @@ import static org.cowboycoders.ant.profiles.BitManipulation.*;
  */
 public class CalibrationResponse implements AntPage {
 
+    public static final int PAGE_NUMBER = 1;
+
     private static final int OFFSET_FLAG__MASK = 0x40;
     private static final int SPINDOWN_FLAG_MASK = 0x80;
     private static final int SPINDOWN_FLAG_OFFSET = 1;
@@ -117,6 +119,7 @@ public class CalibrationResponse implements AntPage {
         }
 
         public void encode(final byte[] packet) {
+            packet[0] = PAGE_NUMBER;
             if (zeroOffsetSuccess) {
                 packet[OFFSET_FLAG_OFFSET] |= OFFSET_FLAG__MASK;
             } else {

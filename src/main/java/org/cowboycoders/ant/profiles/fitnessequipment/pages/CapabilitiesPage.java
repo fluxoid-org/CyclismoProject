@@ -12,6 +12,8 @@ import static org.cowboycoders.ant.profiles.BitManipulation.*;
  */
 public class CapabilitiesPage implements AntPage {
 
+    public static final int PAGE_NUMBER = 54;
+
     private static final int MAX_RESISTANCE_OFFSET = 5;
     private static final int FLAGS_OFFSET = 7;
     public static final int RESISTANCE_MASK = 0x1;
@@ -56,6 +58,7 @@ public class CapabilitiesPage implements AntPage {
     }
 
     public CapabilitiesPage(byte[] packet) {
+        packet[0] = PAGE_NUMBER;
         CapabilitiesBuilder builder = new CapabilitiesBuilder();
         int maxResitanceRaw = UnsignedNumFrom2LeBytes(packet, MAX_RESISTANCE_OFFSET);
         if (maxResitanceRaw != UNSIGNED_INT16_MAX) {
