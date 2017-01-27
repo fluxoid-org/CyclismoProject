@@ -1,5 +1,7 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
+import org.cowboycoders.ant.profiles.common.decode.interfaces.TimeDecodable;
+import org.cowboycoders.ant.profiles.common.utils.CounterUtils;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 
@@ -12,7 +14,9 @@ import static org.cowboycoders.ant.profiles.BitManipulation.*;
  * p16
  * Created by fluxoid on 02/01/17.
  */
-public class GeneralData extends CommonPageData implements AntPage {
+public class GeneralData extends CommonPageData implements AntPage, TimeDecodable {
+
+    public static int PAGE_NUMBER = 16;
 
     // these are counters that overflow
     private static final int TIME_OFFSET = 2;
@@ -24,6 +28,9 @@ public class GeneralData extends CommonPageData implements AntPage {
     private static final int HR_SOURCE_MASK = 0x3;
     private static final int DISTANCE_MASK = 0x4;
     private static final int VIRTUAL_SPEED_MASK = 0x8;
+
+    private static final int TYPE_MASK = 0x1F;
+    private static final int TYPE_OFFSET = 1;
 
     public boolean isDistanceAvailable() {
         return distanceAvailable;
@@ -62,6 +69,165 @@ public class GeneralData extends CommonPageData implements AntPage {
     private final Defines.HeartRateDataSource heartRateSource;
     private final boolean usingVirtualSpeed;
 
+    private final Defines.EquipmentType type;
+
+    public Defines.EquipmentType getType() {
+        return type;
+    }
+
+    @Override
+    public int getTicks() {
+        return timeElapsed;
+    }
+
+    @Override
+    public long getTicksDelta(TimeDecodable old) {
+        return CounterUtils.calcDelta(old.getTicks(), getTicks(), UNSIGNED_INT8_MAX);
+    }
+
+    @Override
+    public BigDecimal ticksToSeconds(long delta) {
+        return new BigDecimal(delta). divide(new BigDecimal(4), 2, RoundingMode.HALF_UP);
+    }
+
+    public static class GeneralDataPayload extends CommonPagePayload {
+
+        private boolean distanceAvailable = false;
+
+        private int timeElapsed = 0;
+        private Integer distanceCovered;
+        private BigDecimal speed;
+        private Integer heartRate;
+        private Defines.HeartRateDataSource heartRateSource;
+        private boolean usingVirtualSpeed;
+        private Defines.EquipmentType type;
+
+        public boolean isDistanceAvailable() {
+            return distanceAvailable;
+        }
+
+        public GeneralDataPayload setDistanceAvailable(boolean distanceAvailable) {
+            this.distanceAvailable = distanceAvailable;
+            return this;
+        }
+
+        public int getTimeElapsed() {
+            return timeElapsed;
+        }
+        
+        public GeneralDataPayload setTimeElapsed(BigDecimal seconds) {
+            timeElapsed = seconds.multiply(new BigDecimal(4)).setScale(0, RoundingMode.HALF_UP).intValue();
+            return this;
+        }
+
+        /**
+         * @param timeElapsed in seconds x 4
+         */
+        public GeneralDataPayload setTimeElapsed(int timeElapsed) {
+            this.timeElapsed = timeElapsed;
+            return this;
+        }
+
+        public Integer getDistanceCovered() {
+            return distanceCovered;
+        }
+
+        public GeneralDataPayload setDistanceCovered(Integer distanceCovered) {
+            this.distanceCovered = distanceCovered;
+            return this;
+        }
+
+        public BigDecimal getSpeed() {
+            return speed;
+        }
+
+        public GeneralDataPayload setSpeed(BigDecimal speed) {
+            this.speed = speed;
+            return this;
+        }
+
+        public Integer getHeartRate() {
+            return heartRate;
+        }
+
+        public GeneralDataPayload setHeartRate(Integer heartRate) {
+            this.heartRate = heartRate;
+            return this;
+        }
+
+        public Defines.HeartRateDataSource getHeartRateSource() {
+            return heartRateSource;
+        }
+
+        public GeneralDataPayload setHeartRateSource(Defines.HeartRateDataSource heartRateSource) {
+            this.heartRateSource = heartRateSource;
+            return this;
+        }
+
+        public boolean isUsingVirtualSpeed() {
+            return usingVirtualSpeed;
+        }
+
+        public GeneralDataPayload setUsingVirtualSpeed(boolean usingVirtualSpeed) {
+            this.usingVirtualSpeed = usingVirtualSpeed;
+            return this;
+        }
+
+        public Defines.EquipmentType getType() {
+            return type;
+        }
+
+        public GeneralDataPayload setType(Defines.EquipmentType type) {
+            this.type = type;
+            return this;
+        }
+
+        @Override
+        public GeneralDataPayload setLapFlag(boolean lapflag) {
+            return (GeneralDataPayload) super.setLapFlag(lapflag);
+        }
+
+        @Override
+        public GeneralDataPayload setState(Defines.EquipmentState state) {
+            return (GeneralDataPayload) super.setState(state);
+        }
+
+        public void encode(final byte[] packet) {
+            super.encode(packet);
+            PutUnsignedNumIn1LeBytes(packet, PAGE_OFFSET, PAGE_NUMBER);
+            packet[TYPE_OFFSET] = (byte) (0xff & (type.getIntValue() & TYPE_MASK));
+            if (distanceAvailable) {
+                packet[META_OFFSET] |= DISTANCE_MASK;
+            } else {
+                packet[META_OFFSET] = clearMaskedBits(packet[META_OFFSET], DISTANCE_MASK);
+            }
+            PutUnsignedNumIn1LeBytes(packet, TIME_OFFSET, timeElapsed);
+            if (distanceAvailable) {
+                assert(distanceCovered != null);
+                PutUnsignedNumIn1LeBytes(packet, DISTANCE_OFFSET, distanceCovered);
+            }
+            if (speed == null) {
+                PutUnsignedNumIn2LeBytes(packet, SPEED_OFFSET, UNSIGNED_INT16_MAX);
+            } else {
+                BigDecimal conv = speed.multiply(new BigDecimal(1000)).setScale(0, RoundingMode.HALF_UP);
+                PutUnsignedNumIn2LeBytes(packet, SPEED_OFFSET, conv.intValue());
+            }
+            if (heartRate == null) {
+                PutUnsignedNumIn1LeBytes(packet, HR_OFFSET, UNSIGNED_INT8_MAX);
+            } else {
+                PutUnsignedNumIn1LeBytes(packet, HR_OFFSET, heartRate);
+            }
+            packet[META_OFFSET] |= heartRateSource.getIntValue();
+
+            if (usingVirtualSpeed) {
+                packet[META_OFFSET] |= VIRTUAL_SPEED_MASK;
+            } else {
+                packet[META_OFFSET] = clearMaskedBits(packet[META_OFFSET], VIRTUAL_SPEED_MASK);
+            }
+        }
+    }
+
+
 
     public GeneralData(byte [] packet) {
         super(packet);
@@ -84,7 +250,7 @@ public class GeneralData extends CommonPageData implements AntPage {
         }
         
         final int heartRateRaw = UnsignedNumFrom1LeByte(packet[HR_OFFSET]);
-        if (heartRateRaw == UNSIGNED_INT8_MAX) {
+        if (heartRateRaw != UNSIGNED_INT8_MAX) {
             heartRate = heartRateRaw;
         } else {
             heartRate = 0;
@@ -92,6 +258,8 @@ public class GeneralData extends CommonPageData implements AntPage {
 
         heartRateSource = Defines.HeartRateDataSource.getValueFromInt(HR_SOURCE_MASK & packet[META_OFFSET]);
         usingVirtualSpeed = booleanFromU8(packet[META_OFFSET], VIRTUAL_SPEED_MASK);
+
+        type = Defines.EquipmentType.getValueFromInt(packet[TYPE_OFFSET] & TYPE_MASK);
         
     }
 

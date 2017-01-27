@@ -1,9 +1,6 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
-import org.cowboycoders.ant.profiles.fitnessequipment.Config;
-import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
-import org.cowboycoders.ant.profiles.fitnessequipment.Capabilities;
-import org.cowboycoders.ant.profiles.fitnessequipment.CapabilitiesBuilder;
+import org.cowboycoders.ant.profiles.fitnessequipment.*;
 
 import org.cowboycoders.ant.profiles.pages.CommonCommandPage;
 import org.junit.Test;
@@ -108,14 +105,12 @@ public class PageTests {
                 .setCadence(cadence)
                 .setState(Defines.EquipmentState.READY)
                 .setPower(power)
-                //.setType(Defines.EquipmentType.BIKE) setType only works on GeneralData
                 .encode(data);
         BikeData page = new BikeData(data);
         assertEquals(cadence, page.getCadence());
         assertEquals(power, page.getPower());
         assertEquals(Defines.EquipmentState.READY, page.getState());
         assertTrue(page.isLapToggled());
-        assertEquals(Defines.EquipmentType.BIKE, page.getEquipmentType());
     }
 
     @Test
@@ -276,6 +271,59 @@ public class PageTests {
         assertEquals(resistance, recv.getTotalResistance().doubleValue(), 0.01);
         assertEquals(Defines.Status.PASS, recv.getStatus());
         assertEquals(seqNum, recv.getLastReceivedSequenceNumber());
+    }
+
+    @Test
+    public void encodeDecodeConfig() {
+        final double BIKE_WEIGHT = 7.5;
+        final double USER_WEIGHT = 85.5;
+        final double DIAMETER = 0.8;
+        final double RATIO = 2;
+        Config conf = new ConfigBuilder()
+                .setBicycleWeight(new BigDecimal(BIKE_WEIGHT))
+                .setBicycleWheelDiameter(new BigDecimal(DIAMETER))
+                .setGearRatio(new BigDecimal(RATIO))
+                .setUserWeight(new BigDecimal(USER_WEIGHT))
+                .createConfig();
+        byte [] packet = new byte[8];
+        new ConfigPage.ConfigPayload()
+                .setConfig(conf)
+                .encode(packet);
+        ConfigPage page = new ConfigPage(packet);
+        Config recv = page.getConfig();
+        assertEquals(BIKE_WEIGHT, recv.getBicycleWeight().doubleValue(), 0.01);
+        assertEquals(USER_WEIGHT, recv.getUserWeight().doubleValue(), 0.01);
+        assertEquals(DIAMETER, recv.getBicycleWheelDiameter().doubleValue(), 0.01);
+        assertEquals(RATIO, recv.getGearRatio().doubleValue(), 0.01);
+    }
+
+    @Test
+    public void encodeDecodeGeneral() {
+        final int DISTANCE_COVERED = 123;
+        final int HR = 80;
+        final int TIME_ELAPSED = 127;
+
+        byte [] packet = new byte[8];
+        new GeneralData.GeneralDataPayload()
+                .setLapFlag(true)
+                .setState(Defines.EquipmentState.READY)
+                .setDistanceAvailable(true)
+                .setDistanceCovered(DISTANCE_COVERED)
+                .setType(Defines.EquipmentType.BIKE)
+                .setHeartRateSource(Defines.HeartRateDataSource.ANTPLUS_HRM)
+                .setHeartRate(HR)
+                .setTimeElapsed(TIME_ELAPSED)
+                .setUsingVirtualSpeed(true)
+                .encode(packet);
+        GeneralData page = new GeneralData(packet);
+        assertTrue(page.isLapToggled());
+        assertTrue(page.isDistanceAvailable());
+        assertTrue(page.isUsingVirtualSpeed());
+        assertEquals(Defines.HeartRateDataSource.ANTPLUS_HRM, page.getHeartRateSource());
+        assertEquals(Defines.EquipmentState.READY, page.getState());
+        assertEquals(DISTANCE_COVERED, (int) page.getDistanceCovered());
+        assertEquals(HR, (int) page.getHeartRate());
+        assertEquals(TIME_ELAPSED, page.getTimeElapsed());
     }
 
 

@@ -76,11 +76,6 @@ public class BikeData extends CommonPageData {
         }
 
         @Override
-        public BikeDataPayload setType(Defines.EquipmentType type) {
-            return (BikeDataPayload) super.setType(type);
-        }
-
-        @Override
         public BikeDataPayload setState (Defines.EquipmentState state) {
             return (BikeDataPayload) super.setState(state);
         }

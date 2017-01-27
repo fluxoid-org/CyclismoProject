@@ -15,6 +15,8 @@ import static org.cowboycoders.ant.profiles.BitManipulation.*;
  */
 public class ConfigPage implements AntPage {
 
+    public static int PAGE_NUMBER = 55;
+
     private static final int USER_WEIGHT_OFFSET = 1;
     private static final int BIKE_WEIGHT_OFFSET = 4;
     private static final int WHEEL_DIAMETER_OFFSET = 6;
@@ -23,6 +25,56 @@ public class ConfigPage implements AntPage {
 
     public Config getConfig() {
         return config;
+    }
+
+    public static class ConfigPayload {
+        private Config config;
+
+        public Config getConfig() {
+            return config;
+        }
+
+        public ConfigPayload setConfig(Config config) {
+            this.config = config;
+            return this;
+        }
+
+        public void encode(final byte[] packet) {
+            PutUnsignedNumIn1LeBytes(packet, PAGE_OFFSET, PAGE_NUMBER);
+            BigDecimal uw = config.getUserWeight();
+            if (uw == null) {
+                PutUnsignedNumIn2LeBytes(packet, USER_WEIGHT_OFFSET, UNSIGNED_INT16_MAX);
+            } else {
+                PutUnsignedNumIn2LeBytes(packet, USER_WEIGHT_OFFSET,
+                        uw.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP)
+                                .intValue());
+            }
+            BigDecimal bw = config.getBicycleWeight();
+            if (bw == null) {
+                PutUnsignedNumInUpper1And1HalfLeBytes(packet, BIKE_WEIGHT_OFFSET, UNSIGNED_INT12_MAX);
+            } else {
+                PutUnsignedNumInUpper1And1HalfLeBytes(packet, BIKE_WEIGHT_OFFSET,
+                        bw.multiply(new BigDecimal(20)).setScale(0, RoundingMode.HALF_UP)
+                .intValue());
+            }
+            BigDecimal dia = config.getBicycleWheelDiameter();
+            if (dia == null) {
+                PutUnsignedNumIn1LeBytes(packet, WHEEL_DIAMETER_OFFSET, UNSIGNED_INT8_MAX);
+            } else {
+                PutUnsignedNumIn1LeBytes(packet, WHEEL_DIAMETER_OFFSET,
+                        dia.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP)
+                        .byteValue());
+            }
+            BigDecimal ratio = config.getGearRatio();
+            if (ratio == null){
+                PutUnsignedNumIn1LeBytes(packet, GEAR_RATIO_OFFSET, UNSIGNED_INT8_MAX);
+            } else {
+                PutUnsignedNumIn1LeBytes(packet, GEAR_RATIO_OFFSET,
+                        ratio.divide(new BigDecimal(0.03), 0, RoundingMode.HALF_UP).byteValue());
+            }
+
+
+        }
     }
 
     public ConfigPage(byte[] packet) {

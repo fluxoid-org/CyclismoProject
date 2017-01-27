@@ -43,18 +43,10 @@ public abstract class CommonPageData {
         return state;
     }
 
-    /**
-     *
-     * @return null, if not contained in packet.
-     */
-    public Defines.EquipmentType getEquipmentType() {
-        return equipmentType;
-    }
-
 
     private final boolean lapFlag;
     private final Defines.EquipmentState state;
-    private final Defines.EquipmentType equipmentType;
+
 
 
     private static final int LAP_OFFSET = 7;
@@ -62,15 +54,12 @@ public abstract class CommonPageData {
     private static final int STATE_MASK = 0x70;
     private static final int STATE_SHIFT = 4;
     private static final int STATE_OFFSET = 7;
-    private static final int TYPE_FLAG_OFFSET = 0;
-    private static final int TYPE_FLAG = 16;
-    private static final int TYPE_MASK = 0x1F;
-    private static final int TYPE_OFFSET = 1;
+
 
     public static class CommonPagePayload {
         private boolean lapFlag = false;
         private Defines.EquipmentState state = Defines.EquipmentState.UNRECOGNIZED;
-        private Defines.EquipmentType type = Defines.EquipmentType.UNKNOWN;
+
 
         public boolean isLapFlagSet() {
             return lapFlag;
@@ -80,10 +69,6 @@ public abstract class CommonPageData {
             return state;
         }
 
-        // FIXME: this seems to want to be in the GeneralData class
-        public Defines.EquipmentType getType() {
-            return type;
-        }
 
         public CommonPagePayload setLapFlag(boolean lapflag) {
             this.lapFlag = lapflag;
@@ -95,11 +80,6 @@ public abstract class CommonPageData {
             return this;
         }
 
-        public CommonPagePayload setType(Defines.EquipmentType type) {
-            this.type = type;
-            return this;
-        }
-
         public void encode(final byte[] packet) {
             if (lapFlag) {
                 packet[LAP_OFFSET] |= LAP_MASK;
@@ -108,9 +88,6 @@ public abstract class CommonPageData {
             }
             int stateRaw = (state.getIntValue() << STATE_SHIFT) & STATE_MASK;
             packet[STATE_OFFSET] |= (byte) (0xff & stateRaw);
-            // we may need to make this configurable
-            packet[TYPE_FLAG_OFFSET] = TYPE_FLAG;
-            packet[TYPE_OFFSET] = (byte) (0xff & (type.getIntValue() & TYPE_MASK));
         }
     }
 
@@ -122,11 +99,7 @@ public abstract class CommonPageData {
         this.lapFlag = (intToBoolean(LAP_MASK & data[LAP_OFFSET]));
 
         this.state = Defines.EquipmentState.getValueFromInt(((data[STATE_OFFSET] & STATE_MASK) >>> STATE_SHIFT));
-        if (data[TYPE_FLAG_OFFSET] == TYPE_FLAG) {
-            this.equipmentType = Defines.EquipmentType.getValueFromInt(data[TYPE_OFFSET] & TYPE_MASK);
-        } else {
-            this.equipmentType = null;
-        }
+
 
     }
 
