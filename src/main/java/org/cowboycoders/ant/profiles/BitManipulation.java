@@ -43,6 +43,14 @@ public class BitManipulation
         array[offset + 1] = (byte)(0xFF & n2 >> 8);
     }
 
+    public static void PutSignedNumIn2LeBytes(final byte[] array, final int offset, final int n2) {
+        if (n2 > Short.MAX_VALUE || n2 < Short.MIN_VALUE) {
+            throw new IllegalArgumentException("Value outside the bounds of unsigned 2 byte integer");
+        }
+        array[offset] = (byte)(n2 & 0xFF);
+        array[offset + 1] = (byte)(0xFF & n2 >> 8);
+    }
+
     public static void PutUnsignedNumIn4LeBytes(final byte[] array, final int offset, final long n2) {
         if (n2 > 4294967295L || n2 < 0L) {
             throw new IllegalArgumentException("Value outside the bounds of unsigned 4 byte integer");

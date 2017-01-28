@@ -1,19 +1,20 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
+import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import static org.cowboycoders.ant.profiles.BitManipulation.UNSIGNED_INT8_MAX;
-import static org.cowboycoders.ant.profiles.BitManipulation.UnsignedNumFrom1LeByte;
-import static org.cowboycoders.ant.profiles.BitManipulation.UnsignedNumFrom2LeBytes;
+import static org.cowboycoders.ant.profiles.BitManipulation.*;
 
 /**
  * Page 17
  * Created by fluxoid on 02/01/17.
  */
 public class GeneralSettings extends CommonPageData implements AntPage {
+
+    public static final int PAGE_NUMBER = 17;
 
     private static final int CYCLE_LENGTH_OFFSET = 3;
     private static final int INCLINE_OFFSET = 4;
@@ -22,6 +23,72 @@ public class GeneralSettings extends CommonPageData implements AntPage {
     private final BigDecimal cycleLength;
     private final BigDecimal incline;
     private final Integer resistance;
+
+
+    public static class GeneralSettingsPayload extends CommonPagePayload {
+        private BigDecimal cycleLength;
+        private BigDecimal incline;
+        private Integer resistance;
+
+        public BigDecimal getCycleLength() {
+            return cycleLength;
+        }
+
+        public GeneralSettingsPayload setCycleLength(BigDecimal cycleLength) {
+            this.cycleLength = cycleLength;
+            return this;
+        }
+
+        public BigDecimal getIncline() {
+            return incline;
+        }
+
+        public GeneralSettingsPayload setIncline(BigDecimal incline) {
+            this.incline = incline;
+            return this;
+        }
+
+        public Integer getResistance() {
+            return resistance;
+        }
+
+        public GeneralSettingsPayload setResistance(Integer resistance) {
+            this.resistance = resistance;
+            return this;
+        }
+
+        @Override
+        public GeneralSettingsPayload setLapFlag(boolean lapflag) {
+            return (GeneralSettingsPayload) super.setLapFlag(lapflag);
+        }
+
+        @Override
+        public GeneralSettingsPayload setState(Defines.EquipmentState state) {
+            return (GeneralSettingsPayload) super.setState(state);
+        }
+
+        public void encode(final byte[] packet) {
+            super.encode(packet);
+            PutUnsignedNumIn1LeBytes(packet, PAGE_OFFSET, PAGE_NUMBER);
+            if (cycleLength == null) {
+                PutUnsignedNumIn1LeBytes(packet, CYCLE_LENGTH_OFFSET, UNSIGNED_INT8_MAX);
+            } else {
+                BigDecimal raw = cycleLength.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP);
+                PutUnsignedNumIn1LeBytes(packet, CYCLE_LENGTH_OFFSET, raw.byteValue());
+            }
+            if (incline == null) {
+                PutUnsignedNumIn2LeBytes(packet, INCLINE_OFFSET, Short.MAX_VALUE);
+            } else {
+                BigDecimal raw = incline.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP);
+                PutSignedNumIn2LeBytes(packet, INCLINE_OFFSET, raw.intValue());
+            }
+            if (resistance == null) {
+                PutUnsignedNumIn1LeBytes(packet, RESISTANCE_OFFSET, UNSIGNED_INT8_MAX);
+            } else {
+                PutUnsignedNumIn1LeBytes(packet, RESISTANCE_OFFSET, resistance);
+            }
+        }
+    }
 
     /**
      * length of complete "cycle" for the equipment being used, eg:
@@ -58,7 +125,7 @@ public class GeneralSettings extends CommonPageData implements AntPage {
         } else {
             cycleLength = null;
         }
-        final int inclineRaw = UnsignedNumFrom2LeBytes(data, INCLINE_OFFSET);
+        final int inclineRaw = SignedNumFrom2LeBytes(data, INCLINE_OFFSET);
         if (inclineRaw != Short.MAX_VALUE) {
             incline = new BigDecimal(inclineRaw).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP);
         } else {

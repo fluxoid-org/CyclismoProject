@@ -114,7 +114,7 @@ public class GeneralData extends CommonPageData implements AntPage, TimeDecodabl
         public int getTimeElapsed() {
             return timeElapsed;
         }
-        
+
         public GeneralDataPayload setTimeElapsed(BigDecimal seconds) {
             timeElapsed = seconds.multiply(new BigDecimal(4)).setScale(0, RoundingMode.HALF_UP).intValue();
             return this;

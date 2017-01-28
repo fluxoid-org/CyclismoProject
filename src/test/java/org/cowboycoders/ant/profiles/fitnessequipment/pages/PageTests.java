@@ -326,6 +326,28 @@ public class PageTests {
         assertEquals(TIME_ELAPSED, page.getTimeElapsed());
     }
 
+    @Test
+    public void encodeDecodeSettings() {
+        final double incline = -12.34;
+        final double cycleLength = 1.23;
+        final int resistance = 234;
+
+        byte [] packet = new byte[8];
+        new GeneralSettings.GeneralSettingsPayload()
+                .setLapFlag(true)
+                .setState(Defines.EquipmentState.READY)
+                .setCycleLength(new BigDecimal(cycleLength))
+                .setIncline(new BigDecimal(incline))
+                .setResistance(resistance)
+                .encode(packet);
+        GeneralSettings page = new GeneralSettings(packet);
+        assertEquals(Defines.EquipmentState.READY, page.getState());
+        assertTrue(page.isLapToggled());
+        assertEquals(incline, page.getIncline().doubleValue(), 0.01);
+        assertEquals(cycleLength, page.getCycleLength().doubleValue(), 0.01);
+
+    }
+
 
 
 
