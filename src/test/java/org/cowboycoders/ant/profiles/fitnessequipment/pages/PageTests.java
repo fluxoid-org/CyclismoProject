@@ -348,6 +348,32 @@ public class PageTests {
 
     }
 
+    @Test
+    public void encodeDecodeMetabolic() {
+        final double met = 12.3;
+        final double instantCal = 1234.5;
+        final int calorieCount = 10;
+
+        byte [] packet = new byte[8];
+        new MetabolicData.MetabolicDataPayload()
+                .setLapFlag(true)
+                .setState(Defines.EquipmentState.READY)
+                .setCaloriesAvailable(true)
+                .setCalorieCounter(calorieCount)
+                .setInstantCalorieBurn(new BigDecimal(instantCal))
+                .setInstantMetabolicEquivalents(new BigDecimal(met))
+                .encode(packet);
+        MetabolicData page = new MetabolicData(packet);
+        assertEquals(Defines.EquipmentState.READY, page.getState());
+        assertTrue(page.isLapToggled());
+        assertTrue(page.isCummulativeCaloriesAvailable());
+        assertEquals(met, page.getInstantMetabolicEquivalent().doubleValue(),0.01);
+        assertEquals(instantCal, page.getInstantCalorieBurn().doubleValue(), 0.1);
+        assertEquals(calorieCount, (int) page.getCalorieCounter());
+
+
+    }
+
 
 
 

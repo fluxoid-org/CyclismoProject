@@ -1,6 +1,8 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
 import org.cowboycoders.ant.profiles.common.utils.CounterUtils;
+import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
+import org.cowboycoders.ant.profiles.pages.AntPage;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -10,7 +12,9 @@ import static org.cowboycoders.ant.profiles.BitManipulation.*;
 /**
  * Created by fluxoid on 02/01/17.
  */
-public class MetabolicData extends CommonPageData {
+public class MetabolicData extends CommonPageData implements AntPage {
+
+    public static int PAGE_NUMBER = 18;
 
     private static final int META_OFFSET = 7;
     private static final int HAS_CALORIES_MASK = 0x1;
@@ -20,6 +24,87 @@ public class MetabolicData extends CommonPageData {
 
     private final boolean caloriesAvailable;
     private final Integer calorieCounter;
+
+    public static class MetabolicDataPayload extends CommonPagePayload {
+        private boolean caloriesAvailable = false;
+        private Integer calorieCounter;
+        private BigDecimal instantMetabolicEquivalents;
+        private BigDecimal instantCalorieBurn;
+
+        public boolean isCaloriesAvailable() {
+            return caloriesAvailable;
+        }
+
+        public MetabolicDataPayload setCaloriesAvailable(boolean caloriesAvailable) {
+            this.caloriesAvailable = caloriesAvailable;
+            return this;
+        }
+
+        public Integer getCalorieCounter() {
+            return calorieCounter;
+        }
+
+        public MetabolicDataPayload setCalorieCounter(Integer calorieCounter) {
+            this.calorieCounter = calorieCounter;
+            return this;
+        }
+
+        public BigDecimal getInstantMetabolicEquivalents() {
+            return instantMetabolicEquivalents;
+        }
+
+        public MetabolicDataPayload setInstantMetabolicEquivalents(BigDecimal instantMetabolicEquivalents) {
+            this.instantMetabolicEquivalents = instantMetabolicEquivalents;
+            return this;
+        }
+
+        public BigDecimal getInstantCalorieBurn() {
+            return instantCalorieBurn;
+        }
+
+        public MetabolicDataPayload setInstantCalorieBurn(BigDecimal instantCalorieBurn) {
+            this.instantCalorieBurn = instantCalorieBurn;
+            return this;
+        }
+
+        @Override
+        public MetabolicDataPayload setLapFlag(boolean lapflag) {
+            return (MetabolicDataPayload) super.setLapFlag(lapflag);
+        }
+
+        @Override
+        public MetabolicDataPayload setState(Defines.EquipmentState state) {
+            return (MetabolicDataPayload) super.setState(state);
+        }
+
+        public void encode(byte[] packet) {
+            super.encode(packet);
+            PutUnsignedNumIn1LeBytes(packet, PAGE_OFFSET, PAGE_NUMBER);
+            if (caloriesAvailable && calorieCounter == null) {
+                throw new IllegalArgumentException("must set calorie counter");
+            }
+            if (caloriesAvailable) {
+                packet[META_OFFSET] |= HAS_CALORIES_MASK;
+                PutUnsignedNumIn1LeBytes(packet, CALORIES_OFFSET, calorieCounter);
+            } else {
+                packet[META_OFFSET] = clearMaskedBits(packet[META_OFFSET], HAS_CALORIES_MASK);
+            }
+            if (instantMetabolicEquivalents == null) {
+                PutUnsignedNumIn2LeBytes(packet, INSTANT_METABOLIC_EQUIVALENTS_OFFSET, UNSIGNED_INT16_MAX);
+            } else {
+                BigDecimal raw = instantMetabolicEquivalents.multiply(new BigDecimal(100))
+                        .setScale(0, RoundingMode.HALF_UP);
+                PutUnsignedNumIn2LeBytes(packet, INSTANT_METABOLIC_EQUIVALENTS_OFFSET, raw.intValue());
+            }
+            if (instantCalorieBurn == null) {
+                PutUnsignedNumIn2LeBytes(packet, INSTANT_CALORIE_OFFSET, UNSIGNED_INT16_MAX);
+            } else {
+                BigDecimal raw = instantCalorieBurn.multiply(new BigDecimal(10))
+                        .setScale(0, RoundingMode.HALF_UP);
+                PutUnsignedNumIn2LeBytes(packet, INSTANT_CALORIE_OFFSET, raw.intValue());
+            }
+        }
+    }
 
     /**
      *
@@ -45,7 +130,7 @@ public class MetabolicData extends CommonPageData {
 
     /**
      *
-     * @return kcal/hr burnt, with 0.1 kcla/hr resolution
+     * @return kcal/hr burnt, with 0.1 kcal/hr resolution
      */
     public BigDecimal getInstantCalorieBurn() {
         return instantCalorieBurn;
