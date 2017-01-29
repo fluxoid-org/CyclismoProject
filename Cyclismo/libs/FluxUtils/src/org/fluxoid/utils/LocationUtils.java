@@ -61,7 +61,6 @@ public class LocationUtils {
 
   /**
    * Calculates the distance over the surface of the Earth between two points.
-   * <p/>
    * see http://www.movable-type.co.uk/scripts/latlong.html
    *
    * @param src Source point.
@@ -118,7 +117,6 @@ public class LocationUtils {
    * Returns a list of points interpolated between the specified points, with a specified
    * maximum spacing. If the the specified points are closer than the maximum spacing no points
    * are returned.
-   * <p/>
    * The source and destination points are NOT returned.
    *
    * @param src Source point
