@@ -374,6 +374,26 @@ public class PageTests {
 
     }
 
+    @Test public void encodeDecodePercentResistance() {
+        byte [] packet = new byte[8];
+        BigDecimal resistance = new BigDecimal(50.5);
+        new PercentageResistance.PercentageResistancePayload()
+                .setResistance(resistance)
+                .encode(packet);
+        PercentageResistance page = new PercentageResistance(packet);
+        assertEquals(resistance.setScale(2), page.getResistance().setScale(2));
+    }
+
+    @Test public void encodeDecodeTargetPower2() {
+        final byte [] packet = new byte[8];
+        BigDecimal targetPower = new BigDecimal(123.5);
+        new TargetPower.TargetPowerPayload()
+                .setTargetPower(targetPower)
+                .encode(packet);
+        TargetPower page = new TargetPower(packet);
+        assertEquals(targetPower.setScale(2), page.getTargetPower().setScale(2));
+    }
+
 
 
 

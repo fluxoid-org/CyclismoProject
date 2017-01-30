@@ -41,7 +41,7 @@ public class TargetPower implements AntPage {
                 throw new IllegalArgumentException("must set targetPower");
             }
             BigDecimal n = targetPower.multiply(new BigDecimal(4)).setScale(0, RoundingMode.HALF_UP);
-            PutUnsignedNumIn2LeBytes(packet, PAGE_OFFSET, n.intValue());
+            PutUnsignedNumIn2LeBytes(packet, POWER_OFFSET, n.intValue());
         }
 
 
