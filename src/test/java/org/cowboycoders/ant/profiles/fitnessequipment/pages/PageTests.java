@@ -6,6 +6,7 @@ import org.cowboycoders.ant.profiles.pages.CommonCommandPage;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
@@ -89,7 +90,7 @@ public class PageTests {
         double draftingFactor = 0.5;
         byte [] data = PayloadGen.getSetWindResistance(new BigDecimal(coeff), windspeed, new BigDecimal(draftingFactor));
         WindResistance page = new WindResistance(data);
-        assertEquals(coeff, page.getWindResitanceCoefficent().doubleValue(), 0.01);
+        assertEquals(coeff, page.getWindResistanceCoefficent().doubleValue(), 0.01);
         assertEquals(windspeed, page.getWindSpeed());
         assertEquals(draftingFactor, page.getDraftingFactor().doubleValue(), 0.001);
     }
@@ -392,6 +393,62 @@ public class PageTests {
                 .encode(packet);
         TargetPower page = new TargetPower(packet);
         assertEquals(targetPower.setScale(2), page.getTargetPower().setScale(2));
+    }
+
+    @Test public void encodeDecodeTorque() {
+        final byte[] packet = new byte[8];
+        final int events = 123;
+        final int period = 4567;
+        final int rotations = 78;
+        final int torqueSum = 999;
+        new TorqueData.TorqueDataPayload()
+                .setEvents(events)
+                .setPeriod(period)
+                .setRotations(rotations)
+                .setTorqueSum(torqueSum)
+                .encode(packet);
+        TorqueData page = new TorqueData(packet);
+        assertEquals(events, page.getEventCount());
+        assertEquals(period, page.getRotationPeriod());
+        assertEquals(rotations, page.getWheelRotations());
+        assertEquals(torqueSum, page.getTorque());
+    }
+
+    @Test public void encodeDecodeTrackResistance() {
+        final byte[] packet = new byte[8];
+        final BigDecimal gradient = new BigDecimal(123.5);
+        final BigDecimal coefficientRollingResistance = new BigDecimal(0.005);
+
+        new TrackResistance.TrackResistancePayload()
+                .setCoefficientRollingResistance(coefficientRollingResistance)
+                .setGradient(gradient)
+                .encode(packet);
+
+        TrackResistance page = new TrackResistance(packet);
+        assertEquals(gradient.setScale(2), page.getGradient().setScale(2));
+        assertEquals(coefficientRollingResistance.setScale(3, RoundingMode.HALF_UP),
+                page.getCoefficientRollingResistance().setScale(3, RoundingMode.HALF_UP));
+
+
+    }
+
+    @Test public void encodeDecodeWind() {
+        final byte[] packet = new byte[8];
+
+        final int windSpeed = -127;
+        final BigDecimal windResistanceCoeff = new BigDecimal(0.57).setScale(2, RoundingMode.HALF_UP);
+        final BigDecimal draftingFactor = new BigDecimal(0.89).setScale(2, RoundingMode.HALF_UP);
+
+        new WindResistance.WindResistancePayload()
+                .setDraftingFactor(draftingFactor)
+                .setWindResistanceCoeff(windResistanceCoeff)
+                .setWindSpeed(windSpeed)
+                .encode(packet);
+
+        WindResistance page = new WindResistance(packet);
+        assertEquals(draftingFactor, page.getDraftingFactor());
+        assertEquals(windResistanceCoeff, page.getWindResistanceCoefficent());
+        assertEquals(windSpeed, page.getWindSpeed());
     }
 
 

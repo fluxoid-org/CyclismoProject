@@ -238,6 +238,9 @@ public class Defines {
 
     }
 
+    /**
+     * These correspond to page numbers
+     */
     public enum TorqueSource
     {
 
