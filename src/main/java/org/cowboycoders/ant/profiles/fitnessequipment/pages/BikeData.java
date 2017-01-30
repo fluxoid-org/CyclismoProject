@@ -1,6 +1,7 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
+import org.cowboycoders.ant.profiles.pages.AntPage;
 
 import static org.cowboycoders.ant.profiles.BitManipulation.*;
 
@@ -8,7 +9,7 @@ import static org.cowboycoders.ant.profiles.BitManipulation.*;
  * Page 21
  * Created by fluxoid on 02/01/17.
  */
-public class BikeData extends CommonPageData {
+public class BikeData extends CommonPageData implements AntPage {
 
     public static final int CADENCE_OFFSET = 4;
     public static final int POWER_OFFSET = 5;
