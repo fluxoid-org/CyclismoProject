@@ -13,7 +13,7 @@ public class BikeData extends CommonPageData implements AntPage {
 
     public static final int CADENCE_OFFSET = 4;
     public static final int POWER_OFFSET = 5;
-    public static final int PAGE_NUMBER = 12;
+    public static final int PAGE_NUMBER = 21;
 
     /**
      * @return in rpm

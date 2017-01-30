@@ -84,7 +84,7 @@ public class PageDispatcher {
         if (page != null) {
             bus.sendMessage(page);
         } else {
-            Logger.getGlobal().warning("no handler for: " + data);
+            Logger.getGlobal().warning("no handler for page: " + data[AntPage.PAGE_OFFSET]);
         }
     }
 }
