@@ -32,7 +32,7 @@ public class TorqueData extends CommonPageData implements AntPage, TorqueDecodab
     private final long timestamp;
     private final TimeOutDeltaValidator timeOutDeltaValidator = new TimeOutDeltaValidator(TIMEOUT_DELTA);
 
-    public static class TorqueDataPayload {
+    public static class TorqueDataPayload extends CommonPagePayload {
         private int events;
         private int torqueSum;
 
@@ -76,6 +76,15 @@ public class TorqueData extends CommonPageData implements AntPage, TorqueDecodab
             return this;
         }
 
+        @Override
+        public TorqueDataPayload setLapFlag(boolean lapflag) {
+            return (TorqueDataPayload) super.setLapFlag(lapflag);
+        }
+
+        @Override
+        public TorqueDataPayload  setState(Defines.EquipmentState state) {
+            return (TorqueDataPayload) super.setState(state);
+        }
 
         public void encode(final byte[] packet) {
             PutUnsignedNumIn1LeBytes(packet, PAGE_OFFSET, PAGE_NUMBER);

@@ -19,22 +19,22 @@ public class PercentageResistance implements AntPage {
     private final BigDecimal resistance;
 
     public static class PercentageResistancePayload {
-        private BigDecimal resistance;
+        private BigDecimal resistance = new BigDecimal(0);
 
         public BigDecimal getResistance() {
             return resistance;
         }
 
         public PercentageResistancePayload setResistance(BigDecimal resistance) {
+            if (resistance == null) {
+                throw new IllegalArgumentException("resistance cannot be null");
+            }
             this.resistance = resistance;
             return this;
         }
 
         public void encode(final byte [] packet) {
             PutUnsignedNumIn1LeBytes(packet, PAGE_OFFSET, PAGE_NUMBER);
-            if (resistance == null) {
-                throw new IllegalArgumentException("must set resistance");
-            }
             BigDecimal n = resistance.multiply(new BigDecimal(2));
             PutUnsignedNumIn1LeBytes(packet, RESISTANCE_OFFSET, n.intValue());
 
