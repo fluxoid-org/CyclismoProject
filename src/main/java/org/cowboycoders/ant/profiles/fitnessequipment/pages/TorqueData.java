@@ -87,6 +87,7 @@ public class TorqueData extends CommonPageData implements AntPage, TorqueDecodab
         }
 
         public void encode(final byte[] packet) {
+            super.encode(packet);
             PutUnsignedNumIn1LeBytes(packet, PAGE_OFFSET, PAGE_NUMBER);
             PutUnsignedNumIn1LeBytes(packet, EVENT_OFFSET, events);
             PutUnsignedNumIn1LeBytes(packet, ROTATION_OFFSET, rotations);

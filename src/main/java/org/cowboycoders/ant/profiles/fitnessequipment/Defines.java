@@ -200,7 +200,7 @@ public class Defines {
         MAXIMUM_POWER_LIMIT_REACHED(Byte.BYTE1, 0x1),
         MINIMUM_POWER_LIMIT_REACHED(Byte.BYTE1, 0x2);
 
-        public static final int STATUS_OFFSET = 7;
+        public static final int STATUS_OFFSET = 6;
 
         private enum Byte {
             BYTE0,
@@ -233,6 +233,20 @@ public class Defines {
 
             }
             return none;
+        }
+
+        public static void encode(final byte[] packet, EnumSet<TrainerStatusFlag> vals) {
+            byte b0 = packet[STATUS_OFFSET];
+            byte b1 = packet[STATUS_OFFSET + 1];
+            for (TrainerStatusFlag flag : vals) {
+                if (flag.byt == Byte.BYTE0) {
+                    b0 |= flag.mask;
+                } else {
+                    b1 |= flag.mask;
+                }
+            }
+            packet[STATUS_OFFSET] = b0;
+            packet[STATUS_OFFSET + 1] = b1;
         }
 
 

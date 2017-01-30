@@ -5,6 +5,7 @@ import org.cowboycoders.ant.profiles.common.utils.CounterUtils;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.CounterBasedDecodable;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.PowerOnlyDecodable;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
+import org.cowboycoders.ant.profiles.pages.AntPage;
 
 import java.util.EnumSet;
 import java.util.concurrent.TimeUnit;
@@ -14,7 +15,9 @@ import static org.cowboycoders.ant.profiles.BitManipulation.*;
 /**
  * Created by fluxoid on 02/01/17.
  */
-public class TrainerData extends CommonPageData implements PowerOnlyDecodable {
+public class TrainerData extends CommonPageData implements PowerOnlyDecodable, AntPage {
+
+    public static final int PAGE_NUMBER = 25;
 
     private static final long TIMEOUT_DELTA = TimeUnit.SECONDS.toNanos(12);
     public static final int POWER_OFFSET = 3;
@@ -27,6 +30,100 @@ public class TrainerData extends CommonPageData implements PowerOnlyDecodable {
     private final boolean powerAvailable;
     private final int events;
     private final long timestamp;
+
+    public static class TrainerDataPayload extends CommonPagePayload {
+        private int power;
+        private int instantPower = -1;
+        private int events;
+        private Integer cadence;
+        private EnumSet<Defines.TrainerStatusFlag> trainerStatusFlags = EnumSet.noneOf(Defines.TrainerStatusFlag.class);
+
+        public Integer getCadence() {
+            return cadence;
+        }
+
+        public TrainerDataPayload setCadence(Integer cadence) {
+            this.cadence = cadence;
+            return this;
+        }
+
+        public EnumSet<Defines.TrainerStatusFlag> getTrainerStatusFlags() {
+            return trainerStatusFlags;
+        }
+
+        public TrainerDataPayload setTrainerStatusFlags(EnumSet<Defines.TrainerStatusFlag> trainerStatusFlags) {
+            if (trainerStatusFlags == null) {
+                throw new IllegalArgumentException("trainerStatusFlags cannot be null");
+            }
+            this.trainerStatusFlags = trainerStatusFlags;
+            return this;
+        }
+
+        public int getPower() {
+            return power;
+        }
+
+        public TrainerDataPayload setPower(int power) {
+            this.power = power;
+            return this;
+        }
+
+        public int getInstantPower() {
+            return instantPower;
+        }
+
+        public TrainerDataPayload setInstantPower(int instantPower) {
+            if (instantPower < 0 || instantPower > UNSIGNED_INT12_MAX) {
+                throw new IllegalArgumentException("instant power out of range");
+            }
+            this.instantPower = instantPower;
+            return this;
+        }
+
+        public boolean isPowerAvailable() {
+            return instantPower != -1;
+        }
+
+
+        public int getEvents() {
+            return events;
+        }
+
+        public TrainerDataPayload setEvents(int events) {
+            this.events = events;
+            return this;
+        }
+
+        @Override
+        public TrainerDataPayload setLapFlag(boolean lapflag) {
+            return (TrainerDataPayload) super.setLapFlag(lapflag);
+        }
+
+        @Override
+        public TrainerDataPayload setState(Defines.EquipmentState state) {
+            return (TrainerDataPayload) super.setState(state);
+        }
+
+        public void encode(final byte[] packet) {
+            super.encode(packet);
+            PutUnsignedNumIn1LeBytes(packet, PAGE_OFFSET, PAGE_NUMBER);
+            PutUnsignedNumIn2LeBytes(packet, POWER_OFFSET, power);
+            PutUnsignedNumIn1LeBytes(packet, EVENT_OFFSET, events);
+            int old = UnsignedNumFrom2LeBytes(packet, INSTANT_POWER_OFFSET);
+            if (isPowerAvailable()) {
+                PutUnsignedNumIn2LeBytes(packet, INSTANT_POWER_OFFSET, old | instantPower );
+            } else {
+                PutUnsignedNumIn2LeBytes(packet, INSTANT_POWER_OFFSET, old | UNSIGNED_INT12_MAX );
+            }
+            if (cadence == null) {
+                PutUnsignedNumIn1LeBytes(packet, CADENCE_OFFSET, UNSIGNED_INT8_MAX);
+            } else {
+                PutUnsignedNumIn1LeBytes(packet, CADENCE_OFFSET, cadence);
+            }
+            Defines.TrainerStatusFlag.encode(packet, trainerStatusFlags);
+        }
+    }
+
 
     /**
      * Accumulated power : running sum of instanteous power updated on each increment of event count
@@ -64,12 +161,12 @@ public class TrainerData extends CommonPageData implements PowerOnlyDecodable {
         return cadence;
     }
 
-    public EnumSet<Defines.TrainerStatusFlag> getTrainerStatus() {
-        return trainerStatus;
+    public EnumSet<Defines.TrainerStatusFlag> getStatusFlags() {
+        return statusFlags;
     }
 
     private final Integer cadence;
-    private final EnumSet<Defines.TrainerStatusFlag> trainerStatus;
+    private final EnumSet<Defines.TrainerStatusFlag> statusFlags;
     private final TimeOutDeltaValidator timeOutDeltaValidator = new TimeOutDeltaValidator(TIMEOUT_DELTA);
 
 
@@ -90,7 +187,7 @@ public class TrainerData extends CommonPageData implements PowerOnlyDecodable {
         } else {
             cadence = null;
         }
-        trainerStatus = Defines.TrainerStatusFlag.getEnumSet(packet);
+        statusFlags = Defines.TrainerStatusFlag.getEnumSet(packet);
 
     }
 

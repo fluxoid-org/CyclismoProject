@@ -4,11 +4,14 @@ import org.cowboycoders.ant.profiles.fitnessequipment.*;
 
 import org.cowboycoders.ant.profiles.pages.CommonCommandPage;
 import org.junit.Test;
+import org.junit.experimental.theories.suppliers.TestedOn;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.EnumSet;
 
 import static junit.framework.TestCase.assertFalse;
+import static org.cowboycoders.ant.profiles.fitnessequipment.Defines.TrainerStatusFlag.BICYCLE_POWER_CALIBRATION_REQUIRED;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -449,6 +452,36 @@ public class PageTests {
         assertEquals(draftingFactor, page.getDraftingFactor());
         assertEquals(windResistanceCoeff, page.getWindResistanceCoefficent());
         assertEquals(windSpeed, page.getWindSpeed());
+    }
+
+    @Test
+    public void encodeDecodeTrainerData() {
+        EnumSet<Defines.TrainerStatusFlag> flags = EnumSet.of(BICYCLE_POWER_CALIBRATION_REQUIRED,
+                Defines.TrainerStatusFlag.USER_CONFIGURATION_REQUIRED,
+                Defines.TrainerStatusFlag.MINIMUM_POWER_LIMIT_REACHED);
+        final byte [] packet = new byte[8];
+        final int cadence = 123;
+        final int instantPower = 1234;
+        final int events = 149;
+        final int power = 200;
+        new TrainerData.TrainerDataPayload()
+                .setCadence(cadence)
+                .setInstantPower(instantPower)
+                .setEvents(events)
+                .setPower(power)
+                .setLapFlag(true)
+                .setState(Defines.EquipmentState.READY)
+                .setTrainerStatusFlags(flags)
+                .encode(packet);
+        TrainerData page = new TrainerData(packet);
+        assertTrue(page.isPowerAvailable());
+        assertTrue(page.isLapToggled());
+        assertEquals(cadence, (int) page.getCadence());
+        assertEquals(instantPower, page.getInstantPower());
+        assertEquals(events, page.getEventCount());
+        assertEquals(power, page.getSumPower());
+        assertTrue(page.getStatusFlags().containsAll(flags));
+        System.out.println();
     }
 
 
