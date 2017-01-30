@@ -144,7 +144,7 @@ public class Command extends CommonCommandPage {
                 BigDecimal n = totalResistance.multiply(
                         new BigDecimal(2).setScale(0, RoundingMode.HALF_UP)
                 );
-                PutUnsignedNumIn1LeBytes(response, 3, n.byteValue());
+                PutUnsignedNumIn1LeBytes(response, 3, n.intValue());
             }
 
             builder.setRawResponseData(response);
@@ -285,7 +285,7 @@ public class Command extends CommonCommandPage {
                 BigDecimal n = rollingResistanceCoefficient.multiply(
                         new BigDecimal(20000).setScale(0, RoundingMode.HALF_UP)
                 );
-                PutUnsignedNumIn1LeBytes(response, 3, n.byteValue());
+                PutUnsignedNumIn1LeBytes(response, 3, n.intValue());
             }
 
             builder.setRawResponseData(response);
@@ -370,7 +370,7 @@ public class Command extends CommonCommandPage {
                 BigDecimal n = windResistanceCoefficient.multiply(
                         new BigDecimal(100).setScale(0, RoundingMode.HALF_UP)
                 );
-                PutUnsignedNumIn1LeBytes(response, 1, n.byteValue());
+                PutUnsignedNumIn1LeBytes(response, 1, n.intValue());
             }
             if (windSpeed == null) {
                 PutUnsignedNumIn1LeBytes(response, 2 , UNSIGNED_INT8_MAX);
@@ -384,7 +384,7 @@ public class Command extends CommonCommandPage {
             } else {
                 BigDecimal n = draftingFactor.multiply(
                         new BigDecimal(100).setScale(0, RoundingMode.HALF_UP));
-                PutUnsignedNumIn1LeBytes(response, 3, n.byteValue());
+                PutUnsignedNumIn1LeBytes(response, 3, n.intValue());
             }
 
             builder.setRawResponseData(response);

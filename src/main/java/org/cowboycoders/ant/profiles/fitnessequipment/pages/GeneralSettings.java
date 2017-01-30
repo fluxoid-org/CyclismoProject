@@ -74,7 +74,7 @@ public class GeneralSettings extends CommonPageData implements AntPage {
                 PutUnsignedNumIn1LeBytes(packet, CYCLE_LENGTH_OFFSET, UNSIGNED_INT8_MAX);
             } else {
                 BigDecimal raw = cycleLength.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP);
-                PutUnsignedNumIn1LeBytes(packet, CYCLE_LENGTH_OFFSET, raw.byteValue());
+                PutUnsignedNumIn1LeBytes(packet, CYCLE_LENGTH_OFFSET, raw.intValue());
             }
             if (incline == null) {
                 PutUnsignedNumIn2LeBytes(packet, INCLINE_OFFSET, Short.MAX_VALUE);

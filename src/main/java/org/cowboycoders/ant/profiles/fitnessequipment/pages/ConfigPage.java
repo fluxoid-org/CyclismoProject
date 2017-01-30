@@ -63,14 +63,14 @@ public class ConfigPage implements AntPage {
             } else {
                 PutUnsignedNumIn1LeBytes(packet, WHEEL_DIAMETER_OFFSET,
                         dia.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP)
-                        .byteValue());
+                        .intValue());
             }
             BigDecimal ratio = config.getGearRatio();
             if (ratio == null){
                 PutUnsignedNumIn1LeBytes(packet, GEAR_RATIO_OFFSET, UNSIGNED_INT8_MAX);
             } else {
                 PutUnsignedNumIn1LeBytes(packet, GEAR_RATIO_OFFSET,
-                        ratio.divide(new BigDecimal(0.03), 0, RoundingMode.HALF_UP).byteValue());
+                        ratio.divide(new BigDecimal(0.03), 0, RoundingMode.HALF_UP).intValue());
             }
 
 
