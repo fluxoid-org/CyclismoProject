@@ -3,6 +3,7 @@ package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.TimeDecodable;
 import org.cowboycoders.ant.profiles.common.utils.CounterUtils;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
+import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 
 import java.math.BigDecimal;
@@ -90,9 +91,8 @@ public class GeneralData extends CommonPageData implements AntPage, TimeDecodabl
         return new BigDecimal(delta). divide(new BigDecimal(4), 2, RoundingMode.HALF_UP);
     }
 
-    public static class GeneralDataPayload extends CommonPagePayload {
+    public static class GeneralDataPayload extends CommonPagePayload implements AntPacketEncodable {
 
-        private boolean distanceAvailable = false;
 
         private int timeElapsed = 0;
         private Integer distanceCovered;
@@ -102,14 +102,6 @@ public class GeneralData extends CommonPageData implements AntPage, TimeDecodabl
         private boolean usingVirtualSpeed;
         private Defines.EquipmentType type;
 
-        public boolean isDistanceAvailable() {
-            return distanceAvailable;
-        }
-
-        public GeneralDataPayload setDistanceAvailable(boolean distanceAvailable) {
-            this.distanceAvailable = distanceAvailable;
-            return this;
-        }
 
         public int getTimeElapsed() {
             return timeElapsed;
@@ -194,6 +186,7 @@ public class GeneralData extends CommonPageData implements AntPage, TimeDecodabl
 
         public void encode(final byte[] packet) {
             super.encode(packet);
+            final boolean distanceAvailable = distanceCovered != null;
             PutUnsignedNumIn1LeBytes(packet, PAGE_OFFSET, PAGE_NUMBER);
             packet[TYPE_OFFSET] = (byte) (0xff & (type.getIntValue() & TYPE_MASK));
             if (distanceAvailable) {
@@ -203,7 +196,6 @@ public class GeneralData extends CommonPageData implements AntPage, TimeDecodabl
             }
             PutUnsignedNumIn1LeBytes(packet, TIME_OFFSET, timeElapsed);
             if (distanceAvailable) {
-                assert(distanceCovered != null);
                 PutUnsignedNumIn1LeBytes(packet, DISTANCE_OFFSET, distanceCovered);
             }
             if (speed == null) {

@@ -1,6 +1,7 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
+import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 
 import static org.cowboycoders.ant.profiles.BitManipulation.*;
@@ -49,7 +50,7 @@ public class BikeData extends CommonPageData implements AntPage {
         }
     }
 
-    public static class BikeDataPayload  extends CommonPagePayload {
+    public static class BikeDataPayload  extends CommonPagePayload implements AntPacketEncodable {
         private Integer power;
         private Integer cadence;
 
