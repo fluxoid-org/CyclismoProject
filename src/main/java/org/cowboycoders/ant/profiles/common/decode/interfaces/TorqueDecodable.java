@@ -5,8 +5,8 @@ package org.cowboycoders.ant.profiles.common.decode.interfaces;
  */
 public interface TorqueDecodable extends AbstractPowerDecodable, RotationDecodable {
 
-    long getTorqueDelta(TorqueDecodable old);
-    int getTorque();
+    long getRawTorqueDelta(TorqueDecodable old);
+    int getRawTorque();
 
 
 }

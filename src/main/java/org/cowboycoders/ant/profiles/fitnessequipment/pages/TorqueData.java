@@ -4,10 +4,15 @@ import org.cowboycoders.ant.profiles.TimeOutDeltaValidator;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.*;
 import org.cowboycoders.ant.profiles.common.utils.CounterUtils;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
+import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
+import org.fluxoid.utils.RollOverVal;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.concurrent.TimeUnit;
 
+import static java.lang.Math.PI;
 import static org.cowboycoders.ant.profiles.BitManipulation.*;
 
 /**
@@ -32,47 +37,63 @@ public class TorqueData extends CommonPageData implements AntPage, TorqueDecodab
     private final long timestamp;
     private final TimeOutDeltaValidator timeOutDeltaValidator = new TimeOutDeltaValidator(TIMEOUT_DELTA);
 
-    public static class TorqueDataPayload extends CommonPagePayload {
-        private int events;
-        private int torqueSum;
+    public static class TorqueDataPayload extends CommonPagePayload  implements AntPacketEncodable {
+        RollOverVal events = new RollOverVal(UNSIGNED_INT8_MAX);
+        RollOverVal torqueSum = new RollOverVal(UNSIGNED_INT16_MAX);
 
         // wheel related
-        private int rotations;
-        private int period;
+        RollOverVal rotations = new RollOverVal(UNSIGNED_INT8_MAX);
+        RollOverVal period = new RollOverVal(UNSIGNED_INT16_MAX);
 
         public int getEvents() {
-            return events;
+            return Math.toIntExact(events.getValue());
         }
 
         public TorqueDataPayload setEvents(int events) {
-            this.events = events;
+            this.events.setValue(events);
             return this;
         }
 
-        public int getTorqueSum() {
-            return torqueSum;
+        public long getTorqueSum() {
+            return torqueSum.getValue();
         }
 
         public TorqueDataPayload setTorqueSum(int torqueSum) {
-            this.torqueSum = torqueSum;
+            this.torqueSum.setValue(torqueSum);
             return this;
         }
 
-        public int getRotations() {
-            return rotations;
-        }
-
-        public TorqueDataPayload setRotations(int rotations) {
-            this.rotations = rotations;
+        public TorqueDataPayload setTorqueSum(BigDecimal torqueSum) {
+            BigDecimal scaled = torqueSum.multiply(new BigDecimal(32)).setScale(0, RoundingMode.HALF_UP);
+            this.torqueSum.setValue(scaled.longValue());
             return this;
         }
 
-        public int getPeriod() {
-            return period;
+
+        public TorqueDataPayload updateTorqueSumFromPower(int power, long period) {
+            this.period.add(period);
+            BigDecimal delta = new BigDecimal(power).multiply(new BigDecimal(period))
+                    .divide(new BigDecimal(PI).multiply(new BigDecimal(128)), 0, BigDecimal.ROUND_HALF_UP);
+            this.torqueSum.add(delta.longValue());
+            return this;
+
         }
 
-        public TorqueDataPayload setPeriod(int period) {
-            this.period = period;
+        public long getRotations() {
+            return rotations.getValue();
+        }
+
+        public TorqueDataPayload setRotations(long rotations) {
+            this.rotations.setValue(rotations);
+            return this;
+        }
+
+        public long getPeriod() {
+            return period.getValue();
+        }
+
+        public TorqueDataPayload setPeriod(long period) {
+            this.period.setValue(period);
             return this;
         }
 
@@ -89,10 +110,10 @@ public class TorqueData extends CommonPageData implements AntPage, TorqueDecodab
         public void encode(final byte[] packet) {
             super.encode(packet);
             PutUnsignedNumIn1LeBytes(packet, PAGE_OFFSET, PAGE_NUMBER);
-            PutUnsignedNumIn1LeBytes(packet, EVENT_OFFSET, events);
-            PutUnsignedNumIn1LeBytes(packet, ROTATION_OFFSET, rotations);
-            PutUnsignedNumIn2LeBytes(packet, PERIOD_OFFSET, period);
-            PutUnsignedNumIn2LeBytes(packet, TORQUE_OFFSET, torqueSum);
+            PutUnsignedNumIn1LeBytes(packet, EVENT_OFFSET, Math.toIntExact(events.get()));
+            PutUnsignedNumIn1LeBytes(packet, ROTATION_OFFSET, Math.toIntExact(rotations.get()));
+            PutUnsignedNumIn2LeBytes(packet, PERIOD_OFFSET, Math.toIntExact(period.get()));
+            PutUnsignedNumIn2LeBytes(packet, TORQUE_OFFSET, Math.toIntExact(torqueSum.get()));
 
         }
     }
@@ -108,12 +129,12 @@ public class TorqueData extends CommonPageData implements AntPage, TorqueDecodab
     }
 
     @Override
-    public long getTorqueDelta(TorqueDecodable old) {
-        return CounterUtils.calcDelta(UNSIGNED_INT16_MAX, old.getTorque(), getTorque());
+    public long getRawTorqueDelta(TorqueDecodable old) {
+        return CounterUtils.calcDelta(UNSIGNED_INT16_MAX, old.getRawTorque(), getRawTorque());
     }
 
     @Override
-    public int getTorque() {
+    public int getRawTorque() {
         return torqueSum;
     }
 

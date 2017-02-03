@@ -3,15 +3,13 @@ package org.org.cowboycoders.ant.profiles.simulators;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.BikeData;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.CommonPageData;
-import org.cowboycoders.ant.profiles.fitnessequipment.pages.GeneralData;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.GeneralData.GeneralDataPayload;
+import org.cowboycoders.ant.profiles.fitnessequipment.pages.TrainerData;
 import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.fluxoid.utils.RotatingView;
 
 import java.math.BigDecimal;
-import java.util.concurrent.TimeUnit;
-
-import static org.cowboycoders.ant.profiles.BitManipulation.UNSIGNED_INT8_MAX;
+import java.util.EnumSet;
 
 /**
  * Created by fluxoid on 01/02/17.
@@ -25,8 +23,10 @@ public class DummyTrainerState {
     private Defines.EquipmentState state = Defines.EquipmentState.READY;
     private static final Defines.EquipmentType type = Defines.EquipmentType.BIKE;
 
-    // cleared when commanpage data is generated
+    // cleared when common page data is generated
     private boolean lapFlagIsDirty = false;
+    private long powerEvents;
+    private long powerSum;
 
     private <V extends CommonPageData.CommonPagePayload> V setCommon(V payload) {
         lapFlagIsDirty = false;
@@ -116,6 +116,39 @@ public class DummyTrainerState {
             );
         }
     };
+
+    private EnumSet<Defines.TrainerStatusFlag> statusFlags = EnumSet.noneOf(Defines.TrainerStatusFlag.class);
+
+    public EnumSet<Defines.TrainerStatusFlag> getStatusFlags() {
+        return statusFlags;
+    }
+
+    public DummyTrainerState setStatusFlags(EnumSet<Defines.TrainerStatusFlag> statusFlags) {
+        this.statusFlags = statusFlags;
+        return this;
+    }
+
+    // not used by EquipmentType.Bike
+    private PageGen trainerDataGen = new PageGen() {
+
+        @Override
+        public AntPacketEncodable getPageEncoder() {
+            powerEvents += 1;
+            powerSum += power;
+            return setCommon(
+                    new TrainerData.TrainerDataPayload()
+                            .setInstantPower(power)
+                    .setCadence(cadence)
+                    .setPowerSum(powerSum)
+                    .setEvents(Math.toIntExact(powerEvents))
+                    .setTrainerStatusFlags(statusFlags)
+                            
+            );
+        }
+    };
+
+
+
     private RotatingView<PageGen> packetGen = new RotatingView<> (
             new PageGen [] {generalDataGen, bikeDataGen}
     );

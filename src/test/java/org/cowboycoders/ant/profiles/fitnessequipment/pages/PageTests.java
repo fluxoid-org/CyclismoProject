@@ -4,7 +4,6 @@ import org.cowboycoders.ant.profiles.fitnessequipment.*;
 
 import org.cowboycoders.ant.profiles.pages.CommonCommandPage;
 import org.junit.Test;
-import org.junit.experimental.theories.suppliers.TestedOn;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -413,7 +412,7 @@ public class PageTests {
         assertEquals(events, page.getEventCount());
         assertEquals(period, page.getRotationPeriod());
         assertEquals(rotations, page.getWheelRotations());
-        assertEquals(torqueSum, page.getTorque());
+        assertEquals(torqueSum, page.getRawTorque());
     }
 
     @Test public void encodeDecodeTrackResistance() {
@@ -467,7 +466,7 @@ public class PageTests {
                 .setCadence(cadence)
                 .setInstantPower(instantPower)
                 .setEvents(events)
-                .setPower(power)
+                .setPowerSum(power)
                 .setLapFlag(true)
                 .setState(Defines.EquipmentState.READY)
                 .setTrainerStatusFlags(flags)

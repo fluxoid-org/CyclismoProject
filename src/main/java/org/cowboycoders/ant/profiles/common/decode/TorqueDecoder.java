@@ -3,10 +3,10 @@ package org.cowboycoders.ant.profiles.common.decode;
 import org.cowboycoders.ant.events.BroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.decode.utils.CounterBasedDecoder;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.TorqueDecodable;
-import org.cowboycoders.ant.profiles.common.events.AverageTorqueUpdate;
 import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
 import org.cowboycoders.ant.profiles.common.events.TorquePowerUpdate;
 import org.cowboycoders.ant.profiles.common.events.TorqueUpdate;
+import org.cowboycoders.ant.profiles.common.events.AverageTorqueUpdate;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -63,8 +63,8 @@ public class TorqueDecoder implements Decoder<TorqueDecodable> {
         protected void onValidDelta() {
             TorqueDecodable next = getCurrentPage();
             TorqueDecodable prev = getPreviousPage();
-            torqueDelta = next.getTorqueDelta(prev);
-            periodDelta = next.getTorqueDelta(prev);
+            torqueDelta = next.getRawTorqueDelta(prev);
+            periodDelta = next.getRawTorqueDelta(prev);
             torqueSum += torqueDelta;
             periodSum += periodDelta;
         }

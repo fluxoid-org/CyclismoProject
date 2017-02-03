@@ -59,7 +59,7 @@ public class Dummy {
 
         ExecutorService pool = Executors.newSingleThreadExecutor();
 
-        DummyTrainerState state = new DummyTrainerState();
+        final DummyTrainerState state = new DummyTrainerState();
 
         state.setPower(200);
         state.setCadence(75);
@@ -84,7 +84,7 @@ public class Dummy {
             }
         }, 1000, 1000);
 
-        Channel channel = transceiver.getFreeChannel();
+        final Channel channel = transceiver.getFreeChannel();
         ChannelType type = new MasterChannelType(false, false);
         channel.assign(NetworkKeys.ANT_SPORT, type);
         channel.setId(1234,17,255,false);

@@ -5,12 +5,13 @@ import org.cowboycoders.ant.profiles.common.events.interfaces.HasPower;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import static java.lang.Math.PI;
+
 /**
  * Created by fluxoid on 10/01/17.
  */
 public class TorquePowerUpdate  implements HasPower {
 
-    public static final double PI = 3.141592653589793;
     private final long torqueSum;
     private final long period;
 

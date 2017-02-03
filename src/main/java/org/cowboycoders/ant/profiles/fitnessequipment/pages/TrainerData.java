@@ -5,7 +5,9 @@ import org.cowboycoders.ant.profiles.common.utils.CounterUtils;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.CounterBasedDecodable;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.PowerOnlyDecodable;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
+import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
+import org.fluxoid.utils.RollOverVal;
 
 import java.util.EnumSet;
 import java.util.concurrent.TimeUnit;
@@ -13,6 +15,11 @@ import java.util.concurrent.TimeUnit;
 import static org.cowboycoders.ant.profiles.BitManipulation.*;
 
 /**
+ *
+ * Seems to be used for EquipmentType.Trainer
+ *
+ * Isn't used for: EquipmentType.Bike
+ *
  * Created by fluxoid on 02/01/17.
  */
 public class TrainerData extends CommonPageData implements PowerOnlyDecodable, AntPage {
@@ -31,10 +38,10 @@ public class TrainerData extends CommonPageData implements PowerOnlyDecodable, A
     private final int events;
     private final long timestamp;
 
-    public static class TrainerDataPayload extends CommonPagePayload {
-        private int power;
+    public static class TrainerDataPayload extends CommonPagePayload implements AntPacketEncodable {
+        private RollOverVal powerSum = new RollOverVal(UNSIGNED_INT16_MAX);
         private int instantPower = -1;
-        private int events;
+        private RollOverVal events = new RollOverVal(UNSIGNED_INT8_MAX);
         private Integer cadence;
         private EnumSet<Defines.TrainerStatusFlag> trainerStatusFlags = EnumSet.noneOf(Defines.TrainerStatusFlag.class);
 
@@ -59,12 +66,12 @@ public class TrainerData extends CommonPageData implements PowerOnlyDecodable, A
             return this;
         }
 
-        public int getPower() {
-            return power;
+        public long getPowerSum() {
+            return powerSum.getValue();
         }
 
-        public TrainerDataPayload setPower(int power) {
-            this.power = power;
+        public TrainerDataPayload setPowerSum(long powerSum) {
+            this.powerSum.setValue(powerSum);
             return this;
         }
 
@@ -74,7 +81,7 @@ public class TrainerData extends CommonPageData implements PowerOnlyDecodable, A
 
         public TrainerDataPayload setInstantPower(int instantPower) {
             if (instantPower < 0 || instantPower > UNSIGNED_INT12_MAX) {
-                throw new IllegalArgumentException("instant power out of range");
+                throw new IllegalArgumentException("instant powerSum out of range");
             }
             this.instantPower = instantPower;
             return this;
@@ -86,11 +93,11 @@ public class TrainerData extends CommonPageData implements PowerOnlyDecodable, A
 
 
         public int getEvents() {
-            return events;
+            return Math.toIntExact(events.getValue());
         }
 
         public TrainerDataPayload setEvents(int events) {
-            this.events = events;
+            this.events.setValue(events);
             return this;
         }
 
@@ -107,8 +114,8 @@ public class TrainerData extends CommonPageData implements PowerOnlyDecodable, A
         public void encode(final byte[] packet) {
             super.encode(packet);
             PutUnsignedNumIn1LeBytes(packet, PAGE_OFFSET, PAGE_NUMBER);
-            PutUnsignedNumIn2LeBytes(packet, POWER_OFFSET, power);
-            PutUnsignedNumIn1LeBytes(packet, EVENT_OFFSET, events);
+            PutUnsignedNumIn2LeBytes(packet, POWER_OFFSET, Math.toIntExact(powerSum.get()));
+            PutUnsignedNumIn1LeBytes(packet, EVENT_OFFSET, Math.toIntExact(events.get()));
             int old = UnsignedNumFrom2LeBytes(packet, INSTANT_POWER_OFFSET);
             if (isPowerAvailable()) {
                 PutUnsignedNumIn2LeBytes(packet, INSTANT_POWER_OFFSET, old | instantPower );
@@ -126,7 +133,7 @@ public class TrainerData extends CommonPageData implements PowerOnlyDecodable, A
 
 
     /**
-     * Accumulated power : running sum of instanteous power updated on each increment of event count
+     * Accumulated powerSum : running sum of instanteous powerSum updated on each increment of event count
      * @return
      */
     public int getSumPower() {

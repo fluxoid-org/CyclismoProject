@@ -18,11 +18,14 @@ public class PageDispatcher {
     private Map<Object, BroadcastListener<AntPage>> adapterListenerMap = new HashMap();
 
 
-    public <A extends AntPage> void addListener(Class<A> clazz, BroadcastListener<A> listener) {
+    public <A extends AntPage> void addListener(final Class<A> clazz, final BroadcastListener<A> listener) {
         //TODO: factor out this pattern as it is used in jformica.Node
-        BroadcastListener<AntPage> wrapper = o -> {
-            if (clazz.isInstance(o)) {
-                listener.receiveMessage(clazz.cast(o));
+        BroadcastListener<AntPage> wrapper = new BroadcastListener<AntPage>() {
+            @Override
+            public void receiveMessage(AntPage o) {
+                if (clazz.isInstance(o)) {
+                    listener.receiveMessage(clazz.cast(o));
+                }
             }
         };
         adapterListenerMap.put(listener, wrapper);
