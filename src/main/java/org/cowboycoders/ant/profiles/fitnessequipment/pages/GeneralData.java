@@ -5,6 +5,7 @@ import org.cowboycoders.ant.profiles.common.utils.CounterUtils;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
 import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
+import org.org.cowboycoders.ant.profiles.simulators.RollOverVal;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -96,6 +97,7 @@ public class GeneralData extends CommonPageData implements AntPage, TimeDecodabl
 
         private int timeElapsed = 0;
         private Integer distanceCovered;
+        private RollOverVal distance = new RollOverVal(UNSIGNED_INT8_MAX);
         private BigDecimal speed;
         private Integer heartRate;
         private Defines.HeartRateDataSource heartRateSource;
@@ -108,7 +110,10 @@ public class GeneralData extends CommonPageData implements AntPage, TimeDecodabl
         }
 
         public GeneralDataPayload setTimeElapsed(BigDecimal seconds) {
-            timeElapsed = seconds.multiply(new BigDecimal(4)).setScale(0, RoundingMode.HALF_UP).intValue();
+            int temp = seconds.multiply(new BigDecimal(4)).setScale(0, RoundingMode.HALF_UP).intValue();
+            RollOverVal val = new RollOverVal(UNSIGNED_INT8_MAX);
+            val.setValue(temp);
+            timeElapsed = (int) val.get();
             return this;
         }
 
@@ -124,7 +129,12 @@ public class GeneralData extends CommonPageData implements AntPage, TimeDecodabl
             return distanceCovered;
         }
 
+        /**
+         * @param distanceCovered if larger than 255, will be rolled over to fit in a byte when encoded
+         *                        e.g 256 will be encoded as 0, and 257 will be encoded as 1
+         */
         public GeneralDataPayload setDistanceCovered(Integer distanceCovered) {
+            distance.setValue(distanceCovered);
             this.distanceCovered = distanceCovered;
             return this;
         }
@@ -196,7 +206,7 @@ public class GeneralData extends CommonPageData implements AntPage, TimeDecodabl
             }
             PutUnsignedNumIn1LeBytes(packet, TIME_OFFSET, timeElapsed);
             if (distanceAvailable) {
-                PutUnsignedNumIn1LeBytes(packet, DISTANCE_OFFSET, distanceCovered);
+                PutUnsignedNumIn1LeBytes(packet, DISTANCE_OFFSET, (int) distance.get());
             }
             if (speed == null) {
                 PutUnsignedNumIn2LeBytes(packet, SPEED_OFFSET, UNSIGNED_INT16_MAX);

@@ -311,7 +311,6 @@ public class PageTests {
         new GeneralData.GeneralDataPayload()
                 .setLapFlag(true)
                 .setState(Defines.EquipmentState.READY)
-                .setDistanceAvailable(true)
                 .setDistanceCovered(DISTANCE_COVERED)
                 .setType(Defines.EquipmentType.BIKE)
                 .setHeartRateSource(Defines.HeartRateDataSource.ANTPLUS_HRM)
