@@ -3,7 +3,7 @@ package org.cowboycoders.ant.utils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.org.cowboycoders.ant.profiles.simulators.RollOverVal;
+import org.fluxoid.utils.RollOverVal;
 
 import static org.cowboycoders.ant.profiles.BitManipulation.UNSIGNED_INT8_MAX;
 import static org.junit.Assert.assertEquals;

@@ -5,7 +5,7 @@ import org.cowboycoders.ant.profiles.common.utils.CounterUtils;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
 import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
-import org.org.cowboycoders.ant.profiles.simulators.RollOverVal;
+import org.fluxoid.utils.RollOverVal;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
