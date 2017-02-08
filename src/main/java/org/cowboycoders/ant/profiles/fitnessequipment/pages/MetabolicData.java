@@ -1,8 +1,11 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
+import org.cowboycoders.ant.profiles.common.decode.interfaces.CalorieCountDecodable;
 import org.cowboycoders.ant.profiles.common.utils.CounterUtils;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
+import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
+import org.fluxoid.utils.RollOverVal;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -12,7 +15,7 @@ import static org.cowboycoders.ant.profiles.BitManipulation.*;
 /**
  * Created by fluxoid on 02/01/17.
  */
-public class MetabolicData extends CommonPageData implements AntPage {
+public class MetabolicData extends CommonPageData implements AntPage, CalorieCountDecodable {
 
     public static int PAGE_NUMBER = 18;
 
@@ -25,27 +28,21 @@ public class MetabolicData extends CommonPageData implements AntPage {
     private final boolean caloriesAvailable;
     private final Integer calorieCounter;
 
-    public static class MetabolicDataPayload extends CommonPagePayload {
-        private boolean caloriesAvailable = false;
-        private Integer calorieCounter;
+    public static class MetabolicDataPayload extends CommonPagePayload implements AntPacketEncodable {
+        private RollOverVal calorieCounter = new RollOverVal(UNSIGNED_INT8_MAX);
         private BigDecimal instantMetabolicEquivalents;
         private BigDecimal instantCalorieBurn;
 
         public boolean isCaloriesAvailable() {
-            return caloriesAvailable;
-        }
-
-        public MetabolicDataPayload setCaloriesAvailable(boolean caloriesAvailable) {
-            this.caloriesAvailable = caloriesAvailable;
-            return this;
+            return calorieCounter != null;
         }
 
         public Integer getCalorieCounter() {
-            return calorieCounter;
+            return Math.toIntExact(calorieCounter.getValue());
         }
 
         public MetabolicDataPayload setCalorieCounter(Integer calorieCounter) {
-            this.calorieCounter = calorieCounter;
+            this.calorieCounter.setValue(calorieCounter);
             return this;
         }
 
@@ -80,12 +77,12 @@ public class MetabolicData extends CommonPageData implements AntPage {
         public void encode(byte[] packet) {
             super.encode(packet);
             PutUnsignedNumIn1LeBytes(packet, PAGE_OFFSET, PAGE_NUMBER);
-            if (caloriesAvailable && calorieCounter == null) {
+            if (isCaloriesAvailable() && calorieCounter == null) {
                 throw new IllegalArgumentException("must set calorie counter");
             }
-            if (caloriesAvailable) {
+            if (isCaloriesAvailable()) {
                 packet[META_OFFSET] |= HAS_CALORIES_MASK;
-                PutUnsignedNumIn1LeBytes(packet, CALORIES_OFFSET, calorieCounter);
+                PutUnsignedNumIn1LeBytes(packet, CALORIES_OFFSET, Math.toIntExact(calorieCounter.get()));
             } else {
                 packet[META_OFFSET] = clearMaskedBits(packet[META_OFFSET], HAS_CALORIES_MASK);
             }
@@ -117,6 +114,7 @@ public class MetabolicData extends CommonPageData implements AntPage {
     /**
      * calories burnt counter
      */
+    @Override
     public Integer getCalorieCounter() {
         return calorieCounter;
     }
@@ -165,10 +163,11 @@ public class MetabolicData extends CommonPageData implements AntPage {
 
     }
 
-    public long getCalorieDelta(MetabolicData old) {
+    @Override
+    public long getCalorieDelta(CalorieCountDecodable old) {
         if (old == null) {
             return calorieCounter;
         }
-        return CounterUtils.calcDelta(UNSIGNED_INT8_MAX, old.calorieCounter, calorieCounter);
+        return CounterUtils.calcDelta(UNSIGNED_INT8_MAX, old.getCalorieCounter(), calorieCounter);
     }
 }

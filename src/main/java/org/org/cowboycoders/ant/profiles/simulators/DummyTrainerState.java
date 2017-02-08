@@ -1,11 +1,8 @@
 package org.org.cowboycoders.ant.profiles.simulators;
 
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
-import org.cowboycoders.ant.profiles.fitnessequipment.pages.BikeData;
-import org.cowboycoders.ant.profiles.fitnessequipment.pages.CommonPageData;
+import org.cowboycoders.ant.profiles.fitnessequipment.pages.*;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.GeneralData.GeneralDataPayload;
-import org.cowboycoders.ant.profiles.fitnessequipment.pages.TorqueData;
-import org.cowboycoders.ant.profiles.fitnessequipment.pages.TrainerData;
 import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.fluxoid.utils.RotatingView;
 
@@ -22,12 +19,19 @@ public class DummyTrainerState {
     public static final BigDecimal WHEEL_CIRCUM = new BigDecimal(700); // 700mm from pluginsampler
     //public static final BigDecimal WHEEL_CIRCUM = WHEEL_DIA.multiply(new BigDecimal(Math.PI));
 
+
+    // for intense cycling!
+    // estimated from https://en.wikipedia.org/wiki/Metabolic_equivalent
+    public static final double MET_CYCLING = 7.5;
+
     private boolean lapFlag;
     private int power;
     private int cadence;
     private BigDecimal speed = new BigDecimal(0.0);
     private Defines.EquipmentState state = Defines.EquipmentState.READY;
     private static final Defines.EquipmentType type = Defines.EquipmentType.TRAINER;
+
+    private Athlete athlete = new MaleAthlete(180, 80, 21);
 
     // cleared when common page data is generated
     private boolean lapFlagIsDirty = false;
@@ -177,9 +181,29 @@ public class DummyTrainerState {
     };
 
 
+    private PageGen metabolicGen = new PageGen() {
+
+        @Override
+        public AntPacketEncodable getPageEncoder() {
+            long timeNanos = System.nanoTime() - start;
+            double timeHrs = timeNanos / Math.pow(10, 9) / (60 * 60);
+            BigDecimal instantCalorieBurn = athlete.getEstimatedCalorificBurn(MET_CYCLING);
+            BigDecimal calsBurnt = instantCalorieBurn.multiply(new BigDecimal(timeHrs));
+            System.out.println(instantCalorieBurn);
+            return setCommon(
+                    new MetabolicData.MetabolicDataPayload()
+                            .setInstantCalorieBurn(instantCalorieBurn)
+                            .setCalorieCounter(calsBurnt.intValue())
+                            .setInstantMetabolicEquivalents(new BigDecimal(MET_CYCLING)
+
+            ));
+        }
+    };
+
+
 
     private RotatingView<PageGen> packetGen = new RotatingView<> (
-            new PageGen [] {generalDataGen, bikeDataGen, torqueDataGen}
+            new PageGen [] {generalDataGen, bikeDataGen, metabolicGen}
     );
 
     public byte [] nextPacket() {
