@@ -2,8 +2,7 @@ package org.cowboycoders.ant.profiles.common.decode;
 
 import org.cowboycoders.ant.events.BroadcastListener;
 import org.cowboycoders.ant.events.BroadcastMessenger;
-import org.cowboycoders.ant.profiles.common.events.SpeedUpdate;
-import org.cowboycoders.ant.profiles.common.events.WheelFreqUpdate;
+import org.cowboycoders.ant.profiles.common.events.WheelRotationsUpdate;
 import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.TorqueData;
 import org.junit.Test;
@@ -16,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by fluxoid on 07/02/17.
  */
-public class SpeedDecoderTest {
+public class DistanceDecoderTest {
 
 
     private static final BigDecimal WHEEL_CIRCUM = new BigDecimal(0.7); //m
@@ -25,21 +24,17 @@ public class SpeedDecoderTest {
     public void matchesKnownGood() {
         BroadcastMessenger<TelemetryEvent> bus = new BroadcastMessenger<TelemetryEvent>();
         class FreqListener implements BroadcastListener<TelemetryEvent>  {
-            private BigDecimal freq;
-            private BigDecimal speedKmh;
+            private long rotations;
             public void receiveMessage(TelemetryEvent telemetryEvent) {
-                if (telemetryEvent instanceof WheelFreqUpdate) {
-                    WheelFreqUpdate up = (WheelFreqUpdate) telemetryEvent;
-                    freq = up.getRotationalFrequency();
-                }
-                if (telemetryEvent instanceof SpeedUpdate) {
-                    speedKmh = ((SpeedUpdate) telemetryEvent).getSpeed();
+                if (telemetryEvent instanceof WheelRotationsUpdate) {
+                    WheelRotationsUpdate up = (WheelRotationsUpdate) telemetryEvent;
+                    rotations = up.getWheelRotations();
                 }
             }
         };
         FreqListener freqListener = new FreqListener();
         bus.addBroadcastListener(freqListener);
-        BigDecimal speed = new BigDecimal(10.0); // metres / per second
+        BigDecimal speed = new BigDecimal(10.0);
         BigDecimal period = WHEEL_CIRCUM.divide(speed, 20, BigDecimal.ROUND_HALF_UP);
         int power = 200;
         int rotationsDelta = 10;
@@ -59,20 +54,14 @@ public class SpeedDecoderTest {
         TorqueData p1 = new TorqueData(data1);
         TorqueData p2 = new TorqueData(data2);
 
-        SpeedDecoder dec = new SpeedDecoder(bus, WHEEL_CIRCUM);
+        DistanceDecoder dec = new DistanceDecoder(bus, WHEEL_CIRCUM);
         dec.update(p1);
         dec.update(p2);
-        // there is some rounding error in decode / encode step
 
-        BigDecimal calcSpeed = WHEEL_CIRCUM.multiply(freqListener.freq);
         assertEquals(
-                speed.setScale(1, RoundingMode.HALF_UP),
-                calcSpeed.setScale(1, RoundingMode.HALF_UP)
+                rotationsDelta,
+                freqListener.rotations
                 );
-        assertEquals(
-                speed.multiply(new BigDecimal(3.6)).setScale(0, RoundingMode.HALF_UP), // km/h conversion
-                freqListener.speedKmh.setScale(0, RoundingMode.HALF_UP)
-        );
 
     }
 
