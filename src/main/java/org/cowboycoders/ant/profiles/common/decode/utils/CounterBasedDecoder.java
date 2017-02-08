@@ -58,7 +58,7 @@ public abstract class CounterBasedDecoder<T extends CounterBasedDecodable> {
         this.currentPage = next;
         onUpdate();
         coastDetector.update(next);
-        if (!next.isValidDelta(prev) || prev == null) {
+        if (prev == null || !next.isValidDelta(prev)) {
             coastDetector.startCoast(next);
             prev = next;
             initializeCounters(next);

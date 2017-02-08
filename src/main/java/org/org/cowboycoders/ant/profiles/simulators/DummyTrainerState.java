@@ -4,6 +4,7 @@ import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.BikeData;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.CommonPageData;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.GeneralData.GeneralDataPayload;
+import org.cowboycoders.ant.profiles.fitnessequipment.pages.TorqueData;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.TrainerData;
 import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.fluxoid.utils.RotatingView;
@@ -16,12 +17,17 @@ import java.util.EnumSet;
  */
 public class DummyTrainerState {
 
+    // 700c http://www.bikecalc.com/wheel_size_math
+    //public static final BigDecimal WHEEL_DIA = new BigDecimal(668.00);
+    public static final BigDecimal WHEEL_CIRCUM = new BigDecimal(700); // 700mm from pluginsampler
+    //public static final BigDecimal WHEEL_CIRCUM = WHEEL_DIA.multiply(new BigDecimal(Math.PI));
+
     private boolean lapFlag;
     private int power;
     private int cadence;
     private BigDecimal speed = new BigDecimal(0.0);
     private Defines.EquipmentState state = Defines.EquipmentState.READY;
-    private static final Defines.EquipmentType type = Defines.EquipmentType.BIKE;
+    private static final Defines.EquipmentType type = Defines.EquipmentType.TRAINER;
 
     // cleared when common page data is generated
     private boolean lapFlagIsDirty = false;
@@ -93,7 +99,7 @@ public class DummyTrainerState {
             BigDecimal elapsed = new BigDecimal((now - start) / Math.pow(10,9));
             return setCommon(
                     new GeneralDataPayload()
-                    .setType(Defines.EquipmentType.BIKE)
+                    .setType(type)
                     .setHeartRate(heartRate)
                     .setHeartRateSource(Defines.HeartRateDataSource.ANTPLUS_HRM)
                     .setDistanceCovered(distance)
@@ -147,10 +153,33 @@ public class DummyTrainerState {
         }
     };
 
+    private int torqueEvents;
+    private long torqueTimeStamp = System.nanoTime();
+
+    private final TorqueData.TorqueDataPayload torqueDataPayload = new TorqueData.TorqueDataPayload();
+    private PageGen torqueDataGen = new PageGen() {
+
+        @Override
+        public AntPacketEncodable getPageEncoder() {
+            // period for 1 rotation
+            BigDecimal period = WHEEL_CIRCUM.multiply(new BigDecimal(Math.pow(10,-3))).divide(speed, 20, BigDecimal.ROUND_HALF_UP);
+            torqueEvents += 1;
+            long now = System.nanoTime();
+            double delta = (now - torqueTimeStamp) / Math.pow(10,9);
+            BigDecimal rotations = new BigDecimal(delta).divide(period, 0, BigDecimal.ROUND_HALF_UP);
+            return setCommon(
+                    torqueDataPayload
+                    .setEvents(torqueEvents)
+                    .updateTorqueSumFromPower(power, period)
+                    .setRotations(rotations.longValue())
+            );
+        }
+    };
+
 
 
     private RotatingView<PageGen> packetGen = new RotatingView<> (
-            new PageGen [] {generalDataGen, bikeDataGen}
+            new PageGen [] {generalDataGen, bikeDataGen, torqueDataGen}
     );
 
     public byte [] nextPacket() {

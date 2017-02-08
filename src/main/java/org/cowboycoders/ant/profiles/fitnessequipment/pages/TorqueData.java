@@ -70,9 +70,10 @@ public class TorqueData extends CommonPageData implements AntPage, TorqueDecodab
         }
 
 
-        public TorqueDataPayload updateTorqueSumFromPower(int power, long period) {
-            this.period.add(period);
-            BigDecimal delta = new BigDecimal(power).multiply(new BigDecimal(period))
+        public TorqueDataPayload updateTorqueSumFromPower(int power, BigDecimal periodInSeconds) {
+            BigDecimal scaledPeriod = periodInSeconds.multiply(new BigDecimal(2048));
+            this.period.add(scaledPeriod.longValue());
+            BigDecimal delta = new BigDecimal(power).multiply(scaledPeriod)
                     .divide(new BigDecimal(PI).multiply(new BigDecimal(128)), 0, BigDecimal.ROUND_HALF_UP);
             this.torqueSum.add(delta.longValue());
             return this;

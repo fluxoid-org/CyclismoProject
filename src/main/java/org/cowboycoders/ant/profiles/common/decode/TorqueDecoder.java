@@ -64,7 +64,7 @@ public class TorqueDecoder implements Decoder<TorqueDecodable> {
             TorqueDecodable next = getCurrentPage();
             TorqueDecodable prev = getPreviousPage();
             torqueDelta = next.getRawTorqueDelta(prev);
-            periodDelta = next.getRawTorqueDelta(prev);
+            periodDelta = next.getRotationPeriodDelta(prev);
             torqueSum += torqueDelta;
             periodSum += periodDelta;
         }

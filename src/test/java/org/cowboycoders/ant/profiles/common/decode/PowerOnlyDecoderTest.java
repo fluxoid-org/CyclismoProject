@@ -3,7 +3,6 @@ package org.cowboycoders.ant.profiles.common.decode;
 import org.cowboycoders.ant.events.BroadcastListener;
 import org.cowboycoders.ant.events.BroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.decode.utils.CoastDetector;
-import org.cowboycoders.ant.profiles.common.decode.PowerOnlyDecoder;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.CounterBasedDecodable;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.PowerOnlyDecodable;
 import org.cowboycoders.ant.profiles.common.events.AveragedPowerUpdate;
@@ -38,7 +37,7 @@ public class PowerOnlyDecoderTest {
             }
         }
 
-        BroadcastMessenger<TelemetryEvent> bus = new BroadcastMessenger();
+        BroadcastMessenger<TelemetryEvent> bus = new BroadcastMessenger<TelemetryEvent>();
         PowerOnlyDecoder decoder = new PowerOnlyDecoder(bus);
 
         CoastHelper listener = new CoastHelper();
@@ -108,7 +107,7 @@ public class PowerOnlyDecoderTest {
     }
 
     /**
-     * Tests averaged power = (summation of power readings) / (number of power readings in summation)
+     * Tests averaged freq = (summation of freq readings) / (number of freq readings in summation)
      */
     @Test
     public void testSumPower() {
@@ -130,7 +129,7 @@ public class PowerOnlyDecoderTest {
             }
         }
 
-        BroadcastMessenger<TelemetryEvent> bus = new BroadcastMessenger();
+        BroadcastMessenger<TelemetryEvent> bus = new BroadcastMessenger<TelemetryEvent>();
         PowerOnlyDecoder decoder = new PowerOnlyDecoder(bus);
 
         PowerSumListener listener = new PowerSumListener();

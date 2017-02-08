@@ -10,10 +10,18 @@ import java.math.BigDecimal;
 public class WheelFreqUpdate implements TelemetryEvent {
     private BigDecimal rotationalFrequency;
 
+    /**
+     *
+     * @param rotationalFrequency in rotations/seconds
+     */
     public WheelFreqUpdate(BigDecimal rotationalFrequency) {
         this.rotationalFrequency = rotationalFrequency;
     }
 
+    /**
+     *
+     * @return in rotations/second
+     */
     public BigDecimal getRotationalFrequency() {
         return rotationalFrequency;
     }
