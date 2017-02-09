@@ -1,8 +1,6 @@
 package org.org.cowboycoders.ant.profiles.simulators;
 
-import org.cowboycoders.ant.profiles.fitnessequipment.Config;
-import org.cowboycoders.ant.profiles.fitnessequipment.ConfigBuilder;
-import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
+import org.cowboycoders.ant.profiles.fitnessequipment.*;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.*;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.GeneralData.GeneralDataPayload;
 import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
@@ -10,7 +8,10 @@ import org.fluxoid.utils.RotatingView;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.LinkedList;
+import java.util.List;
 
 import static java.lang.Math.PI;
 
@@ -40,6 +41,14 @@ public class DummyTrainerState {
     private Athlete athlete = new MaleAthlete(180, 80, 21);
     private BigDecimal bikeWeight = new BigDecimal(10); // kg
     private BigDecimal gearRatio = getGearRatio(52, 11);
+    private Capabilities capabilities = new CapabilitiesBuilder()
+            .setBasicResistanceModeSupport(true)
+            .setSimulationModeSupport(false)
+            .setTargetPowerModeSupport(false)
+            .setMaximumResistance(1234)
+            .createCapabilities();
+
+    private List<PageGen> priorityMessages = new LinkedList<>();
 
     /**
      * Front to back ratio
@@ -236,15 +245,34 @@ public class DummyTrainerState {
         }
     };
 
+    private PageGen capabilitiesGen = new PageGen() {
+
+        @Override
+        public AntPacketEncodable getPageEncoder() {
+            return new CapabilitiesPage.CapabilitiesPayload()
+                    .setCapabilites(capabilities);
+
+        }
+    };
+
 
 
     private RotatingView<PageGen> packetGen = new RotatingView<> (
             new PageGen [] {generalDataGen, bikeDataGen, metabolicGen, configGen, torqueDataGen}
     );
 
+    public void setCapabilitesRequested() {
+        priorityMessages.add(capabilitiesGen);
+    }
+
     public byte [] nextPacket() {
         final byte [] packet = new byte[8];
-        packetGen.rotate().getPageEncoder().encode(packet);
+        if (priorityMessages.isEmpty()) {
+            packetGen.rotate().getPageEncoder().encode(packet);
+        } else {
+            priorityMessages.remove(0).getPageEncoder().encode(packet);
+        }
+
         return packet;
     }
 }

@@ -2,6 +2,7 @@ package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
 import org.cowboycoders.ant.profiles.fitnessequipment.Capabilities;
 import org.cowboycoders.ant.profiles.fitnessequipment.CapabilitiesBuilder;
+import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 
 import static org.cowboycoders.ant.profiles.BitManipulation.*;
@@ -25,7 +26,7 @@ public class CapabilitiesPage implements AntPage {
         return capabilites;
     }
 
-    public static class CapabilitiesPayload {
+    public static class CapabilitiesPayload implements AntPacketEncodable {
         private Capabilities capabilites = new CapabilitiesBuilder().createCapabilities();
 
         public Capabilities getCapabilites() {
@@ -38,6 +39,7 @@ public class CapabilitiesPage implements AntPage {
         }
 
         public void encode(byte[] packet) {
+            PutUnsignedNumIn1LeBytes(packet, PAGE_OFFSET, PAGE_NUMBER);
             if (capabilites.getMaximumResistance() != null) {
                 PutUnsignedNumIn2LeBytes(packet, MAX_RESISTANCE_OFFSET, capabilites.getMaximumResistance());
             } else {

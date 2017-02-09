@@ -12,9 +12,13 @@ import org.cowboycoders.ant.messages.data.BroadcastDataMessage;
 import org.cowboycoders.ant.messages.data.DataMessage;
 import org.cowboycoders.ant.messages.responses.Response;
 import org.cowboycoders.ant.messages.responses.ResponseCode;
+import org.cowboycoders.ant.profiles.common.PageDispatcher;
+import org.cowboycoders.ant.profiles.fitnessequipment.Capabilities;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.BikeData;
+import org.cowboycoders.ant.profiles.fitnessequipment.pages.CapabilitiesPage;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.GeneralData;
+import org.cowboycoders.ant.profiles.pages.Request;
 
 import java.math.BigDecimal;
 import java.util.Timer;
@@ -66,6 +70,19 @@ public class Dummy {
         state.setHeartRate(123);
         state.setSpeed(new BigDecimal(10));
 
+        PageDispatcher pageDispatcher = new PageDispatcher();
+
+        pageDispatcher.addListener(Request.class, new BroadcastListener<Request>() {
+
+            @Override
+            public void receiveMessage(Request request) {
+                if (request.getPageNumber() == CapabilitiesPage.PAGE_NUMBER) {
+                    System.out.println("capabilitiesRequested");
+                    state.setCapabilitesRequested();
+                }
+            }
+        });
+
 
 
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -80,7 +97,7 @@ public class Dummy {
             @Override
             public void run() {
                 int distance = state.getDistance();
-                state.setDistance(distance += 1);
+                state.setDistance(distance + 1);
             }
         }, 1000, 1000);
 
@@ -94,6 +111,7 @@ public class Dummy {
         channel.registerRxListener(new BroadcastListener<DataMessage>() {
             @Override
             public void receiveMessage(DataMessage msg) {
+                pageDispatcher.dispatch(msg.getPrimitiveData());
                 printBytes(msg.getData());
             }
         }, DataMessage.class);

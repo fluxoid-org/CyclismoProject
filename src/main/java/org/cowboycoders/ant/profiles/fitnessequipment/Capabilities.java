@@ -20,6 +20,10 @@ public class Capabilities {
         return basicResistanceModeSupport;
     }
 
+    /**
+     *
+     * @return in N
+     */
     public Integer getMaximumResistance() {
         return maximumResistance;
     }

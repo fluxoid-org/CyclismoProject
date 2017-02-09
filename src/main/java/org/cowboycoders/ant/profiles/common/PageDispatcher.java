@@ -4,6 +4,7 @@ import org.cowboycoders.ant.events.BroadcastListener;
 import org.cowboycoders.ant.events.BroadcastMessenger;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.*;
 import org.cowboycoders.ant.profiles.pages.AntPage;
+import org.cowboycoders.ant.profiles.pages.Request;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -76,6 +77,8 @@ public class PageDispatcher {
                 return new CapabilitiesPage(data);
             case 55:
                 return new ConfigPage(data);
+            case 70:
+                return new Request(data);
             case 71:
                 return new Command(data);
         }
