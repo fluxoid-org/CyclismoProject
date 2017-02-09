@@ -1,5 +1,7 @@
 package org.org.cowboycoders.ant.profiles.simulators;
 
+import org.cowboycoders.ant.profiles.fitnessequipment.Config;
+import org.cowboycoders.ant.profiles.fitnessequipment.ConfigBuilder;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.*;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.GeneralData.GeneralDataPayload;
@@ -7,7 +9,10 @@ import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.fluxoid.utils.RotatingView;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.EnumSet;
+
+import static java.lang.Math.PI;
 
 /**
  * Created by fluxoid on 01/02/17.
@@ -16,7 +21,8 @@ public class DummyTrainerState {
 
     // 700c http://www.bikecalc.com/wheel_size_math
     //public static final BigDecimal WHEEL_DIA = new BigDecimal(668.00);
-    public static final BigDecimal WHEEL_CIRCUM = new BigDecimal(700); // 700mm from pluginsampler
+    public static final BigDecimal WHEEL_CIRCUM = new BigDecimal(0.700); // 700mm from pluginsampler
+    public static final BigDecimal WHEEL_DIA = WHEEL_CIRCUM.divide(new BigDecimal(PI),4, RoundingMode.HALF_UP);
     //public static final BigDecimal WHEEL_CIRCUM = WHEEL_DIA.multiply(new BigDecimal(Math.PI));
 
 
@@ -32,6 +38,27 @@ public class DummyTrainerState {
     private static final Defines.EquipmentType type = Defines.EquipmentType.TRAINER;
 
     private Athlete athlete = new MaleAthlete(180, 80, 21);
+    private BigDecimal bikeWeight = new BigDecimal(10); // kg
+    private BigDecimal gearRatio = getGearRatio(52, 11);
+
+    /**
+     * Front to back ratio
+     * @param inputTeeth numbre of teeth on chainring
+     * @param outputTeeth number of teeth on cassette sprocket
+     * @return
+     */
+    private static BigDecimal getGearRatio(int inputTeeth, int outputTeeth) {
+        return new BigDecimal(inputTeeth).divide(new BigDecimal(outputTeeth), 4 ,RoundingMode.HALF_UP);
+    }
+
+    private Config getConfig() {
+        return new ConfigBuilder()
+                .setBicycleWeight(bikeWeight)
+                .setBicycleWheelDiameter(WHEEL_DIA)
+                .setGearRatio(gearRatio)
+                .setUserWeight(new BigDecimal(athlete.getWeight()))
+                .createConfig();
+    }
 
     // cleared when common page data is generated
     private boolean lapFlagIsDirty = false;
@@ -166,7 +193,7 @@ public class DummyTrainerState {
         @Override
         public AntPacketEncodable getPageEncoder() {
             // period for 1 rotation
-            BigDecimal period = WHEEL_CIRCUM.multiply(new BigDecimal(Math.pow(10,-3))).divide(speed, 20, BigDecimal.ROUND_HALF_UP);
+            BigDecimal period = WHEEL_CIRCUM.divide(speed, 20, BigDecimal.ROUND_HALF_UP);
             torqueEvents += 1;
             long now = System.nanoTime();
             double delta = (now - torqueTimeStamp) / Math.pow(10,9);
@@ -189,7 +216,6 @@ public class DummyTrainerState {
             double timeHrs = timeNanos / Math.pow(10, 9) / (60 * 60);
             BigDecimal instantCalorieBurn = athlete.getEstimatedCalorificBurn(MET_CYCLING);
             BigDecimal calsBurnt = instantCalorieBurn.multiply(new BigDecimal(timeHrs));
-            System.out.println(instantCalorieBurn);
             return setCommon(
                     new MetabolicData.MetabolicDataPayload()
                             .setInstantCalorieBurn(instantCalorieBurn)
@@ -200,10 +226,20 @@ public class DummyTrainerState {
         }
     };
 
+    private PageGen configGen = new PageGen() {
+
+        @Override
+        public AntPacketEncodable getPageEncoder() {
+            return new ConfigPage.ConfigPayload()
+                    .setConfig(getConfig());
+
+        }
+    };
+
 
 
     private RotatingView<PageGen> packetGen = new RotatingView<> (
-            new PageGen [] {generalDataGen, bikeDataGen, metabolicGen}
+            new PageGen [] {generalDataGen, bikeDataGen, metabolicGen, configGen, torqueDataGen}
     );
 
     public byte [] nextPacket() {

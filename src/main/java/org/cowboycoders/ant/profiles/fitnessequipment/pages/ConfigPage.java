@@ -2,6 +2,7 @@ package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
 import org.cowboycoders.ant.profiles.fitnessequipment.Config;
 import org.cowboycoders.ant.profiles.fitnessequipment.ConfigBuilder;
+import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 
 import java.math.BigDecimal;
@@ -27,7 +28,7 @@ public class ConfigPage implements AntPage {
         return config;
     }
 
-    public static class ConfigPayload {
+    public static class ConfigPayload implements AntPacketEncodable {
         private Config config;
 
         public Config getConfig() {
@@ -69,8 +70,9 @@ public class ConfigPage implements AntPage {
             if (ratio == null){
                 PutUnsignedNumIn1LeBytes(packet, GEAR_RATIO_OFFSET, UNSIGNED_INT8_MAX);
             } else {
+                BigDecimal raw = ratio.divide(new BigDecimal(0.03), RoundingMode.HALF_UP);
                 PutUnsignedNumIn1LeBytes(packet, GEAR_RATIO_OFFSET,
-                        ratio.divide(new BigDecimal(0.03), 0, RoundingMode.HALF_UP).intValue());
+                        raw.intValue());
             }
 
 

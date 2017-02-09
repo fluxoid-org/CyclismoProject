@@ -62,4 +62,16 @@ public abstract class Athlete {
         // TODO: add activity -> MET map?
         return new BigDecimal(met).multiply(getBrmPerHour());
     }
+
+    public double getHeight() {
+        return height;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public int getAge() {
+        return age;
+    }
 }

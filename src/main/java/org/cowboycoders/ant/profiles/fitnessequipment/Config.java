@@ -18,18 +18,34 @@ public class Config {
         this.userWeight = userWeight;
     }
 
+    /**
+     *
+     * @return in kg
+     */
     public BigDecimal getBicycleWeight() {
         return bicycleWeight;
     }
 
+    /**
+     *
+     * @return in m
+     */
     public BigDecimal getBicycleWheelDiameter() {
         return bicycleWheelDiameter;
     }
 
+    /**
+     * Front to back gear ratio
+     * @return in m
+     */
     public BigDecimal getGearRatio() {
         return gearRatio;
     }
 
+    /**
+     *
+     * @return in kg
+     */
     public BigDecimal getUserWeight() {
         return userWeight;
     }
