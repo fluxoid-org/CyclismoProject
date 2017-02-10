@@ -16,6 +16,7 @@ public class CommonCommandPage implements AntPage {
     private static final int RESPONSE_OFFSET = 4;
     private static final int RESPONSE_LENGTH = 4;
     private static final int RESPONSE_END = RESPONSE_OFFSET + RESPONSE_LENGTH;
+    public static final int PAGE_NUMBER = 71;
 
     private int lastCommandPage;
     private int lastSequenceNumber;
@@ -48,7 +49,7 @@ public class CommonCommandPage implements AntPage {
     public static byte [] encode(int lastCommandPage, int lastSequenceNumber, Defines.GenericCommandStatus status, final byte [] response) {
         // -1 offset from decode is becuase we do not include the msg id
         final byte [] array = new byte[8];
-        array[0] = 71;
+        array[0] = PAGE_NUMBER;
         array[1] = (byte)(0xFF & lastCommandPage);
         array[2] = (byte)(0xFF & lastSequenceNumber);
         array[3] = (byte)(0xFF & status.getIntValue());
@@ -57,7 +58,9 @@ public class CommonCommandPage implements AntPage {
     }
 
     public static byte [] createEmptyResponse() {
-        return new byte[RESPONSE_LENGTH];
+        final byte [] result = new byte[RESPONSE_LENGTH];
+        result[PAGE_OFFSET] = PAGE_NUMBER;
+        return result;
     }
 
     /**
@@ -95,7 +98,7 @@ public class CommonCommandPage implements AntPage {
         }
 
         public void encode(final byte[] array) {
-            array[0] = 71;
+            array[0] = PAGE_NUMBER;
             array[1] = (byte)(0xFF & lastReceivedCommandId.getIntValue());
             array[2] = (byte)(0xFF & lastReceivedSequenceNumber);
             array[3] = (byte)(0xFF & status.getIntValue());

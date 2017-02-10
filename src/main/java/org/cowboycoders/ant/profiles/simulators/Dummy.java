@@ -12,8 +12,11 @@ import org.cowboycoders.ant.messages.MasterChannelType;
 import org.cowboycoders.ant.messages.data.BroadcastDataMessage;
 import org.cowboycoders.ant.messages.data.DataMessage;
 import org.cowboycoders.ant.profiles.common.PageDispatcher;
+import org.cowboycoders.ant.profiles.fitnessequipment.Defines.CommandId;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.CapabilitiesPage;
+import org.cowboycoders.ant.profiles.fitnessequipment.pages.Command;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.ConfigPage;
+import org.cowboycoders.ant.profiles.fitnessequipment.pages.PercentageResistance;
 import org.cowboycoders.ant.profiles.pages.Request;
 
 import java.math.BigDecimal;
@@ -22,6 +25,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static org.cowboycoders.ant.profiles.common.PageDispatcher.getPageNum;
 
 /**
  * Created by fluxoid on 31/01/17.
@@ -33,13 +38,14 @@ public class Dummy {
     private Node transceiver;
 
     public static CharSequence printBytes(Byte[] arr) {
-        StringBuilder builder = new StringBuilder();
+        Formatter formatter = new Formatter();
+        final int len = arr.length * 3;
         for (byte b: arr) {
-            Formatter formatter = new Formatter();
             formatter.format("%02x:",b);
-            builder.append(formatter.toString());
         }
-        return builder;
+        // strip last char
+        int end = arr.length == 0 ? 0 : len - 1;
+        return formatter.toString().substring(0, end);
     }
 
     Timer timer = new Timer();
@@ -78,14 +84,32 @@ public class Dummy {
                 final int page = request.getPageNumber();
                 switch (page) {
                     case CapabilitiesPage.PAGE_NUMBER:
-                        logger.trace("capabilitiesRequested");
+                        logger.trace("capabilities requested");
                         state.setCapabilitesRequested();
                         break;
                     case ConfigPage.PAGE_NUMBER:
-                        logger.trace("configRequested");
+                        logger.trace("config requested");
                         state.setConfigRequested();
                         break;
+                    case Command.PAGE_NUMBER:
+                        logger.trace("command status requested");
+                        state.sendCmdStatus();
                 }
+            }
+        });
+
+        pageDispatcher.addListener(ConfigPage.class, new BroadcastListener<ConfigPage>() {
+
+            @Override
+            public void receiveMessage(ConfigPage page) {
+                state.useConfig(page.getConfig());
+            }
+        });
+
+        pageDispatcher.addListener(PercentageResistance.class, new BroadcastListener<PercentageResistance>() {
+            @Override
+            public void receiveMessage(PercentageResistance percentageResistance) {
+                state.setResistance(percentageResistance.getResistance());
             }
         });
 
@@ -99,13 +123,6 @@ public class Dummy {
             }
         }, 1000, 60000);
 
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                int distance = state.getDistance();
-                state.setDistance(distance + 1);
-            }
-        }, 1000, 1000);
 
         final Channel channel = transceiver.getFreeChannel();
         ChannelType type = new MasterChannelType(false, false);
@@ -117,7 +134,12 @@ public class Dummy {
         channel.registerRxListener(new BroadcastListener<DataMessage>() {
             @Override
             public void receiveMessage(DataMessage msg) {
-                pageDispatcher.dispatch(msg.getPrimitiveData());
+                byte [] data = msg.getPrimitiveData();
+                pageDispatcher.dispatch(data);
+                CommandId cmd = CommandId.getValueFromInt(getPageNum(data));
+                if (cmd != CommandId.UNRECOGNIZED && cmd != CommandId.NO_CONTROL_PAGE_RECEIVED) {
+                    logger.trace("receieved cmd: " + cmd);
+                }
                 logger.trace(printBytes(msg.getData()));
             }
         }, DataMessage.class);
@@ -184,4 +206,5 @@ public class Dummy {
         channel.open();
 
     }
+
 }

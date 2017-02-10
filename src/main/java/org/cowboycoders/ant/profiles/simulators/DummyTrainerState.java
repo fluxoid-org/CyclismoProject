@@ -1,9 +1,15 @@
 package org.cowboycoders.ant.profiles.simulators;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.cowboycoders.ant.profiles.fitnessequipment.*;
+import org.cowboycoders.ant.profiles.fitnessequipment.Defines.CommandId;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.*;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.GeneralData.GeneralDataPayload;
 import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
+import org.cowboycoders.ant.profiles.pages.CommonCommandPage;
+import org.fluxoid.utils.MathCompat;
+import org.fluxoid.utils.RollOverVal;
 import org.fluxoid.utils.RotatingView;
 
 import java.math.BigDecimal;
@@ -19,16 +25,20 @@ import static java.lang.Math.PI;
  */
 public class DummyTrainerState {
 
+    private Logger logger = LogManager.getLogger();
+
     // 700c http://www.bikecalc.com/wheel_size_math
-    //public static final BigDecimal WHEEL_DIA = new BigDecimal(668.00);
-    public static final BigDecimal WHEEL_CIRCUM = new BigDecimal(0.700); // 700mm from pluginsampler
-    public static final BigDecimal WHEEL_DIA = WHEEL_CIRCUM.divide(new BigDecimal(PI),4, RoundingMode.HALF_UP);
-    //public static final BigDecimal WHEEL_CIRCUM = WHEEL_DIA.multiply(new BigDecimal(Math.PI));
+    private BigDecimal wheelDiameter = new BigDecimal(0.700).divide(new BigDecimal(PI),4, RoundingMode.HALF_UP);
+    private BigDecimal resistance = new BigDecimal(0);
 
-
+    private BigDecimal getWheelCircumference() {
+        return wheelDiameter.multiply(new BigDecimal(PI));
+    }
     // for intense cycling!
     // estimated from https://en.wikipedia.org/wiki/Metabolic_equivalent
     public static final double MET_CYCLING = 7.5;
+    public static final int ATHLETE_HEIGHT = 180;
+    public static final int ATHLETE_AGE = 21;
 
     private boolean lapFlag;
     private int power;
@@ -37,7 +47,7 @@ public class DummyTrainerState {
     private Defines.EquipmentState state = Defines.EquipmentState.READY;
     private static final Defines.EquipmentType type = Defines.EquipmentType.TRAINER;
 
-    private Athlete athlete = new MaleAthlete(180, 80, 21);
+    private Athlete athlete = new MaleAthlete(ATHLETE_HEIGHT, 80, ATHLETE_AGE);
     private BigDecimal bikeWeight = new BigDecimal(10); // kg
     private BigDecimal gearRatio = getGearRatio(52, 11);
     private Capabilities capabilities = new CapabilitiesBuilder()
@@ -46,6 +56,9 @@ public class DummyTrainerState {
             .setTargetPowerModeSupport(false)
             .setMaximumResistance(1234)
             .createCapabilities();
+
+    private RollOverVal seqNum = new RollOverVal(255);
+    private CommandId lastCmd = CommandId.UNRECOGNIZED;
 
     private List<PageGen> priorityMessages = new LinkedList<>();
 
@@ -62,7 +75,7 @@ public class DummyTrainerState {
     private Config getConfig() {
         return new ConfigBuilder()
                 .setBicycleWeight(bikeWeight)
-                .setBicycleWheelDiameter(WHEEL_DIA)
+                .setBicycleWheelDiameter(wheelDiameter)
                 .setGearRatio(gearRatio)
                 .setUserWeight(new BigDecimal(athlete.getWeight()))
                 .createConfig();
@@ -104,10 +117,6 @@ public class DummyTrainerState {
         return this;
     }
 
-    public DummyTrainerState setDistance(int distance) {
-        this.distance = distance;
-        return this;
-    }
 
     public DummyTrainerState setHeartRate(Integer heartRate) {
         this.heartRate = heartRate;
@@ -129,6 +138,19 @@ public class DummyTrainerState {
         lapFlag =! lapFlag;
         lapFlagIsDirty = true;
     }
+
+    private PageGen basicCmdStatusGen = new PageGen() {
+        @Override
+        public AntPacketEncodable getPageEncoder() {
+            CommonCommandPage.CommandStatus status = new CommonCommandPage.CommandStatusBuilder()
+                    .setLastReceivedSequenceNumber(MathCompat.toIntExact(seqNum.get()))
+                    .setStatus(Defines.Status.PASS) // we can instantly set resistance
+                    .createCommandStatus();
+            return new Command.ResistanceStatusBuilder()
+                    .setStatus(status)
+                    .setTotalResistance(resistance);
+        }
+    };
 
     private PageGen generalDataGen = new PageGen() {
 
@@ -185,7 +207,7 @@ public class DummyTrainerState {
                             .setInstantPower(power)
                     .setCadence(cadence)
                     .setPowerSum(powerSum)
-                    .setEvents(Math.toIntExact(powerEvents))
+                    .setEvents(MathCompat.toIntExact(powerEvents))
                     .setTrainerStatusFlags(statusFlags)
                             
             );
@@ -201,7 +223,7 @@ public class DummyTrainerState {
         @Override
         public AntPacketEncodable getPageEncoder() {
             // period for 1 rotation
-            BigDecimal period = WHEEL_CIRCUM.divide(speed, 20, BigDecimal.ROUND_HALF_UP);
+            BigDecimal period = getWheelCircumference().divide(speed, 20, BigDecimal.ROUND_HALF_UP);
             torqueEvents += 1;
             long now = System.nanoTime();
             double delta = (now - torqueTimeStamp) / Math.pow(10,9);
@@ -268,7 +290,15 @@ public class DummyTrainerState {
         priorityMessages.add(configGen);
     }
 
+    private BigDecimal getTimeSinceStart() {
+        long now = System.nanoTime();
+        return new BigDecimal(now - start)
+                .divide(new BigDecimal(Math.pow(10, 9)),10, RoundingMode.HALF_UP);
+    }
+
     public byte [] nextPacket() {
+
+        distance = getTimeSinceStart().multiply(speed).intValue();
         final byte [] packet = new byte[8];
         if (priorityMessages.isEmpty()) {
             packetGen.rotate().getPageEncoder().encode(packet);
@@ -277,5 +307,33 @@ public class DummyTrainerState {
         }
 
         return packet;
+    }
+
+    private void onCmdReceieved(CommandId commandId) {
+        lastCmd = commandId;
+        seqNum.add(1);
+    }
+
+    public void setResistance(BigDecimal resisitance) {
+        onCmdReceieved(CommandId.BASIC_RESISTANCE);
+        this.resistance = resisitance;
+    }
+
+    public void useConfig(Config config) {
+        // we don't get sent sex, height,
+        athlete = new MaleAthlete(ATHLETE_HEIGHT, config.getUserWeight().doubleValue(), ATHLETE_HEIGHT);
+        bikeWeight = config.getBicycleWeight();
+        gearRatio = config.getGearRatio();
+        wheelDiameter = config.getBicycleWheelDiameter();
+    }
+
+    public void sendCmdStatus() {
+        switch (lastCmd) {
+            case BASIC_RESISTANCE:
+                priorityMessages.add(basicCmdStatusGen);
+                break;
+
+        }
+
     }
 }

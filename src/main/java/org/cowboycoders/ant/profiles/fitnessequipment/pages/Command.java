@@ -2,6 +2,7 @@ package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
 import org.cowboycoders.ant.profiles.BitManipulation;
 import org.cowboycoders.ant.profiles.fitnessequipment.*;
+import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.CommonCommandPage;
 
 import java.math.BigDecimal;
@@ -11,6 +12,7 @@ import java.util.Arrays;
 import static org.cowboycoders.ant.profiles.BitManipulation.*;
 
 /**
+ * @see org.cowboycoders.ant.profiles.pages.CommonCommandPage
  * Created by fluxoid on 17/01/17.
  */
 public class Command extends CommonCommandPage {
@@ -88,7 +90,9 @@ public class Command extends CommonCommandPage {
                 status = tsb.createCommandStatus();
                 break;
             default:
-                throw new IllegalArgumentException("unexpected packet");
+                // commandId not recognized, this is a work around since a request for the current command
+                // status matches this page number, but doesn't contain a valid commandId
+                status = commonStatus;
 
         }
     }
@@ -114,7 +118,7 @@ public class Command extends CommonCommandPage {
     /**
      * Created by fluxoid on 26/01/17.
      */
-    public static class ResistanceStatusBuilder {
+    public static class ResistanceStatusBuilder implements AntPacketEncodable {
 
         private CommandStatus status = new CommandStatusBuilder().createCommandStatus();
         private BigDecimal totalResistance = null;

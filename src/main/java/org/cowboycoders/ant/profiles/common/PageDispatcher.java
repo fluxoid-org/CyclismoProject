@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import static org.cowboycoders.ant.profiles.BitManipulation.UnsignedNumFrom1LeByte;
+
 /**
  * Created by fluxoid on 30/12/16.
  */
@@ -83,6 +85,10 @@ public class PageDispatcher {
                 return new Command(data);
         }
         return null;
+    }
+
+    public static int getPageNum(byte[] data) {
+        return UnsignedNumFrom1LeByte(data[AntPage.PAGE_OFFSET]);
     }
 
     public void dispatch(final byte[] data) {

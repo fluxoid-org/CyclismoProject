@@ -11,7 +11,7 @@ public class PageGen {
     public static int DEFAULT_PRODUCT_ID = 65532; // product id of android plugin?
 
     /**
-     *
+     * Maybe used for training files
      * @param requestedCommandId
      * @param burstSeqNum
      * @param manufacturerId
