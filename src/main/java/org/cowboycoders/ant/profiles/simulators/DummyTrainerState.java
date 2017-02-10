@@ -1,4 +1,4 @@
-package org.org.cowboycoders.ant.profiles.simulators;
+package org.cowboycoders.ant.profiles.simulators;
 
 import org.cowboycoders.ant.profiles.fitnessequipment.*;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.*;
@@ -8,7 +8,6 @@ import org.fluxoid.utils.RotatingView;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -256,13 +255,17 @@ public class DummyTrainerState {
     };
 
 
-
+    // type = BIKE doesn't use capabilities, torqueData
     private RotatingView<PageGen> packetGen = new RotatingView<> (
-            new PageGen [] {generalDataGen, bikeDataGen, metabolicGen, configGen, torqueDataGen}
+            new PageGen [] {generalDataGen, bikeDataGen, metabolicGen, torqueDataGen}
     );
 
     public void setCapabilitesRequested() {
         priorityMessages.add(capabilitiesGen);
+    }
+
+    public void setConfigRequested() {
+        priorityMessages.add(configGen);
     }
 
     public byte [] nextPacket() {

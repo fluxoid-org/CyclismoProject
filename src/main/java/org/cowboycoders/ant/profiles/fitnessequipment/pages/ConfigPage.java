@@ -16,7 +16,7 @@ import static org.cowboycoders.ant.profiles.BitManipulation.*;
  */
 public class ConfigPage implements AntPage {
 
-    public static int PAGE_NUMBER = 55;
+    public static final int PAGE_NUMBER = 55;
 
     private static final int USER_WEIGHT_OFFSET = 1;
     private static final int BIKE_WEIGHT_OFFSET = 4;

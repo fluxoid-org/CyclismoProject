@@ -360,7 +360,6 @@ public class PageTests {
         new MetabolicData.MetabolicDataPayload()
                 .setLapFlag(true)
                 .setState(Defines.EquipmentState.READY)
-                .setCaloriesAvailable(true)
                 .setCalorieCounter(calorieCount)
                 .setInstantCalorieBurn(new BigDecimal(instantCal))
                 .setInstantMetabolicEquivalents(new BigDecimal(met))

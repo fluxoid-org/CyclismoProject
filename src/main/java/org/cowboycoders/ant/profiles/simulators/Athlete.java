@@ -1,8 +1,8 @@
-package org.org.cowboycoders.ant.profiles.simulators;
+package org.cowboycoders.ant.profiles.simulators;
 
 import java.math.BigDecimal;
 
-import static org.org.cowboycoders.ant.profiles.simulators.Athlete.Sex.MALE;
+import static org.cowboycoders.ant.profiles.simulators.Athlete.Sex.MALE;
 
 /**
  * Created by fluxoid on 08/02/17.

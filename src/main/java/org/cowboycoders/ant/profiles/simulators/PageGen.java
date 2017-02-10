@@ -1,4 +1,4 @@
-package org.org.cowboycoders.ant.profiles.simulators;
+package org.cowboycoders.ant.profiles.simulators;
 
 import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 

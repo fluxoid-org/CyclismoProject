@@ -1,47 +1,45 @@
-package org.org.cowboycoders.ant.profiles.simulators;
+package org.cowboycoders.ant.profiles.simulators;
 
-import org.cowboycoders.ant.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.cowboycoders.ant.Channel;
+import org.cowboycoders.ant.ChannelEventHandler;
+import org.cowboycoders.ant.Node;
 import org.cowboycoders.ant.events.BroadcastListener;
-import org.cowboycoders.ant.events.MessageCondition;
-import org.cowboycoders.ant.events.MessageConditionFactory;
 import org.cowboycoders.ant.interfaces.AntTransceiver;
 import org.cowboycoders.ant.messages.ChannelType;
 import org.cowboycoders.ant.messages.MasterChannelType;
-import org.cowboycoders.ant.messages.MessageId;
 import org.cowboycoders.ant.messages.data.BroadcastDataMessage;
 import org.cowboycoders.ant.messages.data.DataMessage;
-import org.cowboycoders.ant.messages.responses.Response;
-import org.cowboycoders.ant.messages.responses.ResponseCode;
 import org.cowboycoders.ant.profiles.common.PageDispatcher;
-import org.cowboycoders.ant.profiles.fitnessequipment.Capabilities;
-import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
-import org.cowboycoders.ant.profiles.fitnessequipment.pages.BikeData;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.CapabilitiesPage;
-import org.cowboycoders.ant.profiles.fitnessequipment.pages.GeneralData;
+import org.cowboycoders.ant.profiles.fitnessequipment.pages.ConfigPage;
 import org.cowboycoders.ant.profiles.pages.Request;
 
 import java.math.BigDecimal;
+import java.util.Formatter;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import static org.cowboycoders.ant.events.MessageConditionFactory.newResponseCondition;
 
 /**
  * Created by fluxoid on 31/01/17.
  */
 public class Dummy {
 
+    private static final Logger logger = LogManager.getLogger();
+
     private Node transceiver;
 
-    public static void printBytes(Byte[] arr) {
+    public static CharSequence printBytes(Byte[] arr) {
+        StringBuilder builder = new StringBuilder();
         for (byte b: arr) {
-            System.out.printf("%02x:", b);
+            Formatter formatter = new Formatter();
+            formatter.format("%02x:",b);
+            builder.append(formatter.toString());
         }
-        System.out.println();
+        return builder;
     }
 
     Timer timer = new Timer();
@@ -65,20 +63,28 @@ public class Dummy {
 
         final DummyTrainerState state = new DummyTrainerState();
 
+
         state.setPower(200);
         state.setCadence(75);
         state.setHeartRate(123);
         state.setSpeed(new BigDecimal(10));
 
-        PageDispatcher pageDispatcher = new PageDispatcher();
+        final PageDispatcher pageDispatcher = new PageDispatcher();
 
         pageDispatcher.addListener(Request.class, new BroadcastListener<Request>() {
 
             @Override
             public void receiveMessage(Request request) {
-                if (request.getPageNumber() == CapabilitiesPage.PAGE_NUMBER) {
-                    System.out.println("capabilitiesRequested");
-                    state.setCapabilitesRequested();
+                final int page = request.getPageNumber();
+                switch (page) {
+                    case CapabilitiesPage.PAGE_NUMBER:
+                        logger.trace("capabilitiesRequested");
+                        state.setCapabilitesRequested();
+                        break;
+                    case ConfigPage.PAGE_NUMBER:
+                        logger.trace("configRequested");
+                        state.setConfigRequested();
+                        break;
                 }
             }
         });
@@ -112,7 +118,7 @@ public class Dummy {
             @Override
             public void receiveMessage(DataMessage msg) {
                 pageDispatcher.dispatch(msg.getPrimitiveData());
-                printBytes(msg.getData());
+                logger.trace(printBytes(msg.getData()));
             }
         }, DataMessage.class);
 

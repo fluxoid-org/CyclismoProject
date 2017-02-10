@@ -1,4 +1,4 @@
-package org.org.cowboycoders.ant.profiles.simulators;
+package org.cowboycoders.ant.profiles.simulators;
 
 /**
  * Created by fluxoid on 08/02/17.
