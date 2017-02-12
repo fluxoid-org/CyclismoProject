@@ -150,11 +150,6 @@ public class DummyTrainer extends GenericTurboTrainer {
   }
 
   @Override
-  public double getTarget() {
-    return slope;
-  }
-
-  @Override
   public void start() throws TurboCommunicationException, InterruptedException, TimeoutException,
       IllegalStateException {
     dataTimer = new Timer(true);

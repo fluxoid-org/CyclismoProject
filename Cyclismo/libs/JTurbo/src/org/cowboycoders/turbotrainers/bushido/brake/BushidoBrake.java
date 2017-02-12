@@ -1322,13 +1322,6 @@ public class BushidoBrake extends AntTurboTrainer {
 
   }
 
-  @Override
-  public double getTarget() {
-    synchronized (model) {
-      return model.getTarget();
-    }
-  }
-
   /**
    * Returns a default controller for the specified turbo mode. These controllers are specific to
    * the Bushido.

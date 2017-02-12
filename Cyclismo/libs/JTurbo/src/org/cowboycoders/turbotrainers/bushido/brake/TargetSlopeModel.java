@@ -20,11 +20,6 @@ public class TargetSlopeModel extends BrakeModel {
     setSlope(castParameters.getSlope());
   }
 
-  @Override
-  public double getTarget() {
-    return getSlope();
-  }
-
   public static void main(String[] args) {
     BigInteger bi = new BigInteger(new byte[]{(byte) 254, 98});
     System.out.println("resistance low: " + bi);

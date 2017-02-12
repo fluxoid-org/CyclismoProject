@@ -609,12 +609,5 @@ public class BushidoHeadunit extends AntTurboTrainer {
     }
   }
 
-  @Override
-  public double getTarget() {
-    synchronized (model) {
-      return model.getTarget();
-    }
-  }
-
 
 }

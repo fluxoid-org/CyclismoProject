@@ -190,9 +190,4 @@ abstract public class TurboBaseModel {
   public abstract void setParameters(CommonParametersInterface parameters) throws
       IllegalArgumentException;
 
-  /**
-   * Returns latest bounded target
-   */
-  public abstract double getTarget();
-
 }
