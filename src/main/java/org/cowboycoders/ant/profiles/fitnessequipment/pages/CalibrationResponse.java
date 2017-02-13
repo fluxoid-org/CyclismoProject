@@ -1,12 +1,11 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
 import org.cowboycoders.ant.profiles.BitManipulation;
+import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Collections;
-import java.util.List;
 
 import static org.cowboycoders.ant.profiles.BitManipulation.*;
 
@@ -66,7 +65,7 @@ public class CalibrationResponse implements AntPage {
     private final Integer spinDownTime;
     private final BigDecimal temp;
 
-    public static class CalibrationResponsePayload {
+    public static class CalibrationResponsePayload implements AntPacketEncodable {
         private Integer zeroOffset = null;
         private Integer spinDownTime = null;
         private BigDecimal temp = null;

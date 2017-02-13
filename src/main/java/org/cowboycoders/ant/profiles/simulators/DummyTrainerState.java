@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.cowboycoders.ant.profiles.fitnessequipment.*;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines.CommandId;
+import org.cowboycoders.ant.profiles.fitnessequipment.Defines.SpeedCondition;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.*;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.GeneralData.GeneralDataPayload;
 import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
@@ -14,9 +15,7 @@ import org.fluxoid.utils.RotatingView;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.EnumSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static java.lang.Math.PI;
 
@@ -25,11 +24,15 @@ import static java.lang.Math.PI;
  */
 public class DummyTrainerState {
 
+
     private Logger logger = LogManager.getLogger();
 
     // 700c http://www.bikecalc.com/wheel_size_math
     private BigDecimal wheelDiameter = new BigDecimal(0.700).divide(new BigDecimal(PI),4, RoundingMode.HALF_UP);
     private BigDecimal resistance = new BigDecimal(0);
+    private BigDecimal internalTemp = new BigDecimal(66.6);
+
+    private boolean calibrationInProgress = false;
 
     private BigDecimal getWheelCircumference() {
         return wheelDiameter.multiply(new BigDecimal(PI));
@@ -222,9 +225,18 @@ public class DummyTrainerState {
 
         @Override
         public AntPacketEncodable getPageEncoder() {
+            torqueEvents += 1;
+            if (speed.compareTo(new BigDecimal(0.1)) < 0) {
+                // assume stationary to stop divide by zero when calculating period i.e period -> infinity
+                return setCommon(
+                        torqueDataPayload
+                                .setEvents(torqueEvents)
+                );
+            }
+
             // period for 1 rotation
             BigDecimal period = getWheelCircumference().divide(speed, 20, BigDecimal.ROUND_HALF_UP);
-            torqueEvents += 1;
+
             long now = System.nanoTime();
             double delta = (now - torqueTimeStamp) / Math.pow(10,9);
             BigDecimal rotations = new BigDecimal(delta).divide(period, 0, BigDecimal.ROUND_HALF_UP);
@@ -277,10 +289,147 @@ public class DummyTrainerState {
     };
 
 
+    private PageGen [] normalPages = new PageGen[] {generalDataGen, bikeDataGen, metabolicGen, torqueDataGen};
+
     // type = BIKE doesn't use capabilities, torqueData
-    private RotatingView<PageGen> packetGen = new RotatingView<> (
-            new PageGen [] {generalDataGen, bikeDataGen, metabolicGen, torqueDataGen}
-    );
+    //private RotatingView<PageGen> packetGen = new RotatingView<> (normalPages);
+
+    private static interface OperationMode {
+
+        public OperationMode update();
+
+        RotatingView<PageGen> getPacketGenerators();
+    }
+
+    private OperationMode normalMode = new OperationMode() {
+
+        private RotatingView<PageGen> normalPackets = new RotatingView<>(normalPages);
+
+        @Override
+        public OperationMode update() {
+            return this;
+        }
+
+        @Override
+        public RotatingView<PageGen> getPacketGenerators() {
+            return normalPackets;
+        }
+    };
+
+    private enum SpinDownCalibrationState {
+        AWAITING_SPEED_UP,
+        REACHED_SPEED,
+        AWAITING_SPEED_DOWN,
+    }
+
+    private static final BigDecimal TARGET_SPEED = new BigDecimal(10);
+    // speed in which it assumed that the bike is stationary; this is necessary since some turbo trainers are unpowered
+    // and cannot transmit packets when the speed is below a certain threshold
+    private static final BigDecimal ZERO_SPEED_THRESHOLD = new BigDecimal(1.6);
+
+    private PageGen calibrationResponseGen = new PageGen() {
+        @Override
+        public AntPacketEncodable getPageEncoder() {
+            return new CalibrationResponse.CalibrationResponsePayload()
+                    .setSpinDownSuccess(true)
+                    .setSpinDownTime(10000)
+                    .setTemp(internalTemp);
+        }
+    };
+    private OperationMode spinDownCalibrationMode = new OperationMode() {
+
+        private SpinDownCalibrationState state = SpinDownCalibrationState.AWAITING_SPEED_UP;
+
+        private final PageGen calibrationStatusGen = new PageGen() {
+            @Override
+            public AntPacketEncodable getPageEncoder() {
+                return new CalibrationProgress.CalibrationProgressPayload()
+                        .setTemp(internalTemp)
+                        .setTempState(Defines.TemperatureCondition.CURRENT_TEMPERATURE_OK)
+                        .setSpeedState(getSpeedState())
+                        .setSpinDownPending(true)
+                        .setTargetSpeed(TARGET_SPEED)
+                        .setTargetSpinDownTime(10000);
+            }
+
+        };
+
+        private PageGen [] calibrationPages;
+        {
+            // this needs normalPages to be defined before this in the source file
+            List<PageGen> t = new ArrayList<>(Arrays.asList(normalPages));
+            t.add(calibrationStatusGen);
+            calibrationPages = t.toArray(new PageGen[0]);
+
+        };
+
+        private SpeedCondition getSpeedState() {
+            switch (state) {
+                case AWAITING_SPEED_UP: return SpeedCondition.CURRENT_SPEED_TOO_LOW;
+                default: return SpeedCondition.CURRENT_SPEED_OK;
+            }
+        }
+
+        private RotatingView<PageGen> calibrationGen = new RotatingView<>(calibrationPages);
+
+        private Long start;
+
+        private void reset() {
+            start = null;
+            state = SpinDownCalibrationState.AWAITING_SPEED_UP;
+        }
+
+        @Override
+        public OperationMode update() {
+            if (start == null) {
+                start = System.nanoTime();
+            }
+            switch (state) {
+                case AWAITING_SPEED_UP:
+                    if (speed.compareTo(TARGET_SPEED) >= 0) {
+                        state = SpinDownCalibrationState.REACHED_SPEED;
+                    }
+                    return this;
+                case AWAITING_SPEED_DOWN:
+                    if (speed.compareTo(ZERO_SPEED_THRESHOLD) <= 0) {
+                        state = SpinDownCalibrationState.REACHED_SPEED;
+                    }
+                    return this;
+                case REACHED_SPEED:
+                    if (speed.compareTo(ZERO_SPEED_THRESHOLD) <= 0) {
+                        // finish condition
+                        long delta = System.nanoTime() - start;
+                        final BigDecimal spinDownTimeMillis = new BigDecimal(delta)
+                                .divide(new BigDecimal(Math.pow(10, 6)), 0, RoundingMode.HALF_UP);
+                        logger.trace("spindown calibration time (ms): {}", spinDownTimeMillis );
+                        priorityMessages.add(new PageGen() {
+                            @Override
+                            public AntPacketEncodable getPageEncoder() {
+                                return new CalibrationResponse.CalibrationResponsePayload()
+                                        .setSpinDownSuccess(true)
+                                        .setSpinDownTime(spinDownTimeMillis.intValue())
+                                        .setTemp(internalTemp);
+                            }
+                        });
+                        reset();
+                        return normalMode;
+                    }
+                    state = SpinDownCalibrationState.AWAITING_SPEED_DOWN;
+                    return this;
+
+
+            }
+            return this;
+        }
+
+        @Override
+        public RotatingView<PageGen> getPacketGenerators() {
+            return calibrationGen;
+        }
+    };
+
+    private OperationMode mode = normalMode;
+
 
     public void setCapabilitesRequested() {
         priorityMessages.add(capabilitiesGen);
@@ -297,11 +446,12 @@ public class DummyTrainerState {
     }
 
     public byte [] nextPacket() {
-
+        mode = mode.update();
         distance = getTimeSinceStart().multiply(speed).intValue();
         final byte [] packet = new byte[8];
+
         if (priorityMessages.isEmpty()) {
-            packetGen.rotate().getPageEncoder().encode(packet);
+            mode.getPacketGenerators().rotate().getPageEncoder().encode(packet);
         } else {
             priorityMessages.remove(0).getPageEncoder().encode(packet);
         }
@@ -332,8 +482,21 @@ public class DummyTrainerState {
             case BASIC_RESISTANCE:
                 priorityMessages.add(basicCmdStatusGen);
                 break;
-
         }
 
     }
+
+    public void requestSpinDownCalibration() {
+        mode = spinDownCalibrationMode;
+    }
+
+    public void requestOffsetCalibration() {
+        logger.warn("offset calibration requested, but emulating this is not supported yet");
+    }
+
+    public void sendCalibrationResponse() {
+        priorityMessages.add(calibrationResponseGen);
+    }
+
+
 }
