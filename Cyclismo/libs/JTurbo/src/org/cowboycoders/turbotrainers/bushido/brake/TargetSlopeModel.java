@@ -10,7 +10,7 @@ public class TargetSlopeModel extends BrakeModel {
   @Override
   public void setParameters(CommonParametersInterface parameters)
       throws IllegalArgumentException {
-    Parameters.TargetSlope castParameters = null;
+    Parameters.TargetSlope castParameters;
     try {
       castParameters = (Parameters.TargetSlope) parameters;
     } catch (ClassCastException e) {
@@ -18,12 +18,6 @@ public class TargetSlopeModel extends BrakeModel {
     }
     setTotalWeight(castParameters.getTotalWeight());
     setSlope(castParameters.getSlope());
-
-  }
-
-  @Override
-  public double getTarget() {
-    return getSlope();
   }
 
   public static void main(String[] args) {

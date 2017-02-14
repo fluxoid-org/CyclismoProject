@@ -57,12 +57,6 @@ public interface TurboTrainerInterface {
 
   public void setMode(Mode mode) throws IllegalArgumentException;
 
-  /**
-   * Gets target value e.g power, slope
-   *
-   * @return target value or -1
-   */
-  public double getTarget();
 
   /**
    * @throws TurboCommunicationException cannot communicate with turbo trainer

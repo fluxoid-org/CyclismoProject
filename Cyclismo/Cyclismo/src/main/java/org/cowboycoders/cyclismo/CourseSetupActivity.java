@@ -53,6 +53,7 @@ public class CourseSetupActivity extends Activity {
 
   protected Long trackId;
   protected String modeString;
+  protected Integer constantCoursePower;
   private Bike bike;
   private String turboString;
   private Button goButton;
@@ -72,6 +73,12 @@ public class CourseSetupActivity extends Activity {
     @Override
     public void onCourseModeUpdate(String modeStringIn) {
       setModeString(modeStringIn);
+      validate();
+    }
+
+    @Override
+    public void onConstantCoursePowerUpdate(Integer power) {
+      setConstantCoursePower(power);
       validate();
     }
 
@@ -119,14 +126,24 @@ public class CourseSetupActivity extends Activity {
     this.modeString = modeString;
   }
 
+  private void setConstantCoursePower(Integer power) {
+    constantCoursePower = power;
+  }
+
+  private Integer getConstantCoursePower() {
+    return constantCoursePower;
+  }
+
   private ServiceConnection mConnection = new ServiceConnection() {
 
     public void onServiceConnected(ComponentName className, IBinder binder) {
       turboService = ((TurboService.TurboBinder) binder).getService();
       Toast.makeText(CourseSetupActivity.this, "Connected to turbo service",
           Toast.LENGTH_SHORT).show();
-      getFragmentManager().beginTransaction().replace(R.id.course_select_preferences,
-          new CourseSetupFragment().addObserver(courseSetupObserver)).commit();
+      CourseSetupFragment courseSetupFragment = new CourseSetupFragment();
+      courseSetupFragment.addObserver(courseSetupObserver);
+      getFragmentManager().beginTransaction().replace(
+          R.id.course_select_preferences, courseSetupFragment).commit();
     }
 
     public void onServiceDisconnected(ComponentName className) {
@@ -263,9 +280,19 @@ public class CourseSetupActivity extends Activity {
   private void validate() {
     boolean valid = true;
 
-    if (getModeString() == null || getTurboString() == null || getBike() == null) {
+    String modeString = getModeString();
+    if (modeString == null || getTurboString() == null || getBike() == null ) {
       updateUi(false);
       return;
+    }
+
+    // Constant power mode requires a power to be set
+    // TODO: This will need updating when course power tracking is updated
+    if (modeString.equals(getString(R.string.settings_courses_mode_constant_power_value))) {
+      Integer constantCoursePower = getConstantCoursePower();
+      if (constantCoursePower == null || constantCoursePower < 0) {
+        valid = false;
+      }
     }
 
     // At the moment, all modes require a track. Later on we may have other modes which don't.

@@ -333,6 +333,10 @@ public class BushidoBrake extends AntTurboTrainer {
 
     @Override
     public void onDistanceChange(final double distance) {
+      if (resistanceController instanceof PowerPidBrakeController) {
+        PowerPidBrakeController rc = (PowerPidBrakeController) resistanceController;
+        rc.setTargetPower(model.getTargetPower());
+      }
     }
 
     @Override
@@ -426,6 +430,8 @@ public class BushidoBrake extends AntTurboTrainer {
 
   public void startConnection() throws InterruptedException, TimeoutException {
     Node node = getNode();
+    // FIXME: Sometimes the channels aren't freed after use. Stop the node as a workaround for now.
+    node.stop();
     node.start();
     channel = node.getFreeChannel();
 
@@ -448,8 +454,18 @@ public class BushidoBrake extends AntTurboTrainer {
 
     channelMessageSender = new EnqueuedMessageSender(channel);
 
-    model = new TargetSlopeModel();
     Mode mode = getCurrentMode();
+    switch (mode) {
+      case TARGET_POWER:
+        model = new TargetPowerModel();
+        break;
+      case TARGET_SPEED:
+        // TODO
+      case TARGET_SLOPE:
+      default:
+        model = new TargetSlopeModel();
+    }
+
     if (resistanceController == null) {
       // This is normally the case unless the controller has been specifically set
       resistanceController = getDefaultResistanceController(mode);
@@ -1262,14 +1278,18 @@ public class BushidoBrake extends AntTurboTrainer {
       }
     }
 
-
-    resistanceController.stop();
+    if (resistanceController != null) {
+      // If something goes wrong when the ANT connection is started this might not be initialised.
+      resistanceController.stop();
+    }
 
     // disconnect();
-    channel.close();
-    channel.unassign();
-    getNode().freeChannel(channel);
-    // let external controiller stop node
+    if (channel != null) {
+      channel.close();
+      channel.unassign();
+      getNode().freeChannel(channel);
+    }
+    // let external controller stop node
     // node.stop();
   }
 
@@ -1300,13 +1320,6 @@ public class BushidoBrake extends AntTurboTrainer {
       model.setParameters(parameters);
     }
 
-  }
-
-  @Override
-  public double getTarget() {
-    synchronized (model) {
-      return model.getTarget();
-    }
   }
 
   /**

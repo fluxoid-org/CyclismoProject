@@ -57,11 +57,13 @@ public class CourseSetupFragment extends AbstractSettingsFragment {
   private OnSharedPreferenceChangeListener sharedListener;
   private SharedPreferences sharedPreferences;
   private UpdateSummaryCaller updateCourseModeSummaryCaller;
+  private UpdateSummaryCaller updateConstantCoursePowerCaller;
   private UpdateSummaryCaller updateTrackIdSummaryCaller;
   private UpdateSummaryCaller updateBikeSummaryCaller;
   private UpdateSummaryCaller updateTurboSummaryCaller;
   private List<CourseSetupObserver> observers = new ArrayList<>();
   private ListPreference courseModeListPreference;
+  private Preference constantCoursePowerPreference;
   private Preference courseTrackIdPreference;
   private Preference bikeSelectPreference;
   private Preference turboSelectPreference;
@@ -105,6 +107,42 @@ public class CourseSetupFragment extends AbstractSettingsFragment {
         courseModeSummarizer);
 
     return courseModeValue;
+  }
+
+  private  Integer setupConstantCoursePowerSelector(Context context) {
+    Log.i(TAG, "updating constant course power");
+    constantCoursePowerPreference = findPreference(
+        getString(R.string.constant_course_power));
+
+    Integer constantCoursePowerValue = PreferencesUtils.getInt(
+        context, R.string.constant_course_power, 0);
+
+    PreferencesUtils.SettingsSelectionSummarizer constantCoursePowerSummarizer =
+        new PreferencesUtils.SettingsSelectionSummarizer() {
+          @Override
+          public String summarize(Object value) {
+            return summarizeConstantCoursePowerSelection(value);
+          }
+        };
+    updateConstantCoursePowerCaller = new UpdateSummaryCaller(
+        constantCoursePowerPreference,
+        null,
+        null,
+        R.string.settings_constant_course_power_summary,
+        constantCoursePowerSummarizer);
+
+    // Grey out the power settings when not in constant power mode. Ideally this would actually
+    // remove the setting.
+    courseModeListPreference.setOnPreferenceChangeListener(
+        new
+            Preference.OnPreferenceChangeListener() {
+              public boolean onPreferenceChange(Preference preference, Object newValue) {
+                configureConstantPowerModePreferences(newValue.toString());
+                return true;
+              }
+            });
+
+    return constantCoursePowerValue;
   }
 
   private String setupTurboSelector(Context context) {
@@ -195,12 +233,14 @@ public class CourseSetupFragment extends AbstractSettingsFragment {
     Long bikeValue = setupBikeSelector(context);
     String turboValue = setupTurboSelector(context);
     String courseModeValue = setupCourseModeSelector(context, turboValue);
+    Integer constantCoursePowerValue = setupConstantCoursePowerSelector(context);
 
     // Initial configuration of settings UI
     updateTurbo(turboValue);
     updateBike(bikeValue);
     updateCourseTrackId(courseTrackIdValue);
     updateCourseMode(courseModeValue);
+    updateConstantCoursePower(constantCoursePowerValue);
 
     // Listener for updating UI when selections change
     sharedListener = new OnSharedPreferenceChangeListener() {
@@ -212,6 +252,9 @@ public class CourseSetupFragment extends AbstractSettingsFragment {
         } else if (key.equals(PreferencesUtils.getKey(getActivity(), R.string.course_track_id))) {
           Long newValue = sharedPreferences.getLong(key, -1l);
           updateCourseTrackId(newValue);
+        } else if (key.equals(PreferencesUtils.getKey(getActivity(), R.string.constant_course_power))) {
+          Integer newValue = sharedPreferences.getInt(key, 0);
+          updateConstantCoursePower(newValue);
         } else if (key.equals(PreferencesUtils.getKey(getActivity(), R.string
             .settings_select_bike_current_selection_key))) {
           Long newValue = sharedPreferences.getLong(key, -1l);
@@ -225,11 +268,14 @@ public class CourseSetupFragment extends AbstractSettingsFragment {
       }
     };
 
+    // This is required to initialse the settings. The whole class could use some refactoring at
+    // some stage to support adding new settings in a more transparent and extensible way.
     for (CourseSetupObserver observer : observers) {
       observer.onCourseModeUpdate(courseModeValue);
       observer.onTrackIdUpdate(courseTrackIdValue);
       updateBike(bikeValue);
       observer.onTurboUpdate(turboValue);
+      observer.onConstantCoursePowerUpdate(constantCoursePowerValue);
     }
   }
 
@@ -324,9 +370,19 @@ public class CourseSetupFragment extends AbstractSettingsFragment {
     if (courseMode == null) {
       Log.w(TAG, "course mode invalid");
       PreferencesUtils.setLong(this.getActivity(), R.string.course_mode, -1L);
-      return this.getString(R.string.course_mode);
+      return this.getString(R.string.item_not_selected);
     }
     return courseMode;
+  }
+
+  protected String summarizeConstantCoursePowerSelection(Object value) {
+    Integer power = (Integer) value;
+    if (power == null) {
+      Log.w(TAG, "constant course power invalid");
+      PreferencesUtils.setInt(this.getActivity(), R.string.constant_course_power, 0);
+      return this.getString(R.string.item_not_selected);
+    }
+    return power.toString() + "W";
   }
 
   protected String summarizeTurboSelection(Object value) {
@@ -359,6 +415,31 @@ public class CourseSetupFragment extends AbstractSettingsFragment {
     //}
   }
 
+  private void updateConstantCoursePower(Integer newValue) {
+    Log.i(TAG, "constant course power: " + newValue);
+    updateConstantCoursePowerCaller.updateSummary(newValue);
+    for (CourseSetupObserver observer : observers) {
+      observer.onConstantCoursePowerUpdate(newValue);
+    }
+    configureConstantPowerModePreferences(null);
+  }
+
+  /**
+   * If constant power mode is selected, then show the settings for it. Otherwise hide them.
+   *
+   * @param newMode is the current selection in the trainer mode menu. If null is passed,
+   *                the selection is retrieved from the mode list preference.
+   */
+  private void configureConstantPowerModePreferences(String newMode) {
+    String constantPowerMode = getString(R.string.settings_courses_mode_constant_power_value);
+    newMode = (newMode != null) ? newMode : courseModeListPreference.getValue().toString();
+    if (newMode.equals(constantPowerMode)) {
+      constantCoursePowerPreference.setEnabled(true);
+    } else {
+      constantCoursePowerPreference.setEnabled(false);
+    }
+  }
+
   private void updateTurbo(final String newValue) {
     Log.i(TAG, "new turbo selected with id: " + newValue);
     updateTurboSummaryCaller.updateSummary(newValue);
@@ -387,6 +468,7 @@ public class CourseSetupFragment extends AbstractSettingsFragment {
     void onTrackIdUpdate(Long trackId);
     void onBikeUpdate(Bike bike);
     void onCourseModeUpdate(String modeString);
+    void onConstantCoursePowerUpdate(Integer power);
     void onTurboUpdate(String turbo);
   }
 }

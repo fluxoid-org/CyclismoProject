@@ -103,10 +103,6 @@ public class BushidoTargetSlopeModel extends AbstractBushidoModel {
 
   }
 
-  public double getTarget() {
-    return getSlope();
-  }
-
   public double getSlope() {
     return slope;
   }
