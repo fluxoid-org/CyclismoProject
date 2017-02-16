@@ -1,6 +1,7 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
 import org.cowboycoders.ant.profiles.BitManipulation;
+import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 
 import java.math.BigDecimal;
@@ -13,12 +14,12 @@ import static org.cowboycoders.ant.profiles.BitManipulation.PutUnsignedNumIn1LeB
  */
 public class PercentageResistance implements AntPage {
 
-    public static int PAGE_NUMBER = 48;
+    public static final  int PAGE_NUMBER = 48;
 
     private static final int RESISTANCE_OFFSET = 7;
     private final BigDecimal resistance;
 
-    public static class PercentageResistancePayload {
+    public static class PercentageResistancePayload implements AntPacketEncodable {
         private BigDecimal resistance = new BigDecimal(0);
 
         public BigDecimal getResistance() {

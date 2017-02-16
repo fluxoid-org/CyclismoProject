@@ -1,6 +1,7 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
 import org.cowboycoders.ant.profiles.BitManipulation;
+import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 
 import java.math.BigDecimal;
@@ -25,7 +26,7 @@ public class WindResistance implements AntPage {
     private final int windSpeed;
     private final BigDecimal draftingFactor;
 
-    public static class WindResistancePayload {
+    public static class WindResistancePayload implements AntPacketEncodable {
         private BigDecimal windResitanceCoeff = DEFAULT_WIND_COEFF;
         private int windSpeed;
         private BigDecimal draftingFactor = DEFAULT_DRAFTING_FACTOR;
@@ -98,6 +99,15 @@ public class WindResistance implements AntPage {
             final byte[] packet = new byte[8];
             this.encode(packet);
             return new WindResistance(packet);
+        }
+
+        public WindResistancePayload from(WindResistance old) {
+            WindResistancePayload payload = new WindResistancePayload()
+                .setWindSpeed(old.getWindSpeed())
+                .setDraftingFactor(old.getDraftingFactor())
+                .setWindResistanceCoeff(old.getWindResistanceCoefficent());
+            return payload;
+
         }
     }
 

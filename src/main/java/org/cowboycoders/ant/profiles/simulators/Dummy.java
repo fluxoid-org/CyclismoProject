@@ -33,7 +33,7 @@ public class Dummy {
 
     private Node transceiver;
 
-    public static CharSequence printBytes(Byte[] arr) {
+    public static CharSequence bytesToString(Byte[] arr) {
         Formatter formatter = new Formatter();
         final int len = arr.length * 3;
         for (byte b: arr) {
@@ -48,7 +48,7 @@ public class Dummy {
 
 
     public static void main(String [] args) {
-        //printBytes(new Byte[] {-1,2,3});
+        //bytesToString(new Byte[] {-1,2,3});
         AntTransceiver antchip = new AntTransceiver(0);
         Node node = new Node(antchip);
         node.start();
@@ -93,6 +93,18 @@ public class Dummy {
                     case CalibrationResponse.PAGE_NUMBER:
                         logger.trace("calibration response requested");
                         state.sendCalibrationResponse();
+                        break;
+                    case PercentageResistance.PAGE_NUMBER:
+                        logger.trace("requested basic resistance");
+                        state.sendBasicResistance();
+                        break;
+                    case TrackResistance.PAGE_NUMBER:
+                        logger.trace("requested track resistance");
+                        state.sendTrackResistance();
+                        break;
+                    case WindResistance.PAGE_NUMBER:
+                        logger.trace("requested wind data");
+                        state.sendWindData();
                         break;
                 }
             }
@@ -166,7 +178,7 @@ public class Dummy {
                 if (cmd != CommandId.UNRECOGNIZED && cmd != CommandId.NO_CONTROL_PAGE_RECEIVED) {
                     logger.trace("receieved cmd: " + cmd);
                 }
-                logger.trace(printBytes(msg.getData()));
+                logger.trace(bytesToString(msg.getData()));
             }
         }, DataMessage.class);
 

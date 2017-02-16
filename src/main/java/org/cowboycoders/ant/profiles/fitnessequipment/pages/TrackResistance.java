@@ -1,6 +1,7 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
 import org.cowboycoders.ant.profiles.BitManipulation;
+import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 
 import java.math.BigDecimal;
@@ -25,12 +26,19 @@ public class TrackResistance implements AntPage {
     private final BigDecimal gradient;
     private final BigDecimal coefficientRollingResistance;
 
-    public static class TrackResistancePayload {
+    public static class TrackResistancePayload implements AntPacketEncodable {
         private BigDecimal gradient = DEFAULT_GRADIENT;
         private BigDecimal coefficientRollingResistance = DEFAULT_ROLLING_RESISTANCE;
 
         public BigDecimal getGradient() {
             return gradient;
+        }
+
+        public static TrackResistancePayload from(TrackResistance old) {
+            TrackResistancePayload payload = new TrackResistancePayload();
+            payload.setGradient(old.getGradient());
+            payload.setCoefficientRollingResistance(old.getCoefficientRollingResistance());
+            return payload;
         }
 
         public TrackResistancePayload setGradient(BigDecimal gradient) {

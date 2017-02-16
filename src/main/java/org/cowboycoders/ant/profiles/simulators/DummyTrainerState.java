@@ -211,7 +211,7 @@ public class DummyTrainerState {
                         .setWindSpeed(windResistance.getWindSpeed());
 
             }
-            logger.debug("unsupported command: {}", lastCmd);
+            logger.warn("unsupported command: {}", lastCmd);
             return null;
         }
     };
@@ -360,6 +360,47 @@ public class DummyTrainerState {
 
 
     private PageGen [] normalPages = new PageGen[] {generalDataGen, bikeDataGen, metabolicGen, torqueDataGen};
+
+
+    private PageGen basicResistanceGen = new PageGen() {
+
+        @Override
+        public AntPacketEncodable getPageEncoder() {
+            return new PercentageResistance.PercentageResistancePayload()
+                    .setResistance(resistance);
+        }
+    };
+
+    public void sendBasicResistance() {
+        priorityMessages.add(basicResistanceGen);
+    }
+
+    private PageGen trackDataGen = new PageGen() {
+        @Override
+        public AntPacketEncodable getPageEncoder() {
+            return new TrackResistance.TrackResistancePayload().
+                    from(trackResistance);
+        }
+    };
+
+    public void sendTrackResistance() {
+        priorityMessages.add(trackDataGen);
+    }
+
+    private PageGen windGen = new PageGen() {
+
+        @Override
+        public AntPacketEncodable getPageEncoder() {
+            return new WindResistance.WindResistancePayload()
+                    .from(windResistance);
+        }
+    };
+
+    public void sendWindData() {
+        priorityMessages.add(windGen);
+    }
+
+
 
     // type = BIKE doesn't use capabilities, torqueData
     //private RotatingView<PageGen> packetGen = new RotatingView<> (normalPages);
