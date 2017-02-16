@@ -9,6 +9,7 @@ import org.cowboycoders.ant.profiles.fitnessequipment.pages.*;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.GeneralData.GeneralDataPayload;
 import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.CommonCommandPage;
+import org.cowboycoders.turbotrainers.PowerModel;
 import org.fluxoid.utils.MathCompat;
 import org.fluxoid.utils.RollOverVal;
 import org.fluxoid.utils.RotatingView;
@@ -28,6 +29,7 @@ public class DummyTrainerState {
     public static final double CALORIES_TO_JOULES = 4.2;
     public static final double HUMAN_EFFICENCY_FUDGE_FACTOR = 1 / 0.3;
     public static final double WATTS_TO_KJ_PER_HOUR = 3.6;
+    public static final int MAX_GRADIENT_BASIC_RESISTANCE = 30;
     private Logger logger = LogManager.getLogger();
 
     // 700c http://www.bikecalc.com/wheel_size_math
@@ -35,7 +37,6 @@ public class DummyTrainerState {
     private BigDecimal resistance = new BigDecimal(0);
     private BigDecimal internalTemp = new BigDecimal(66.6);
 
-    private boolean calibrationInProgress = false;
 
     private BigDecimal getWheelCircumference() {
         return wheelDiameter.multiply(new BigDecimal(PI));
@@ -52,13 +53,56 @@ public class DummyTrainerState {
     private BigDecimal speed = new BigDecimal(0.0);
     private Defines.EquipmentState state = Defines.EquipmentState.READY;
     private static final Defines.EquipmentType type = Defines.EquipmentType.TRAINER;
+    private PowerModel powerModel = new PowerModel() {
+        @Override
+        public double getPowerLostToAerodynamicDrag() {
+
+            // TODO: think about how this works for a tail wind
+            double Vg = Math.abs(this.getVelocity());
+
+            //https://en.wikipedia.org/wiki/Drag_equation
+            BigDecimal preScaled = new BigDecimal(0.5)
+                    .multiply(windResistance.getWindResistanceCoefficent())
+                    .multiply(new BigDecimal(this.getAirVelocity()).pow(2))
+                    .multiply(new BigDecimal(Vg));
+
+
+            return windResistance.getDraftingFactor()
+                    .multiply(preScaled)
+                    .doubleValue();
+        }
+    };
+
+    public void setTrackResistance(TrackResistance trackResistance) {
+        onCmdReceieved(CommandId.TRACK_RESISTANCE);
+        this.trackResistance = trackResistance;
+    }
+
+    public void setWindResistance(WindResistance windResistance) {
+        onCmdReceieved(CommandId.WIND_RESISTANCE);
+        this.windResistance = windResistance;
+    }
+
+    public void setBasicResistance(PercentageResistance resistance) {
+        onCmdReceieved(CommandId.BASIC_RESISTANCE);
+        this.resistance = resistance.getResistance();
+        // basic resistance is simulated by just adjusting the gradient
+        this.windResistance = new WindResistance.WindResistancePayload().createWindResistance();
+        BigDecimal validated = resistance.getResistance().min(new BigDecimal(100.0)).max(new BigDecimal(0))
+                .divide(new BigDecimal(100), 4, RoundingMode.HALF_UP);
+        final BigDecimal calculatedGradient = validated.multiply(new BigDecimal(MAX_GRADIENT_BASIC_RESISTANCE));
+        logger.trace("setting calculated gradient: {}",calculatedGradient);
+        this.trackResistance = new TrackResistance.TrackResistancePayload()
+                .setGradient(calculatedGradient)
+                .createTrackResistance();
+    }
 
     private Athlete athlete = new MaleAthlete(ATHLETE_HEIGHT, 80, ATHLETE_AGE);
     private BigDecimal bikeWeight = new BigDecimal(10); // kg
     private BigDecimal gearRatio = getGearRatio(52, 11);
     private Capabilities capabilities = new CapabilitiesBuilder()
             .setBasicResistanceModeSupport(true)
-            .setSimulationModeSupport(false)
+            .setSimulationModeSupport(true)
             .setTargetPowerModeSupport(false)
             .setMaximumResistance(1234)
             .createCapabilities();
@@ -67,6 +111,9 @@ public class DummyTrainerState {
     private CommandId lastCmd = CommandId.UNRECOGNIZED;
 
     private List<PageGen> priorityMessages = new LinkedList<>();
+
+    private TrackResistance trackResistance = new TrackResistance.TrackResistancePayload().createTrackResistance();
+    private WindResistance windResistance = new WindResistance.WindResistancePayload().createWindResistance();
 
     /**
      * Front to back ratio
@@ -118,12 +165,6 @@ public class DummyTrainerState {
         return this;
     }
 
-    public DummyTrainerState setSpeed(BigDecimal speed) {
-        this.speed = speed;
-        return this;
-    }
-
-
     public DummyTrainerState setHeartRate(Integer heartRate) {
         this.heartRate = heartRate;
         return this;
@@ -145,16 +186,33 @@ public class DummyTrainerState {
         lapFlagIsDirty = true;
     }
 
-    private PageGen basicCmdStatusGen = new PageGen() {
+    private PageGen cmdStatusGen = new PageGen() {
         @Override
         public AntPacketEncodable getPageEncoder() {
             CommonCommandPage.CommandStatus status = new CommonCommandPage.CommandStatusBuilder()
                     .setLastReceivedSequenceNumber(MathCompat.toIntExact(seqNum.get()))
                     .setStatus(Defines.Status.PASS) // we can instantly set resistance
                     .createCommandStatus();
-            return new Command.ResistanceStatusBuilder()
-                    .setStatus(status)
-                    .setTotalResistance(resistance);
+            // we should probably send the data we actually last received
+            // currently setting a basic resistance will clobber the old
+            // values
+            switch (lastCmd) {
+                case BASIC_RESISTANCE: return new Command.ResistanceStatusBuilder()
+                        .setStatus(status)
+                        .setTotalResistance(resistance);
+                case TRACK_RESISTANCE: return new Command.TerrainStatusBuilder()
+                        .setStatus(status)
+                        .setGrade(trackResistance.getGradient())
+                        .setRollingResistanceCoefficient(trackResistance.getGradient());
+                case WIND_RESISTANCE: return new Command.WindStatusBuilder()
+                        .setStatus(status)
+                        .setDraftingFactor(windResistance.getDraftingFactor())
+                        .setWindResistanceCoefficient(windResistance.getWindResistanceCoefficent())
+                        .setWindSpeed(windResistance.getWindSpeed());
+
+            }
+            logger.debug("unsupported command: {}", lastCmd);
+            return null;
         }
     };
 
@@ -442,6 +500,15 @@ public class DummyTrainerState {
 
     private OperationMode mode = normalMode;
 
+    private void syncPowerModel() {
+        powerModel.setTotalMass(bikeWeight.add(new BigDecimal(athlete.getWeight())).doubleValue());
+        powerModel.setCoefficentRollingResistance(trackResistance.getCoefficientRollingResistance().doubleValue());
+        powerModel.setGradientAsPercentage(trackResistance.getGradient().doubleValue());
+        powerModel.setWindSpeed(windResistance.getWindSpeed());
+        powerModel.updatePower(power);
+        speed = new BigDecimal(powerModel.getVelocity());
+    }
+
 
     public void setCapabilitesRequested() {
         priorityMessages.add(capabilitiesGen);
@@ -458,14 +525,25 @@ public class DummyTrainerState {
     }
 
     public byte [] nextPacket() {
+        syncPowerModel();
         mode = mode.update();
         distance = getTimeSinceStart().multiply(speed).intValue();
         final byte [] packet = new byte[8];
+        return doEncoding(packet);
+    }
+
+    private byte[] doEncoding(final byte[] packet) {
 
         if (priorityMessages.isEmpty()) {
             mode.getPacketGenerators().rotate().getPageEncoder().encode(packet);
         } else {
-            priorityMessages.remove(0).getPageEncoder().encode(packet);
+            AntPacketEncodable encoder = priorityMessages.remove(0).getPageEncoder();
+            if (encoder != null) {
+                encoder.encode(packet);
+                return packet;
+            }
+            logger.debug("null encoder, trying next...");
+            return doEncoding(packet); // skip
         }
 
         return packet;
@@ -476,10 +554,6 @@ public class DummyTrainerState {
         seqNum.add(1);
     }
 
-    public void setResistance(BigDecimal resisitance) {
-        onCmdReceieved(CommandId.BASIC_RESISTANCE);
-        this.resistance = resisitance;
-    }
 
     public void useConfig(Config config) {
         // we don't get sent sex, height,
@@ -490,12 +564,7 @@ public class DummyTrainerState {
     }
 
     public void sendCmdStatus() {
-        switch (lastCmd) {
-            case BASIC_RESISTANCE:
-                priorityMessages.add(basicCmdStatusGen);
-                break;
-        }
-
+        priorityMessages.add(cmdStatusGen);
     }
 
     public void requestSpinDownCalibration() {

@@ -93,6 +93,12 @@ public class WindResistance implements AntPage {
                 PutUnsignedNumIn1LeBytes(packet, DRAFTING_OFFSET, raw.intValue());
             }
         }
+
+        public WindResistance createWindResistance() {
+            final byte[] packet = new byte[8];
+            this.encode(packet);
+            return new WindResistance(packet);
+        }
     }
 
     public WindResistance(byte [] packet) {

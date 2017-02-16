@@ -16,7 +16,6 @@ import org.cowboycoders.ant.profiles.fitnessequipment.Defines.CommandId;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.*;
 import org.cowboycoders.ant.profiles.pages.Request;
 
-import java.math.BigDecimal;
 import java.util.Formatter;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -70,7 +69,6 @@ public class Dummy {
         state.setPower(200);
         state.setCadence(75);
         state.setHeartRate(123);
-        state.setSpeed(new BigDecimal(5));
 
         final PageDispatcher pageDispatcher = new PageDispatcher();
 
@@ -91,9 +89,11 @@ public class Dummy {
                     case Command.PAGE_NUMBER:
                         logger.trace("command status requested");
                         state.sendCmdStatus();
+                        break;
                     case CalibrationResponse.PAGE_NUMBER:
                         logger.trace("calibration response requested");
                         state.sendCalibrationResponse();
+                        break;
                 }
             }
         });
@@ -109,7 +109,21 @@ public class Dummy {
         pageDispatcher.addListener(PercentageResistance.class, new BroadcastListener<PercentageResistance>() {
             @Override
             public void receiveMessage(PercentageResistance percentageResistance) {
-                state.setResistance(percentageResistance.getResistance());
+                state.setBasicResistance(percentageResistance);
+            }
+        });
+
+        pageDispatcher.addListener(TrackResistance.class, new BroadcastListener<TrackResistance>() {
+            @Override
+            public void receiveMessage(TrackResistance page) {
+                state.setTrackResistance(page);
+            }
+        });
+
+        pageDispatcher.addListener(WindResistance.class, new BroadcastListener<WindResistance>() {
+            @Override
+            public void receiveMessage(WindResistance page) {
+                state.setWindResistance(page);
             }
         });
 
@@ -118,24 +132,6 @@ public class Dummy {
             public void receiveMessage(CalibrationResponse calibrationResponse) {
                 if (calibrationResponse.isSpinDownSuccess()) {
                     state.requestSpinDownCalibration();
-                    timer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            state.setSpeed(new BigDecimal(11.0));
-                        }
-                    }, 10000);
-                    timer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            state.setSpeed(new BigDecimal(0.0));
-                        }
-                    }, 20000);
-                    timer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            state.setSpeed(new BigDecimal(5.0));
-                        }
-                    }, 25000);
                 }
                 if (calibrationResponse.isZeroOffsetSuccess()) {
                     state.requestOffsetCalibration();

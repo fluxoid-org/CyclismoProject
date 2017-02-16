@@ -75,6 +75,12 @@ public class TrackResistance implements AntPage {
 
 
         }
+
+        public TrackResistance createTrackResistance() {
+            final byte [] packet = new byte[8];
+            this.encode(packet);
+            return new TrackResistance(packet);
+        }
     }
 
     public TrackResistance(byte[] packet) {

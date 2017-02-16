@@ -178,7 +178,7 @@ public class Command extends CommonCommandPage {
     /**
      * Created by fluxoid on 26/01/17.
      */
-    public static class TargetPowerStatusBuilder {
+    public static class TargetPowerStatusBuilder implements AntPacketEncodable {
 
         private BigDecimal targetPower = null;
         private CommandStatus status = new CommandStatusBuilder().createCommandStatus();
@@ -246,7 +246,7 @@ public class Command extends CommonCommandPage {
     /**
      * Created by fluxoid on 26/01/17.
      */
-    public static class TerrainStatusBuilder {
+    public static class TerrainStatusBuilder implements AntPacketEncodable {
         private BigDecimal grade = new BigDecimal("0.00");
         private BigDecimal rollingResistanceCoefficient = new BigDecimal("0.004");
         private CommandStatus status = new CommandStatusBuilder().createCommandStatus();
@@ -333,7 +333,7 @@ public class Command extends CommonCommandPage {
     /**
      * Created by fluxoid on 26/01/17.
      */
-    public static class WindStatusBuilder {
+    public static class WindStatusBuilder implements AntPacketEncodable {
         private BigDecimal draftingFactor = new BigDecimal("1.00");
         private BigDecimal windResistanceCoefficient = new BigDecimal("0.51");
         private Integer windSpeed = 0;
