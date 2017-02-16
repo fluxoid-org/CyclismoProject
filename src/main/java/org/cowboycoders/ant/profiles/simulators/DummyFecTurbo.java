@@ -57,7 +57,6 @@ public class DummyFecTurbo implements TurboControllable {
     public void start(Node transceiver) {
 
         state.setPower(200);
-        state.setCadence(75);
         state.setHeartRate(123);
 
         final PageDispatcher pageDispatcher = new PageDispatcher();
@@ -163,6 +162,7 @@ public class DummyFecTurbo implements TurboControllable {
             @Override
             public void receiveMessage(DataMessage msg) {
                 byte [] data = msg.getPrimitiveData();
+
                 pageDispatcher.dispatch(data);
                 CommandId cmd = CommandId.getValueFromInt(getPageNum(data));
                 if (cmd != CommandId.UNRECOGNIZED && cmd != CommandId.NO_CONTROL_PAGE_RECEIVED) {

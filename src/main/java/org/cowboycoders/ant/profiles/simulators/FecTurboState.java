@@ -160,16 +160,12 @@ public class FecTurboState implements TurboStateViewable {
         return this;
     }
 
-    public FecTurboState setCadence(int cadence) {
-        this.cadence = cadence;
-        return this;
-    }
-
     public FecTurboState setHeartRate(Integer heartRate) {
         this.heartRate = heartRate;
         return this;
     }
 
+    @Override
     public int getDistance() {
         return distance;
     }
@@ -300,6 +296,13 @@ public class FecTurboState implements TurboStateViewable {
             // period for 1 rotation
             BigDecimal period = getWheelCircumference().divide(speed, 20, BigDecimal.ROUND_HALF_UP);
 
+            // move this to a better place?
+            setCadence(
+                    new BigDecimal(60) // seconds to minutes
+                    .divide(period.multiply(gearRatio), 0, RoundingMode.HALF_UP)
+                    .intValue()
+            );
+
             long now = System.nanoTime();
             double delta = (now - torqueTimeStamp) / Math.pow(10,9);
             BigDecimal rotations = new BigDecimal(delta).divide(period, 0, BigDecimal.ROUND_HALF_UP);
@@ -361,7 +364,8 @@ public class FecTurboState implements TurboStateViewable {
     };
 
 
-    private PageGen [] normalPages = new PageGen[] {generalDataGen, bikeDataGen, metabolicGen, torqueDataGen};
+    private PageGen [] normalPages = new PageGen[]
+            {trainerDataGen, generalDataGen, bikeDataGen, metabolicGen, torqueDataGen};
 
 
     private PageGen basicResistanceGen = new PageGen() {
@@ -402,6 +406,14 @@ public class FecTurboState implements TurboStateViewable {
         priorityMessages.add(windGen);
     }
 
+    private void setCadence(int cadence) {
+        //logger.debug("attempting to set cadence to: {}", cadence);
+        if (cadence > 255) {
+            logger.error("cadence over limit");
+            cadence = 255;
+        }
+        this.cadence = cadence;
+    }
 
 
     // type = BIKE doesn't use capabilities, torqueData
