@@ -25,6 +25,9 @@ import static java.lang.Math.PI;
 public class DummyTrainerState {
 
 
+    public static final double CALORIES_TO_JOULES = 4.2;
+    public static final double HUMAN_EFFICENCY_FUDGE_FACTOR = 1 / 0.3;
+    public static final double WATTS_TO_KJ_PER_HOUR = 3.6;
     private Logger logger = LogManager.getLogger();
 
     // 700c http://www.bikecalc.com/wheel_size_math
@@ -249,6 +252,15 @@ public class DummyTrainerState {
         }
     };
 
+    private BigDecimal getInstantCalorieBurn() {
+        double kcal = (HUMAN_EFFICENCY_FUDGE_FACTOR * ((power * WATTS_TO_KJ_PER_HOUR) / CALORIES_TO_JOULES));
+        return new BigDecimal(kcal);
+    }
+
+    private BigDecimal getApproxMet() {
+        return getInstantCalorieBurn().divide(athlete.getBrmPerHour(), 2, RoundingMode.HALF_UP);
+    }
+
 
     private PageGen metabolicGen = new PageGen() {
 
@@ -256,15 +268,15 @@ public class DummyTrainerState {
         public AntPacketEncodable getPageEncoder() {
             long timeNanos = System.nanoTime() - start;
             double timeHrs = timeNanos / Math.pow(10, 9) / (60 * 60);
-            BigDecimal instantCalorieBurn = athlete.getEstimatedCalorificBurn(MET_CYCLING);
+            BigDecimal instantCalorieBurn = getInstantCalorieBurn();
             BigDecimal calsBurnt = instantCalorieBurn.multiply(new BigDecimal(timeHrs));
             return setCommon(
                     new MetabolicData.MetabolicDataPayload()
                             .setInstantCalorieBurn(instantCalorieBurn)
                             .setCalorieCounter(calsBurnt.intValue())
-                            .setInstantMetabolicEquivalents(new BigDecimal(MET_CYCLING)
+                            .setInstantMetabolicEquivalents(getApproxMet())
 
-            ));
+            );
         }
     };
 
