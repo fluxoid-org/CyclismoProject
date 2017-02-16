@@ -23,7 +23,7 @@ import static java.lang.Math.PI;
 /**
  * Created by fluxoid on 01/02/17.
  */
-public class DummyTrainerState {
+public class FecTurboState implements TurboStateViewable {
 
 
     public static final double CALORIES_TO_JOULES = 4.2;
@@ -151,21 +151,21 @@ public class DummyTrainerState {
 
     private long start;
 
-    public DummyTrainerState() {
+    public FecTurboState() {
         start = System.nanoTime();
     }
 
-    public DummyTrainerState setPower(int power) {
+    public FecTurboState setPower(int power) {
         this.power = power;
         return this;
     }
 
-    public DummyTrainerState setCadence(int cadence) {
+    public FecTurboState setCadence(int cadence) {
         this.cadence = cadence;
         return this;
     }
 
-    public DummyTrainerState setHeartRate(Integer heartRate) {
+    public FecTurboState setHeartRate(Integer heartRate) {
         this.heartRate = heartRate;
         return this;
     }
@@ -185,6 +185,8 @@ public class DummyTrainerState {
         lapFlag =! lapFlag;
         lapFlagIsDirty = true;
     }
+
+
 
     private PageGen cmdStatusGen = new PageGen() {
         @Override
@@ -254,7 +256,7 @@ public class DummyTrainerState {
         return statusFlags;
     }
 
-    public DummyTrainerState setStatusFlags(EnumSet<Defines.TrainerStatusFlag> statusFlags) {
+    public FecTurboState setStatusFlags(EnumSet<Defines.TrainerStatusFlag> statusFlags) {
         this.statusFlags = statusFlags;
         return this;
     }

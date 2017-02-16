@@ -19,19 +19,15 @@ import org.cowboycoders.ant.profiles.pages.Request;
 import java.util.Formatter;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static org.cowboycoders.ant.profiles.common.PageDispatcher.getPageNum;
 
 /**
  * Created by fluxoid on 31/01/17.
  */
-public class Dummy {
+public class DummyFecTurbo implements TurboControllable {
 
     private static final Logger logger = LogManager.getLogger();
-
-    private Node transceiver;
 
     public static CharSequence bytesToString(Byte[] arr) {
         Formatter formatter = new Formatter();
@@ -44,7 +40,9 @@ public class Dummy {
         return formatter.toString().substring(0, end);
     }
 
-    Timer timer = new Timer();
+    private Timer timer = new Timer();
+
+    private final FecTurboState state = new FecTurboState();
 
 
     public static void main(String [] args) {
@@ -53,18 +51,10 @@ public class Dummy {
         Node node = new Node(antchip);
         node.start();
         node.reset();
-        new Dummy().start(node);
+        new DummyFecTurbo().start(node);
     }
 
     public void start(Node transceiver) {
-        this.transceiver = transceiver;
-
-
-
-        ExecutorService pool = Executors.newSingleThreadExecutor();
-
-        final DummyTrainerState state = new DummyTrainerState();
-
 
         state.setPower(200);
         state.setCadence(75);
@@ -245,4 +235,24 @@ public class Dummy {
 
     }
 
+    @Override
+    public void setPower(int power) {
+        state.setPower(power);
+    }
+
+    @Override
+    public void incrementLaps() {
+        // we could buffer these requests, but I don't think there is a
+        // pressing need for such short laps
+        try {
+            state.incrementLaps();
+        } catch (IllegalStateException e) {
+            logger.warn("increment laps ignore, polling to fast!");
+        }
+    }
+
+    @Override
+    public TurboStateViewable getState() {
+        return state;
+    }
 }
