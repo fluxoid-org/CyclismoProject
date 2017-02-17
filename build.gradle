@@ -1,13 +1,32 @@
 version '1.0-SNAPSHOT'
 
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
+    }
+}
+
 apply plugin: 'java'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
 repositories {
     mavenCentral()
     jcenter()
 }
+
+
+task runDummyFec(type:JavaExec) {
+    // this will hang on building as it never returns
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.cowboycoders.ant.profiles.simulators.DummyFecTurbo'
+}
+
 
 dependencies {
     compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.8'
