@@ -242,6 +242,11 @@ public class DummyFecTurbo implements TurboControllable {
     }
 
     @Override
+    public void setHeartrate(int hr) {
+        state.setHeartRate(hr);
+    }
+
+    @Override
     public void incrementLaps() {
         // we could buffer these requests, but I don't think there is a
         // pressing need for such short laps

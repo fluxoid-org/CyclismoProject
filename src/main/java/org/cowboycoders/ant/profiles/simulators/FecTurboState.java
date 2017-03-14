@@ -73,6 +73,57 @@ public class FecTurboState implements TurboStateViewable {
         }
     };
 
+
+    @Override
+    public int getPower() {
+        return power;
+    }
+
+    @Override
+    public int getCadence() {
+        return cadence;
+    }
+
+    @Override
+    public BigDecimal getSpeed() {
+        return speed;
+    }
+
+    @Override
+    public Athlete getAthlete() {
+        return athlete;
+    }
+
+    @Override
+    public BigDecimal getBikeWeight() {
+        return bikeWeight;
+    }
+
+    @Override
+    public BigDecimal getGearRatio() {
+        return gearRatio;
+    }
+
+    @Override
+    public OperationState getState() {
+        return mode;
+    }
+
+    @Override
+    public TrackResistance getTrackResistance() {
+        return trackResistance;
+    }
+
+    @Override
+    public WindResistance getWindResistance() {
+        return windResistance;
+    }
+
+    @Override
+    public Integer getHeartRate() {
+        return heartRate;
+    }
+
     public void setTrackResistance(TrackResistance trackResistance) {
         onCmdReceieved(CommandId.TRACK_RESISTANCE);
         this.trackResistance = trackResistance;
@@ -419,32 +470,28 @@ public class FecTurboState implements TurboStateViewable {
     // type = BIKE doesn't use capabilities, torqueData
     //private RotatingView<PageGen> packetGen = new RotatingView<> (normalPages);
 
-    private static interface OperationMode {
+    private static interface OperationMode extends OperationState {
 
         public OperationMode update();
 
         RotatingView<PageGen> getPacketGenerators();
     }
 
-    private OperationMode normalMode = new OperationMode() {
+    private OperationMode normalMode = new NormalOperationMode();
 
-        private RotatingView<PageGen> normalPackets = new RotatingView<>(normalPages);
-
-        @Override
-        public OperationMode update() {
-            return this;
-        }
-
-        @Override
-        public RotatingView<PageGen> getPacketGenerators() {
-            return normalPackets;
-        }
-    };
-
-    private enum SpinDownCalibrationState {
+    public enum SpinDownCalibrationState {
         AWAITING_SPEED_UP,
         REACHED_SPEED,
         AWAITING_SPEED_DOWN,
+    }
+
+    /**
+     * Read-only public representation of operating state
+     */
+    public interface OperationState {}
+
+    public interface SpinDownInProgessState extends OperationState {
+        SpinDownCalibrationState getSpinDownState();
     }
 
     private static final BigDecimal TARGET_SPEED = new BigDecimal(10);
@@ -461,97 +508,7 @@ public class FecTurboState implements TurboStateViewable {
                     .setTemp(internalTemp);
         }
     };
-    private OperationMode spinDownCalibrationMode = new OperationMode() {
-
-        private SpinDownCalibrationState state = SpinDownCalibrationState.AWAITING_SPEED_UP;
-
-        private final PageGen calibrationStatusGen = new PageGen() {
-            @Override
-            public AntPacketEncodable getPageEncoder() {
-                return new CalibrationProgress.CalibrationProgressPayload()
-                        .setTemp(internalTemp)
-                        .setTempState(Defines.TemperatureCondition.CURRENT_TEMPERATURE_OK)
-                        .setSpeedState(getSpeedState())
-                        .setSpinDownPending(true)
-                        .setTargetSpeed(TARGET_SPEED)
-                        .setTargetSpinDownTime(10000);
-            }
-
-        };
-
-        private PageGen [] calibrationPages;
-        {
-            // this needs normalPages to be defined before this in the source file
-            List<PageGen> t = new ArrayList<>(Arrays.asList(normalPages));
-            t.add(calibrationStatusGen);
-            calibrationPages = t.toArray(new PageGen[0]);
-
-        };
-
-        private SpeedCondition getSpeedState() {
-            switch (state) {
-                case AWAITING_SPEED_UP: return SpeedCondition.CURRENT_SPEED_TOO_LOW;
-                default: return SpeedCondition.CURRENT_SPEED_OK;
-            }
-        }
-
-        private RotatingView<PageGen> calibrationGen = new RotatingView<>(calibrationPages);
-
-        private Long start;
-
-        private void reset() {
-            start = null;
-            state = SpinDownCalibrationState.AWAITING_SPEED_UP;
-        }
-
-        @Override
-        public OperationMode update() {
-            if (start == null) {
-                start = System.nanoTime();
-            }
-            switch (state) {
-                case AWAITING_SPEED_UP:
-                    if (speed.compareTo(TARGET_SPEED) >= 0) {
-                        state = SpinDownCalibrationState.REACHED_SPEED;
-                    }
-                    return this;
-                case AWAITING_SPEED_DOWN:
-                    if (speed.compareTo(ZERO_SPEED_THRESHOLD) <= 0) {
-                        state = SpinDownCalibrationState.REACHED_SPEED;
-                    }
-                    return this;
-                case REACHED_SPEED:
-                    if (speed.compareTo(ZERO_SPEED_THRESHOLD) <= 0) {
-                        // finish condition
-                        long delta = System.nanoTime() - start;
-                        final BigDecimal spinDownTimeMillis = new BigDecimal(delta)
-                                .divide(new BigDecimal(Math.pow(10, 6)), 0, RoundingMode.HALF_UP);
-                        logger.trace("spindown calibration time (ms): {}", spinDownTimeMillis );
-                        priorityMessages.add(new PageGen() {
-                            @Override
-                            public AntPacketEncodable getPageEncoder() {
-                                return new CalibrationResponse.CalibrationResponsePayload()
-                                        .setSpinDownSuccess(true)
-                                        .setSpinDownTime(spinDownTimeMillis.intValue())
-                                        .setTemp(internalTemp);
-                            }
-                        });
-                        reset();
-                        return normalMode;
-                    }
-                    state = SpinDownCalibrationState.AWAITING_SPEED_DOWN;
-                    return this;
-
-
-            }
-            return this;
-        }
-
-        @Override
-        public RotatingView<PageGen> getPacketGenerators() {
-            return calibrationGen;
-        }
-    };
+    private OperationMode spinDownCalibrationMode = new SpinDownOperationMode();
 
     private OperationMode mode = normalMode;
 
@@ -635,4 +592,118 @@ public class FecTurboState implements TurboStateViewable {
     }
 
 
+    private class NormalOperationMode implements OperationMode {
+
+        private RotatingView<PageGen> normalPackets = new RotatingView<>(normalPages);
+
+        @Override
+        public OperationMode update() {
+            return this;
+        }
+
+        @Override
+        public RotatingView<PageGen> getPacketGenerators() {
+            return normalPackets;
+        }
+    }
+
+    private class SpinDownOperationMode implements OperationMode, SpinDownInProgessState {
+
+        private SpinDownCalibrationState state = SpinDownCalibrationState.AWAITING_SPEED_UP;
+
+        private final PageGen calibrationStatusGen = new PageGen() {
+            @Override
+            public AntPacketEncodable getPageEncoder() {
+                return new CalibrationProgress.CalibrationProgressPayload()
+                        .setTemp(internalTemp)
+                        .setTempState(Defines.TemperatureCondition.CURRENT_TEMPERATURE_OK)
+                        .setSpeedState(getSpeedState())
+                        .setSpinDownPending(true)
+                        .setTargetSpeed(TARGET_SPEED)
+                        .setTargetSpinDownTime(10000);
+            }
+
+        };
+
+        private PageGen [] calibrationPages;
+
+        {
+            // this needs normalPages to be defined before this in the source file
+            List<PageGen> t = new ArrayList<>(Arrays.asList(normalPages));
+            t.add(calibrationStatusGen);
+            calibrationPages = t.toArray(new PageGen[0]);
+
+        }
+
+        ;
+
+        private SpeedCondition getSpeedState() {
+            switch (state) {
+                case AWAITING_SPEED_UP: return SpeedCondition.CURRENT_SPEED_TOO_LOW;
+                default: return SpeedCondition.CURRENT_SPEED_OK;
+            }
+        }
+
+        private RotatingView<PageGen> calibrationGen = new RotatingView<>(calibrationPages);
+
+        private Long start;
+
+        private void reset() {
+            start = null;
+            state = SpinDownCalibrationState.AWAITING_SPEED_UP;
+        }
+
+        @Override
+        public OperationMode update() {
+            if (start == null) {
+                start = System.nanoTime();
+            }
+            switch (state) {
+                case AWAITING_SPEED_UP:
+                    if (speed.compareTo(TARGET_SPEED) >= 0) {
+                        state = SpinDownCalibrationState.REACHED_SPEED;
+                    }
+                    return this;
+                case AWAITING_SPEED_DOWN:
+                    if (speed.compareTo(ZERO_SPEED_THRESHOLD) <= 0) {
+                        state = SpinDownCalibrationState.REACHED_SPEED;
+                    }
+                    return this;
+                case REACHED_SPEED:
+                    if (speed.compareTo(ZERO_SPEED_THRESHOLD) <= 0) {
+                        // finish condition
+                        long delta = System.nanoTime() - start;
+                        final BigDecimal spinDownTimeMillis = new BigDecimal(delta)
+                                .divide(new BigDecimal(Math.pow(10, 6)), 0, RoundingMode.HALF_UP);
+                        logger.trace("spindown calibration time (ms): {}", spinDownTimeMillis );
+                        priorityMessages.add(new PageGen() {
+                            @Override
+                            public AntPacketEncodable getPageEncoder() {
+                                return new CalibrationResponse.CalibrationResponsePayload()
+                                        .setSpinDownSuccess(true)
+                                        .setSpinDownTime(spinDownTimeMillis.intValue())
+                                        .setTemp(internalTemp);
+                            }
+                        });
+                        reset();
+                        return normalMode;
+                    }
+                    state = SpinDownCalibrationState.AWAITING_SPEED_DOWN;
+                    return this;
+
+
+            }
+            return this;
+        }
+
+        @Override
+        public RotatingView<PageGen> getPacketGenerators() {
+            return calibrationGen;
+        }
+
+        @Override
+        public SpinDownCalibrationState getSpinDownState() {
+            return state;
+        }
+    }
 }

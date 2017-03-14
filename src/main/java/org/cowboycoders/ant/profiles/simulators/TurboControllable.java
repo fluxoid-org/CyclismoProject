@@ -8,6 +8,7 @@ import org.cowboycoders.ant.Node;
 public interface TurboControllable {
     void start(Node transceiver);
     void setPower(int power);
+    void setHeartrate(int hr);
     void incrementLaps();
     TurboStateViewable getState();
 }
