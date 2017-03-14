@@ -490,12 +490,21 @@ public class FecTurboState implements TurboStateViewable {
         AWAITING_SPEED_DOWN,
     }
 
+    public enum OperationModeState {
+        BASIC_RESISTANCE,
+        SIMULATION
+    }
+
     /**
      * Read-only public representation of operating state
      */
     public interface OperationState {}
 
-    public interface SpinDownInProgessState extends OperationState {
+    public interface NormalOperationState extends OperationState {
+        OperationModeState getMode();
+    }
+
+    public interface SpinDownInProgressState extends OperationState {
         SpinDownCalibrationState getSpinDownState();
     }
 
@@ -569,6 +578,16 @@ public class FecTurboState implements TurboStateViewable {
     private void onCmdReceieved(CommandId commandId) {
         lastCmd = commandId;
         seqNum.add(1);
+        if (mode instanceof NormalOperationMode) {
+            NormalOperationMode mode = ((NormalOperationMode) this.mode);
+            switch (commandId) {
+                case BASIC_RESISTANCE:
+                    mode.setMode(OperationModeState.BASIC_RESISTANCE);
+                case TRACK_RESISTANCE:
+                case WIND_RESISTANCE:
+                    mode.setMode(OperationModeState.SIMULATION);
+            }
+        }
     }
 
 
@@ -597,7 +616,13 @@ public class FecTurboState implements TurboStateViewable {
     }
 
 
-    private class NormalOperationMode implements OperationMode {
+    private class NormalOperationMode implements OperationMode, NormalOperationState {
+
+        private OperationModeState mode = OperationModeState.BASIC_RESISTANCE;
+
+        private void setMode(OperationModeState mode) {
+            this.mode = mode;
+        }
 
         private RotatingView<PageGen> normalPackets = new RotatingView<>(normalPages);
 
@@ -610,9 +635,14 @@ public class FecTurboState implements TurboStateViewable {
         public RotatingView<PageGen> getPacketGenerators() {
             return normalPackets;
         }
+
+        @Override
+        public OperationModeState getMode() {
+            return mode;
+        }
     }
 
-    private class SpinDownOperationMode implements OperationMode, SpinDownInProgessState {
+    private class SpinDownOperationMode implements OperationMode, SpinDownInProgressState {
 
         private SpinDownCalibrationState state = SpinDownCalibrationState.AWAITING_SPEED_UP;
 
