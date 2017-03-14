@@ -435,7 +435,7 @@ public class FecTurboState implements TurboStateViewable {
     private PageGen trackDataGen = new PageGen() {
         @Override
         public AntPacketEncodable getPageEncoder() {
-            return new TrackResistance.TrackResistancePayload().
+            return TrackResistance.TrackResistancePayload.
                     from(trackResistance);
         }
     };
