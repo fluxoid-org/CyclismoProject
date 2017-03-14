@@ -352,12 +352,16 @@ public class FecTurboState implements TurboStateViewable {
             // period for 1 rotation
             BigDecimal period = getWheelCircumference().divide(speed, 20, BigDecimal.ROUND_HALF_UP);
 
-            // move this to a better place?
-            setCadence(
-                    new BigDecimal(60) // seconds to minutes
-                    .divide(period.multiply(gearRatio), 0, RoundingMode.HALF_UP)
-                    .intValue()
-            );
+            if (power > 0) {
+                // move this to a better place?
+                setCadence(
+                        new BigDecimal(60) // seconds to minutes
+                                .divide(period.multiply(gearRatio), 0, RoundingMode.HALF_UP)
+                                .intValue()
+                );
+            } else {
+                setCadence(0);
+            }
 
             long now = System.nanoTime();
             double delta = (now - torqueTimeStamp) / Math.pow(10,9);
@@ -545,15 +549,22 @@ public class FecTurboState implements TurboStateViewable {
     }
 
     private BigDecimal getTimeSinceStart() {
-        long now = System.nanoTime();
-        return new BigDecimal(now - start)
+        return getTimeSince(System.nanoTime(), start);
+    }
+
+    private BigDecimal getTimeSince(long now, long then) {
+        return new BigDecimal(then - start)
                 .divide(new BigDecimal(Math.pow(10, 9)),10, RoundingMode.HALF_UP);
     }
+
+    private long lastDistanceTimeStamp = System.nanoTime();
 
     public byte [] nextPacket() {
         syncPowerModel();
         mode = mode.update();
-        distance = getTimeSinceStart().multiply(speed).intValue();
+        long now = System.nanoTime();
+        distance += getTimeSince(now, lastDistanceTimeStamp).multiply(speed).intValue();
+        lastDistanceTimeStamp = now;
         final byte [] packet = new byte[8];
         return doEncoding(packet);
     }
