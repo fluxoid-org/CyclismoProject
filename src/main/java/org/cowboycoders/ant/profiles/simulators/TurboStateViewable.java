@@ -24,6 +24,8 @@ public interface TurboStateViewable {
 
     FecTurboState.OperationState getState();
 
+    BigDecimal getWheelDiameter();
+
     TrackResistance getTrackResistance();
 
     WindResistance getWindResistance();

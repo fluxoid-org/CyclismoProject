@@ -110,6 +110,11 @@ public class FecTurboState implements TurboStateViewable {
     }
 
     @Override
+    public BigDecimal getWheelDiameter() {
+        return wheelDiameter;
+    }
+
+    @Override
     public TrackResistance getTrackResistance() {
         return trackResistance;
     }
