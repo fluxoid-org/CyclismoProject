@@ -26,6 +26,11 @@ public class TrainerData extends CommonPageData implements PowerOnlyDecodable, A
 
     public static final int PAGE_NUMBER = 25;
 
+    @Override
+    public int getPageNumber() {
+        return PAGE_NUMBER;
+    }
+
     private static final long TIMEOUT_DELTA = TimeUnit.SECONDS.toNanos(12);
     public static final int POWER_OFFSET = 3;
     public static final int EVENT_OFFSET = 1;

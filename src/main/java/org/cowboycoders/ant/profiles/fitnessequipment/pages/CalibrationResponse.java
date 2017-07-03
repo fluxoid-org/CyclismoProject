@@ -17,6 +17,11 @@ public class CalibrationResponse implements AntPage {
 
     public static final int PAGE_NUMBER = 1;
 
+    @Override
+    public int getPageNumber() {
+        return PAGE_NUMBER;
+    }
+
     private static final int OFFSET_FLAG__MASK = 0x40;
     private static final int SPINDOWN_FLAG_MASK = 0x80;
     private static final int SPINDOWN_FLAG_OFFSET = 1;

@@ -15,6 +15,11 @@ public class CapabilitiesPage implements AntPage {
 
     public static final int PAGE_NUMBER = 54;
 
+    @Override
+    public int getPageNumber() {
+        return PAGE_NUMBER;
+    }
+
     private static final int MAX_RESISTANCE_OFFSET = 5;
     private static final int FLAGS_OFFSET = 7;
     public static final int RESISTANCE_MASK = 0x1;

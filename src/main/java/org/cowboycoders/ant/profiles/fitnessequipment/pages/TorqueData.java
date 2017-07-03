@@ -22,6 +22,11 @@ public class TorqueData extends CommonPageData implements AntPage, TorqueDecodab
 
     public static int PAGE_NUMBER = 26;
 
+    @Override
+    public int getPageNumber() {
+        return PAGE_NUMBER;
+    }
+
     private static final int EVENT_OFFSET = 1;
     private static final int ROTATION_OFFSET = 2;
     private static final int PERIOD_OFFSET = 3;

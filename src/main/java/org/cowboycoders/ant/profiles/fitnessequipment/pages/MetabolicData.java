@@ -19,6 +19,11 @@ public class MetabolicData extends CommonPageData implements AntPage, CalorieCou
 
     public static int PAGE_NUMBER = 18;
 
+    @Override
+    public int getPageNumber() {
+        return PAGE_NUMBER;
+    }
+
     private static final int META_OFFSET = 7;
     private static final int HAS_CALORIES_MASK = 0x1;
     private static final int CALORIES_OFFSET = 6;

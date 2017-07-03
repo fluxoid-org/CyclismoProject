@@ -16,6 +16,11 @@ public class GeneralSettings extends CommonPageData implements AntPage {
 
     public static final int PAGE_NUMBER = 17;
 
+    @Override
+    public int getPageNumber() {
+        return PAGE_NUMBER;
+    }
+
     private static final int CYCLE_LENGTH_OFFSET = 3;
     private static final int INCLINE_OFFSET = 4;
     private static final int RESISTANCE_OFFSET = 6;

@@ -15,7 +15,7 @@ public class Request implements AntPage {
     private final int pageNumber;
     private final int subPage;
 
-    public int getPageNumber() {
+    public int getRequestedPageNumber() {
         return pageNumber;
     }
 
@@ -26,6 +26,11 @@ public class Request implements AntPage {
     public Request(final byte[] data) {
         pageNumber = UnsignedNumFrom1LeByte(data[REQEUSTED_PAGE_OFFSET]);
         subPage =  UnsignedNumFrom1LeByte(data[SUBPAGE_OFFSET]);
+    }
+
+    @Override
+    public int getPageNumber() {
+        return PAGE_NUMBER;
     }
 
     public static class RequestPayload implements AntPacketEncodable {

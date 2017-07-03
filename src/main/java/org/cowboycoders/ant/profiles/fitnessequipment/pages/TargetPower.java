@@ -17,6 +17,11 @@ public class TargetPower implements AntPage {
 
     public static final int PAGE_NUMBER = 49;
 
+    @Override
+    public int getPageNumber() {
+        return PAGE_NUMBER;
+    }
+
     private static final int POWER_OFFSET = 6;
     private final BigDecimal targetPower;
 

@@ -50,6 +50,11 @@ public class BikeData extends CommonPageData implements AntPage {
         }
     }
 
+    @Override
+    public int getPageNumber() {
+        return PAGE_NUMBER;
+    }
+
     public static class BikeDataPayload  extends CommonPagePayload implements AntPacketEncodable {
         private Integer power;
         private Integer cadence;

@@ -18,6 +18,11 @@ public class ConfigPage implements AntPage {
 
     public static final int PAGE_NUMBER = 55;
 
+    @Override
+    public int getPageNumber() {
+        return PAGE_NUMBER;
+    }
+
     private static final int USER_WEIGHT_OFFSET = 1;
     private static final int BIKE_WEIGHT_OFFSET = 4;
     private static final int WHEEL_DIAMETER_OFFSET = 6;

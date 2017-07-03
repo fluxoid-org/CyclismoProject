@@ -17,6 +17,11 @@ public class TrackResistance implements AntPage {
 
     public static final int PAGE_NUMBER = 51;
 
+    @Override
+    public int getPageNumber() {
+        return PAGE_NUMBER;
+    }
+
     // if you change these you have to adjust scale in encode()
     private static final BigDecimal DEFAULT_ROLLING_RESISTANCE = new BigDecimal(0.004);
     private static final BigDecimal DEFAULT_GRADIENT = new BigDecimal(0.00);

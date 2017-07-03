@@ -17,6 +17,11 @@ public class WindResistance implements AntPage {
 
     public static final int PAGE_NUMBER = 50;
 
+    @Override
+    public int getPageNumber() {
+        return PAGE_NUMBER;
+    }
+
     private static final BigDecimal DEFAULT_WIND_COEFF = new BigDecimal(0.51);
     private static final BigDecimal DEFAULT_DRAFTING_FACTOR = new BigDecimal(1.00);
     private static final int WIND_COEFFICIENT_OFFSET = 5;

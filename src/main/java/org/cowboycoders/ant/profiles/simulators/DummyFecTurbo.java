@@ -15,8 +15,8 @@ import org.cowboycoders.ant.profiles.common.PageDispatcher;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines.CommandId;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.*;
 import org.cowboycoders.ant.profiles.pages.Request;
+import org.fluxoid.utils.Format;
 
-import java.util.Formatter;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -28,17 +28,6 @@ import static org.cowboycoders.ant.profiles.common.PageDispatcher.getPageNum;
 public class DummyFecTurbo implements TurboControllable {
 
     private static final Logger logger = LogManager.getLogger();
-
-    public static CharSequence bytesToString(Byte[] arr) {
-        Formatter formatter = new Formatter();
-        final int len = arr.length * 3;
-        for (byte b: arr) {
-            formatter.format("%02x:",b);
-        }
-        // strip last char
-        int end = arr.length == 0 ? 0 : len - 1;
-        return formatter.toString().substring(0, end);
-    }
 
     private Timer timer = new Timer();
 
@@ -66,7 +55,7 @@ public class DummyFecTurbo implements TurboControllable {
 
             @Override
             public void receiveMessage(Request request) {
-                final int page = request.getPageNumber();
+                final int page = request.getRequestedPageNumber();
                 switch (page) {
                     case CapabilitiesPage.PAGE_NUMBER:
                         logger.trace("capabilities requested");
@@ -169,7 +158,7 @@ public class DummyFecTurbo implements TurboControllable {
                 if (cmd != CommandId.UNRECOGNIZED && cmd != CommandId.NO_CONTROL_PAGE_RECEIVED) {
                     logger.trace("receieved cmd: " + cmd);
                 }
-                logger.trace(bytesToString(msg.getData()));
+                logger.trace(Format.bytesToString(msg.getData()));
             }
         }, DataMessage.class);
 

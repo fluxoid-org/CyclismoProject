@@ -20,6 +20,11 @@ public class GeneralData extends CommonPageData implements AntPage, TimeDecodabl
 
     public static int PAGE_NUMBER = 16;
 
+    @Override
+    public int getPageNumber() {
+        return PAGE_NUMBER;
+    }
+
     // these are counters that overflow
     private static final int TIME_OFFSET = 2;
     private static final int DISTANCE_OFFSET = 3;

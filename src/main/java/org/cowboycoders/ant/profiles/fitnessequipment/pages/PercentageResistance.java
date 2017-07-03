@@ -16,6 +16,11 @@ public class PercentageResistance implements AntPage {
 
     public static final  int PAGE_NUMBER = 48;
 
+    @Override
+    public int getPageNumber() {
+        return PAGE_NUMBER;
+    }
+
     private static final int RESISTANCE_OFFSET = 7;
     private final BigDecimal resistance;
 

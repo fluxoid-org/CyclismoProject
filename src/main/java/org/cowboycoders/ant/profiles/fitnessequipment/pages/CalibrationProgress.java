@@ -17,6 +17,11 @@ public class CalibrationProgress  implements AntPage {
 
     public static final int PAGE_NUMBER = 2;
 
+    @Override
+    public int getPageNumber() {
+        return PAGE_NUMBER;
+    }
+
     private static final int OFFSET_IN_PROGRESS_MASK = 0x40;
     private static final int SPINDOWN_IN_PROGRESS_MASK = 0x80;
     private static final int CONDITION_OFFSET = 2;
