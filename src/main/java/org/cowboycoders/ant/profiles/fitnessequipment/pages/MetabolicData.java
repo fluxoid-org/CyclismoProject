@@ -17,7 +17,7 @@ import static org.cowboycoders.ant.profiles.BitManipulation.*;
  */
 public class MetabolicData extends CommonPageData implements AntPage, CalorieCountDecodable {
 
-    public static int PAGE_NUMBER = 18;
+    public static final int PAGE_NUMBER = 18;
 
     @Override
     public int getPageNumber() {

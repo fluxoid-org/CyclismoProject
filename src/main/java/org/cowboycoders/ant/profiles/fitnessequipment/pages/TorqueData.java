@@ -20,7 +20,7 @@ import static org.cowboycoders.ant.profiles.BitManipulation.*;
  */
 public class TorqueData extends CommonPageData implements AntPage, TorqueDecodable, DistanceDecodable, SpeedDecodable {
 
-    public static int PAGE_NUMBER = 26;
+    public static final int PAGE_NUMBER = 26;
 
     @Override
     public int getPageNumber() {

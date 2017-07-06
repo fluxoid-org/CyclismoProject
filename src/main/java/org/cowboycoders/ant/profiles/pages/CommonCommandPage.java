@@ -63,6 +63,11 @@ public class CommonCommandPage implements AntPage {
         return result;
     }
 
+    @Override
+    public int getPageNumber() {
+        return PAGE_NUMBER;
+    }
+
     /**
      * Created by fluxoid on 17/01/17.
      */

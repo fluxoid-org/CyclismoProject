@@ -18,7 +18,7 @@ import static org.cowboycoders.ant.profiles.BitManipulation.*;
  */
 public class GeneralData extends CommonPageData implements AntPage, TimeDecodable {
 
-    public static int PAGE_NUMBER = 16;
+    public static final int PAGE_NUMBER = 16;
 
     @Override
     public int getPageNumber() {

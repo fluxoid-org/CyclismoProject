@@ -13,11 +13,15 @@ import org.cowboycoders.ant.messages.SlaveChannelType;
 import org.cowboycoders.ant.messages.data.BroadcastDataMessage;
 import org.cowboycoders.ant.messages.data.DataMessage;
 import org.cowboycoders.ant.profiles.common.PageDispatcher;
+import org.cowboycoders.ant.profiles.fitnessequipment.Config;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.*;
+import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 import org.cowboycoders.ant.profiles.pages.Request;
 import org.cowboycoders.ant.profiles.simulators.NetworkKeys;
+
+import java.math.BigDecimal;
 
 import static org.cowboycoders.ant.profiles.common.PageDispatcher.getPageNum;
 import static org.fluxoid.utils.Format.bytesToString;
@@ -28,6 +32,11 @@ import static org.fluxoid.utils.Format.bytesToString;
 public class FecProfile {
 
     private Channel channel;
+
+    // for BikeData, CommonPageData
+    private boolean lapFlag;
+
+    private final PageDispatcher pageDispatcher = new PageDispatcher();
 
     public static void main(String [] args) {
         AntTransceiver antchip = new AntTransceiver(0);
@@ -48,11 +57,11 @@ public class FecProfile {
         requestPage(ConfigPage.PAGE_NUMBER);
     }
 
-    public void requestCmdStatus() {
+    public void requestStatusCmd() {
         requestPage(Command.PAGE_NUMBER);
     }
 
-    public void requestCalibration() {
+    public void requestStatusCalibration() {
         requestPage(CalibrationResponse.PAGE_NUMBER);
     }
 
@@ -68,15 +77,62 @@ public class FecProfile {
         requestPage(WindResistance.PAGE_NUMBER);
     }
 
+    public void setConfig(Config config) {
+        sendEncodable(
+        new ConfigPage.ConfigPayload().
+                setConfig(config)
+        );
+    }
 
-    private void requestPage(int pageNumber) {
+    public void setBasicResistance(double gradient) {
+        sendEncodable(
+        new PercentageResistance.PercentageResistancePayload()
+            .setResistance(new BigDecimal(gradient)));
+    }
+
+    public void setWindResistance(WindResistance.WindResistancePayload settings) {
+        sendEncodable(settings);
+    }
+
+    public void setTrackResistance(TrackResistance.TrackResistancePayload settings) {
+        sendEncodable(settings);
+    }
+
+    public void requestSpinDownCalibration() {
+        sendEncodable(new CalibrationResponse.CalibrationResponsePayload()
+        .setSpinDownSuccess(true));
+    }
+
+    public void requestZeroOffsetCalibration() {
+        sendEncodable(
+                new CalibrationResponse.CalibrationResponsePayload()
+                .setZeroOffsetSuccess(true)
+        );
+    }
+
+
+    public void incrementLaps() {
+        lapFlag = !lapFlag;
+    }
+
+
+
+    public void sendEncodable(AntPacketEncodable encodable) {
         byte [] data = new byte[8];
-        new Request.RequestPayload()
-                .setPageNumber(pageNumber)
-                .encode(data);
+        encodable.encode(data);
         BroadcastDataMessage payload = new BroadcastDataMessage();
         payload.setData(data);
         channel.send(payload);
+    }
+
+
+
+    private void requestPage(int pageNumber) {
+        sendEncodable(
+        new Request.RequestPayload()
+                .setPageNumber(pageNumber)
+        );
+
     }
 
 
@@ -84,27 +140,63 @@ public class FecProfile {
 
         final PageDispatcher pageDispatcher = new PageDispatcher();
 
-        pageDispatcher.addListener(Request.class, new BroadcastListener<Request>() {
-
-            @Override
-            public void receiveMessage(Request request) {
-                final int page = request.getRequestedPageNumber();
-                System.out.print("request for page: " + page);
-
-            }
-        });
-
         pageDispatcher.addListener(AntPage.class, new BroadcastListener<AntPage>() {
 
             @Override
             public void receiveMessage(AntPage page) {
                 final int pageNum = page.getPageNumber();
-                if (page instanceof Request) {
-                    // separate handler above
-                    return;
+                switch (pageNum) {
+                    case CalibrationProgress.PAGE_NUMBER:
+                    case TrainerData.PAGE_NUMBER:
+                    case TorqueData.PAGE_NUMBER:
+                    case GeneralData.PAGE_NUMBER:
+                    case BikeData.PAGE_NUMBER:
+                    case MetabolicData.PAGE_NUMBER:
                 }
                 System.out.print("got page: " + page);
 
+            }
+        });
+
+        pageDispatcher.addListener(CalibrationProgress.class, new BroadcastListener<CalibrationProgress>() {
+            @Override
+            public void receiveMessage(CalibrationProgress calibrationProgress) {
+                // TODO: forward on to client
+            }
+        });
+
+        pageDispatcher.addListener(TrainerData.class, new BroadcastListener<TrainerData>() {
+            @Override
+            public void receiveMessage(TrainerData trainerData) {
+                // TODO: decode trainerdata
+            }
+        });
+
+        pageDispatcher.addListener(TorqueData.class, new BroadcastListener<TorqueData>() {
+            @Override
+            public void receiveMessage(TorqueData torqueData) {
+                // TODO: decode torqueData
+            }
+        });
+
+        pageDispatcher.addListener(GeneralData.class, new BroadcastListener<GeneralData>() {
+            @Override
+            public void receiveMessage(GeneralData generalData) {
+                // TODO: decode general
+            }
+        });
+
+        pageDispatcher.addListener(BikeData.class, new BroadcastListener<BikeData>() {
+            @Override
+            public void receiveMessage(BikeData bikeData) {
+                // TODO: decode bike data
+            }
+        });
+
+        pageDispatcher.addListener(MetabolicData.class, new BroadcastListener<MetabolicData>() {
+            @Override
+            public void receiveMessage(MetabolicData metabolicData) {
+                // TODO: decode metabolic
             }
         });
 
