@@ -140,6 +140,7 @@ public class FecProfile {
 
         final PageDispatcher pageDispatcher = new PageDispatcher();
 
+
         pageDispatcher.addListener(AntPage.class, new BroadcastListener<AntPage>() {
 
             @Override
@@ -152,6 +153,7 @@ public class FecProfile {
                     case GeneralData.PAGE_NUMBER:
                     case BikeData.PAGE_NUMBER:
                     case MetabolicData.PAGE_NUMBER:
+                        return; // don't print pages we already handle
                 }
                 System.out.print("got page: " + page);
 
