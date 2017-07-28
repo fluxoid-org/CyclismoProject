@@ -17,6 +17,14 @@ import java.util.ArrayList;
  */
 public class EliteAntProfile {
 
+    /*
+    TODO: create a speed-level -> power mapping
+    e.g a 3rd degree polynomial curve fit:
+
+    resistance level -> coefficients array
+    coefficients[0] * speed ^ 3 + coefficients[1] * speed ^2 + coefficients[2] * speed + coefficients
+     */
+
     private Channel channel;
     private long totalDistance = -1;
     private long prevDistance;
@@ -83,13 +91,6 @@ public class EliteAntProfile {
         channel.setPeriod(16172);
         channel.setFrequency(57);
 
-//        // does it transmit power?! (this doesn't work by the way)
-//        Channel channel2 = transceiver.getFreeChannel();
-//        channel2.assign(NetworkKeys.ANT_SPORT, type);
-//        channel2.setId(ChannelId.WILDCARD,11, ChannelId.WILDCARD, false);
-//        channel2.setFrequency(57);
-//        channel2.setPeriod(8182);
-//        channel2.setSearchTimeout(Channel.SEARCH_TIMEOUT_NEVER);
 
         channel.setSearchTimeout(Channel.SEARCH_TIMEOUT_NEVER);
         channel.registerRxListener(new BroadcastListener<BroadcastDataMessage>() {
@@ -109,12 +110,14 @@ public class EliteAntProfile {
                 double cadence = (cadenceLsb >> 4) + (cadenceMsb >> 4) * 10 + (cadenceMsb) * 100;
                 final int distanceMsb = 0xff & data[3];
                 final int distanceLsb = 0xff & data[2];
+                // note: we are doubling the value here
                 final int distance = (distanceMsb << 9) + (distanceLsb << 1);
                 if (totalDistance == -1) {
                     totalDistance = -distance;
                 }
                 if (distance < prevDistance) {
-                    // rolled over
+                    // value has rolled over
+                    // // 2 ^ 17 as the values are doubled in distance calculation
                     totalDistance += 2 << 16;
                 }
                 totalDistance += distance - prevDistance;
@@ -193,7 +196,6 @@ public class EliteAntProfile {
         });
 
         channel.open();
-        //channel2.open();
 
     }
 }
