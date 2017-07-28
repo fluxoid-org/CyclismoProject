@@ -67,12 +67,17 @@ public class EliteAntProfile {
     private ArrayList<BroadcastDataMessage> msgQueue = new ArrayList<>();
     BroadcastDataMessage pending = null;
 
+
     public void setPower(int target) {
         BroadcastDataMessage payload = new BroadcastDataMessage();
         payload.setData(genPower(target));
         msgQueue.add(payload);
     }
 
+    /**
+     * Higher numbers equal more resistance
+     * @param target 1 - 16 (Arion)
+     */
     public void setResistance(int target) {
         BroadcastDataMessage payload = new BroadcastDataMessage();
         payload.setData(genResistance(target));
