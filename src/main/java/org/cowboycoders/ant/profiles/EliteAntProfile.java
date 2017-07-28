@@ -68,6 +68,10 @@ public class EliteAntProfile {
     BroadcastDataMessage pending = null;
 
 
+    /**
+     * Headunit range is 60-990 in 10w intervals
+     * @param target
+     */
     public void setPower(int target) {
         BroadcastDataMessage payload = new BroadcastDataMessage();
         payload.setData(genPower(target));
