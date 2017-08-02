@@ -49,6 +49,12 @@ public abstract class FecProfile {
             public void onCapabilitiesReceived(Capabilities capabilitiesPage) {
 
             }
+
+            @Override
+            public void onConfigRecieved(Config conf) {
+
+            }
+
         }.start(node);
     }
 
@@ -123,7 +129,7 @@ public abstract class FecProfile {
 
 
 
-    public void sendEncodable(AntPacketEncodable encodable) {
+    private void sendEncodable(AntPacketEncodable encodable) {
         byte [] data = new byte[8];
         encodable.encode(data);
         BroadcastDataMessage payload = new BroadcastDataMessage();
@@ -159,10 +165,18 @@ public abstract class FecProfile {
                     case GeneralData.PAGE_NUMBER:
                     case BikeData.PAGE_NUMBER:
                     case MetabolicData.PAGE_NUMBER:
+                    case CapabilitiesPage.PAGE_NUMBER:
                         return; // don't print pages we already handle
                 }
                 System.out.print("got page: " + page);
 
+            }
+        });
+
+        pageDispatcher.addListener(ConfigPage.class, new BroadcastListener<ConfigPage>() {
+            @Override
+            public void receiveMessage(ConfigPage configPage) {
+                FecProfile.this.onConfigRecieved(configPage.getConfig());
             }
         });
 
@@ -299,4 +313,5 @@ public abstract class FecProfile {
     }
 
     public abstract void onCapabilitiesReceived(Capabilities capabilitiesPage);
+    public abstract void onConfigRecieved(Config conf);
 }
