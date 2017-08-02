@@ -13,6 +13,7 @@ import org.cowboycoders.ant.messages.SlaveChannelType;
 import org.cowboycoders.ant.messages.data.BroadcastDataMessage;
 import org.cowboycoders.ant.messages.data.DataMessage;
 import org.cowboycoders.ant.profiles.common.PageDispatcher;
+import org.cowboycoders.ant.profiles.fitnessequipment.Capabilities;
 import org.cowboycoders.ant.profiles.fitnessequipment.Config;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.*;
@@ -29,7 +30,7 @@ import static org.fluxoid.utils.Format.bytesToString;
 /**
  * Created by fluxoid on 02/07/17.
  */
-public class FecProfile {
+public abstract class FecProfile {
 
     private Channel channel;
 
@@ -43,7 +44,12 @@ public class FecProfile {
         Node node = new Node(antchip);
         node.start();
         node.reset();
-        new FecProfile().start(node);
+        new FecProfile() {
+            @Override
+            public void onCapabilitiesReceived(Capabilities capabilitiesPage) {
+
+            }
+        }.start(node);
     }
 
 
@@ -157,6 +163,13 @@ public class FecProfile {
                 }
                 System.out.print("got page: " + page);
 
+            }
+        });
+
+        pageDispatcher.addListener(CapabilitiesPage.class, new BroadcastListener<CapabilitiesPage>() {
+            @Override
+            public void receiveMessage(CapabilitiesPage capabilitiesPage) {
+                FecProfile.this.onCapabilitiesReceived(capabilitiesPage.getCapabilites());
             }
         });
 
@@ -284,4 +297,6 @@ public class FecProfile {
         channel.open();
 
     }
+
+    public abstract void onCapabilitiesReceived(Capabilities capabilitiesPage);
 }
