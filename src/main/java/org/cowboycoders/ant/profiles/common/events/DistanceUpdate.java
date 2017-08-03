@@ -18,6 +18,14 @@ public class DistanceUpdate implements TelemetryEvent{
         this.distance = distance;
     }
 
+    /**
+     *
+     * @param distance in m
+     */
+    public DistanceUpdate(long distance) {
+        this.distance = new BigDecimal(distance);
+    }
+
     /** in m **/
     public BigDecimal getDistance() {
         return distance;

@@ -1,12 +1,18 @@
 package org.cowboycoders.ant.profiles.common.decode.interfaces;
 
+
+import java.math.BigDecimal;
+
 /**
- * Provides number of rotations of bike wheel
- * Created by fluxoid on 10/01/17.
+ * Accumulated distance to distance
  */
-public interface DistanceDecodable extends CounterBasedDecodable {
+public interface DistanceDecodable {
 
-    int getWheelRotations();
-    long getWheelRotationsDelta(DistanceDecodable old);
-
+    long getDistanceDelta(DistanceDecodable old);
+    Integer getDistanceCovered();
+    /**
+     * The distance can be optional
+     * @return false if distance is not available, true otherwise
+     */
+    boolean isDistanceAvailable();
 }

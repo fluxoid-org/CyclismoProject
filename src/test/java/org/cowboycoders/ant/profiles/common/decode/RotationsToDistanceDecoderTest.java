@@ -1,7 +1,6 @@
 package org.cowboycoders.ant.profiles.common.decode;
 
 import org.cowboycoders.ant.events.BroadcastListener;
-import org.cowboycoders.ant.events.BroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.events.WheelRotationsUpdate;
 import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
@@ -9,14 +8,13 @@ import org.cowboycoders.ant.profiles.fitnessequipment.pages.TorqueData;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 import static org.junit.Assert.assertEquals;
 
 /**
  * Created by fluxoid on 07/02/17.
  */
-public class DistanceDecoderTest {
+public class RotationsToDistanceDecoderTest {
 
 
     private static final BigDecimal WHEEL_CIRCUM = new BigDecimal(0.7); //m
@@ -55,7 +53,7 @@ public class DistanceDecoderTest {
         TorqueData p1 = new TorqueData(data1);
         TorqueData p2 = new TorqueData(data2);
 
-        DistanceDecoder dec = new DistanceDecoder(bus, WHEEL_CIRCUM);
+        RotationsToDistanceDecoder dec = new RotationsToDistanceDecoder(bus, WHEEL_CIRCUM);
         dec.update(p1);
         dec.update(p2);
 

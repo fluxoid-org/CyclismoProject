@@ -1,8 +1,7 @@
 package org.cowboycoders.ant.profiles.common.decode;
 
-import org.cowboycoders.ant.events.BroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
-import org.cowboycoders.ant.profiles.common.decode.interfaces.DistanceDecodable;
+import org.cowboycoders.ant.profiles.common.decode.interfaces.RotationsToDistanceDecodable;
 import org.cowboycoders.ant.profiles.common.decode.utils.CounterBasedDecoder;;
 import org.cowboycoders.ant.profiles.common.events.DistanceUpdate;
 import org.cowboycoders.ant.profiles.common.events.WheelRotationsUpdate;
@@ -14,14 +13,14 @@ import java.math.BigDecimal;
 /**
  * Created by fluxoid on 10/01/17.
  */
-public class DistanceDecoder implements Decoder<DistanceDecodable> {
+public class RotationsToDistanceDecoder implements Decoder<RotationsToDistanceDecodable> {
 
 
     private final BigDecimal wheelCircumferece;
     private long wheelTicks;
     private MyCounterBasedDecoder decoder;
 
-    public DistanceDecoder(FilteredBroadcastMessenger<TelemetryEvent> updateHub, BigDecimal wheelCircumference) {
+    public RotationsToDistanceDecoder(FilteredBroadcastMessenger<TelemetryEvent> updateHub, BigDecimal wheelCircumference) {
         assert  wheelCircumference != null;
         this.wheelCircumferece = wheelCircumference;
         decoder = new MyCounterBasedDecoder(updateHub);
@@ -32,7 +31,7 @@ public class DistanceDecoder implements Decoder<DistanceDecodable> {
         wheelTicks = 0;
     }
 
-    private class MyCounterBasedDecoder extends CounterBasedDecoder<DistanceDecodable> {
+    private class MyCounterBasedDecoder extends CounterBasedDecoder<RotationsToDistanceDecodable> {
 
         public MyCounterBasedDecoder(FilteredBroadcastMessenger<TelemetryEvent> updateHub) {
             super(updateHub);
@@ -50,8 +49,8 @@ public class DistanceDecoder implements Decoder<DistanceDecodable> {
 
         @Override
         protected void onValidDelta() {
-            DistanceDecodable next = getCurrentPage();
-            DistanceDecodable prev = getPreviousPage();
+            RotationsToDistanceDecodable next = getCurrentPage();
+            RotationsToDistanceDecodable prev = getPreviousPage();
             wheelTicks += next.getWheelRotationsDelta(prev);
         }
 
@@ -64,7 +63,7 @@ public class DistanceDecoder implements Decoder<DistanceDecodable> {
 
 
     @Override
-    public void update(DistanceDecodable newPage) {
+    public void update(RotationsToDistanceDecodable newPage) {
         decoder.update(newPage);
     }
 

@@ -18,7 +18,7 @@ import static org.cowboycoders.ant.profiles.BitManipulation.*;
 /**
  * Created by fluxoid on 09/01/17.
  */
-public class TorqueData extends CommonPageData implements AntPage, TorqueDecodable, DistanceDecodable, SpeedDecodable {
+public class TorqueData extends CommonPageData implements AntPage, TorqueDecodable, RotationsToDistanceDecodable, SpeedDecodable {
 
     public static final int PAGE_NUMBER = 26;
 
@@ -171,7 +171,7 @@ public class TorqueData extends CommonPageData implements AntPage, TorqueDecodab
     }
 
     @Override
-    public long getWheelRotationsDelta(DistanceDecodable old) {
+    public long getWheelRotationsDelta(RotationsToDistanceDecodable old) {
         return CounterUtils.calcDelta(UNSIGNED_INT8_MAX, old.getWheelRotations(), getWheelRotations());
     }
 

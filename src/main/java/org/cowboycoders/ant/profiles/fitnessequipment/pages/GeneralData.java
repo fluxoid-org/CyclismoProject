@@ -1,5 +1,6 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
+import org.cowboycoders.ant.profiles.common.decode.interfaces.DistanceDecodable;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.TimeDecodable;
 import org.cowboycoders.ant.profiles.common.utils.CounterUtils;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
@@ -16,7 +17,7 @@ import static org.cowboycoders.ant.profiles.BitManipulation.*;
  * p16
  * Created by fluxoid on 02/01/17.
  */
-public class GeneralData extends CommonPageData implements AntPage, TimeDecodable {
+public class GeneralData extends CommonPageData implements AntPage, TimeDecodable, DistanceDecodable {
 
     public static final int PAGE_NUMBER = 16;
 
@@ -89,7 +90,7 @@ public class GeneralData extends CommonPageData implements AntPage, TimeDecodabl
 
     @Override
     public long getTicksDelta(TimeDecodable old) {
-        return CounterUtils.calcDelta(old.getTicks(), getTicks(), UNSIGNED_INT8_MAX);
+        return CounterUtils.calcDelta(UNSIGNED_INT8_MAX, old.getTicks(), getTicks());
     }
 
     @Override
@@ -298,14 +299,16 @@ public class GeneralData extends CommonPageData implements AntPage, TimeDecodabl
      * @param old page containing previous update
      * @return distance in m
      */
-    public BigDecimal getDistanceDelta(GeneralData old) {
+    @Override
+    public long getDistanceDelta(DistanceDecodable old) {
         if (old == null) {
-            return scaleDistance(distanceCovered);
+            return distanceCovered;
         }
-        return scaleDistance(getDeltaUnscaled(old));
+        return CounterUtils.calcDelta(UNSIGNED_INT8_MAX, old.getDistanceCovered(), distanceCovered);
     }
 
-    private BigDecimal scaleDistance(int distance) {
+    // scale to km?
+    private BigDecimal scaleDistance(long distance) {
         return new BigDecimal(distance).divide(new BigDecimal(1000), 3, RoundingMode.HALF_UP);
     }
 
