@@ -604,7 +604,7 @@ public class FecTurboState implements TurboStateViewable {
 
     public void useConfig(Config config) {
         // we don't get sent sex, height,
-        athlete = new MaleAthlete(ATHLETE_HEIGHT, config.getUserWeight().doubleValue(), ATHLETE_HEIGHT);
+        athlete = new MaleAthlete(ATHLETE_HEIGHT, config.getUserWeight().doubleValue(), ATHLETE_AGE);
         bikeWeight = config.getBicycleWeight();
         gearRatio = config.getGearRatio();
         wheelDiameter = config.getBicycleWheelDiameter();

@@ -37,7 +37,6 @@ public abstract class FecProfile {
     // for BikeData, CommonPageData
     private boolean lapFlag;
 
-    private final PageDispatcher pageDispatcher = new PageDispatcher();
 
     public static void main(String [] args) {
         AntTransceiver antchip = new AntTransceiver(0);
