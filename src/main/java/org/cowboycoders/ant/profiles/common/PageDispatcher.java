@@ -15,38 +15,7 @@ import static org.cowboycoders.ant.profiles.BitManipulation.UnsignedNumFrom1LeBy
 /**
  * Created by fluxoid on 30/12/16.
  */
-public class PageDispatcher {
-
-    private BroadcastMessenger<AntPage> bus = new BroadcastMessenger();
-    private Map<Object, BroadcastListener<AntPage>> adapterListenerMap = new HashMap();
-
-
-    public <A extends AntPage> void addListener(final Class<A> clazz, final BroadcastListener<A> listener) {
-        //TODO: factor out this pattern as it is used in jformica.Node
-        BroadcastListener<AntPage> wrapper = new BroadcastListener<AntPage>() {
-            @Override
-            public void receiveMessage(AntPage o) {
-                if (clazz.isInstance(o)) {
-                    listener.receiveMessage(clazz.cast(o));
-                }
-            }
-        };
-        adapterListenerMap.put(listener, wrapper);
-        bus.addBroadcastListener(wrapper);
-    }
-
-    /**
-     *
-     * @param listener recieves updates for <A><
-     * @param <A> interesting object
-     * @return true on success
-     */
-    public <A extends AntPage> boolean removeListener(BroadcastListener<A> listener) {
-        BroadcastListener<AntPage> wrapper = adapterListenerMap.get(listener);
-        if (wrapper == null) {return false;}
-        bus.removeBroadcastListener(wrapper);
-        return true;
-    }
+public class PageDispatcher extends FilteredBroadcastMessenger<AntPage> {
 
     public AntPage decode(byte[] data) {
         final byte page = data[AntPage.PAGE_OFFSET];
@@ -94,7 +63,7 @@ public class PageDispatcher {
     public void dispatch(final byte[] data) {
         AntPage page = decode(data);
         if (page != null) {
-            bus.sendMessage(page);
+            send(page);
         } else {
             Logger.getGlobal().warning("no handler for page: " + data[AntPage.PAGE_OFFSET]);
         }

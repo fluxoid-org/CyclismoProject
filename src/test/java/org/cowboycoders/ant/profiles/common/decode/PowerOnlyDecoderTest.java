@@ -2,6 +2,7 @@ package org.cowboycoders.ant.profiles.common.decode;
 
 import org.cowboycoders.ant.events.BroadcastListener;
 import org.cowboycoders.ant.events.BroadcastMessenger;
+import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.decode.utils.CoastDetector;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.CounterBasedDecodable;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.PowerOnlyDecodable;
@@ -37,11 +38,11 @@ public class PowerOnlyDecoderTest {
             }
         }
 
-        BroadcastMessenger<TelemetryEvent> bus = new BroadcastMessenger<TelemetryEvent>();
+        FilteredBroadcastMessenger<TelemetryEvent> bus = new FilteredBroadcastMessenger<TelemetryEvent>();
         PowerOnlyDecoder decoder = new PowerOnlyDecoder(bus);
 
         CoastHelper listener = new CoastHelper();
-        bus.addBroadcastListener(listener);
+        bus.addListener(TelemetryEvent.class, listener);
 
         decoder.update(new PowerOnlyDecodable() {
             public long getSumPowerDelta(PowerOnlyDecodable old) {
@@ -129,11 +130,11 @@ public class PowerOnlyDecoderTest {
             }
         }
 
-        BroadcastMessenger<TelemetryEvent> bus = new BroadcastMessenger<TelemetryEvent>();
+        FilteredBroadcastMessenger<TelemetryEvent> bus = new FilteredBroadcastMessenger<TelemetryEvent>();
         PowerOnlyDecoder decoder = new PowerOnlyDecoder(bus);
 
         PowerSumListener listener = new PowerSumListener();
-        bus.addBroadcastListener(listener);
+        bus.addListener(TelemetryEvent.class, listener);
 
         decoder.update(new PowerOnlyDecodable() {
             public long getSumPowerDelta(PowerOnlyDecodable old) {

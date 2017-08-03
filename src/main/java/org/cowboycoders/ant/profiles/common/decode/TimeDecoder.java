@@ -1,6 +1,7 @@
 package org.cowboycoders.ant.profiles.common.decode;
 
 import org.cowboycoders.ant.events.BroadcastMessenger;
+import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.TimeDecodable;
 import org.cowboycoders.ant.profiles.common.events.TimeElapsedUpdate;
 import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
@@ -12,11 +13,11 @@ import java.math.BigDecimal;
  */
 public class TimeDecoder implements Decoder<TimeDecodable> {
 
-    private final BroadcastMessenger<TelemetryEvent> bus;
+    private final FilteredBroadcastMessenger<TelemetryEvent> bus;
     private long timeSum = 0;
     private TimeDecodable prev;
 
-    public TimeDecoder(BroadcastMessenger<TelemetryEvent> updateHub) {
+    public TimeDecoder(FilteredBroadcastMessenger<TelemetryEvent> updateHub) {
         bus = updateHub;
     }
 
@@ -28,7 +29,7 @@ public class TimeDecoder implements Decoder<TimeDecodable> {
         }
         timeSum += newPage.getTicksDelta(prev);
         BigDecimal seconds = newPage.ticksToSeconds(timeSum);
-        bus.sendMessage(new TimeElapsedUpdate(seconds));
+        bus.send(new TimeElapsedUpdate(seconds));
     }
 
     @Override

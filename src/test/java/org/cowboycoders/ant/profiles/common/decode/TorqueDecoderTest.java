@@ -2,6 +2,7 @@ package org.cowboycoders.ant.profiles.common.decode;
 
 import org.cowboycoders.ant.events.BroadcastListener;
 import org.cowboycoders.ant.events.BroadcastMessenger;
+import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.events.TorquePowerUpdate;
 import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.TorqueData;
@@ -23,7 +24,7 @@ public class TorqueDecoderTest {
 
     @Test
     public void matchesKnownGood() {
-        BroadcastMessenger<TelemetryEvent> bus = new BroadcastMessenger<TelemetryEvent>();
+        FilteredBroadcastMessenger<TelemetryEvent> bus = new FilteredBroadcastMessenger<TelemetryEvent>();
         class PowerListener implements BroadcastListener<TelemetryEvent>  {
             BigDecimal power;
             public void receiveMessage(TelemetryEvent telemetryEvent) {
@@ -34,7 +35,7 @@ public class TorqueDecoderTest {
             }
         };
         PowerListener powerListener = new PowerListener();
-        bus.addBroadcastListener(powerListener);
+        bus.addListener(TelemetryEvent.class, powerListener);
         BigDecimal speed = new BigDecimal(10.0);
         BigDecimal period = WHEEL_CIRCUM.multiply(new BigDecimal(Math.pow(10, -3))).divide(speed, 20, BigDecimal.ROUND_HALF_UP);
         int power = 200;

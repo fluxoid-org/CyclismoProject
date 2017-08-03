@@ -1,6 +1,7 @@
 package org.cowboycoders.ant.profiles.common.decode;
 
 import org.cowboycoders.ant.events.BroadcastMessenger;
+import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.decode.utils.CounterBasedDecoder;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.PowerOnlyDecodable;
 import org.cowboycoders.ant.profiles.common.events.AveragedPowerUpdate;
@@ -18,7 +19,7 @@ public class PowerOnlyDecoder implements Decoder<PowerOnlyDecodable> {
     private final MyCounterBasedDecoder counterBasedDecoder;
     private long powerSum;
 
-    public PowerOnlyDecoder(BroadcastMessenger<TelemetryEvent> updateHub) {
+    public PowerOnlyDecoder(FilteredBroadcastMessenger<TelemetryEvent> updateHub) {
         counterBasedDecoder = new MyCounterBasedDecoder(updateHub);
         reset();
     }
@@ -36,14 +37,14 @@ public class PowerOnlyDecoder implements Decoder<PowerOnlyDecodable> {
     }
 
     private class MyCounterBasedDecoder extends CounterBasedDecoder<PowerOnlyDecodable> {
-        public MyCounterBasedDecoder(BroadcastMessenger<TelemetryEvent> updateHub) {
+        public MyCounterBasedDecoder(FilteredBroadcastMessenger<TelemetryEvent> updateHub) {
             super(updateHub);
         }
 
 
         @Override
         protected void onUpdate() {
-            bus.sendMessage(new InstantPowerUpdate(new BigDecimal(getCurrentPage().getInstantPower())));
+            bus.send(new InstantPowerUpdate(new BigDecimal(getCurrentPage().getInstantPower())));
         }
 
         @Override
@@ -59,7 +60,7 @@ public class PowerOnlyDecoder implements Decoder<PowerOnlyDecodable> {
 
         @Override
         protected void onNoCoast() {
-            bus.sendMessage(new AveragedPowerUpdate(powerSum, getEvents()));
+            bus.send(new AveragedPowerUpdate(powerSum, getEvents()));
         }
     }
 }

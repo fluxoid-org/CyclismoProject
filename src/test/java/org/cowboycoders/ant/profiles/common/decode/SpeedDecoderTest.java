@@ -2,6 +2,7 @@ package org.cowboycoders.ant.profiles.common.decode;
 
 import org.cowboycoders.ant.events.BroadcastListener;
 import org.cowboycoders.ant.events.BroadcastMessenger;
+import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.events.SpeedUpdate;
 import org.cowboycoders.ant.profiles.common.events.WheelFreqUpdate;
 import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
@@ -23,7 +24,7 @@ public class SpeedDecoderTest {
 
     @Test
     public void matchesKnownGood() {
-        BroadcastMessenger<TelemetryEvent> bus = new BroadcastMessenger<TelemetryEvent>();
+        FilteredBroadcastMessenger<TelemetryEvent> bus = new FilteredBroadcastMessenger<TelemetryEvent>();
         class FreqListener implements BroadcastListener<TelemetryEvent>  {
             private BigDecimal freq;
             private BigDecimal speedKmh;
@@ -38,7 +39,7 @@ public class SpeedDecoderTest {
             }
         };
         FreqListener freqListener = new FreqListener();
-        bus.addBroadcastListener(freqListener);
+        bus.addListener(TelemetryEvent.class, freqListener);
         BigDecimal speed = new BigDecimal(10.0); // metres / per second
         BigDecimal period = WHEEL_CIRCUM.divide(speed, 20, BigDecimal.ROUND_HALF_UP);
         int power = 200;

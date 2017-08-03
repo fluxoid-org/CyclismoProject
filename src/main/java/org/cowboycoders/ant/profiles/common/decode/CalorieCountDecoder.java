@@ -1,6 +1,7 @@
 package org.cowboycoders.ant.profiles.common.decode;
 
 import org.cowboycoders.ant.events.BroadcastMessenger;
+import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.CalorieCountDecodable;
 import org.cowboycoders.ant.profiles.common.decode.utils.CounterBasedDecoder;
 import org.cowboycoders.ant.profiles.common.events.CalorieBurntUpdate;
@@ -16,11 +17,13 @@ import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
 public class CalorieCountDecoder implements Decoder<CalorieCountDecodable> {
 
 
+    private final FilteredBroadcastMessenger<TelemetryEvent> bus;
     private long caloriesBurnt;
     private CalorieCountDecodable prev;
 
 
-    public CalorieCountDecoder(BroadcastMessenger<TelemetryEvent> updateHub) {
+    public CalorieCountDecoder(FilteredBroadcastMessenger<TelemetryEvent> updateHub) {
+        this.bus = updateHub;
         reset();
     }
 
@@ -37,6 +40,7 @@ public class CalorieCountDecoder implements Decoder<CalorieCountDecodable> {
         }
         caloriesBurnt += newPage.getCalorieDelta(prev);
         prev = newPage;
+        bus.send(new CalorieBurntUpdate(caloriesBurnt));
     }
 
     @Override

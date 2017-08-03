@@ -1,6 +1,7 @@
 package org.cowboycoders.ant.profiles.common.decode;
 
 import org.cowboycoders.ant.events.BroadcastMessenger;
+import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.decode.utils.CounterBasedDecoder;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.TorqueDecodable;
 import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
@@ -30,7 +31,7 @@ public class TorqueDecoder implements Decoder<TorqueDecodable> {
         periodSum = 0;
     }
 
-    TorqueDecoder(BroadcastMessenger<TelemetryEvent> updateHub) {
+    TorqueDecoder(FilteredBroadcastMessenger<TelemetryEvent> updateHub) {
         counterBasedDecoder = new MyCounterBasedDecoder(updateHub);
         reset();
     }
@@ -44,7 +45,7 @@ public class TorqueDecoder implements Decoder<TorqueDecodable> {
     }
 
     private class MyCounterBasedDecoder extends CounterBasedDecoder<TorqueDecodable> {
-        public MyCounterBasedDecoder(BroadcastMessenger<TelemetryEvent> updateHub) {
+        public MyCounterBasedDecoder(FilteredBroadcastMessenger<TelemetryEvent> updateHub) {
             super(updateHub);
         }
 
@@ -71,10 +72,10 @@ public class TorqueDecoder implements Decoder<TorqueDecodable> {
 
         @Override
         protected void onNoCoast() {
-            bus.sendMessage(new TorquePowerUpdate(torqueDelta, periodDelta));
+            bus.send(new TorquePowerUpdate(torqueDelta, periodDelta));
             BigDecimal torque = new BigDecimal(torqueDelta).divide(new BigDecimal(32), 15, RoundingMode.HALF_UP).divide(new BigDecimal(getEventDelta()), 13, RoundingMode.HALF_UP);
-            bus.sendMessage(new TorqueUpdate(torque));
-            bus.sendMessage(new AverageTorqueUpdate(periodSum, torqueSum, getEvents()));
+            bus.send(new TorqueUpdate(torque));
+            bus.send(new AverageTorqueUpdate(periodSum, torqueSum, getEvents()));
         }
 
     }

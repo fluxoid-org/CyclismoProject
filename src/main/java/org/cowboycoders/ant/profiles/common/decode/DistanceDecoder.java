@@ -1,6 +1,7 @@
 package org.cowboycoders.ant.profiles.common.decode;
 
 import org.cowboycoders.ant.events.BroadcastMessenger;
+import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.DistanceDecodable;
 import org.cowboycoders.ant.profiles.common.decode.utils.CounterBasedDecoder;;
 import org.cowboycoders.ant.profiles.common.events.DistanceUpdate;
@@ -20,7 +21,7 @@ public class DistanceDecoder implements Decoder<DistanceDecodable> {
     private long wheelTicks;
     private MyCounterBasedDecoder decoder;
 
-    public DistanceDecoder(BroadcastMessenger<TelemetryEvent> updateHub, BigDecimal wheelCircumference) {
+    public DistanceDecoder(FilteredBroadcastMessenger<TelemetryEvent> updateHub, BigDecimal wheelCircumference) {
         assert  wheelCircumference != null;
         this.wheelCircumferece = wheelCircumference;
         decoder = new MyCounterBasedDecoder(updateHub);
@@ -33,7 +34,7 @@ public class DistanceDecoder implements Decoder<DistanceDecodable> {
 
     private class MyCounterBasedDecoder extends CounterBasedDecoder<DistanceDecodable> {
 
-        public MyCounterBasedDecoder(BroadcastMessenger<TelemetryEvent> updateHub) {
+        public MyCounterBasedDecoder(FilteredBroadcastMessenger<TelemetryEvent> updateHub) {
             super(updateHub);
         }
 
@@ -56,8 +57,8 @@ public class DistanceDecoder implements Decoder<DistanceDecodable> {
 
         @Override
         protected void onNoCoast() {
-            bus.sendMessage(new WheelRotationsUpdate(wheelTicks));
-            bus.sendMessage(new DistanceUpdate(wheelCircumferece.multiply(new BigDecimal(wheelTicks))));
+            bus.send(new WheelRotationsUpdate(wheelTicks));
+            bus.send(new DistanceUpdate(wheelCircumferece.multiply(new BigDecimal(wheelTicks))));
         }
     }
 

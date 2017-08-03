@@ -7,12 +7,16 @@ import org.cowboycoders.ant.ChannelEventHandler;
 import org.cowboycoders.ant.ChannelId;
 import org.cowboycoders.ant.Node;
 import org.cowboycoders.ant.events.BroadcastListener;
+import org.cowboycoders.ant.events.BroadcastMessenger;
 import org.cowboycoders.ant.interfaces.AntTransceiver;
 import org.cowboycoders.ant.messages.ChannelType;
 import org.cowboycoders.ant.messages.SlaveChannelType;
 import org.cowboycoders.ant.messages.data.BroadcastDataMessage;
 import org.cowboycoders.ant.messages.data.DataMessage;
+import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.PageDispatcher;
+import org.cowboycoders.ant.profiles.common.decode.PowerOnlyDecoder;
+import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
 import org.cowboycoders.ant.profiles.fitnessequipment.Capabilities;
 import org.cowboycoders.ant.profiles.fitnessequipment.Config;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
@@ -146,11 +150,17 @@ public abstract class FecProfile {
 
     }
 
+    private final FilteredBroadcastMessenger<TelemetryEvent> dataHub = new FilteredBroadcastMessenger<>();
+
+    public FilteredBroadcastMessenger<TelemetryEvent> getDataHub() {
+        return dataHub;
+    }
 
     public void start(Node transceiver) {
 
         final PageDispatcher pageDispatcher = new PageDispatcher();
 
+        final PowerOnlyDecoder trainerDataDecoder = new PowerOnlyDecoder(dataHub);
 
         pageDispatcher.addListener(AntPage.class, new BroadcastListener<AntPage>() {
 
@@ -165,6 +175,7 @@ public abstract class FecProfile {
                     case BikeData.PAGE_NUMBER:
                     case MetabolicData.PAGE_NUMBER:
                     case CapabilitiesPage.PAGE_NUMBER:
+                    case ConfigPage.PAGE_NUMBER:
                         return; // don't print pages we already handle
                 }
                 System.out.print("got page: " + page);
@@ -196,7 +207,7 @@ public abstract class FecProfile {
         pageDispatcher.addListener(TrainerData.class, new BroadcastListener<TrainerData>() {
             @Override
             public void receiveMessage(TrainerData trainerData) {
-                // TODO: decode trainerdata
+                trainerDataDecoder.update(trainerData);
             }
         });
 
