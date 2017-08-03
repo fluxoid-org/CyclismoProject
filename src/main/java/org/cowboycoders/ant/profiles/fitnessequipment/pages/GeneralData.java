@@ -102,7 +102,7 @@ public class GeneralData extends CommonPageData implements AntPage, TimeDecodabl
 
 
         private int timeElapsed = 0;
-        private Integer distanceCovered;
+        private Long distanceCovered;
         private RollOverVal distance = new RollOverVal(UNSIGNED_INT8_MAX);
         private BigDecimal speed;
         private Integer heartRate;
@@ -131,7 +131,7 @@ public class GeneralData extends CommonPageData implements AntPage, TimeDecodabl
             return this;
         }
 
-        public Integer getDistanceCovered() {
+        public Long getDistanceCovered() {
             return distanceCovered;
         }
 
@@ -139,7 +139,7 @@ public class GeneralData extends CommonPageData implements AntPage, TimeDecodabl
          * @param distanceCovered if larger than 255, will be rolled over to fit in a byte when encoded
          *                        e.g 256 will be encoded as 0, and 257 will be encoded as 1
          */
-        public GeneralDataPayload setDistanceCovered(Integer distanceCovered) {
+        public GeneralDataPayload setDistanceCovered(Long distanceCovered) {
             distance.setValue(distanceCovered);
             this.distanceCovered = distanceCovered;
             return this;

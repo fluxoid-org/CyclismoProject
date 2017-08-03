@@ -25,7 +25,10 @@ public class RollOverVal {
      * @param currentVal the unrolled over value
      */
     public void setValue(long currentVal) {
-        assert currentVal >= 0;
+        if (currentVal < 0) {
+            throw new IllegalArgumentException("only works for positive numbers");
+        }
+
         this.currentVal = currentVal;
     }
 

@@ -202,7 +202,7 @@ public class FecTurboState implements TurboStateViewable {
         return payload;
     }
 
-    private int distance = 0;
+    private long distance = 0;
     private Integer heartRate;
 
     private long start;
@@ -222,7 +222,7 @@ public class FecTurboState implements TurboStateViewable {
     }
 
     @Override
-    public int getDistance() {
+    public long getDistance() {
         return distance;
     }
 
@@ -553,7 +553,7 @@ public class FecTurboState implements TurboStateViewable {
     }
 
     private BigDecimal getTimeSince(long now, long then) {
-        return new BigDecimal(then - start)
+        return new BigDecimal(now - then)
                 .divide(new BigDecimal(Math.pow(10, 9)),10, RoundingMode.HALF_UP);
     }
 

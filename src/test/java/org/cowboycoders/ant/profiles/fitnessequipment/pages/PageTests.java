@@ -302,7 +302,7 @@ public class PageTests {
 
     @Test
     public void encodeDecodeGeneral() {
-        final int DISTANCE_COVERED = 123;
+        final long DISTANCE_COVERED = 123;
         final int HR = 80;
         final int TIME_ELAPSED = 127;
 

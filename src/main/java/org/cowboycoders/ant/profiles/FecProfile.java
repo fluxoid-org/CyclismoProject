@@ -15,7 +15,9 @@ import org.cowboycoders.ant.messages.data.BroadcastDataMessage;
 import org.cowboycoders.ant.messages.data.DataMessage;
 import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.PageDispatcher;
+import org.cowboycoders.ant.profiles.common.decode.AccDistanceDecoder;
 import org.cowboycoders.ant.profiles.common.decode.PowerOnlyDecoder;
+import org.cowboycoders.ant.profiles.common.decode.TimeDecoder;
 import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
 import org.cowboycoders.ant.profiles.fitnessequipment.Capabilities;
 import org.cowboycoders.ant.profiles.fitnessequipment.Config;
@@ -161,6 +163,8 @@ public abstract class FecProfile {
         final PageDispatcher pageDispatcher = new PageDispatcher();
 
         final PowerOnlyDecoder trainerDataDecoder = new PowerOnlyDecoder(dataHub);
+        final AccDistanceDecoder accDistDecoder = new AccDistanceDecoder(dataHub);
+        final TimeDecoder timeDecoder = new TimeDecoder(dataHub);
 
         pageDispatcher.addListener(AntPage.class, new BroadcastListener<AntPage>() {
 
@@ -221,7 +225,8 @@ public abstract class FecProfile {
         pageDispatcher.addListener(GeneralData.class, new BroadcastListener<GeneralData>() {
             @Override
             public void receiveMessage(GeneralData generalData) {
-                // TODO: decode general
+                accDistDecoder.update(generalData);
+                timeDecoder.update(generalData);
             }
         });
 

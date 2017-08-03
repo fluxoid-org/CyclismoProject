@@ -12,9 +12,12 @@ public class FilteredBroadcastMessenger<T> {
 
     public <A extends T> void addListener(final Class<A> clazz, final BroadcastListener<A> listener) {
         //TODO: factor out this pattern as it is used in jformica.Node
-        BroadcastListener<T> wrapper = o -> {
-            if (clazz.isInstance(o)) {
-                listener.receiveMessage(clazz.cast(o));
+        BroadcastListener<T> wrapper = new BroadcastListener<T>() {
+            @Override
+            public void receiveMessage(T o) {
+                if (clazz.isInstance(o)) {
+                    listener.receiveMessage(clazz.cast(o));
+                }
             }
         };
         adapterListenerMap.put(listener, wrapper);

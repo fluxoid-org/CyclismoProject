@@ -32,5 +32,5 @@ public interface TurboStateViewable {
 
     Integer getHeartRate();
 
-    int getDistance();
+    long getDistance();
 }
