@@ -45,7 +45,7 @@ public abstract class CounterBasedDecoder<T extends CounterBasedDecodable> {
         return eventDelta;
     }
 
-    protected long getEvents() {
+    protected long ggetEvents() {
         return events;
     }
 

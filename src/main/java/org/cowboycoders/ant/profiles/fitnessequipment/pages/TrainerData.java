@@ -210,12 +210,12 @@ public class TrainerData extends CommonPageData implements PowerOnlyDecodable, A
 
     @Override
     public long getSumPowerDelta(PowerOnlyDecodable old) {
-        return CounterUtils.calcDelta(old.getSumPower(), getSumPower(), UNSIGNED_INT16_MAX);
+        return CounterUtils.calcDelta(UNSIGNED_INT16_MAX, old.getSumPower(), getSumPower());
     }
 
     @Override
     public long getEventCountDelta(CounterBasedDecodable old) {
-        return CounterUtils.calcDelta(old.getEventCount(), getEventCount(), UNSIGNED_INT8_MAX);
+        return CounterUtils.calcDelta(UNSIGNED_INT8_MAX, old.getEventCount(), getEventCount());
     }
 
 
