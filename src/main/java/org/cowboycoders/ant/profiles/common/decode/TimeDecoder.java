@@ -29,6 +29,7 @@ public class TimeDecoder implements Decoder<TimeDecodable> {
         }
         timeSum += newPage.getTicksDelta(prev);
         BigDecimal seconds = newPage.ticksToSeconds(timeSum);
+        prev = newPage;
         bus.send(new TimeElapsedUpdate(seconds));
     }
 

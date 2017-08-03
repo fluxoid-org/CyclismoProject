@@ -27,6 +27,7 @@ public class AccDistanceDecoder implements Decoder<DistanceDecodable> {
             return;
         }
         sum += newPage.getDistanceDelta(prev);
+        prev = newPage;
         bus.send(new DistanceUpdate(sum));
     }
 
