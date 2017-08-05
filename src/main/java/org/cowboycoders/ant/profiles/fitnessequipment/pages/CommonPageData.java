@@ -1,5 +1,6 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
+import org.cowboycoders.ant.profiles.common.decode.interfaces.LapFlagDecodable;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
 
 import static org.cowboycoders.ant.profiles.BitManipulation.clearMaskedBits;
@@ -7,29 +8,8 @@ import static org.cowboycoders.ant.profiles.BitManipulation.clearMaskedBits;
 /**
  * Created by fluxoid on 29/12/16.
  */
-public abstract class CommonPageData {
+public abstract class CommonPageData implements LapFlagDecodable {
 
-
-    public static abstract class Listener {
-        /**
-         * @param state cyles between true and false. A negation indicates a lap.
-         */
-        public void onLapFlagDecode(final boolean state) {
-        }
-
-        /**
-         * @param state unknown state code
-         */
-        public void onStateDecode(final int state) {
-        }
-
-        /**
-         * @param type
-         */
-        public void onFitnessTypeDecode(final int type) {
-        }
-
-    }
 
     /**
      * Each lap toggles the flag
