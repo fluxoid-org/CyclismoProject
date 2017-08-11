@@ -1,12 +1,9 @@
 package org.cowboycoders.ant.profiles.common.decode;
 
-import org.cowboycoders.ant.events.BroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.CalorieCountDecodable;
-import org.cowboycoders.ant.profiles.common.decode.utils.CounterBasedDecoder;
 import org.cowboycoders.ant.profiles.common.events.CalorieBurntUpdate;
-import org.cowboycoders.ant.profiles.common.events.WheelRotationsUpdate;
-import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
+import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEvent;
 
 ;
 
@@ -14,15 +11,15 @@ import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
 /**
  * Created by fluxoid on 10/01/17.
  */
-public class CalorieCountDecoder implements Decoder<CalorieCountDecodable> {
+public class CalorieCountDecoder<T extends CalorieCountDecodable> implements Decoder<T> {
 
 
-    private final FilteredBroadcastMessenger<TelemetryEvent> bus;
+    private final FilteredBroadcastMessenger<TaggedTelemetryEvent> bus;
     private long caloriesBurnt;
     private CalorieCountDecodable prev;
 
 
-    public CalorieCountDecoder(FilteredBroadcastMessenger<TelemetryEvent> updateHub) {
+    public CalorieCountDecoder(FilteredBroadcastMessenger<TaggedTelemetryEvent> updateHub) {
         this.bus = updateHub;
         reset();
     }
@@ -33,14 +30,14 @@ public class CalorieCountDecoder implements Decoder<CalorieCountDecodable> {
 
 
     @Override
-    public void update(CalorieCountDecodable newPage) {
+    public void update(T newPage) {
         if (prev == null) {
             prev = newPage;
             return;
         }
         caloriesBurnt += newPage.getCalorieDelta(prev);
         prev = newPage;
-        bus.send(new CalorieBurntUpdate(caloriesBurnt));
+        bus.send(new CalorieBurntUpdate(newPage.getClass(), caloriesBurnt));
     }
 
     @Override

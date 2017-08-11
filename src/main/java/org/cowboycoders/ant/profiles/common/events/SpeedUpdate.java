@@ -1,13 +1,13 @@
 package org.cowboycoders.ant.profiles.common.events;
 
-import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
+import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEvent;
 
 import java.math.BigDecimal;
 
 /**
  * Created by fluxoid on 16/01/17.
  */
-public class SpeedUpdate implements TelemetryEvent{
+public class SpeedUpdate extends TaggedTelemetryEvent {
 
     /**
      * @return km/h
@@ -16,7 +16,8 @@ public class SpeedUpdate implements TelemetryEvent{
         return speed;
     }
 
-    public SpeedUpdate(BigDecimal speed) {
+    public SpeedUpdate(Object tag, BigDecimal speed) {
+        super(tag);
         this.speed = speed;
     }
 

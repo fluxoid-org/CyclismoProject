@@ -1,28 +1,27 @@
 package org.cowboycoders.ant.profiles.common.decode;
 
-import org.cowboycoders.ant.events.BroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.TimeDecodable;
 import org.cowboycoders.ant.profiles.common.events.TimeElapsedUpdate;
-import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
+import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEvent;
 
 import java.math.BigDecimal;
 
 /**
  * Created by fluxoid on 27/01/17.
  */
-public class TimeDecoder implements Decoder<TimeDecodable> {
+public class TimeDecoder<T extends TimeDecodable> implements Decoder<T> {
 
-    private final FilteredBroadcastMessenger<TelemetryEvent> bus;
+    private final FilteredBroadcastMessenger<TaggedTelemetryEvent> bus;
     private long timeSum = 0;
     private TimeDecodable prev;
 
-    public TimeDecoder(FilteredBroadcastMessenger<TelemetryEvent> updateHub) {
+    public TimeDecoder(FilteredBroadcastMessenger<TaggedTelemetryEvent> updateHub) {
         bus = updateHub;
     }
 
     @Override
-    public void update(TimeDecodable newPage) {
+    public void update(T newPage) {
         if (prev == null) {
             prev = newPage;
             return;
@@ -30,7 +29,7 @@ public class TimeDecoder implements Decoder<TimeDecodable> {
         timeSum += newPage.getTicksDelta(prev);
         BigDecimal seconds = newPage.ticksToSeconds(timeSum);
         prev = newPage;
-        bus.send(new TimeElapsedUpdate(seconds));
+        bus.send(new TimeElapsedUpdate(newPage.getClass() ,seconds));
     }
 
     @Override

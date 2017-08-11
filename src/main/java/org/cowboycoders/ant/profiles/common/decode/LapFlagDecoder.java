@@ -3,15 +3,15 @@ package org.cowboycoders.ant.profiles.common.decode;
 import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.LapFlagDecodable;
 import org.cowboycoders.ant.profiles.common.events.LapUpdate;
-import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
+import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEvent;
 
-public class LapFlagDecoder implements Decoder<LapFlagDecodable> {
+public class LapFlagDecoder<T extends LapFlagDecodable> implements Decoder<T> {
 
-    private final FilteredBroadcastMessenger<TelemetryEvent> bus;
+    private final FilteredBroadcastMessenger<TaggedTelemetryEvent> bus;
     private int laps = 0;
     private LapFlagDecodable prev;
 
-    public LapFlagDecoder(FilteredBroadcastMessenger<TelemetryEvent> bus) {
+    public LapFlagDecoder(FilteredBroadcastMessenger<TaggedTelemetryEvent> bus) {
         this.bus = bus;
     }
 
@@ -24,7 +24,7 @@ public class LapFlagDecoder implements Decoder<LapFlagDecodable> {
         prev = newPage;
         if (state == prevState) return;
         laps += 1;
-        bus.send(new LapUpdate(laps));
+        bus.send(new LapUpdate(newPage.getClass(),laps));
 
     }
 

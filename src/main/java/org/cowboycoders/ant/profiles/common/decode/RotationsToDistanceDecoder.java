@@ -5,7 +5,7 @@ import org.cowboycoders.ant.profiles.common.decode.interfaces.RotationsToDistanc
 import org.cowboycoders.ant.profiles.common.decode.utils.CounterBasedDecoder;;
 import org.cowboycoders.ant.profiles.common.events.DistanceUpdate;
 import org.cowboycoders.ant.profiles.common.events.WheelRotationsUpdate;
-import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
+import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEvent;
 
 import java.math.BigDecimal;
 
@@ -13,14 +13,14 @@ import java.math.BigDecimal;
 /**
  * Created by fluxoid on 10/01/17.
  */
-public class RotationsToDistanceDecoder implements Decoder<RotationsToDistanceDecodable> {
+public class RotationsToDistanceDecoder<T extends RotationsToDistanceDecodable> implements Decoder<T> {
 
 
     private final BigDecimal wheelCircumferece;
     private long wheelTicks;
     private MyCounterBasedDecoder decoder;
 
-    public RotationsToDistanceDecoder(FilteredBroadcastMessenger<TelemetryEvent> updateHub, BigDecimal wheelCircumference) {
+    public RotationsToDistanceDecoder(FilteredBroadcastMessenger<TaggedTelemetryEvent> updateHub, BigDecimal wheelCircumference) {
         assert  wheelCircumference != null;
         this.wheelCircumferece = wheelCircumference;
         decoder = new MyCounterBasedDecoder(updateHub);
@@ -33,7 +33,7 @@ public class RotationsToDistanceDecoder implements Decoder<RotationsToDistanceDe
 
     private class MyCounterBasedDecoder extends CounterBasedDecoder<RotationsToDistanceDecodable> {
 
-        public MyCounterBasedDecoder(FilteredBroadcastMessenger<TelemetryEvent> updateHub) {
+        public MyCounterBasedDecoder(FilteredBroadcastMessenger<TaggedTelemetryEvent> updateHub) {
             super(updateHub);
         }
 
@@ -56,14 +56,14 @@ public class RotationsToDistanceDecoder implements Decoder<RotationsToDistanceDe
 
         @Override
         protected void onNoCoast() {
-            bus.send(new WheelRotationsUpdate(wheelTicks));
-            bus.send(new DistanceUpdate(wheelCircumferece.multiply(new BigDecimal(wheelTicks))));
+            bus.send(new WheelRotationsUpdate(getCurrentPage().getClass() ,wheelTicks));
+            bus.send(new DistanceUpdate(getCurrentPage().getClass(),wheelCircumferece.multiply(new BigDecimal(wheelTicks))));
         }
     }
 
 
     @Override
-    public void update(RotationsToDistanceDecodable newPage) {
+    public void update(T newPage) {
         decoder.update(newPage);
     }
 

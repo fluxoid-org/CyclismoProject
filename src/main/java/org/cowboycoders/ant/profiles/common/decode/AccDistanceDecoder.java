@@ -3,24 +3,23 @@ package org.cowboycoders.ant.profiles.common.decode;
 import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.DistanceDecodable;
 import org.cowboycoders.ant.profiles.common.events.DistanceUpdate;
-import org.cowboycoders.ant.profiles.common.events.TimeElapsedUpdate;
-import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
+import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEvent;
 
 /**
  * Created by fluxoid on 27/01/17.
  */
-public class AccDistanceDecoder implements Decoder<DistanceDecodable> {
+public class AccDistanceDecoder<T extends DistanceDecodable> implements Decoder<T> {
 
-    private final FilteredBroadcastMessenger<TelemetryEvent> bus;
+    private final FilteredBroadcastMessenger<TaggedTelemetryEvent> bus;
     private long sum = 0;
     private DistanceDecodable prev;
 
-    public AccDistanceDecoder(FilteredBroadcastMessenger<TelemetryEvent> updateHub) {
+    public AccDistanceDecoder(FilteredBroadcastMessenger<TaggedTelemetryEvent> updateHub) {
         bus = updateHub;
     }
 
     @Override
-    public void update(DistanceDecodable newPage) {
+    public void update(T newPage) {
         if (!newPage.isDistanceAvailable()) return;
         if (prev == null) {
             prev = newPage;
@@ -28,7 +27,7 @@ public class AccDistanceDecoder implements Decoder<DistanceDecodable> {
         }
         sum += newPage.getDistanceDelta(prev);
         prev = newPage;
-        bus.send(new DistanceUpdate(sum));
+        bus.send(new DistanceUpdate(newPage.getClass(), sum));
     }
 
     @Override

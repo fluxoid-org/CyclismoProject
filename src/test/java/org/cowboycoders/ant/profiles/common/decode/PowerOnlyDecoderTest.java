@@ -1,14 +1,13 @@
 package org.cowboycoders.ant.profiles.common.decode;
 
 import org.cowboycoders.ant.events.BroadcastListener;
-import org.cowboycoders.ant.events.BroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.decode.utils.CoastDetector;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.CounterBasedDecodable;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.PowerOnlyDecodable;
 import org.cowboycoders.ant.profiles.common.events.AveragedPowerUpdate;
 import org.cowboycoders.ant.profiles.common.events.CoastDetectedEvent;
-import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
+import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEvent;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -27,10 +26,10 @@ public class PowerOnlyDecoderTest {
      */
     @Test
     public void testCoastTimeout() {
-        class CoastHelper implements BroadcastListener<TelemetryEvent> {
+        class CoastHelper implements BroadcastListener<TaggedTelemetryEvent> {
             boolean coastDetected = false;
 
-            public void receiveMessage(TelemetryEvent event) {
+            public void receiveMessage(TaggedTelemetryEvent event) {
                 if (!(event instanceof CoastDetectedEvent)) {
                     return;
                 }
@@ -38,11 +37,11 @@ public class PowerOnlyDecoderTest {
             }
         }
 
-        FilteredBroadcastMessenger<TelemetryEvent> bus = new FilteredBroadcastMessenger<TelemetryEvent>();
+        FilteredBroadcastMessenger<TaggedTelemetryEvent> bus = new FilteredBroadcastMessenger<TaggedTelemetryEvent>();
         PowerOnlyDecoder decoder = new PowerOnlyDecoder(bus);
 
         CoastHelper listener = new CoastHelper();
-        bus.addListener(TelemetryEvent.class, listener);
+        bus.addListener(TaggedTelemetryEvent.class, listener);
 
         decoder.update(new PowerOnlyDecodable() {
             public long getSumPowerDelta(PowerOnlyDecodable old) {
@@ -114,12 +113,12 @@ public class PowerOnlyDecoderTest {
     public void testSumPower() {
         final double SIM_POWER = 123.0;
         final long EVENTS = 100;
-        class PowerSumListener implements BroadcastListener<TelemetryEvent> {
+        class PowerSumListener implements BroadcastListener<TaggedTelemetryEvent> {
             BigDecimal powersum = null;
             long events = 0;
             long sum = 0;
 
-            public void receiveMessage(TelemetryEvent event) {
+            public void receiveMessage(TaggedTelemetryEvent event) {
                 if (!(event instanceof AveragedPowerUpdate)) {
                     return;
                 }
@@ -130,11 +129,11 @@ public class PowerOnlyDecoderTest {
             }
         }
 
-        FilteredBroadcastMessenger<TelemetryEvent> bus = new FilteredBroadcastMessenger<TelemetryEvent>();
+        FilteredBroadcastMessenger<TaggedTelemetryEvent> bus = new FilteredBroadcastMessenger<TaggedTelemetryEvent>();
         PowerOnlyDecoder decoder = new PowerOnlyDecoder(bus);
 
         PowerSumListener listener = new PowerSumListener();
-        bus.addListener(TelemetryEvent.class, listener);
+        bus.addListener(TaggedTelemetryEvent.class, listener);
 
         decoder.update(new PowerOnlyDecodable() {
             public long getSumPowerDelta(PowerOnlyDecodable old) {

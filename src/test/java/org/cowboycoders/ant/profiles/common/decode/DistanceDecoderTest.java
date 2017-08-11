@@ -4,7 +4,7 @@ import org.cowboycoders.ant.events.BroadcastListener;
 import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.DistanceDecodable;
 import org.cowboycoders.ant.profiles.common.events.DistanceUpdate;
-import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
+import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEvent;
 import org.cowboycoders.ant.profiles.common.utils.CounterUtils;
 import org.junit.Test;
 
@@ -55,7 +55,7 @@ public class DistanceDecoderTest {
 
 
 
-        final FilteredBroadcastMessenger<TelemetryEvent> bus = new FilteredBroadcastMessenger<>();
+        final FilteredBroadcastMessenger<TaggedTelemetryEvent> bus = new FilteredBroadcastMessenger<>();
         AccDistanceDecoder dist = new AccDistanceDecoder(bus);
         final BigDecimal expected = new BigDecimal(65);
         final BigDecimal[] actual = {null};
@@ -76,7 +76,7 @@ public class DistanceDecoderTest {
 
 
 
-        final FilteredBroadcastMessenger<TelemetryEvent> bus = new FilteredBroadcastMessenger<>();
+        final FilteredBroadcastMessenger<TaggedTelemetryEvent> bus = new FilteredBroadcastMessenger<>();
         AccDistanceDecoder dist = new AccDistanceDecoder(bus);
         final BigDecimal expected = new BigDecimal(65);
         final BigDecimal[] actual = {null};

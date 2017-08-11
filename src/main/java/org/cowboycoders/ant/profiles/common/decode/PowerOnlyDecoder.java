@@ -1,12 +1,11 @@
 package org.cowboycoders.ant.profiles.common.decode;
 
-import org.cowboycoders.ant.events.BroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.decode.utils.CounterBasedDecoder;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.PowerOnlyDecodable;
 import org.cowboycoders.ant.profiles.common.events.AveragedPowerUpdate;
 import org.cowboycoders.ant.profiles.common.events.InstantPowerUpdate;
-import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
+import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEvent;
 
 import java.math.BigDecimal;
 
@@ -14,12 +13,12 @@ import java.math.BigDecimal;
  * Gets Power data from an ant+ page that only contains power data. i.e not dervived from torque
  * Created by fluxoid on 04/01/17.
  */
-public class PowerOnlyDecoder implements Decoder<PowerOnlyDecodable> {
+public class PowerOnlyDecoder<T extends PowerOnlyDecodable> implements Decoder<T> {
 
     private final MyCounterBasedDecoder counterBasedDecoder;
     private long powerSum;
 
-    public PowerOnlyDecoder(FilteredBroadcastMessenger<TelemetryEvent> updateHub) {
+    public PowerOnlyDecoder(FilteredBroadcastMessenger<TaggedTelemetryEvent> updateHub) {
         counterBasedDecoder = new MyCounterBasedDecoder(updateHub);
         reset();
     }
@@ -28,7 +27,7 @@ public class PowerOnlyDecoder implements Decoder<PowerOnlyDecodable> {
         powerSum = 0;
     }
 
-    public void update(PowerOnlyDecodable next) {
+    public void update(T next) {
         counterBasedDecoder.update(next);
     }
 
@@ -37,14 +36,14 @@ public class PowerOnlyDecoder implements Decoder<PowerOnlyDecodable> {
     }
 
     private class MyCounterBasedDecoder extends CounterBasedDecoder<PowerOnlyDecodable> {
-        public MyCounterBasedDecoder(FilteredBroadcastMessenger<TelemetryEvent> updateHub) {
+        public MyCounterBasedDecoder(FilteredBroadcastMessenger<TaggedTelemetryEvent> updateHub) {
             super(updateHub);
         }
 
 
         @Override
         protected void onUpdate() {
-            bus.send(new InstantPowerUpdate(new BigDecimal(getCurrentPage().getInstantPower())));
+            bus.send(new InstantPowerUpdate(getCurrentPage().getClass(),new BigDecimal(getCurrentPage().getInstantPower())));
         }
 
         @Override
@@ -60,7 +59,7 @@ public class PowerOnlyDecoder implements Decoder<PowerOnlyDecodable> {
 
         @Override
         protected void onNoCoast() {
-            bus.send(new AveragedPowerUpdate(powerSum, getEvents()));
+            bus.send(new AveragedPowerUpdate(getCurrentPage().getClass() ,powerSum, getEvents()));
         }
     }
 }

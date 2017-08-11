@@ -7,7 +7,6 @@ import org.cowboycoders.ant.ChannelEventHandler;
 import org.cowboycoders.ant.ChannelId;
 import org.cowboycoders.ant.Node;
 import org.cowboycoders.ant.events.BroadcastListener;
-import org.cowboycoders.ant.events.BroadcastMessenger;
 import org.cowboycoders.ant.interfaces.AntTransceiver;
 import org.cowboycoders.ant.messages.ChannelType;
 import org.cowboycoders.ant.messages.SlaveChannelType;
@@ -21,7 +20,7 @@ import org.cowboycoders.ant.profiles.common.decode.PowerOnlyDecoder;
 import org.cowboycoders.ant.profiles.common.decode.TimeDecoder;
 import org.cowboycoders.ant.profiles.common.events.HeartRateUpdate;
 import org.cowboycoders.ant.profiles.common.events.SpeedUpdate;
-import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
+import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEvent;
 import org.cowboycoders.ant.profiles.fitnessequipment.Capabilities;
 import org.cowboycoders.ant.profiles.fitnessequipment.Config;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
@@ -162,9 +161,9 @@ public abstract class FecProfile {
 
     }
 
-    private final FilteredBroadcastMessenger<TelemetryEvent> dataHub = new FilteredBroadcastMessenger<>();
+    private final FilteredBroadcastMessenger<TaggedTelemetryEvent> dataHub = new FilteredBroadcastMessenger<>();
 
-    public FilteredBroadcastMessenger<TelemetryEvent> getDataHub() {
+    public FilteredBroadcastMessenger<TaggedTelemetryEvent> getDataHub() {
         return dataHub;
     }
 
@@ -172,10 +171,10 @@ public abstract class FecProfile {
 
         final PageDispatcher pageDispatcher = new PageDispatcher();
 
-        final PowerOnlyDecoder trainerDataDecoder = new PowerOnlyDecoder(dataHub);
-        final AccDistanceDecoder accDistDecoder = new AccDistanceDecoder(dataHub);
-        final TimeDecoder timeDecoder = new TimeDecoder(dataHub);
-        final LapFlagDecoder lapDecoder = new LapFlagDecoder(dataHub);
+        final PowerOnlyDecoder<TrainerData> trainerDataDecoder = new PowerOnlyDecoder<>(dataHub);
+        final AccDistanceDecoder<GeneralData> accDistDecoder = new AccDistanceDecoder<>(dataHub);
+        final TimeDecoder<GeneralData> timeDecoder = new TimeDecoder<>(dataHub);
+        final LapFlagDecoder<GeneralData> lapDecoder = new LapFlagDecoder<>(dataHub);
 
         pageDispatcher.addListener(AntPage.class, new BroadcastListener<AntPage>() {
 
@@ -243,8 +242,8 @@ public abstract class FecProfile {
                 timeDecoder.update(generalData);
                 lapDecoder.update(generalData);
                 setState(generalData);
-                dataHub.send(new HeartRateUpdate(generalData.getHeartRateSource(), generalData.getHeartRate()));
-                dataHub.send(new SpeedUpdate(generalData.getSpeed()));
+                dataHub.send(new HeartRateUpdate(generalData.getClass(), generalData.getHeartRateSource(), generalData.getHeartRate()));
+                dataHub.send(new SpeedUpdate(generalData.getClass(), generalData.getSpeed()));
                 setEquipmentType(generalData.getType());
             }
 

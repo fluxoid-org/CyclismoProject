@@ -4,7 +4,7 @@ import org.cowboycoders.ant.events.BroadcastListener;
 import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.LapFlagDecodable;
 import org.cowboycoders.ant.profiles.common.events.LapUpdate;
-import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
+import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEvent;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -27,7 +27,7 @@ public class LapFlagDecoderTest {
 
     @Test
     public void shouldIncrement() {
-        final FilteredBroadcastMessenger<TelemetryEvent> bus = new FilteredBroadcastMessenger<>();
+        final FilteredBroadcastMessenger<TaggedTelemetryEvent> bus = new FilteredBroadcastMessenger<>();
         final LapFlagDecoder decoder = new LapFlagDecoder(bus);
         final int[] res = new int[1];
         bus.addListener(LapUpdate.class, new BroadcastListener<LapUpdate>() {

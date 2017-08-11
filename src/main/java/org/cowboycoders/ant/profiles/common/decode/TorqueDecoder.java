@@ -1,10 +1,9 @@
 package org.cowboycoders.ant.profiles.common.decode;
 
-import org.cowboycoders.ant.events.BroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.decode.utils.CounterBasedDecoder;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.TorqueDecodable;
-import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
+import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEvent;
 import org.cowboycoders.ant.profiles.common.events.TorquePowerUpdate;
 import org.cowboycoders.ant.profiles.common.events.TorqueUpdate;
 import org.cowboycoders.ant.profiles.common.events.AverageTorqueUpdate;
@@ -16,7 +15,7 @@ import java.math.RoundingMode;
  * Gets Power data from an ant+ page that contains power data dervived from torque
  * Created by fluxoid on 04/01/17.
  */
-public class TorqueDecoder implements Decoder<TorqueDecodable> {
+public class TorqueDecoder<T extends TorqueDecodable> implements Decoder<T> {
 
     private final MyCounterBasedDecoder counterBasedDecoder;
     private long torqueDelta;
@@ -31,12 +30,12 @@ public class TorqueDecoder implements Decoder<TorqueDecodable> {
         periodSum = 0;
     }
 
-    TorqueDecoder(FilteredBroadcastMessenger<TelemetryEvent> updateHub) {
+    TorqueDecoder(FilteredBroadcastMessenger<TaggedTelemetryEvent> updateHub) {
         counterBasedDecoder = new MyCounterBasedDecoder(updateHub);
         reset();
     }
 
-    public void update(TorqueDecodable next) {
+    public void update(T next) {
         counterBasedDecoder.update(next);
     }
 
@@ -45,7 +44,7 @@ public class TorqueDecoder implements Decoder<TorqueDecodable> {
     }
 
     private class MyCounterBasedDecoder extends CounterBasedDecoder<TorqueDecodable> {
-        public MyCounterBasedDecoder(FilteredBroadcastMessenger<TelemetryEvent> updateHub) {
+        public MyCounterBasedDecoder(FilteredBroadcastMessenger<TaggedTelemetryEvent> updateHub) {
             super(updateHub);
         }
 
@@ -72,10 +71,10 @@ public class TorqueDecoder implements Decoder<TorqueDecodable> {
 
         @Override
         protected void onNoCoast() {
-            bus.send(new TorquePowerUpdate(torqueDelta, periodDelta));
+            bus.send(new TorquePowerUpdate(getCurrentPage().getClass() ,torqueDelta, periodDelta));
             BigDecimal torque = new BigDecimal(torqueDelta).divide(new BigDecimal(32), 15, RoundingMode.HALF_UP).divide(new BigDecimal(getEventDelta()), 13, RoundingMode.HALF_UP);
-            bus.send(new TorqueUpdate(torque));
-            bus.send(new AverageTorqueUpdate(periodSum, torqueSum, getEvents()));
+            bus.send(new TorqueUpdate(getCurrentPage().getClass() ,torque));
+            bus.send(new AverageTorqueUpdate(getCurrentPage().getClass(),periodSum, torqueSum, getEvents()));
         }
 
     }

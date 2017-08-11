@@ -1,7 +1,7 @@
 package org.cowboycoders.ant.profiles.common.events;
 
 import org.cowboycoders.ant.profiles.common.events.interfaces.HasAveragePower;
-import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
+import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEvent;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -9,7 +9,7 @@ import java.math.RoundingMode;
 /**
  * Created by fluxoid on 05/01/17.
  */
-public class AveragedPowerUpdate implements TelemetryEvent, HasAveragePower {
+public class AveragedPowerUpdate extends TaggedTelemetryEvent implements HasAveragePower {
     private final long events;
     private final long accumPower;
 
@@ -20,7 +20,8 @@ public class AveragedPowerUpdate implements TelemetryEvent, HasAveragePower {
                         5, RoundingMode.HALF_UP);
     }
 
-    public AveragedPowerUpdate(long accumPower, long events) {
+    public AveragedPowerUpdate(Object tag, long accumPower, long events) {
+        super(tag);
         this.accumPower = accumPower;
         this.events = events;
     }

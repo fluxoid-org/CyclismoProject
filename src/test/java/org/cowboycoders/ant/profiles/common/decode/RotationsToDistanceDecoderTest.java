@@ -3,7 +3,7 @@ package org.cowboycoders.ant.profiles.common.decode;
 import org.cowboycoders.ant.events.BroadcastListener;
 import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.events.WheelRotationsUpdate;
-import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
+import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEvent;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.TorqueData;
 import org.junit.Test;
 
@@ -21,10 +21,10 @@ public class RotationsToDistanceDecoderTest {
 
     @Test
     public void matchesKnownGood() {
-        FilteredBroadcastMessenger<TelemetryEvent> bus = new FilteredBroadcastMessenger<TelemetryEvent>();
-        class FreqListener implements BroadcastListener<TelemetryEvent>  {
+        FilteredBroadcastMessenger<TaggedTelemetryEvent> bus = new FilteredBroadcastMessenger<TaggedTelemetryEvent>();
+        class FreqListener implements BroadcastListener<TaggedTelemetryEvent>  {
             private long rotations;
-            public void receiveMessage(TelemetryEvent telemetryEvent) {
+            public void receiveMessage(TaggedTelemetryEvent telemetryEvent) {
                 if (telemetryEvent instanceof WheelRotationsUpdate) {
                     WheelRotationsUpdate up = (WheelRotationsUpdate) telemetryEvent;
                     rotations = up.getWheelRotations();
@@ -32,7 +32,7 @@ public class RotationsToDistanceDecoderTest {
             }
         };
         FreqListener freqListener = new FreqListener();
-        bus.addListener(TelemetryEvent.class, freqListener);
+        bus.addListener(TaggedTelemetryEvent.class, freqListener);
         BigDecimal speed = new BigDecimal(10.0);
         BigDecimal period = WHEEL_CIRCUM.divide(speed, 20, BigDecimal.ROUND_HALF_UP);
         int power = 200;

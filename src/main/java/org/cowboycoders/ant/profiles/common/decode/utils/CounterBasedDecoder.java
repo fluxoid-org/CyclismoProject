@@ -1,16 +1,15 @@
 package org.cowboycoders.ant.profiles.common.decode.utils;
 
-import org.cowboycoders.ant.events.BroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.CounterBasedDecodable;
 import org.cowboycoders.ant.profiles.common.events.CoastDetectedEvent;
-import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
+import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEvent;
 
 /**
  * Created by fluxoid on 05/01/17.
  */
 public abstract class CounterBasedDecoder<T extends CounterBasedDecodable> {
-    protected final FilteredBroadcastMessenger<TelemetryEvent> bus;
+    protected final FilteredBroadcastMessenger<TaggedTelemetryEvent> bus;
     private CoastDetector coastDetector = new CoastDetector();
     private T prev;
     private T currentPage;
@@ -25,7 +24,7 @@ public abstract class CounterBasedDecoder<T extends CounterBasedDecodable> {
         return currentPage;
     }
 
-    public CounterBasedDecoder(FilteredBroadcastMessenger<TelemetryEvent> updateHub) {
+    public CounterBasedDecoder(FilteredBroadcastMessenger<TaggedTelemetryEvent> updateHub) {
         if (updateHub == null) {
             throw new IllegalArgumentException("this bus cannot be null");
         }
@@ -76,7 +75,7 @@ public abstract class CounterBasedDecoder<T extends CounterBasedDecodable> {
             coastDetector.stopCoast();
         }
         if (coastDetector.isCoasting()) {
-            bus.send(new CoastDetectedEvent());
+            bus.send(new CoastDetectedEvent(currentPage.getClass()));
         } else {
             onNoCoast();
         }

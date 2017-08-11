@@ -1,6 +1,7 @@
 package org.cowboycoders.ant.profiles.common.events;
 
 import org.cowboycoders.ant.profiles.common.events.interfaces.HasPower;
+import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEvent;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -10,12 +11,13 @@ import static java.lang.Math.PI;
 /**
  * Created by fluxoid on 10/01/17.
  */
-public class TorquePowerUpdate  implements HasPower {
+public class TorquePowerUpdate extends TaggedTelemetryEvent implements HasPower {
 
     private final long torqueSum;
     private final long period;
 
-    public TorquePowerUpdate(long torqueSum, long period) {
+    public TorquePowerUpdate(Object tag, long torqueSum, long period) {
+        super(tag);
         this.torqueSum = torqueSum;
         this.period = period;
     }
