@@ -16,8 +16,11 @@ import org.cowboycoders.ant.messages.data.DataMessage;
 import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.PageDispatcher;
 import org.cowboycoders.ant.profiles.common.decode.AccDistanceDecoder;
+import org.cowboycoders.ant.profiles.common.decode.LapFlagDecoder;
 import org.cowboycoders.ant.profiles.common.decode.PowerOnlyDecoder;
 import org.cowboycoders.ant.profiles.common.decode.TimeDecoder;
+import org.cowboycoders.ant.profiles.common.events.HeartRateUpdate;
+import org.cowboycoders.ant.profiles.common.events.SpeedUpdate;
 import org.cowboycoders.ant.profiles.common.events.interfaces.TelemetryEvent;
 import org.cowboycoders.ant.profiles.fitnessequipment.Capabilities;
 import org.cowboycoders.ant.profiles.fitnessequipment.Config;
@@ -42,6 +45,8 @@ public abstract class FecProfile {
 
     // for BikeData, CommonPageData
     private boolean lapFlag;
+    private Defines.EquipmentType equipType = Defines.EquipmentType.UNRECOGNIZED;
+    private BroadcastListener<Defines.EquipmentType> typeCallBack = null;
 
 
     public static void main(String [] args) {
@@ -50,6 +55,11 @@ public abstract class FecProfile {
         node.start();
         node.reset();
         new FecProfile() {
+            @Override
+            public void onEquipmentStateChange(Defines.EquipmentState oldState, Defines.EquipmentState newState) {
+
+            }
+
             @Override
             public void onCapabilitiesReceived(Capabilities capabilitiesPage) {
 
@@ -165,6 +175,7 @@ public abstract class FecProfile {
         final PowerOnlyDecoder trainerDataDecoder = new PowerOnlyDecoder(dataHub);
         final AccDistanceDecoder accDistDecoder = new AccDistanceDecoder(dataHub);
         final TimeDecoder timeDecoder = new TimeDecoder(dataHub);
+        final LapFlagDecoder lapDecoder = new LapFlagDecoder(dataHub);
 
         pageDispatcher.addListener(AntPage.class, new BroadcastListener<AntPage>() {
 
@@ -223,10 +234,26 @@ public abstract class FecProfile {
         });
 
         pageDispatcher.addListener(GeneralData.class, new BroadcastListener<GeneralData>() {
+
+            private Defines.EquipmentState state = Defines.EquipmentState.UNRECOGNIZED;
+
             @Override
             public void receiveMessage(GeneralData generalData) {
                 accDistDecoder.update(generalData);
                 timeDecoder.update(generalData);
+                lapDecoder.update(generalData);
+                setState(generalData);
+                dataHub.send(new HeartRateUpdate(generalData.getHeartRateSource(), generalData.getHeartRate()));
+                dataHub.send(new SpeedUpdate(generalData.getSpeed()));
+                setEquipmentType(generalData.getType());
+            }
+
+            private void setState(GeneralData generalData) {
+                if (state != generalData.getState()) {
+                    Defines.EquipmentState newState = generalData.getState();
+                    onEquipmentStateChange(state, newState);
+                    state = newState;
+                }
             }
         });
 
@@ -327,6 +354,27 @@ public abstract class FecProfile {
 
     }
 
+
+    /**
+     *
+     * @param callback will be called once, setting multiple times will overwrite last
+     */
+    public void getEquipmentType(BroadcastListener<Defines.EquipmentType> callback) {
+        if (equipType != Defines.EquipmentType.UNRECOGNIZED) {
+            callback.receiveMessage(equipType);
+        }
+        typeCallBack = callback;
+    }
+
+    private void setEquipmentType(Defines.EquipmentType type) {
+        equipType = type;
+        if (typeCallBack != null) {
+            typeCallBack.receiveMessage(type);
+            typeCallBack = null; // only call once
+        }
+    }
+
+    public abstract void onEquipmentStateChange(Defines.EquipmentState oldState, Defines.EquipmentState newState);
     public abstract void onCapabilitiesReceived(Capabilities capabilitiesPage);
     public abstract void onConfigRecieved(Config conf);
 }
