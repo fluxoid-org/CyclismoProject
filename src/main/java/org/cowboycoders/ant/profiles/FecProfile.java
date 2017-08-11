@@ -243,7 +243,7 @@ public abstract class FecProfile {
                 lapDecoder.update(generalData);
                 setState(generalData);
                 dataHub.send(new HeartRateUpdate(generalData.getClass(), generalData.getHeartRateSource(), generalData.getHeartRate()));
-                dataHub.send(new SpeedUpdate(generalData.getClass(), generalData.getSpeed()));
+                dataHub.send(new SpeedUpdate(generalData.getClass(), generalData.getSpeed(), generalData.isUsingVirtualSpeed()));
                 setEquipmentType(generalData.getType());
             }
 

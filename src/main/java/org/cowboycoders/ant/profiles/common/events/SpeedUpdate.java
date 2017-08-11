@@ -9,6 +9,8 @@ import java.math.BigDecimal;
  */
 public class SpeedUpdate extends TaggedTelemetryEvent {
 
+    private final boolean isVirtual;
+
     /**
      * @return km/h
      */
@@ -16,9 +18,10 @@ public class SpeedUpdate extends TaggedTelemetryEvent {
         return speed;
     }
 
-    public SpeedUpdate(Object tag, BigDecimal speed) {
+    public SpeedUpdate(Object tag, BigDecimal speed, boolean isVirtual) {
         super(tag);
         this.speed = speed;
+        this.isVirtual = isVirtual;
     }
 
     private final BigDecimal speed;

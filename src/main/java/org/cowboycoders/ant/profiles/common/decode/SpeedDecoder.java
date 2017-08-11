@@ -68,7 +68,7 @@ public class SpeedDecoder<T extends SpeedDecodable> implements Decoder<T> {
             bus.send(new WheelFreqUpdate(getCurrentPage().getClass() ,freq));
             bus.send(new SpeedUpdate(getCurrentPage().getClass(), freq.multiply(wheelCircumferece)
                     // convert to kh/h from m/s
-                    .multiply(new BigDecimal (3.6)).setScale(2, RoundingMode.HALF_UP)));
+                    .multiply(new BigDecimal (3.6)).setScale(2, RoundingMode.HALF_UP), false));
         }
     }
 
