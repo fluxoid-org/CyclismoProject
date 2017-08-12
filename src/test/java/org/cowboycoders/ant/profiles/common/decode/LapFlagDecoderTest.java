@@ -28,7 +28,7 @@ public class LapFlagDecoderTest {
     @Test
     public void shouldIncrement() {
         final FilteredBroadcastMessenger<TaggedTelemetryEvent> bus = new FilteredBroadcastMessenger<>();
-        final LapFlagDecoder decoder = new LapFlagDecoder(bus);
+        final LapFlagDecoder<LapFlagDecodable> decoder = new LapFlagDecoder<>(bus);
         final int[] res = new int[1];
         bus.addListener(LapUpdate.class, new BroadcastListener<LapUpdate>() {
             @Override

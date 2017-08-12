@@ -2,6 +2,7 @@ package org.cowboycoders.ant.profiles.common.decode;
 
 import org.cowboycoders.ant.events.BroadcastListener;
 import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
+import org.cowboycoders.ant.profiles.common.decode.interfaces.SpeedDecodable;
 import org.cowboycoders.ant.profiles.common.events.SpeedUpdate;
 import org.cowboycoders.ant.profiles.common.events.WheelFreqUpdate;
 import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEvent;
@@ -59,7 +60,7 @@ public class SpeedDecoderTest {
         TorqueData p1 = new TorqueData(data1);
         TorqueData p2 = new TorqueData(data2);
 
-        SpeedDecoder dec = new SpeedDecoder(bus, WHEEL_CIRCUM);
+        SpeedDecoder<SpeedDecodable> dec = new SpeedDecoder<>(bus, WHEEL_CIRCUM);
         dec.update(p1);
         dec.update(p2);
         // there is some rounding error in decode / encode step

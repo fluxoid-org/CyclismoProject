@@ -56,7 +56,7 @@ public class DistanceDecoderTest {
 
 
         final FilteredBroadcastMessenger<TaggedTelemetryEvent> bus = new FilteredBroadcastMessenger<>();
-        AccDistanceDecoder dist = new AccDistanceDecoder(bus);
+        AccDistanceDecoder<DistanceDecodable> dist = new AccDistanceDecoder<>(bus);
         final BigDecimal expected = new BigDecimal(65);
         final BigDecimal[] actual = {null};
         bus.addListener(DistanceUpdate.class, new BroadcastListener<DistanceUpdate>() {
@@ -77,7 +77,7 @@ public class DistanceDecoderTest {
 
 
         final FilteredBroadcastMessenger<TaggedTelemetryEvent> bus = new FilteredBroadcastMessenger<>();
-        AccDistanceDecoder dist = new AccDistanceDecoder(bus);
+        AccDistanceDecoder<DistanceDecodable> dist = new AccDistanceDecoder<>(bus);
         final BigDecimal expected = new BigDecimal(65);
         final BigDecimal[] actual = {null};
         bus.addListener(DistanceUpdate.class, new BroadcastListener<DistanceUpdate>() {

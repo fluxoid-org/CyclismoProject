@@ -38,7 +38,7 @@ public class PowerOnlyDecoderTest {
         }
 
         FilteredBroadcastMessenger<TaggedTelemetryEvent> bus = new FilteredBroadcastMessenger<TaggedTelemetryEvent>();
-        PowerOnlyDecoder decoder = new PowerOnlyDecoder(bus);
+        PowerOnlyDecoder<PowerOnlyDecodable> decoder = new PowerOnlyDecoder<>(bus);
 
         CoastHelper listener = new CoastHelper();
         bus.addListener(TaggedTelemetryEvent.class, listener);
@@ -130,7 +130,7 @@ public class PowerOnlyDecoderTest {
         }
 
         FilteredBroadcastMessenger<TaggedTelemetryEvent> bus = new FilteredBroadcastMessenger<TaggedTelemetryEvent>();
-        PowerOnlyDecoder decoder = new PowerOnlyDecoder(bus);
+        PowerOnlyDecoder<PowerOnlyDecodable> decoder = new PowerOnlyDecoder<>(bus);
 
         PowerSumListener listener = new PowerSumListener();
         bus.addListener(TaggedTelemetryEvent.class, listener);
