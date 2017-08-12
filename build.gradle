@@ -10,6 +10,7 @@ buildscript {
 }
 
 apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'com.github.johnrengelman.shadow'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -25,6 +26,16 @@ task runDummyFec(type:JavaExec) {
     // this will hang on building as it never returns
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.cowboycoders.ant.profiles.simulators.DummyFecTurbo'
+}
+
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
 }
 
 
