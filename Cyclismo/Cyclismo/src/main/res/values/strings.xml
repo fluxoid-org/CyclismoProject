@@ -3306,7 +3306,8 @@ limitations under the License.
   
   <string name="settings_turbo_scale_factor_invalid">Invalid input</string>
   <string name="settings_turbo_scale_factor_help">Must be between 0.0 and 1.0</string>
-  
+
+    <string name="turbotrainer_fec_compatible_option">FEC Compatible</string>
     <string name="turbotrainer_tacx_bushido_headunit_option">Tacx Bushido Headunit</string>
     <string name="turbotrainer_tacx_bushido_brake_option">Tacx Bushido Brake</string>
     <string name="turbotrainer_dummy_option">Dummy Trainer (for testing)</string>

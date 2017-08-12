@@ -74,6 +74,7 @@ import org.cowboycoders.turbotrainers.TurboTrainerInterface;
 import org.cowboycoders.turbotrainers.bushido.brake.BushidoBrake;
 import org.cowboycoders.turbotrainers.bushido.brake.ConstantResistanceController;
 import org.cowboycoders.turbotrainers.bushido.headunit.BushidoHeadunit;
+import org.cowboycoders.turbotrainers.fec.FecTurbo;
 import org.fluxoid.utils.LatLongAlt;
 
 import java.lang.reflect.InvocationTargetException;
@@ -725,6 +726,10 @@ public class TurboService extends Service {
 
   private void registerTurbos() {
     turboRegistry.register(
+        getString(R.string.turbotrainer_fec_compatible_value),
+        new FecTurbo()
+    );
+    turboRegistry.register(
         getString(R.string.turbotrainer_tacx_bushido_headunit_value),
         new BushidoHeadunit()
     );
@@ -1018,7 +1023,7 @@ public class TurboService extends Service {
           } else if (key.equals(getString(R.string.turbotrainer_selected))) {
             selectedTurboTrainer = preferences.getString(
                 getString(R.string.turbotrainer_selected),
-                getString(R.string.turbotrainer_tacx_bushido_headunit_value));
+                getString(R.string.turbotrainer_fec_compatible_value));
           }
         }
 

@@ -113,7 +113,7 @@ Google은 이용자에 대한 위치정보의 이용∙제공사실을 위치정
   <string name="sensor_data_heart_rate">org.cowboycoders.cyclismo.SENSOR_DATA_HEART_RATE</string>
   <string name="sensor_data_double_value">org.cowboycoders.cyclismo.SENSOR_DATA_DOUBLE_VALUE</string>
   <string name="settings_bushido_antlog_filename">antlog</string>
-  
+  <string name="turbotrainer_fec_compatible_value">FEC_COMPATIBLE</string>
   <string name="turbotrainer_tacx_bushido_headunit_value">TACX_BUSHIDO_HEADUNIT</string>
   <string name="turbotrainer_tacx_bushido_brake_value">TACX_BUSHIDO_BRAKE</string>
 
