@@ -17,7 +17,7 @@ public class LapFlagDecoder<T extends LapFlagDecodable> implements Decoder<T> {
 
 
     @Override
-    public void update(LapFlagDecodable newPage) {
+    public void update(T newPage) {
         if (prev == null) {prev = newPage; return;}
         final boolean prevState = prev.isLapToggled();
         final boolean state = newPage.isLapToggled();

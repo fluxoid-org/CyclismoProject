@@ -14,10 +14,7 @@ import org.cowboycoders.ant.messages.data.BroadcastDataMessage;
 import org.cowboycoders.ant.messages.data.DataMessage;
 import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.PageDispatcher;
-import org.cowboycoders.ant.profiles.common.decode.AccDistanceDecoder;
-import org.cowboycoders.ant.profiles.common.decode.LapFlagDecoder;
-import org.cowboycoders.ant.profiles.common.decode.PowerOnlyDecoder;
-import org.cowboycoders.ant.profiles.common.decode.TimeDecoder;
+import org.cowboycoders.ant.profiles.common.decode.*;
 import org.cowboycoders.ant.profiles.common.events.HeartRateUpdate;
 import org.cowboycoders.ant.profiles.common.events.SpeedUpdate;
 import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEvent;
@@ -40,12 +37,14 @@ import static org.fluxoid.utils.Format.bytesToString;
  */
 public abstract class FecProfile {
 
+    public static final BigDecimal WHEEL_CIRCUMFERENCE = new BigDecimal(2.098);
     private Channel channel;
 
     // for BikeData, CommonPageData
     private boolean lapFlag;
     private Defines.EquipmentType equipType = Defines.EquipmentType.UNRECOGNIZED;
     private BroadcastListener<Defines.EquipmentType> typeCallBack = null;
+    private Defines.EquipmentState state = Defines.EquipmentState.UNRECOGNIZED;
 
 
     public static void main(String [] args) {
@@ -108,6 +107,18 @@ public abstract class FecProfile {
         new ConfigPage.ConfigPayload().
                 setConfig(config)
         );
+        updateDecoders(config);
+    }
+
+    /**
+     * Should update decoders to use new values from config
+     * @param config
+     */
+    private void updateDecoders(Config config) {
+        BigDecimal actualCircum = config.getBicycleWheelDiameter().multiply(
+                new BigDecimal(Math.PI));
+        rotToDistDecoder = new RotationsToDistanceDecoder<>(dataHub, actualCircum);
+        speedDecoder = new SpeedDecoder<>(dataHub, actualCircum);
     }
 
     public void setBasicResistance(double gradient) {
@@ -161,11 +172,34 @@ public abstract class FecProfile {
 
     }
 
+
+
     private final FilteredBroadcastMessenger<TaggedTelemetryEvent> dataHub = new FilteredBroadcastMessenger<>();
 
     public FilteredBroadcastMessenger<TaggedTelemetryEvent> getDataHub() {
         return dataHub;
     }
+
+    final LapFlagDecoder<CommonPageData> lapDecoder = new LapFlagDecoder<>(dataHub);
+
+    private void handleCommon(CommonPageData data) {
+        setState(data);
+        lapDecoder.update(data);
+    }
+
+    private void setState(CommonPageData generalData) {
+        if (state != generalData.getState()) {
+            Defines.EquipmentState newState = generalData.getState();
+            onEquipmentStateChange(state, newState);
+            state = newState;
+        }
+    }
+
+    // initialise with approx wheel diameter, will use value from config when it is determined
+    private RotationsToDistanceDecoder<TorqueData> rotToDistDecoder = new RotationsToDistanceDecoder<>(dataHub,
+            WHEEL_CIRCUMFERENCE);
+
+    private SpeedDecoder<TorqueData> speedDecoder = new SpeedDecoder<>(dataHub, WHEEL_CIRCUMFERENCE);
 
     public void start(Node transceiver) {
 
@@ -174,7 +208,8 @@ public abstract class FecProfile {
         final PowerOnlyDecoder<TrainerData> trainerDataDecoder = new PowerOnlyDecoder<>(dataHub);
         final AccDistanceDecoder<GeneralData> accDistDecoder = new AccDistanceDecoder<>(dataHub);
         final TimeDecoder<GeneralData> timeDecoder = new TimeDecoder<>(dataHub);
-        final LapFlagDecoder<GeneralData> lapDecoder = new LapFlagDecoder<>(dataHub);
+
+        final TorqueDecoder<TorqueData> torqueDecoder = new TorqueDecoder<>(dataHub);
 
         pageDispatcher.addListener(AntPage.class, new BroadcastListener<AntPage>() {
 
@@ -201,6 +236,8 @@ public abstract class FecProfile {
             @Override
             public void receiveMessage(ConfigPage configPage) {
                 FecProfile.this.onConfigRecieved(configPage.getConfig());
+                updateDecoders(configPage.getConfig());
+
             }
         });
 
@@ -228,32 +265,27 @@ public abstract class FecProfile {
         pageDispatcher.addListener(TorqueData.class, new BroadcastListener<TorqueData>() {
             @Override
             public void receiveMessage(TorqueData torqueData) {
-                // TODO: decode torqueData
+                torqueDecoder.update(torqueData);
+                handleCommon(torqueData);
+                rotToDistDecoder.update(torqueData);
+                speedDecoder.update(torqueData);
             }
         });
 
+
         pageDispatcher.addListener(GeneralData.class, new BroadcastListener<GeneralData>() {
 
-            private Defines.EquipmentState state = Defines.EquipmentState.UNRECOGNIZED;
 
             @Override
             public void receiveMessage(GeneralData generalData) {
                 accDistDecoder.update(generalData);
                 timeDecoder.update(generalData);
-                lapDecoder.update(generalData);
-                setState(generalData);
                 dataHub.send(new HeartRateUpdate(generalData.getClass(), generalData.getHeartRateSource(), generalData.getHeartRate()));
+                //FIXME: this speed may be an accumulated value
                 dataHub.send(new SpeedUpdate(generalData.getClass(), generalData.getSpeed(), generalData.isUsingVirtualSpeed()));
                 setEquipmentType(generalData.getType());
             }
 
-            private void setState(GeneralData generalData) {
-                if (state != generalData.getState()) {
-                    Defines.EquipmentState newState = generalData.getState();
-                    onEquipmentStateChange(state, newState);
-                    state = newState;
-                }
-            }
         });
 
         pageDispatcher.addListener(BikeData.class, new BroadcastListener<BikeData>() {
@@ -289,6 +321,16 @@ public abstract class FecProfile {
                     logger.trace("receieved cmd: " + cmd);
                 }
                 logger.trace(bytesToString(msg.getData()));
+            }
+        }, DataMessage.class);
+
+
+        // request config
+        channel.registerRxListener(new BroadcastListener<DataMessage>() {
+            @Override
+            public void receiveMessage(DataMessage channelMessage) {
+                requestConfig();
+                channel.removeRxListener(this);
             }
         }, DataMessage.class);
 

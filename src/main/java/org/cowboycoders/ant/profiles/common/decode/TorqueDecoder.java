@@ -30,7 +30,7 @@ public class TorqueDecoder<T extends TorqueDecodable> implements Decoder<T> {
         periodSum = 0;
     }
 
-    TorqueDecoder(FilteredBroadcastMessenger<TaggedTelemetryEvent> updateHub) {
+    public TorqueDecoder(FilteredBroadcastMessenger<TaggedTelemetryEvent> updateHub) {
         counterBasedDecoder = new MyCounterBasedDecoder(updateHub);
         reset();
     }
