@@ -113,6 +113,7 @@ public class MetabolicData extends CommonPageData implements AntPage, CalorieCou
      *
      * @return whether or not @see getCalorieCounter is available
      */
+    @Override
     public boolean isCummulativeCaloriesAvailable() {
         return caloriesAvailable;
     }

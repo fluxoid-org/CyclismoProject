@@ -31,6 +31,7 @@ public class CalorieCountDecoder<T extends CalorieCountDecodable> implements Dec
 
     @Override
     public void update(T newPage) {
+        if (!newPage.isCummulativeCaloriesAvailable()) return;
         if (prev == null) {
             prev = newPage;
             return;

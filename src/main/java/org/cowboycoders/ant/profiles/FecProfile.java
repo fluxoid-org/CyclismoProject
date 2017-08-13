@@ -15,8 +15,7 @@ import org.cowboycoders.ant.messages.data.DataMessage;
 import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.PageDispatcher;
 import org.cowboycoders.ant.profiles.common.decode.*;
-import org.cowboycoders.ant.profiles.common.events.HeartRateUpdate;
-import org.cowboycoders.ant.profiles.common.events.SpeedUpdate;
+import org.cowboycoders.ant.profiles.common.events.*;
 import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEvent;
 import org.cowboycoders.ant.profiles.fitnessequipment.Capabilities;
 import org.cowboycoders.ant.profiles.fitnessequipment.Config;
@@ -65,6 +64,11 @@ public abstract class FecProfile {
 
             @Override
             public void onConfigRecieved(Config conf) {
+
+            }
+
+            @Override
+            public void onCalibrationUpdate(CalibrationProgress progress) {
 
             }
 
@@ -208,6 +212,7 @@ public abstract class FecProfile {
         final PowerOnlyDecoder<TrainerData> trainerDataDecoder = new PowerOnlyDecoder<>(dataHub);
         final AccDistanceDecoder<GeneralData> accDistDecoder = new AccDistanceDecoder<>(dataHub);
         final TimeDecoder<GeneralData> timeDecoder = new TimeDecoder<>(dataHub);
+        final CalorieCountDecoder<MetabolicData> calorieDecoder = new CalorieCountDecoder<>(dataHub);
 
         final TorqueDecoder<TorqueData> torqueDecoder = new TorqueDecoder<>(dataHub);
 
@@ -251,7 +256,7 @@ public abstract class FecProfile {
         pageDispatcher.addListener(CalibrationProgress.class, new BroadcastListener<CalibrationProgress>() {
             @Override
             public void receiveMessage(CalibrationProgress calibrationProgress) {
-                // TODO: forward on to client
+                onCalibrationUpdate(calibrationProgress);
             }
         });
 
@@ -283,6 +288,7 @@ public abstract class FecProfile {
                 dataHub.send(new HeartRateUpdate(generalData.getClass(), generalData.getHeartRateSource(), generalData.getHeartRate()));
                 dataHub.send(new SpeedUpdate(generalData.getClass(), generalData.getSpeed(), generalData.isUsingVirtualSpeed()));
                 setEquipmentType(generalData.getType());
+                handleCommon(generalData);
             }
 
         });
@@ -290,14 +296,21 @@ public abstract class FecProfile {
         pageDispatcher.addListener(BikeData.class, new BroadcastListener<BikeData>() {
             @Override
             public void receiveMessage(BikeData bikeData) {
-                // TODO: decode bike data
+                dataHub.send(new InstantPowerUpdate(BikeData.class, new BigDecimal(bikeData.getPower())));
+                dataHub.send(new CadenceUpdate(BikeData.class, bikeData.getCadence()));
+                handleCommon(bikeData);
             }
         });
 
         pageDispatcher.addListener(MetabolicData.class, new BroadcastListener<MetabolicData>() {
             @Override
             public void receiveMessage(MetabolicData metabolicData) {
-                // TODO: decode metabolic
+                calorieDecoder.update(metabolicData);
+                handleCommon(metabolicData);
+                dataHub.send(new InstantMetabolicUpdate(MetabolicData.class,
+                        metabolicData.getInstantCalorieBurn(),
+                        metabolicData.getInstantMetabolicEquivalent()));
+
             }
         });
 
@@ -417,4 +430,5 @@ public abstract class FecProfile {
     public abstract void onEquipmentStateChange(Defines.EquipmentState oldState, Defines.EquipmentState newState);
     public abstract void onCapabilitiesReceived(Capabilities capabilitiesPage);
     public abstract void onConfigRecieved(Config conf);
+    public abstract void onCalibrationUpdate(CalibrationProgress progress);
 }
