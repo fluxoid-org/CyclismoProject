@@ -5,6 +5,7 @@ import org.cowboycoders.ant.profiles.common.utils.CounterUtils;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
 import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
+import org.fluxoid.utils.MathCompat;
 import org.fluxoid.utils.RollOverVal;
 
 import java.math.BigDecimal;
@@ -43,7 +44,7 @@ public class MetabolicData extends CommonPageData implements AntPage, CalorieCou
         }
 
         public Integer getCalorieCounter() {
-            return Math.toIntExact(calorieCounter.getValue());
+            return MathCompat.toIntExact(calorieCounter.getValue());
         }
 
         public MetabolicDataPayload setCalorieCounter(Integer calorieCounter) {
@@ -87,7 +88,7 @@ public class MetabolicData extends CommonPageData implements AntPage, CalorieCou
             }
             if (isCaloriesAvailable()) {
                 packet[META_OFFSET] |= HAS_CALORIES_MASK;
-                PutUnsignedNumIn1LeBytes(packet, CALORIES_OFFSET, Math.toIntExact(calorieCounter.get()));
+                PutUnsignedNumIn1LeBytes(packet, CALORIES_OFFSET, MathCompat.toIntExact(calorieCounter.get()));
             } else {
                 packet[META_OFFSET] = clearMaskedBits(packet[META_OFFSET], HAS_CALORIES_MASK);
             }

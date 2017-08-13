@@ -7,6 +7,7 @@ import org.cowboycoders.ant.profiles.common.decode.interfaces.PowerOnlyDecodable
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
 import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
+import org.fluxoid.utils.MathCompat;
 import org.fluxoid.utils.RollOverVal;
 
 import java.util.EnumSet;
@@ -98,7 +99,7 @@ public class TrainerData extends CommonPageData implements PowerOnlyDecodable, A
 
 
         public int getEvents() {
-            return Math.toIntExact(events.getValue());
+            return MathCompat.toIntExact(events.getValue());
         }
 
         public TrainerDataPayload setEvents(int events) {
@@ -119,8 +120,8 @@ public class TrainerData extends CommonPageData implements PowerOnlyDecodable, A
         public void encode(final byte[] packet) {
             super.encode(packet);
             PutUnsignedNumIn1LeBytes(packet, PAGE_OFFSET, PAGE_NUMBER);
-            PutUnsignedNumIn2LeBytes(packet, POWER_OFFSET, Math.toIntExact(powerSum.get()));
-            PutUnsignedNumIn1LeBytes(packet, EVENT_OFFSET, Math.toIntExact(events.get()));
+            PutUnsignedNumIn2LeBytes(packet, POWER_OFFSET, MathCompat.toIntExact(powerSum.get()));
+            PutUnsignedNumIn1LeBytes(packet, EVENT_OFFSET, MathCompat.toIntExact(events.get()));
             int old = UnsignedNumFrom2LeBytes(packet, INSTANT_POWER_OFFSET);
             if (isPowerAvailable()) {
                 PutUnsignedNumIn2LeBytes(packet, INSTANT_POWER_OFFSET, old | instantPower );

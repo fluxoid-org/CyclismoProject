@@ -6,6 +6,7 @@ import org.cowboycoders.ant.profiles.common.utils.CounterUtils;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
 import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
+import org.fluxoid.utils.MathCompat;
 import org.fluxoid.utils.RollOverVal;
 
 import java.math.BigDecimal;
@@ -51,7 +52,7 @@ public class TorqueData extends CommonPageData implements AntPage, TorqueDecodab
         RollOverVal period = new RollOverVal(UNSIGNED_INT16_MAX);
 
         public int getEvents() {
-            return Math.toIntExact(events.getValue());
+            return MathCompat.toIntExact(events.getValue());
         }
 
         public TorqueDataPayload setEvents(int events) {
@@ -116,10 +117,10 @@ public class TorqueData extends CommonPageData implements AntPage, TorqueDecodab
         public void encode(final byte[] packet) {
             super.encode(packet);
             PutUnsignedNumIn1LeBytes(packet, PAGE_OFFSET, PAGE_NUMBER);
-            PutUnsignedNumIn1LeBytes(packet, EVENT_OFFSET, Math.toIntExact(events.get()));
-            PutUnsignedNumIn1LeBytes(packet, ROTATION_OFFSET, Math.toIntExact(rotations.get()));
-            PutUnsignedNumIn2LeBytes(packet, PERIOD_OFFSET, Math.toIntExact(period.get()));
-            PutUnsignedNumIn2LeBytes(packet, TORQUE_OFFSET, Math.toIntExact(torqueSum.get()));
+            PutUnsignedNumIn1LeBytes(packet, EVENT_OFFSET, MathCompat.toIntExact(events.get()));
+            PutUnsignedNumIn1LeBytes(packet, ROTATION_OFFSET, MathCompat.toIntExact(rotations.get()));
+            PutUnsignedNumIn2LeBytes(packet, PERIOD_OFFSET, MathCompat.toIntExact(period.get()));
+            PutUnsignedNumIn2LeBytes(packet, TORQUE_OFFSET, MathCompat.toIntExact(torqueSum.get()));
 
         }
     }

@@ -6,6 +6,7 @@ import org.cowboycoders.ant.profiles.common.utils.CounterUtils;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
 import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
+import org.fluxoid.utils.MathCompat;
 import org.fluxoid.utils.RollOverVal;
 
 import java.math.BigDecimal;
@@ -119,7 +120,7 @@ public class GeneralData extends CommonPageData implements AntPage, TimeDecodabl
             int temp = seconds.multiply(new BigDecimal(4)).setScale(0, RoundingMode.HALF_UP).intValue();
             RollOverVal val = new RollOverVal(UNSIGNED_INT8_MAX);
             val.setValue(temp);
-            timeElapsed = Math.toIntExact(val.get());
+            timeElapsed = MathCompat.toIntExact(val.get());
             return this;
         }
 
@@ -212,7 +213,7 @@ public class GeneralData extends CommonPageData implements AntPage, TimeDecodabl
             }
             PutUnsignedNumIn1LeBytes(packet, TIME_OFFSET, timeElapsed);
             if (distanceAvailable) {
-                PutUnsignedNumIn1LeBytes(packet, DISTANCE_OFFSET, Math.toIntExact(distance.get()));
+                PutUnsignedNumIn1LeBytes(packet, DISTANCE_OFFSET, MathCompat.toIntExact(distance.get()));
             }
             if (speed == null) {
                 PutUnsignedNumIn2LeBytes(packet, SPEED_OFFSET, UNSIGNED_INT16_MAX);
