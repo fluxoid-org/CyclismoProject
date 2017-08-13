@@ -1,5 +1,9 @@
 package org.cowboycoders.ant.profiles.pages;
 
+import org.cowboycoders.ant.messages.data.BroadcastDataMessage;
+import org.cowboycoders.ant.messages.data.DataMessage;
+import org.cowboycoders.ant.profiles.common.utils.PayloadUtils;
+
 import static org.cowboycoders.ant.profiles.BitManipulation.PutUnsignedNumIn1LeBytes;
 import static org.cowboycoders.ant.profiles.BitManipulation.UnsignedNumFrom1LeByte;
 
@@ -11,6 +15,7 @@ public class Request implements AntPage {
 
     public static final int REQEUSTED_PAGE_OFFSET = 6;
     public static final int SUBPAGE_OFFSET = 3;
+    public static final int MANUFACTURER_PAGE_NUM = 80;
     public static int PAGE_NUMBER = 70;
     private final int pageNumber;
     private final int subPage;
@@ -66,6 +71,16 @@ public class Request implements AntPage {
             PutUnsignedNumIn1LeBytes(packet, SUBPAGE_OFFSET, subPage);
             PutUnsignedNumIn1LeBytes(packet, 7,  1);
         }
+    }
+
+    private static BroadcastDataMessage genSimpleRequest(int pageNum) {
+        return PayloadUtils.getBroadcastDataMessage(
+                new RequestPayload().setPageNumber(pageNum)
+        );
+    }
+
+    public static BroadcastDataMessage getManufacturer() {
+     return genSimpleRequest(MANUFACTURER_PAGE_NUM);
     }
 
 }

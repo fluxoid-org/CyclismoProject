@@ -2,8 +2,10 @@ package org.cowboycoders.ant.profiles.common;
 
 import org.cowboycoders.ant.events.BroadcastListener;
 import org.cowboycoders.ant.events.BroadcastMessenger;
+import org.cowboycoders.ant.profiles.BitManipulation;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.*;
 import org.cowboycoders.ant.profiles.pages.AntPage;
+import org.cowboycoders.ant.profiles.pages.ManufacturerInfo;
 import org.cowboycoders.ant.profiles.pages.Request;
 
 import java.util.HashMap;
@@ -11,6 +13,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import static org.cowboycoders.ant.profiles.BitManipulation.UnsignedNumFrom1LeByte;
+import static org.cowboycoders.ant.profiles.pages.AntPage.PAGE_OFFSET;
 
 /**
  * Created by fluxoid on 30/12/16.
@@ -18,7 +21,7 @@ import static org.cowboycoders.ant.profiles.BitManipulation.UnsignedNumFrom1LeBy
 public class PageDispatcher extends FilteredBroadcastMessenger<AntPage> {
 
     public AntPage decode(byte[] data) {
-        final byte page = data[AntPage.PAGE_OFFSET];
+        final int page = BitManipulation.UnsignedNumFrom1LeByte(data[PAGE_OFFSET]);
         switch (page) {
             case 1:
                 return new CalibrationResponse(data);
@@ -52,12 +55,15 @@ public class PageDispatcher extends FilteredBroadcastMessenger<AntPage> {
                 return new Request(data);
             case 71:
                 return new Command(data);
+            case ManufacturerInfo.PAGE_NUMBER:
+                return new ManufacturerInfo(data);
+
         }
         return null;
     }
 
     public static int getPageNum(byte[] data) {
-        return UnsignedNumFrom1LeByte(data[AntPage.PAGE_OFFSET]);
+        return UnsignedNumFrom1LeByte(data[PAGE_OFFSET]);
     }
 
     public void dispatch(final byte[] data) {
@@ -65,7 +71,7 @@ public class PageDispatcher extends FilteredBroadcastMessenger<AntPage> {
         if (page != null) {
             send(page);
         } else {
-            Logger.getGlobal().warning("no handler for page: " + data[AntPage.PAGE_OFFSET]);
+            Logger.getGlobal().warning("no handler for page: " + data[PAGE_OFFSET]);
         }
     }
 }

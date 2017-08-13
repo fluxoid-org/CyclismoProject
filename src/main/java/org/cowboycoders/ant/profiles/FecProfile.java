@@ -29,6 +29,7 @@ import org.cowboycoders.ant.profiles.simulators.NetworkKeys;
 import java.math.BigDecimal;
 
 import static org.cowboycoders.ant.profiles.common.PageDispatcher.getPageNum;
+import static org.cowboycoders.ant.profiles.common.utils.PayloadUtils.getBroadcastDataMessage;
 import static org.fluxoid.utils.Format.bytesToString;
 
 /**
@@ -159,13 +160,9 @@ public abstract class FecProfile {
 
 
     private void sendEncodable(AntPacketEncodable encodable) {
-        byte [] data = new byte[8];
-        encodable.encode(data);
-        BroadcastDataMessage payload = new BroadcastDataMessage();
-        payload.setData(data);
+        BroadcastDataMessage payload = getBroadcastDataMessage(encodable);
         channel.send(payload);
     }
-
 
 
     private void requestPage(int pageNumber) {
