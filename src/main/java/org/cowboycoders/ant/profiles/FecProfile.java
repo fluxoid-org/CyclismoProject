@@ -281,7 +281,6 @@ public abstract class FecProfile {
                 accDistDecoder.update(generalData);
                 timeDecoder.update(generalData);
                 dataHub.send(new HeartRateUpdate(generalData.getClass(), generalData.getHeartRateSource(), generalData.getHeartRate()));
-                //FIXME: this speed may be an accumulated value
                 dataHub.send(new SpeedUpdate(generalData.getClass(), generalData.getSpeed(), generalData.isUsingVirtualSpeed()));
                 setEquipmentType(generalData.getType());
             }
@@ -325,7 +324,7 @@ public abstract class FecProfile {
         }, DataMessage.class);
 
 
-        // request config
+        // request config : we are assuming the wheel diameter is stored in here
         channel.registerRxListener(new BroadcastListener<DataMessage>() {
             @Override
             public void receiveMessage(DataMessage channelMessage) {

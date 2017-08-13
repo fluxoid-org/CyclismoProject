@@ -146,6 +146,9 @@ public class GeneralData extends CommonPageData implements AntPage, TimeDecodabl
             return this;
         }
 
+        /**
+         * @return instantaneous speed
+         */
         public BigDecimal getSpeed() {
             return speed;
         }
