@@ -5,7 +5,7 @@ import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.decode.utils.CoastDetector;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.CounterBasedDecodable;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.PowerOnlyDecodable;
-import org.cowboycoders.ant.profiles.common.events.AveragedPowerUpdate;
+import org.cowboycoders.ant.profiles.common.events.AveragePowerUpdate;
 import org.cowboycoders.ant.profiles.common.events.CoastDetectedEvent;
 import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEvent;
 import org.junit.Test;
@@ -119,10 +119,10 @@ public class PowerOnlyDecoderTest {
             long sum = 0;
 
             public void receiveMessage(TaggedTelemetryEvent event) {
-                if (!(event instanceof AveragedPowerUpdate)) {
+                if (!(event instanceof AveragePowerUpdate)) {
                     return;
                 }
-                AveragedPowerUpdate casted = (AveragedPowerUpdate) event;
+                AveragePowerUpdate casted = (AveragePowerUpdate) event;
                 powersum = casted.getAveragePower();
                 events = casted.getEvents();
                 sum = casted.getSumPower();

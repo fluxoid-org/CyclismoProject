@@ -3,7 +3,7 @@ package org.cowboycoders.ant.profiles.common.decode;
 import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.decode.utils.CounterBasedDecoder;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.PowerOnlyDecodable;
-import org.cowboycoders.ant.profiles.common.events.AveragedPowerUpdate;
+import org.cowboycoders.ant.profiles.common.events.AveragePowerUpdate;
 import org.cowboycoders.ant.profiles.common.events.InstantPowerUpdate;
 import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEvent;
 
@@ -59,7 +59,7 @@ public class PowerOnlyDecoder<T extends PowerOnlyDecodable> implements Decoder<T
 
         @Override
         protected void onNoCoast() {
-            bus.send(new AveragedPowerUpdate(getCurrentPage().getClass() ,powerSum, getEvents()));
+            bus.send(new AveragePowerUpdate(getCurrentPage().getClass() ,powerSum, getEvents()));
         }
     }
 }

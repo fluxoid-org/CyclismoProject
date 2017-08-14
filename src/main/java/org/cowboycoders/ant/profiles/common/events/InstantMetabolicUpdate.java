@@ -18,10 +18,16 @@ public class InstantMetabolicUpdate extends TaggedTelemetryEvent {
 
     }
 
+    /**
+     * @return kcal/hr
+     */
     public BigDecimal getInstantCalorieBurn() {
         return instantCalorieBurn;
     }
 
+    /**
+     * @return Rate of energy expenditure in METs
+     */
     public BigDecimal getInstantMetabolicEquivalent() {
         return instantMetabolicEquivalent;
     }

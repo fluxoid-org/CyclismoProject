@@ -11,7 +11,7 @@ import static java.lang.Math.PI;
 /**
  * Created by fluxoid on 10/01/17.
  */
-public class TorquePowerUpdate extends TaggedTelemetryEvent implements HasPower {
+public class TorquePowerUpdate extends GenericPowerUpdate {
 
     private final long torqueSum;
     private final long period;

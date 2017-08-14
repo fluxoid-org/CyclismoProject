@@ -9,7 +9,7 @@ import java.math.BigDecimal;
  * Instantaneous power
  * Created by fluxoid on 05/01/17.
  */
-public class InstantPowerUpdate extends TaggedTelemetryEvent implements HasPower  {
+public class InstantPowerUpdate extends GenericPowerUpdate  {
 
     @Override
     public BigDecimal getPower() {

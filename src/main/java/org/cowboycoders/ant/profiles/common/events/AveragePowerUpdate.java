@@ -9,7 +9,7 @@ import java.math.RoundingMode;
 /**
  * Created by fluxoid on 05/01/17.
  */
-public class AveragedPowerUpdate extends TaggedTelemetryEvent implements HasAveragePower {
+public class AveragePowerUpdate extends TaggedTelemetryEvent implements HasAveragePower {
     private final long events;
     private final long accumPower;
 
@@ -20,7 +20,7 @@ public class AveragedPowerUpdate extends TaggedTelemetryEvent implements HasAver
                         5, RoundingMode.HALF_UP);
     }
 
-    public AveragedPowerUpdate(Object tag, long accumPower, long events) {
+    public AveragePowerUpdate(Object tag, long accumPower, long events) {
         super(tag);
         this.accumPower = accumPower;
         this.events = events;
