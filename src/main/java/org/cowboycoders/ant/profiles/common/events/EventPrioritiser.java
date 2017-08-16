@@ -46,15 +46,9 @@ public class EventPrioritiser implements BroadcastListener<TaggedTelemetryEvent>
 
         // handle timeout
 
-        if (last.getClass().equals(telemetryEvent.getClass())) {
-            // last update was same type
-            accept(telemetryEvent, clazz);
-            return;
-        }
-
-        Priorities pri = EventPrioritiser.this.priorities.get(clazz);
-        if (getInstancePriority(telemetryEvent, pri) < getInstancePriority(last, pri)
-                || getTagPriority(telemetryEvent, pri) < getTagPriority(last, pri)) {
+        PrioritisedEvent pri = EventPrioritiser.this.priorities.get(clazz);;
+        if (getInstancePriority(telemetryEvent, pri) <= getInstancePriority(last, pri)
+                && getTagPriority(telemetryEvent, pri) <= getTagPriority(last, pri)) {
             accept(telemetryEvent, clazz);
         }
 
@@ -66,15 +60,24 @@ public class EventPrioritiser implements BroadcastListener<TaggedTelemetryEvent>
         out.send(telemetryEvent);
     }
 
-    public static class Priorities {
+    public static class PrioritisedEvent {
         private final HashMap<Class<?>, Integer> tagPriorities = new HashMap<>();
         private final HashMap<Class<? extends TaggedTelemetryEvent>, Integer>  instancePriorities = new HashMap<>();
         private final Class<? extends TaggedTelemetryEvent> event;
 
-        public Priorities(Class<? extends TaggedTelemetryEvent> event, List<Class<? extends TaggedTelemetryEvent>> instancePriorities, Class<?> [] tagPriorities) {
+        /**
+         *
+         * @param event generic base
+         * @param instancePriorities ordered list of priorities, more specific first
+         *                           (first matching class is used for filtering)
+         * @param tagPriorities higher priority first
+         */
+        public PrioritisedEvent(Class<? extends TaggedTelemetryEvent> event,
+                                Class<?> [] tagPriorities,
+                                Class<? extends TaggedTelemetryEvent> [] instancePriorities) {
             this.event = event;
-            for (int i = 0; i < instancePriorities.size(); i++) {
-                this.instancePriorities.put(instancePriorities.get(i), i);
+            for (int i = 0; i < instancePriorities.length; i++) {
+                this.instancePriorities.put(instancePriorities[i], i);
             }
             for (int i = 0; i < tagPriorities.length; i++) {
                 this.tagPriorities.put(tagPriorities[i], i);
@@ -85,15 +88,15 @@ public class EventPrioritiser implements BroadcastListener<TaggedTelemetryEvent>
     // prioritised event to last received example
     private HashMap<Class<? extends TaggedTelemetryEvent>, TaggedTelemetryEvent> lastUpdates = new HashMap<>();
     // prioritised event to priorities
-    private HashMap<Class<? extends TaggedTelemetryEvent>, Priorities> priorities = new HashMap<>();
+    private HashMap<Class<? extends TaggedTelemetryEvent>, PrioritisedEvent> priorities = new HashMap<>();
     // telemetry event to base class in priorities list
     private HashMap<Class<? extends TaggedTelemetryEvent>, Class<? extends TaggedTelemetryEvent>> mappings = new HashMap<>();
     // all events that we filter
     private ArrayList<Class<? extends TaggedTelemetryEvent>> allPrioritised = new ArrayList<>();
 
     public EventPrioritiser(final FilteredBroadcastMessenger<TaggedTelemetryEvent> out, long timeoutNanos,
-                            final Priorities[] priorities) {
-        for (Priorities p : priorities) {
+                            final PrioritisedEvent[] priorities) {
+        for (PrioritisedEvent p : priorities) {
             allPrioritised.add(p.event);
             this.priorities.put(p.event, p);
         }
@@ -101,13 +104,13 @@ public class EventPrioritiser implements BroadcastListener<TaggedTelemetryEvent>
 
     }
 
-    private Integer getTagPriority(TaggedTelemetryEvent telemetryEvent, Priorities pri) {
+    private Integer getTagPriority(TaggedTelemetryEvent telemetryEvent, PrioritisedEvent pri) {
         Integer result =  pri.tagPriorities.get(telemetryEvent.getTag().getClass());
         if (result == null) return Integer.MAX_VALUE;
         return result;
     }
 
-    private Integer getInstancePriority(TaggedTelemetryEvent telemetryEvent, Priorities pri) {
+    private Integer getInstancePriority(TaggedTelemetryEvent telemetryEvent, PrioritisedEvent pri) {
         Integer result = pri.instancePriorities.get(telemetryEvent.getClass());
         if (result == null) return Integer.MAX_VALUE;
         return result;

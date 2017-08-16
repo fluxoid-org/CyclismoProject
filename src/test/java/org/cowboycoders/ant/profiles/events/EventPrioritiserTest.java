@@ -3,37 +3,102 @@ package org.cowboycoders.ant.profiles.events;
 import org.cowboycoders.ant.events.BroadcastListener;
 import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.events.EventPrioritiser;
-import org.cowboycoders.ant.profiles.common.events.GenericPowerUpdate;
-import org.cowboycoders.ant.profiles.common.events.InstantPowerUpdate;
-import org.cowboycoders.ant.profiles.common.events.TorquePowerUpdate;
+import org.cowboycoders.ant.profiles.common.events.EventPrioritiser.PrioritisedEvent;
+import org.cowboycoders.ant.profiles.common.events.PrioritisedEventBuilder;
 import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEvent;
+import org.junit.Before;
 import org.junit.Test;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class EventPrioritiserTest {
 
+    // classes to test instance Priorities
+
+    private class Base extends TaggedTelemetryEvent {
+
+        Base(Object tag) {
+            super(tag);
+        }
+    }
+
+    private class A extends Base {
+
+        A(Object tag) {
+            super(tag);
+        }
+    }
+
+    private class B extends Base {
+
+        B(Object tag) {
+            super(tag);
+        }
+    }
+
+    private class C extends Base {
+
+        C(Object tag) {
+            super(tag);
+        }
+    }
+
+    // test works with deeper inheritance
+    private class D extends A {
+
+        D(Object tag) {
+            super(tag);
+        }
+    }
+
+    private class Tag1 {}
+    private class Tag2 {}
+    private class Tag3 {}
+
+    private Object tag1 = new Tag1();
+    private Object tag2 = new Tag2();
+    private Object tag3 = new Tag3();
+
+
+    private FilteredBroadcastMessenger<TaggedTelemetryEvent> in;
+    private FilteredBroadcastMessenger<TaggedTelemetryEvent> out;
+
+    @Before
+    public void initPipeline() {
+        in = new FilteredBroadcastMessenger<>();
+        out = new FilteredBroadcastMessenger<>();
+        EventPrioritiser prioritiser = new EventPrioritiser(out, TimeUnit.SECONDS.toNanos(10),
+                new PrioritisedEvent[] {
+                        new PrioritisedEventBuilder(Base.class)
+                                .setInstancePriorities(D.class, A.class, B.class, C.class)
+                                .setTagPriorities(Tag1.class, Tag2.class, Tag3.class)
+                                .createPrioritisedEvent(),
+
+
+                });
+        in.addListener(TaggedTelemetryEvent.class, prioritiser);
+    }
+
     @Test
-    public void minimalExampleShouldFunction() {
-        FilteredBroadcastMessenger<TaggedTelemetryEvent> in = new FilteredBroadcastMessenger<>();
-        FilteredBroadcastMessenger<TaggedTelemetryEvent> out = new FilteredBroadcastMessenger<>();
-
-        List<Class<? extends TaggedTelemetryEvent>> instancePriorities = new ArrayList<>();
-        instancePriorities.add(TorquePowerUpdate.class);
-        instancePriorities.add(InstantPowerUpdate.class);
-
-        EventPrioritiser prioritiser = new EventPrioritiser(out, TimeUnit.SECONDS.toNanos(10), new EventPrioritiser.Priorities[] {
-                new EventPrioritiser.Priorities(GenericPowerUpdate.class,
-                        instancePriorities,
-                        new Class<?>[0]),
+    public void instanceTrumpsTag() {
+        out.addListener(TaggedTelemetryEvent.class, new BroadcastListener<TaggedTelemetryEvent>() {
+            @Override
+            public void receiveMessage(TaggedTelemetryEvent taggedTelemetryEvent) {
+                assertTrue(A.class.isInstance(taggedTelemetryEvent));
+            }
         });
 
-        in.addListener(TaggedTelemetryEvent.class, prioritiser);
+        in.send(new A(tag3));
+        in.send(new B(tag1)); // higher tag priority, lower instance priority
+
+    }
+
+    @Test
+    public void lowerInstancePriorityEventsShouldBeFiltered() {
 
         final int [] res = new int[1];
 
@@ -41,23 +106,69 @@ public class EventPrioritiserTest {
             @Override
             public void receiveMessage(TaggedTelemetryEvent taggedTelemetryEvent) {
                res[0] += 1;
+               assertTrue(D.class.isInstance(taggedTelemetryEvent));
             }
         });
 
-        sendInstantPower(in);
-        sendTorquePower(in);
-        sendInstantPower(in);
-        sendInstantPower(in);
+        in.send(new D(tag1)); // highest priority
+        in.send(new A(tag1)); // filtered
+        in.send(new B(tag1)); // filtered
+        in.send(new C(tag1)); // filtered
+        in.send(new D(tag1)); // let through
 
         assertEquals(2, res[0]);
 
     }
 
-    private void sendTorquePower(FilteredBroadcastMessenger<TaggedTelemetryEvent> in) {
-        in.send(new TorquePowerUpdate(new Object(), 2000,2));
+    @Test
+    public void lowerInstanceAllowedThroughBeforeHigher() {
+        final ArrayList<Class<?>> res = new ArrayList<>();
+        final ArrayList<Class<?>> expected = new ArrayList<>();
+        expected.add(A.class);
+        expected.add(D.class);
+        expected.add(D.class);
+
+        out.addListener(TaggedTelemetryEvent.class, new BroadcastListener<TaggedTelemetryEvent>() {
+            @Override
+            public void receiveMessage(TaggedTelemetryEvent taggedTelemetryEvent) {
+                res.add(taggedTelemetryEvent.getClass());
+            }
+        });
+
+        in.send(new A(tag1)); // initially allowed through
+        in.send(new D(tag1)); // highest priority
+        in.send(new A(tag1)); // filtered
+        in.send(new B(tag1)); // filtered
+        in.send(new C(tag1)); // filtered
+        in.send(new D(tag1)); // let through
+
+        assertEquals(expected, res);
     }
 
-    private void sendInstantPower(FilteredBroadcastMessenger<TaggedTelemetryEvent> in) {
-        in.send(new InstantPowerUpdate(new Object(), new BigDecimal(0.0)));
+    @Test
+    public void correctlyFiltersBaseOnTag() {
+
+        final ArrayList<Class<?>> res = new ArrayList<>();
+        final ArrayList<Class<?>> expected = new ArrayList<>();
+        expected.add(Tag3.class);
+        expected.add(Tag2.class);
+        expected.add(Tag1.class);
+
+        out.addListener(TaggedTelemetryEvent.class, new BroadcastListener<TaggedTelemetryEvent>() {
+            @Override
+            public void receiveMessage(TaggedTelemetryEvent taggedTelemetryEvent) {
+                res.add(taggedTelemetryEvent.getTag().getClass());
+            }
+        });
+
+        in.send(new A(tag3));
+        in.send(new A(tag2));
+        in.send(new A(tag1));
+        in.send(new A(tag3));
+        in.send(new A(tag2));
+
+        assertEquals(expected, res);
     }
+
+
 }
