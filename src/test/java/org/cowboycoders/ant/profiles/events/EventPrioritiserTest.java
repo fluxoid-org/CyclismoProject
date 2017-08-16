@@ -14,8 +14,12 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 public class EventPrioritiserTest {
+    public static final long TIMEOUT_NANOS = TimeUnit.SECONDS.toNanos(10);
+    private EventPrioritiser prioritiser;
 
     // classes to test instance Priorities
 
@@ -55,6 +59,12 @@ public class EventPrioritiserTest {
         }
     }
 
+    private class E extends Base {
+        E(Object tag) {
+            super(tag);
+        }
+    }
+
     private class Tag1 {}
     private class Tag2 {}
     private class Tag3 {}
@@ -71,7 +81,7 @@ public class EventPrioritiserTest {
     public void initPipeline() {
         in = new FilteredBroadcastMessenger<>();
         out = new FilteredBroadcastMessenger<>();
-        EventPrioritiser prioritiser = new EventPrioritiser(out, TimeUnit.SECONDS.toNanos(10),
+        prioritiser = new EventPrioritiser(out, TIMEOUT_NANOS,
                 new PrioritisedEvent[] {
                         new PrioritisedEventBuilder(Base.class)
                                 .setInstancePriorities(D.class, A.class, B.class, C.class)
@@ -168,6 +178,52 @@ public class EventPrioritiserTest {
         in.send(new A(tag2));
 
         assertEquals(expected, res);
+    }
+
+    @Test
+    public void unprioritisedPassedThrough() {
+        final int [] res = new int[1];
+
+        out.addListener(TaggedTelemetryEvent.class, new BroadcastListener<TaggedTelemetryEvent>() {
+            @Override
+            public void receiveMessage(TaggedTelemetryEvent taggedTelemetryEvent) {
+                res[0] += 1;
+                assertTrue(E.class.isInstance(taggedTelemetryEvent));
+            }
+        });
+
+        in.send(new E(tag1)); // no priority set
+
+        assertEquals(1, res[0]);
+    }
+
+    @Test
+    public void msgStaleAfterTimeout() {
+        in = new FilteredBroadcastMessenger<>();
+
+        final ArrayList<Class<?>> res = new ArrayList<>();
+        final ArrayList<Class<?>> expected = new ArrayList<>();
+        expected.add(D.class);
+        expected.add(A.class);
+
+        EventPrioritiser spy = spy(prioritiser);
+        when(spy.getTimeStamp()).
+                thenReturn(0L)
+        .thenReturn(TIMEOUT_NANOS + 1); // +1 so that it is strictly greater
+
+        in.addListener(TaggedTelemetryEvent.class, spy);
+
+        out.addListener(TaggedTelemetryEvent.class, new BroadcastListener<TaggedTelemetryEvent>() {
+            @Override
+            public void receiveMessage(TaggedTelemetryEvent taggedTelemetryEvent) {
+                res.add(taggedTelemetryEvent.getClass());
+            }
+        });
+        in.send(new D(tag1)); // highest priority
+        in.send(new A(tag1)); // lower priority, but accepted because of timeout
+
+        assertEquals(expected, res);
+
     }
 
 

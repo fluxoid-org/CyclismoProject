@@ -6,7 +6,6 @@ import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEve
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Filters events by priority. If a message is not received within the timeout window a lower priority message
@@ -15,9 +14,30 @@ import java.util.List;
 public class EventPrioritiser implements BroadcastListener<TaggedTelemetryEvent> {
 
     private final FilteredBroadcastMessenger<TaggedTelemetryEvent> out;
+    private final long timeout;
+
+    private class TimeStampPair {
+        private TaggedTelemetryEvent event;
+        private long timeStamp;
+
+        public TimeStampPair(long newStamp, TaggedTelemetryEvent telemetryEvent) {
+            this.timeStamp = newStamp;
+            this.event = telemetryEvent;
+        }
+    }
+
+    /**
+     * Override for testing purposes. Should only be called one per received message.
+     * @return nano second precision timestamp
+     */
+    public long getTimeStamp() {
+        return System.nanoTime();
+    }
 
     @Override
     public void receiveMessage(TaggedTelemetryEvent telemetryEvent) {
+        final long timeStamp = getTimeStamp();
+
         if (!mappings.containsKey(telemetryEvent.getClass())) {
             OUTER :{
                 for (Class<? extends TaggedTelemetryEvent> clazz : allPrioritised) {
@@ -37,26 +57,33 @@ public class EventPrioritiser implements BroadcastListener<TaggedTelemetryEvent>
             out.send(telemetryEvent);
             return;
         }
-        TaggedTelemetryEvent last = lastUpdates.get(clazz);
-        if (last == null) {
+        TimeStampPair lastPair = lastUpdates.get(clazz);
+        if (lastPair == null) {
             // no previous data
-            accept(telemetryEvent, clazz);
+            accept(telemetryEvent, clazz, timeStamp);
             return;
         }
 
+        TaggedTelemetryEvent last = lastPair.event;
+
         // handle timeout
 
-        PrioritisedEvent pri = EventPrioritiser.this.priorities.get(clazz);;
+        if (timeStamp - lastPair.timeStamp > timeout) {
+            accept(telemetryEvent, clazz, timeStamp);
+            return;
+        }
+
+        PrioritisedEvent pri = EventPrioritiser.this.priorities.get(clazz);
         if (getInstancePriority(telemetryEvent, pri) <= getInstancePriority(last, pri)
                 && getTagPriority(telemetryEvent, pri) <= getTagPriority(last, pri)) {
-            accept(telemetryEvent, clazz);
+            accept(telemetryEvent, clazz, timeStamp);
         }
 
         // filter
     }
 
-    private void accept(TaggedTelemetryEvent telemetryEvent, Class<? extends TaggedTelemetryEvent> clazz) {
-        lastUpdates.put(clazz, telemetryEvent);
+    private void accept(TaggedTelemetryEvent telemetryEvent, Class<? extends TaggedTelemetryEvent> clazz, long newStamp) {
+        lastUpdates.put(clazz, new TimeStampPair(newStamp, telemetryEvent));
         out.send(telemetryEvent);
     }
 
@@ -86,7 +113,7 @@ public class EventPrioritiser implements BroadcastListener<TaggedTelemetryEvent>
     }
 
     // prioritised event to last received example
-    private HashMap<Class<? extends TaggedTelemetryEvent>, TaggedTelemetryEvent> lastUpdates = new HashMap<>();
+    private HashMap<Class<? extends TaggedTelemetryEvent>, TimeStampPair> lastUpdates = new HashMap<>();
     // prioritised event to priorities
     private HashMap<Class<? extends TaggedTelemetryEvent>, PrioritisedEvent> priorities = new HashMap<>();
     // telemetry event to base class in priorities list
@@ -94,6 +121,12 @@ public class EventPrioritiser implements BroadcastListener<TaggedTelemetryEvent>
     // all events that we filter
     private ArrayList<Class<? extends TaggedTelemetryEvent>> allPrioritised = new ArrayList<>();
 
+    /**
+     *
+     * @param out forwards unfiltered events here
+     * @param timeoutNanos before a previous update is considered stale
+     * @param priorities events to be prioritised. If an event not in this array is received, it will be passed through
+     */
     public EventPrioritiser(final FilteredBroadcastMessenger<TaggedTelemetryEvent> out, long timeoutNanos,
                             final PrioritisedEvent[] priorities) {
         for (PrioritisedEvent p : priorities) {
@@ -101,6 +134,7 @@ public class EventPrioritiser implements BroadcastListener<TaggedTelemetryEvent>
             this.priorities.put(p.event, p);
         }
         this.out = out;
+        this.timeout = timeoutNanos;
 
     }
 
