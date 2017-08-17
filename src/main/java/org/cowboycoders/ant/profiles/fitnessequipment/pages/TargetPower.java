@@ -1,6 +1,7 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
 import org.cowboycoders.ant.profiles.BitManipulation;
+import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 
 import java.math.BigDecimal;
@@ -25,7 +26,7 @@ public class TargetPower implements AntPage {
     private static final int POWER_OFFSET = 6;
     private final BigDecimal targetPower;
 
-    public static class TargetPowerPayload {
+    public static class TargetPowerPayload implements AntPacketEncodable {
 
         private BigDecimal targetPower;
 

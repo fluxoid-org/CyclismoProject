@@ -37,11 +37,10 @@ import static org.fluxoid.utils.Format.bytesToString;
  */
 public abstract class FecProfile {
 
-    public static final BigDecimal WHEEL_CIRCUMFERENCE = new BigDecimal(2.098);
+    private static final BigDecimal WHEEL_CIRCUMFERENCE = new BigDecimal(2.098);
     private Channel channel;
 
     // for BikeData, CommonPageData
-    private boolean lapFlag;
     private Defines.EquipmentType equipType = Defines.EquipmentType.UNRECOGNIZED;
     private BroadcastListener<Defines.EquipmentType> typeCallBack = null;
     private Defines.EquipmentState state = Defines.EquipmentState.UNRECOGNIZED;
@@ -117,7 +116,7 @@ public abstract class FecProfile {
 
     /**
      * Should update decoders to use new values from config
-     * @param config
+     * @param config to obtain data from
      */
     private void updateDecoders(Config config) {
         BigDecimal actualCircum = config.getBicycleWheelDiameter().multiply(
@@ -126,10 +125,24 @@ public abstract class FecProfile {
         speedDecoder = new SpeedDecoder<>(dataHub, actualCircum);
     }
 
-    public void setBasicResistance(double gradient) {
+    /**
+     *
+     * @param value either percentage (0.5% resolution) or an absolute value 0-255 depending on the model
+     */
+    public void setBasicResistance(double value) {
         sendEncodable(
         new PercentageResistance.PercentageResistancePayload()
-            .setResistance(new BigDecimal(gradient)));
+            .setResistance(new BigDecimal(value)));
+    }
+
+    /**
+     * @param power range 0-1000w, resolution: 0.25
+     */
+    public void setTargetPower(double power) {
+        sendEncodable(
+                new TargetPower.TargetPowerPayload()
+                .setTargetPower(new BigDecimal(power)
+        ));
     }
 
     public void setWindResistance(WindResistance.WindResistancePayload settings) {
@@ -151,12 +164,6 @@ public abstract class FecProfile {
                 .setZeroOffsetSuccess(true)
         );
     }
-
-
-    public void incrementLaps() {
-        lapFlag = !lapFlag;
-    }
-
 
 
     private void sendEncodable(AntPacketEncodable encodable) {
