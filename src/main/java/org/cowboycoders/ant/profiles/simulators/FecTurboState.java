@@ -340,11 +340,13 @@ public class FecTurboState implements TurboStateViewable {
         }
     };
 
-    private int torqueEvents;
-    private long torqueTimeStamp = System.nanoTime();
 
     private final TorqueData.TorqueDataPayload torqueDataPayload = new TorqueData.TorqueDataPayload();
     private PageGen torqueDataGen = new PageGen() {
+
+        private long rotations;
+        private int torqueEvents;
+        private Long torqueTimeStamp = null;
 
         @Override
         public AntPacketEncodable getPageEncoder() {
@@ -375,13 +377,17 @@ public class FecTurboState implements TurboStateViewable {
             }
 
             long now = System.nanoTime();
-            double delta = (now - torqueTimeStamp) / Math.pow(10,9);
-            BigDecimal rotations = new BigDecimal(delta).divide(period, 0, BigDecimal.ROUND_HALF_UP);
+            if (torqueTimeStamp != null) {
+                double delta = (now - torqueTimeStamp) / Math.pow(10,9);
+                rotations += new BigDecimal(delta).divide(period, 0, BigDecimal.ROUND_HALF_UP).longValue();
+            }
+            torqueTimeStamp = now;
+
             return setCommon(
                     torqueDataPayload
                     .setEvents(torqueEvents)
                     .updateTorqueSumFromPower(power, period)
-                    .setRotations(rotations.longValue())
+                    .setRotations(rotations)
             );
         }
     };
