@@ -72,6 +72,11 @@ public class TorqueDecoder<T extends TorqueDecodable> implements Decoder<T> {
         @Override
         protected void onNoCoast() {
             bus.send(new TorquePowerUpdate(getCurrentPage().getClass() ,torqueDelta, periodDelta));
+            if (getEventDelta() == 0) {
+                bus.send(new TorqueUpdate(getCurrentPage().getClass(), new BigDecimal(0.0)));
+                // should we update average torque
+                return;
+            }
             BigDecimal torque = new BigDecimal(torqueDelta).divide(new BigDecimal(32), 15, RoundingMode.HALF_UP).divide(new BigDecimal(getEventDelta()), 13, RoundingMode.HALF_UP);
             bus.send(new TorqueUpdate(getCurrentPage().getClass() ,torque));
             bus.send(new AverageTorqueUpdate(getCurrentPage().getClass(),periodSum, torqueSum, getEvents()));
