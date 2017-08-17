@@ -86,16 +86,20 @@ public abstract class CounterBasedDecoder<T extends CounterBasedDecodable> {
         prev = next;
     }
 
+    // coasting hooks
+    protected void onCoastStart() {}
+    protected void onCoastStop()  {}
+
     private void sendCoastDetected() {
         if (!sentCoast) {
-            bus.send(new CoastDetectedEvent(currentPage.getClass()));
+            onCoastStart();
             sentCoast = true;
         }
     }
 
     private void doStopCoast() {
         if (coastDetector.isCoasting())  {
-            bus.send(new CoastEndEvent(currentPage.getClass()));
+            onCoastStart();
         }
         coastDetector.stopCoast();
         sentCoast = false;

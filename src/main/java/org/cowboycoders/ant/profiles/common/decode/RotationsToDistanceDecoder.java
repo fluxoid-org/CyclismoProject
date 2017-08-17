@@ -2,7 +2,7 @@ package org.cowboycoders.ant.profiles.common.decode;
 
 import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.RotationsToDistanceDecodable;
-import org.cowboycoders.ant.profiles.common.decode.utils.CounterBasedDecoder;;
+import org.cowboycoders.ant.profiles.common.decode.utils.CounterBasedDecoder;
 import org.cowboycoders.ant.profiles.common.events.DistanceUpdate;
 import org.cowboycoders.ant.profiles.common.events.WheelRotationsUpdate;
 import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEvent;

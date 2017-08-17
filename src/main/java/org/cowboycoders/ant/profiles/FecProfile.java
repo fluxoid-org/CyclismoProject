@@ -228,6 +228,8 @@ public abstract class FecProfile {
         final AccDistanceDecoder<GeneralData> accDistDecoder = new AccDistanceDecoder<>(dataHub);
         final TimeDecoder<GeneralData> timeDecoder = new TimeDecoder<>(dataHub);
         final CalorieCountDecoder<MetabolicData> calorieDecoder = new CalorieCountDecoder<>(dataHub);
+        final CoastEventTrigger<TorqueData> torqueCoastEventTrigger = new CoastEventTrigger<>(dataHub);
+        final CoastEventTrigger<TrainerData> trainerCoastEventTrigger = new CoastEventTrigger<>(dataHub);
 
         final TorqueDecoder<TorqueData> torqueDecoder = new TorqueDecoder<>(dataHub);
 
@@ -279,6 +281,7 @@ public abstract class FecProfile {
             @Override
             public void receiveMessage(TrainerData trainerData) {
                 trainerDataDecoder.update(trainerData);
+                trainerCoastEventTrigger.update(trainerData);
             }
         });
 
