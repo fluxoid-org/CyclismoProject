@@ -79,11 +79,11 @@ public abstract class FecProfile {
     private Logger logger = LogManager.getLogger();
 
     public void requestCapabilities() {
-        requestPage(CapabilitiesPage.PAGE_NUMBER);
+       requestPageDemandResponse(CapabilitiesPage.PAGE_NUMBER, CapabilitiesPage.class);
     }
 
     public void requestConfig() {
-        requestPage(ConfigPage.PAGE_NUMBER);
+        requestPageDemandResponse(ConfigPage.PAGE_NUMBER, ConfigPage.class);
     }
 
     public void requestStatusCmd() {
@@ -91,19 +91,19 @@ public abstract class FecProfile {
     }
 
     public void requestStatusCalibration() {
-        requestPage(CalibrationResponse.PAGE_NUMBER);
+        requestPageDemandResponse(CalibrationResponse.PAGE_NUMBER, CalibrationResponse.class);
     }
 
     public void requestStatusBasic() {
-        requestPage(PercentageResistance.PAGE_NUMBER);
+        requestPageDemandResponse(PercentageResistance.PAGE_NUMBER, PercentageResistance.class);
     }
 
     public void requestStatusTrack() {
-        requestPage(TrackResistance.PAGE_NUMBER);
+        requestPageDemandResponse(TrackResistance.PAGE_NUMBER, TrainerData.class);
     }
 
     public void requestStatusWind() {
-        requestPage(WindResistance.PAGE_NUMBER);
+        requestPageDemandResponse(WindResistance.PAGE_NUMBER, WindResistance.class);
     }
 
     public void setConfig(Config config) {
@@ -180,6 +180,15 @@ public abstract class FecProfile {
 
     }
 
+    private <T extends AntPage> void requestPageDemandResponse(final int pageNumber, Class<T> response) {
+        requestBuffer.request(new RequestBuffer.RequestFor<T>(response) {
+            @Override
+            public void performRequest() {
+                requestPage(pageNumber);
+            }
+        });
+    }
+
 
 
     private final FilteredBroadcastMessenger<TaggedTelemetryEvent> dataHub = new FilteredBroadcastMessenger<>();
@@ -208,6 +217,8 @@ public abstract class FecProfile {
             WHEEL_CIRCUMFERENCE);
 
     private SpeedDecoder<TorqueData> speedDecoder = new SpeedDecoder<>(dataHub, WHEEL_CIRCUMFERENCE);
+
+    private final RequestBuffer requestBuffer = new RequestBuffer();
 
     public void start(Node transceiver) {
 
@@ -318,6 +329,8 @@ public abstract class FecProfile {
             }
         });
 
+        pageDispatcher.addListener(AntPage.class, requestBuffer);
+
 
         channel = transceiver.getFreeChannel();
         ChannelType type = new SlaveChannelType(false, false);
@@ -342,13 +355,7 @@ public abstract class FecProfile {
 
 
         // request config : we are assuming the wheel diameter is stored in here
-        channel.registerRxListener(new BroadcastListener<DataMessage>() {
-            @Override
-            public void receiveMessage(DataMessage channelMessage) {
-                requestConfig();
-                channel.removeRxListener(this);
-            }
-        }, DataMessage.class);
+        requestConfig();
 
         channel.registerEventHandler(new ChannelEventHandler() {
             @Override
