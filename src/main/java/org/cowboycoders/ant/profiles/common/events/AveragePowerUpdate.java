@@ -15,6 +15,7 @@ public class AveragePowerUpdate extends TaggedTelemetryEvent implements HasAvera
 
     @Override
     public BigDecimal getAveragePower() {
+        if (events == 0) return new BigDecimal(0.0);
         return new BigDecimal(accumPower)
                 .divide(new BigDecimal(events),
                         5, RoundingMode.HALF_UP);
