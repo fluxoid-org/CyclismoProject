@@ -15,6 +15,7 @@ import org.cowboycoders.ant.messages.data.DataMessage;
 import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.PageDispatcher;
 import org.cowboycoders.ant.profiles.common.decode.*;
+import org.cowboycoders.ant.profiles.common.decode.interfaces.CounterBasedDecodable;
 import org.cowboycoders.ant.profiles.common.events.*;
 import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEvent;
 import org.cowboycoders.ant.profiles.fitnessequipment.Capabilities;
@@ -77,6 +78,7 @@ public abstract class FecProfile {
 
 
     private Logger logger = LogManager.getLogger();
+
 
     public void requestCapabilities() {
        requestPageDemandResponse(CapabilitiesPage.PAGE_NUMBER, CapabilitiesPage.class);
@@ -193,6 +195,14 @@ public abstract class FecProfile {
 
     private final FilteredBroadcastMessenger<TaggedTelemetryEvent> dataHub = new FilteredBroadcastMessenger<>();
 
+    private final DecoderHub<CounterBasedDecodable> counterHub = new DecoderHub<CounterBasedDecodable>() {
+        @Override
+        public Decoder<CounterBasedDecodable> makeDecoder() {
+            return new CoastEventTrigger<>(dataHub);
+        }
+    };
+
+
     public FilteredBroadcastMessenger<TaggedTelemetryEvent> getDataHub() {
         return dataHub;
     }
@@ -228,8 +238,6 @@ public abstract class FecProfile {
         final AccDistanceDecoder<GeneralData> accDistDecoder = new AccDistanceDecoder<>(dataHub);
         final TimeDecoder<GeneralData> timeDecoder = new TimeDecoder<>(dataHub);
         final CalorieCountDecoder<MetabolicData> calorieDecoder = new CalorieCountDecoder<>(dataHub);
-        final CoastEventTrigger<TorqueData> torqueCoastEventTrigger = new CoastEventTrigger<>(dataHub);
-        final CoastEventTrigger<TrainerData> trainerCoastEventTrigger = new CoastEventTrigger<>(dataHub);
 
         final TorqueDecoder<TorqueData> torqueDecoder = new TorqueDecoder<>(dataHub);
 
@@ -281,7 +289,6 @@ public abstract class FecProfile {
             @Override
             public void receiveMessage(TrainerData trainerData) {
                 trainerDataDecoder.update(trainerData);
-                trainerCoastEventTrigger.update(trainerData);
             }
         });
 
@@ -289,7 +296,6 @@ public abstract class FecProfile {
             @Override
             public void receiveMessage(TorqueData torqueData) {
                 torqueDecoder.update(torqueData);
-                handleCommon(torqueData);
                 rotToDistDecoder.update(torqueData);
                 speedDecoder.update(torqueData);
             }
@@ -306,7 +312,6 @@ public abstract class FecProfile {
                 dataHub.send(new HeartRateUpdate(generalData.getClass(), generalData.getHeartRateSource(), generalData.getHeartRate()));
                 dataHub.send(new SpeedUpdate(generalData.getClass(), generalData.getSpeed(), generalData.isUsingVirtualSpeed()));
                 setEquipmentType(generalData.getType());
-                handleCommon(generalData);
             }
 
         });
@@ -316,7 +321,6 @@ public abstract class FecProfile {
             public void receiveMessage(BikeData bikeData) {
                 dataHub.send(new InstantPowerUpdate(BikeData.class, new BigDecimal(bikeData.getPower())));
                 dataHub.send(new CadenceUpdate(BikeData.class, bikeData.getCadence()));
-                handleCommon(bikeData);
             }
         });
 
@@ -324,7 +328,6 @@ public abstract class FecProfile {
             @Override
             public void receiveMessage(MetabolicData metabolicData) {
                 calorieDecoder.update(metabolicData);
-                handleCommon(metabolicData);
                 dataHub.send(new InstantMetabolicUpdate(MetabolicData.class,
                         metabolicData.getInstantCalorieBurn(),
                         metabolicData.getInstantMetabolicEquivalent()));
@@ -333,6 +336,21 @@ public abstract class FecProfile {
         });
 
         pageDispatcher.addListener(AntPage.class, requestBuffer);
+
+        pageDispatcher.addListener(AntPage.class, new BroadcastListener<AntPage>() {
+            @Override
+            public void receiveMessage(AntPage antPage) {
+                if (antPage instanceof CounterBasedDecodable) {
+                    CounterBasedDecodable cast = (CounterBasedDecodable) antPage;
+                    Decoder<CounterBasedDecodable> decoder = counterHub.getDecoder(cast);
+                    decoder.update(cast);
+                }
+                if (antPage instanceof CommonPageData) {
+                    handleCommon((CommonPageData) antPage);
+                }
+                
+            }
+        });
 
 
         channel = transceiver.getFreeChannel();
