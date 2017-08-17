@@ -14,6 +14,10 @@ public interface TurboStateViewable {
 
     int getCadence();
 
+    /**
+     *
+     * @return in km/h
+     */
     BigDecimal getSpeed();
 
     Athlete getAthlete();

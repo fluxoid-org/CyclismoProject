@@ -86,7 +86,7 @@ public class FecTurboState implements TurboStateViewable {
 
     @Override
     public BigDecimal getSpeed() {
-        return speed;
+        return toKmh(speed);
     }
 
     @Override
@@ -173,7 +173,7 @@ public class FecTurboState implements TurboStateViewable {
 
     /**
      * Front to back ratio
-     * @param inputTeeth numbre of teeth on chainring
+     * @param inputTeeth number of teeth on chain-ring
      * @param outputTeeth number of teeth on cassette sprocket
      * @return
      */
@@ -284,7 +284,7 @@ public class FecTurboState implements TurboStateViewable {
                     .setDistanceCovered(distance)
                     .setTimeElapsed(elapsed)
                     .setUsingVirtualSpeed(false)
-                    .setSpeed(speed)
+                    .setSpeed(getSpeed())
 
             );
         }
@@ -318,7 +318,10 @@ public class FecTurboState implements TurboStateViewable {
 
         @Override
         public AntPacketEncodable getPageEncoder() {
-            powerEvents += 1;
+            if (power > 0) {
+                // non- incrementing events -> coast event
+                powerEvents += 1;
+            }
             powerSum += power;
             return setCommon(
                     new TrainerData.TrainerDataPayload()
@@ -340,7 +343,10 @@ public class FecTurboState implements TurboStateViewable {
 
         @Override
         public AntPacketEncodable getPageEncoder() {
-            torqueEvents += 1;
+            if (power > 0) {
+                // non-incrementing event count signals a coast event
+                torqueEvents += 1;
+            }
             if (speed.compareTo(new BigDecimal(0.1)) < 0) {
                 // assume stationary to stop divide by zero when calculating period i.e period -> infinity
                 return setCommon(
@@ -356,7 +362,7 @@ public class FecTurboState implements TurboStateViewable {
                 // move this to a better place?
                 setCadence(
                         new BigDecimal(60) // seconds to minutes
-                                .divide(period.multiply(gearRatio), 0, RoundingMode.HALF_UP)
+                                .divide(period.multiply(gearRatio), 20, BigDecimal.ROUND_HALF_UP)
                                 .intValue()
                 );
             } else {
@@ -534,9 +540,13 @@ public class FecTurboState implements TurboStateViewable {
         powerModel.setTotalMass(bikeWeight.add(new BigDecimal(athlete.getWeight())).doubleValue());
         powerModel.setCoefficentRollingResistance(trackResistance.getCoefficientRollingResistance().doubleValue());
         powerModel.setGradientAsPercentage(trackResistance.getGradient().doubleValue());
-        powerModel.setWindSpeed(windResistance.getWindSpeed());
+        powerModel.setWindSpeed(toMetresPerSec(windResistance.getWindSpeed()));
         powerModel.updatePower(power);
         speed = new BigDecimal(powerModel.getVelocity());
+    }
+
+    private static double toMetresPerSec(int windSpeed) {
+        return windSpeed / 3.6;
     }
 
 
@@ -653,6 +663,10 @@ public class FecTurboState implements TurboStateViewable {
         }
     }
 
+    private static BigDecimal toKmh(BigDecimal ms) {
+        return ms.multiply(new BigDecimal(3.6));
+    }
+
     private class SpinDownOperationMode implements OperationMode, SpinDownInProgressState {
 
         private SpinDownCalibrationState state = SpinDownCalibrationState.AWAITING_SPEED_UP;
@@ -665,7 +679,7 @@ public class FecTurboState implements TurboStateViewable {
                         .setTempState(Defines.TemperatureCondition.CURRENT_TEMPERATURE_OK)
                         .setSpeedState(getSpeedState())
                         .setSpinDownPending(true)
-                        .setTargetSpeed(TARGET_SPEED)
+                        .setTargetSpeed(toKmh(TARGET_SPEED))
                         .setTargetSpinDownTime(10000);
             }
 

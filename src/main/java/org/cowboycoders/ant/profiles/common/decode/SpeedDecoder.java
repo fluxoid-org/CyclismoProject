@@ -60,6 +60,12 @@ public class SpeedDecoder<T extends SpeedDecodable> implements Decoder<T> {
 
         @Override
         protected void onNoCoast() {
+            // prevent divide by zero: a zero rotationPeriodDelta indicates stopped ?
+            if (rotationPeriodDelta == 0) {
+                bus.send(new SpeedUpdate(getCurrentPage().getClass(), new BigDecimal(0), false));
+                bus.send(new WheelFreqUpdate(getCurrentPage().getClass(), new BigDecimal(0.0)));
+                return;
+            }
             // 73728 = 2048 * 10 * 3.6
             // actual rotationPeriod = rotationPeriodDelta / 2048
             // ie we could get rid of convertToPerSecond,
