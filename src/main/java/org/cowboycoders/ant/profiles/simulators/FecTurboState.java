@@ -153,13 +153,18 @@ public class FecTurboState implements TurboStateViewable {
                 .createTrackResistance();
     }
 
+    public void setTargetPower(TargetPower packet) {
+        onCmdReceieved(CommandId.TARGET_POWER);
+        setPower((packet.getTargetPower().intValue()));
+    }
+
     private Athlete athlete = new MaleAthlete(ATHLETE_HEIGHT, 80, ATHLETE_AGE);
     private BigDecimal bikeWeight = new BigDecimal(10); // kg
     private BigDecimal gearRatio = getGearRatio(52, 11);
     private Capabilities capabilities = new CapabilitiesBuilder()
             .setBasicResistanceModeSupport(true)
             .setSimulationModeSupport(true)
-            .setTargetPowerModeSupport(false)
+            .setTargetPowerModeSupport(true)
             .setMaximumResistance(1234)
             .createCapabilities();
 
@@ -175,7 +180,7 @@ public class FecTurboState implements TurboStateViewable {
      * Front to back ratio
      * @param inputTeeth number of teeth on chain-ring
      * @param outputTeeth number of teeth on cassette sprocket
-     * @return
+     * @return computed ratio
      */
     private static BigDecimal getGearRatio(int inputTeeth, int outputTeeth) {
         return new BigDecimal(inputTeeth).divide(new BigDecimal(outputTeeth), 4 ,RoundingMode.HALF_UP);
@@ -485,9 +490,9 @@ public class FecTurboState implements TurboStateViewable {
     // type = BIKE doesn't use capabilities, torqueData
     //private RotatingView<PageGen> packetGen = new RotatingView<> (normalPages);
 
-    private static interface OperationMode extends OperationState {
+    private interface OperationMode extends OperationState {
 
-        public OperationMode update();
+        OperationMode update();
 
         RotatingView<PageGen> getPacketGenerators();
     }
@@ -695,7 +700,7 @@ public class FecTurboState implements TurboStateViewable {
 
         }
 
-        ;
+
 
         private SpeedCondition getSpeedState() {
             switch (state) {

@@ -111,6 +111,13 @@ public class DummyFecTurbo implements TurboControllable {
             }
         });
 
+        pageDispatcher.addListener(TargetPower.class, new BroadcastListener<TargetPower>() {
+            @Override
+            public void receiveMessage(TargetPower packet) {
+                state.setTargetPower(packet);
+            }
+        });
+
         pageDispatcher.addListener(WindResistance.class, new BroadcastListener<WindResistance>() {
             @Override
             public void receiveMessage(WindResistance page) {
