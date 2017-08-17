@@ -52,12 +52,15 @@ public class RotationsToDistanceDecoder<T extends RotationsToDistanceDecodable> 
             RotationsToDistanceDecodable next = getCurrentPage();
             RotationsToDistanceDecodable prev = getPreviousPage();
             wheelTicks += next.getWheelRotationsDelta(prev);
+
+            // want data even if coasting
+            bus.send(new WheelRotationsUpdate(getCurrentPage().getClass() ,wheelTicks));
+            bus.send(new DistanceUpdate(getCurrentPage().getClass(),wheelCircumferece.multiply(new BigDecimal(wheelTicks))));
         }
 
         @Override
         protected void onNoCoast() {
-            bus.send(new WheelRotationsUpdate(getCurrentPage().getClass() ,wheelTicks));
-            bus.send(new DistanceUpdate(getCurrentPage().getClass(),wheelCircumferece.multiply(new BigDecimal(wheelTicks))));
+
         }
     }
 

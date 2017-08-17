@@ -3,6 +3,7 @@ package org.cowboycoders.ant.profiles.common.decode.utils;
 import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.CounterBasedDecodable;
 import org.cowboycoders.ant.profiles.common.events.CoastDetectedEvent;
+import org.cowboycoders.ant.profiles.common.events.CoastEndEvent;
 import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEvent;
 
 /**
@@ -54,6 +55,8 @@ public abstract class CounterBasedDecoder<T extends CounterBasedDecodable> {
 
     protected abstract void onNoCoast();
 
+    private boolean sentCoast = false;
+
     public void update(T next) {
         this.currentPage = next;
         onUpdate();
@@ -72,14 +75,30 @@ public abstract class CounterBasedDecoder<T extends CounterBasedDecodable> {
         if (next.getEventCountDelta(prev) == 0) {
             coastDetector.startCoast(prev);
         } else {
-            coastDetector.stopCoast();
+            doStopCoast();
         }
         if (coastDetector.isCoasting()) {
-            bus.send(new CoastDetectedEvent(currentPage.getClass()));
+            sendCoastDetected();
+
         } else {
             onNoCoast();
         }
         prev = next;
+    }
+
+    private void sendCoastDetected() {
+        if (!sentCoast) {
+            bus.send(new CoastDetectedEvent(currentPage.getClass()));
+            sentCoast = true;
+        }
+    }
+
+    private void doStopCoast() {
+        if (coastDetector.isCoasting())  {
+            bus.send(new CoastEndEvent(currentPage.getClass()));
+        }
+        coastDetector.stopCoast();
+        sentCoast = false;
     }
 
     protected abstract void onUpdate();

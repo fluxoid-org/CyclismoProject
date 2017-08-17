@@ -35,6 +35,7 @@ public class CoastDetector {
     }
 
     public void startCoast(TelemetryPage start) {
+        if (coastWindowOpen) return;
         coastWindowOpen = true;
         coastStart = start.getTimestamp();
     }
