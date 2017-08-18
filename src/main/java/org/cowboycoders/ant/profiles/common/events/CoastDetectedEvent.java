@@ -5,7 +5,7 @@ import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEve
 /**
  * Created by fluxoid on 05/01/17.
  */
-public class CoastDetectedEvent extends TaggedTelemetryEvent {
+public class CoastDetectedEvent extends CoastEvent {
 
     public CoastDetectedEvent(Object tag) {
         super(tag);
