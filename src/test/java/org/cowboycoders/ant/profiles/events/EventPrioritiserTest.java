@@ -85,11 +85,12 @@ public class EventPrioritiserTest {
     public void initPipeline() {
         in = new FilteredBroadcastMessenger<>();
         out = new FilteredBroadcastMessenger<>();
-        prioritiser = new EventPrioritiser(out, TIMEOUT_NANOS,
+        prioritiser = new EventPrioritiser(out,
                 new PrioritisedEvent[] {
                         new PrioritisedEventBuilder(Base.class)
                                 .setInstancePriorities(D.class, A.class, B.class, C.class)
                                 .setTagPriorities(Tag1.class, Tag2.class, Tag3.class)
+                                .setTimeout(TIMEOUT_NANOS)
                                 .createPrioritisedEvent(),
                         new PrioritisedEventBuilder(SpeedUpdate.class)
                                 .setTagPriorities(GeneralData.class, TorqueData.class)

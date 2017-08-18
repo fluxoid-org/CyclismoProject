@@ -14,7 +14,6 @@ import java.util.HashMap;
 public class EventPrioritiser implements BroadcastListener<TaggedTelemetryEvent> {
 
     private final FilteredBroadcastMessenger<TaggedTelemetryEvent> out;
-    private final long timeout;
 
     private class TimeStampPair {
         private TaggedTelemetryEvent event;
@@ -67,13 +66,13 @@ public class EventPrioritiser implements BroadcastListener<TaggedTelemetryEvent>
         TaggedTelemetryEvent last = lastPair.event;
 
         // handle timeout
+        PrioritisedEvent pri = EventPrioritiser.this.priorities.get(clazz);
 
-        if (timeStamp - lastPair.timeStamp > timeout) {
+        if (timeStamp - lastPair.timeStamp > pri.timeout) {
             accept(telemetryEvent, clazz, timeStamp);
             return;
         }
 
-        PrioritisedEvent pri = EventPrioritiser.this.priorities.get(clazz);
         if (getInstancePriority(telemetryEvent, pri) <= getInstancePriority(last, pri)
                 && getTagPriority(telemetryEvent, pri) <= getTagPriority(last, pri)) {
             accept(telemetryEvent, clazz, timeStamp);
@@ -88,18 +87,22 @@ public class EventPrioritiser implements BroadcastListener<TaggedTelemetryEvent>
     }
 
     public static class PrioritisedEvent {
+
         private final HashMap<Class<?>, Integer> tagPriorities = new HashMap<>();
         private final HashMap<Class<? extends TaggedTelemetryEvent>, Integer>  instancePriorities = new HashMap<>();
         private final Class<? extends TaggedTelemetryEvent> event;
+        private final long timeout;
 
         /**
          *
          * @param event generic base
+         * @param timeoutNanos before a previous update is considered stale
          * @param instancePriorities ordered list of priorities, more specific first
          *                           (first matching class is used for filtering)
          * @param tagPriorities higher priority first
          */
         public PrioritisedEvent(Class<? extends TaggedTelemetryEvent> event,
+                                long timeoutNanos,
                                 Class<?> [] tagPriorities,
                                 Class<? extends TaggedTelemetryEvent> [] instancePriorities) {
             this.event = event;
@@ -109,6 +112,7 @@ public class EventPrioritiser implements BroadcastListener<TaggedTelemetryEvent>
             for (int i = 0; i < tagPriorities.length; i++) {
                 this.tagPriorities.put(tagPriorities[i], i);
             }
+            this.timeout = timeoutNanos;
         }
     }
 
@@ -124,17 +128,15 @@ public class EventPrioritiser implements BroadcastListener<TaggedTelemetryEvent>
     /**
      *
      * @param out forwards unfiltered events here
-     * @param timeoutNanos before a previous update is considered stale
      * @param priorities events to be prioritised. If an event not in this array is received, it will be passed through
      */
-    public EventPrioritiser(final FilteredBroadcastMessenger<TaggedTelemetryEvent> out, long timeoutNanos,
+    public EventPrioritiser(final FilteredBroadcastMessenger<TaggedTelemetryEvent> out,
                             final PrioritisedEvent[] priorities) {
         for (PrioritisedEvent p : priorities) {
             allPrioritised.add(p.event);
             this.priorities.put(p.event, p);
         }
         this.out = out;
-        this.timeout = timeoutNanos;
 
     }
 

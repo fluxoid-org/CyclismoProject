@@ -5,6 +5,12 @@ import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEve
 public class PrioritisedEventBuilder {
     private Class<? extends TaggedTelemetryEvent> event;
     private Class<?>[] tagPriorities = new Class<?>[0];
+    private long timeout = Long.MAX_VALUE;
+
+    public PrioritisedEventBuilder setTimeout(long timeout) {
+        this.timeout = timeout;
+        return this;
+    }
 
     @SuppressWarnings("unchecked") // zero length
     private Class<? extends TaggedTelemetryEvent>[] instancePriorities =
@@ -26,6 +32,6 @@ public class PrioritisedEventBuilder {
     }
 
     public EventPrioritiser.PrioritisedEvent createPrioritisedEvent() {
-        return new EventPrioritiser.PrioritisedEvent(event, tagPriorities, instancePriorities);
+        return new EventPrioritiser.PrioritisedEvent(event, timeout, tagPriorities, instancePriorities);
     }
 }
