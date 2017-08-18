@@ -79,7 +79,7 @@ public class TorqueDecoder<T extends TorqueDecodable> implements Decoder<T> {
             }
             BigDecimal torque = new BigDecimal(torqueDelta).divide(new BigDecimal(32), 15, RoundingMode.HALF_UP).divide(new BigDecimal(getEventDelta()), 13, RoundingMode.HALF_UP);
             bus.send(new TorqueUpdate(getCurrentPage().getClass() ,torque));
-            bus.send(new AverageTorqueUpdate(getCurrentPage().getClass(),periodSum, torqueSum, getEvents()));
+            bus.send(new AverageTorqueUpdate(getCurrentPage(),periodSum, torqueSum, getEvents()));
         }
 
     }

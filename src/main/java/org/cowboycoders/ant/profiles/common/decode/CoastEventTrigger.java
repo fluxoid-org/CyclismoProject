@@ -43,12 +43,12 @@ public class CoastEventTrigger<T extends CounterBasedDecodable> implements Decod
 
         @Override
         protected void onCoastStart() {
-            bus.send(new CoastDetectedEvent(getCurrentPage().getClass()));
+            bus.send(new CoastDetectedEvent(getCurrentPage()));
         }
 
         @Override
         protected void onCoastStop() {
-            bus.send(new CoastEndEvent(getCurrentPage().getClass()));
+            bus.send(new CoastEndEvent(getCurrentPage()));
         }
     }
 

@@ -38,7 +38,7 @@ public class CalorieCountDecoder<T extends CalorieCountDecodable> implements Dec
         }
         caloriesBurnt += newPage.getCalorieDelta(prev);
         prev = newPage;
-        bus.send(new CalorieBurntUpdate(newPage.getClass(), caloriesBurnt));
+        bus.send(new CalorieBurntUpdate(newPage, caloriesBurnt));
     }
 
     @Override

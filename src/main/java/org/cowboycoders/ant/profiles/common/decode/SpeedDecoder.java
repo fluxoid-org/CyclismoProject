@@ -62,8 +62,8 @@ public class SpeedDecoder<T extends SpeedDecodable> implements Decoder<T> {
         protected void onNoCoast() {
             // prevent divide by zero: a zero rotationPeriodDelta indicates stopped ?
             if (rotationPeriodDelta == 0) {
-                bus.send(new SpeedUpdate(getCurrentPage().getClass(), new BigDecimal(0), false));
-                bus.send(new WheelFreqUpdate(getCurrentPage().getClass(), new BigDecimal(0.0)));
+                bus.send(new SpeedUpdate(getCurrentPage(), new BigDecimal(0), false));
+                bus.send(new WheelFreqUpdate(getCurrentPage(), new BigDecimal(0.0)));
                 return;
             }
             // 73728 = 2048 * 10 * 3.6
@@ -71,8 +71,8 @@ public class SpeedDecoder<T extends SpeedDecodable> implements Decoder<T> {
             // ie we could get rid of convertToPerSecond,
             BigDecimal freq = new BigDecimal(2048).multiply(new BigDecimal(this.getEventDelta())
                     .divide(new BigDecimal(rotationPeriodDelta), 4, RoundingMode.HALF_UP));
-            bus.send(new WheelFreqUpdate(getCurrentPage().getClass() ,freq));
-            bus.send(new SpeedUpdate(getCurrentPage().getClass(), freq.multiply(wheelCircumferece)
+            bus.send(new WheelFreqUpdate(getCurrentPage() ,freq));
+            bus.send(new SpeedUpdate(getCurrentPage(), freq.multiply(wheelCircumferece)
                     // convert to kh/h from m/s
                     .multiply(new BigDecimal (3.6)).setScale(2, RoundingMode.HALF_UP), false));
         }

@@ -2,10 +2,14 @@ package org.cowboycoders.ant.profiles.events;
 
 import org.cowboycoders.ant.events.BroadcastListener;
 import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
+import org.cowboycoders.ant.profiles.common.decode.interfaces.TorqueDecodable;
 import org.cowboycoders.ant.profiles.common.events.EventPrioritiser;
 import org.cowboycoders.ant.profiles.common.events.EventPrioritiser.PrioritisedEvent;
 import org.cowboycoders.ant.profiles.common.events.PrioritisedEventBuilder;
+import org.cowboycoders.ant.profiles.common.events.SpeedUpdate;
 import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEvent;
+import org.cowboycoders.ant.profiles.fitnessequipment.pages.GeneralData;
+import org.cowboycoders.ant.profiles.fitnessequipment.pages.TorqueData;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -86,6 +90,9 @@ public class EventPrioritiserTest {
                         new PrioritisedEventBuilder(Base.class)
                                 .setInstancePriorities(D.class, A.class, B.class, C.class)
                                 .setTagPriorities(Tag1.class, Tag2.class, Tag3.class)
+                                .createPrioritisedEvent(),
+                        new PrioritisedEventBuilder(SpeedUpdate.class)
+                                .setTagPriorities(GeneralData.class, TorqueData.class)
                                 .createPrioritisedEvent(),
 
 
@@ -176,6 +183,26 @@ public class EventPrioritiserTest {
         in.send(new A(tag1));
         in.send(new A(tag3));
         in.send(new A(tag2));
+
+        assertEquals(expected, res);
+    }
+
+    @Test
+    public void worksWithReal() {
+
+        final ArrayList<Class<?>> res = new ArrayList<>();
+        final ArrayList<Class<?>> expected = new ArrayList<>();
+        expected.add(GeneralData.class);
+
+        out.addListener(TaggedTelemetryEvent.class, new BroadcastListener<TaggedTelemetryEvent>() {
+            @Override
+            public void receiveMessage(TaggedTelemetryEvent taggedTelemetryEvent) {
+                res.add(taggedTelemetryEvent.getTag().getClass());
+            }
+        });
+
+        in.send(new SpeedUpdate(new GeneralData(new byte[8]), null, false));
+        in.send(new SpeedUpdate(new TorqueData(new byte[8]), null, false));
 
         assertEquals(expected, res);
     }

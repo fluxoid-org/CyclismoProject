@@ -309,8 +309,8 @@ public abstract class FecProfile {
             public void receiveMessage(GeneralData generalData) {
                 accDistDecoder.update(generalData);
                 timeDecoder.update(generalData);
-                dataHub.send(new HeartRateUpdate(generalData.getClass(), generalData.getHeartRateSource(), generalData.getHeartRate()));
-                dataHub.send(new SpeedUpdate(generalData.getClass(), generalData.getSpeed(), generalData.isUsingVirtualSpeed()));
+                dataHub.send(new HeartRateUpdate(generalData, generalData.getHeartRateSource(), generalData.getHeartRate()));
+                dataHub.send(new SpeedUpdate(generalData, generalData.getSpeed(), generalData.isUsingVirtualSpeed()));
                 setEquipmentType(generalData.getType());
             }
 
@@ -319,8 +319,8 @@ public abstract class FecProfile {
         pageDispatcher.addListener(BikeData.class, new BroadcastListener<BikeData>() {
             @Override
             public void receiveMessage(BikeData bikeData) {
-                dataHub.send(new InstantPowerUpdate(BikeData.class, new BigDecimal(bikeData.getPower())));
-                dataHub.send(new CadenceUpdate(BikeData.class, bikeData.getCadence()));
+                dataHub.send(new InstantPowerUpdate(bikeData, new BigDecimal(bikeData.getPower())));
+                dataHub.send(new CadenceUpdate(bikeData, bikeData.getCadence()));
             }
         });
 
@@ -328,7 +328,7 @@ public abstract class FecProfile {
             @Override
             public void receiveMessage(MetabolicData metabolicData) {
                 calorieDecoder.update(metabolicData);
-                dataHub.send(new InstantMetabolicUpdate(MetabolicData.class,
+                dataHub.send(new InstantMetabolicUpdate(metabolicData,
                         metabolicData.getInstantCalorieBurn(),
                         metabolicData.getInstantMetabolicEquivalent()));
 

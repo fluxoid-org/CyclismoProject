@@ -24,7 +24,7 @@ public class LapFlagDecoder<T extends LapFlagDecodable> implements Decoder<T> {
         prev = newPage;
         if (state == prevState) return;
         laps += 1;
-        bus.send(new LapUpdate(newPage.getClass(),laps));
+        bus.send(new LapUpdate(newPage,laps));
 
     }
 

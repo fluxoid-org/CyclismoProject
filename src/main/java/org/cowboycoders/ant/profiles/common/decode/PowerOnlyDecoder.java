@@ -59,7 +59,7 @@ public class PowerOnlyDecoder<T extends PowerOnlyDecodable> implements Decoder<T
 
         @Override
         protected void onNoCoast() {
-            bus.send(new AveragePowerUpdate(getCurrentPage().getClass() ,powerSum, getEvents()));
+            bus.send(new AveragePowerUpdate(getCurrentPage() ,powerSum, getEvents()));
         }
     }
 }
