@@ -15,9 +15,17 @@ public class EventPrioritiser implements BroadcastListener<TaggedTelemetryEvent>
 
     private final FilteredBroadcastMessenger<TaggedTelemetryEvent> out;
 
-    private class TimeStampPair {
+    protected class TimeStampPair {
         private TaggedTelemetryEvent event;
         private long timeStamp;
+
+        public TaggedTelemetryEvent getEvent() {
+            return event;
+        }
+
+        public long getTimeStamp() {
+            return timeStamp;
+        }
 
         public TimeStampPair(long newStamp, TaggedTelemetryEvent telemetryEvent) {
             this.timeStamp = newStamp;
@@ -59,7 +67,7 @@ public class EventPrioritiser implements BroadcastListener<TaggedTelemetryEvent>
         TimeStampPair lastPair = lastUpdates.get(clazz);
         if (lastPair == null) {
             // no previous data
-            accept(telemetryEvent, clazz, timeStamp);
+            onFirstUpdate(telemetryEvent, clazz, timeStamp);
             return;
         }
 
@@ -69,20 +77,49 @@ public class EventPrioritiser implements BroadcastListener<TaggedTelemetryEvent>
         PrioritisedEvent pri = EventPrioritiser.this.priorities.get(clazz);
 
         if (timeStamp - lastPair.timeStamp > pri.timeout) {
-            accept(telemetryEvent, clazz, timeStamp);
+            onLowerPriority(telemetryEvent, clazz, timeStamp);
             return;
         }
-
-        if (getInstancePriority(telemetryEvent, pri) <= getInstancePriority(last, pri)
-                && getTagPriority(telemetryEvent, pri) <= getTagPriority(last, pri)) {
-            accept(telemetryEvent, clazz, timeStamp);
+        if (last.getClass().equals(telemetryEvent.getClass()) && last.getTag().getClass().equals(
+                telemetryEvent.getTag().getClass()
+        )) {
+            onMatchingPriority(telemetryEvent, clazz, timeStamp);
+        } else if (getInstancePriority(telemetryEvent, pri) < getInstancePriority(last, pri)) {
+            onLowerPriority(telemetryEvent, clazz, timeStamp);
+        } else if (getInstancePriority(telemetryEvent, pri).equals(getInstancePriority(last,pri))
+                && getTagPriority(telemetryEvent,pri) < getTagPriority(last, pri)) {
+            onLowerPriority(telemetryEvent, clazz, timeStamp);
         }
 
         // filter
     }
 
-    private void accept(TaggedTelemetryEvent telemetryEvent, Class<? extends TaggedTelemetryEvent> clazz, long newStamp) {
+    protected void onMatchingPriority(TaggedTelemetryEvent telemetryEvent, Class<? extends TaggedTelemetryEvent> clazz, long timeStamp) {
+        doAccept(telemetryEvent, clazz, timeStamp);
+    }
+
+    protected void onLowerPriority(TaggedTelemetryEvent telemetryEvent, Class<? extends TaggedTelemetryEvent> clazz, long timeStamp) {
+        doAccept(telemetryEvent, clazz, timeStamp);
+    }
+
+    protected PrioritisedEvent getPrioritisedEvent(Class<? extends TaggedTelemetryEvent> clazz) {
+        return priorities.get(clazz);
+    }
+
+    protected void onFirstUpdate(TaggedTelemetryEvent telemetryEvent, Class<? extends TaggedTelemetryEvent> clazz, long newStamp) {
+        doAccept(telemetryEvent, clazz, newStamp);
+    }
+
+    private void doAccept(TaggedTelemetryEvent telemetryEvent, Class<? extends TaggedTelemetryEvent> clazz, long newStamp) {
+        store(telemetryEvent, clazz, newStamp);
+        accept(telemetryEvent);
+    }
+
+    protected void store(TaggedTelemetryEvent telemetryEvent, Class<? extends TaggedTelemetryEvent> clazz, long newStamp) {
         lastUpdates.put(clazz, new TimeStampPair(newStamp, telemetryEvent));
+    }
+
+    protected void accept(TaggedTelemetryEvent telemetryEvent) {
         out.send(telemetryEvent);
     }
 
@@ -125,6 +162,10 @@ public class EventPrioritiser implements BroadcastListener<TaggedTelemetryEvent>
     // all events that we filter
     private ArrayList<Class<? extends TaggedTelemetryEvent>> allPrioritised = new ArrayList<>();
 
+    protected HashMap<Class<? extends TaggedTelemetryEvent>, TimeStampPair> getLastUpdates() {
+        return lastUpdates;
+    }
+
     /**
      *
      * @param out forwards unfiltered events here
@@ -140,13 +181,13 @@ public class EventPrioritiser implements BroadcastListener<TaggedTelemetryEvent>
 
     }
 
-    private Integer getTagPriority(TaggedTelemetryEvent telemetryEvent, PrioritisedEvent pri) {
+    protected Integer getTagPriority(TaggedTelemetryEvent telemetryEvent, PrioritisedEvent pri) {
         Integer result =  pri.tagPriorities.get(telemetryEvent.getTag().getClass());
         if (result == null) return Integer.MAX_VALUE;
         return result;
     }
 
-    private Integer getInstancePriority(TaggedTelemetryEvent telemetryEvent, PrioritisedEvent pri) {
+    protected Integer getInstancePriority(TaggedTelemetryEvent telemetryEvent, PrioritisedEvent pri) {
         Integer result = pri.instancePriorities.get(telemetryEvent.getClass());
         if (result == null) return Integer.MAX_VALUE;
         return result;

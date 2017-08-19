@@ -99,7 +99,7 @@ public abstract class CounterBasedDecoder<T extends CounterBasedDecodable> {
 
     private void doStopCoast() {
         if (coastDetector.isCoasting())  {
-            onCoastStart();
+            onCoastStop();
         }
         coastDetector.stopCoast();
         sentCoast = false;

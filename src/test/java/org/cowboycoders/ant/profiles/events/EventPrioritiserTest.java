@@ -2,7 +2,7 @@ package org.cowboycoders.ant.profiles.events;
 
 import org.cowboycoders.ant.events.BroadcastListener;
 import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
-import org.cowboycoders.ant.profiles.common.decode.interfaces.TorqueDecodable;
+import org.cowboycoders.ant.profiles.common.events.BufferedEventPrioritiser;
 import org.cowboycoders.ant.profiles.common.events.EventPrioritiser;
 import org.cowboycoders.ant.profiles.common.events.EventPrioritiser.PrioritisedEvent;
 import org.cowboycoders.ant.profiles.common.events.PrioritisedEventBuilder;
@@ -10,7 +10,6 @@ import org.cowboycoders.ant.profiles.common.events.SpeedUpdate;
 import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEvent;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.GeneralData;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.TorqueData;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -80,29 +79,36 @@ public class EventPrioritiserTest {
 
     private FilteredBroadcastMessenger<TaggedTelemetryEvent> in;
     private FilteredBroadcastMessenger<TaggedTelemetryEvent> out;
+    private PrioritisedEvent[] priorities = new PrioritisedEvent[]{
+            new PrioritisedEventBuilder(Base.class)
+                    .setInstancePriorities(D.class, A.class, B.class, C.class)
+                    .setTagPriorities(Tag1.class, Tag2.class, Tag3.class)
+                    .setTimeout(TIMEOUT_NANOS)
+                    .createPrioritisedEvent(),
+            new PrioritisedEventBuilder(SpeedUpdate.class)
+                    .setTagPriorities(GeneralData.class, TorqueData.class)
+                    .createPrioritisedEvent(),
 
-    @Before
+
+    };
+
     public void initPipeline() {
         in = new FilteredBroadcastMessenger<>();
         out = new FilteredBroadcastMessenger<>();
-        prioritiser = new EventPrioritiser(out,
-                new PrioritisedEvent[] {
-                        new PrioritisedEventBuilder(Base.class)
-                                .setInstancePriorities(D.class, A.class, B.class, C.class)
-                                .setTagPriorities(Tag1.class, Tag2.class, Tag3.class)
-                                .setTimeout(TIMEOUT_NANOS)
-                                .createPrioritisedEvent(),
-                        new PrioritisedEventBuilder(SpeedUpdate.class)
-                                .setTagPriorities(GeneralData.class, TorqueData.class)
-                                .createPrioritisedEvent(),
-
-
-                });
+        prioritiser = new EventPrioritiser(out, priorities);
         in.addListener(TaggedTelemetryEvent.class, prioritiser);
+    }
+
+    public void initBuffered() {
+        in = new FilteredBroadcastMessenger<>();
+        out = new FilteredBroadcastMessenger<>();
+        EventPrioritiser bufferedPrioritiser = new BufferedEventPrioritiser(out, priorities);
+        in.addListener(TaggedTelemetryEvent.class, bufferedPrioritiser);
     }
 
     @Test
     public void instanceTrumpsTag() {
+        initPipeline();
         out.addListener(TaggedTelemetryEvent.class, new BroadcastListener<TaggedTelemetryEvent>() {
             @Override
             public void receiveMessage(TaggedTelemetryEvent taggedTelemetryEvent) {
@@ -117,7 +123,7 @@ public class EventPrioritiserTest {
 
     @Test
     public void lowerInstancePriorityEventsShouldBeFiltered() {
-
+        initPipeline();
         final int [] res = new int[1];
 
         out.addListener(TaggedTelemetryEvent.class, new BroadcastListener<TaggedTelemetryEvent>() {
@@ -140,6 +146,7 @@ public class EventPrioritiserTest {
 
     @Test
     public void lowerInstanceAllowedThroughBeforeHigher() {
+        initPipeline();
         final ArrayList<Class<?>> res = new ArrayList<>();
         final ArrayList<Class<?>> expected = new ArrayList<>();
         expected.add(A.class);
@@ -165,7 +172,7 @@ public class EventPrioritiserTest {
 
     @Test
     public void correctlyFiltersBaseOnTag() {
-
+        initPipeline();
         final ArrayList<Class<?>> res = new ArrayList<>();
         final ArrayList<Class<?>> expected = new ArrayList<>();
         expected.add(Tag3.class);
@@ -190,7 +197,7 @@ public class EventPrioritiserTest {
 
     @Test
     public void worksWithReal() {
-
+        initPipeline();
         final ArrayList<Class<?>> res = new ArrayList<>();
         final ArrayList<Class<?>> expected = new ArrayList<>();
         expected.add(GeneralData.class);
@@ -210,6 +217,7 @@ public class EventPrioritiserTest {
 
     @Test
     public void unprioritisedPassedThrough() {
+        initPipeline();
         final int [] res = new int[1];
 
         out.addListener(TaggedTelemetryEvent.class, new BroadcastListener<TaggedTelemetryEvent>() {
@@ -227,6 +235,7 @@ public class EventPrioritiserTest {
 
     @Test
     public void msgStaleAfterTimeout() {
+        initPipeline();
         in = new FilteredBroadcastMessenger<>();
 
         final ArrayList<Class<?>> res = new ArrayList<>();
@@ -252,6 +261,57 @@ public class EventPrioritiserTest {
 
         assertEquals(expected, res);
 
+    }
+
+    @Test
+    public void bufferedHoldsBackFirst() {
+        initBuffered();
+        final ArrayList<Class<?>> res = new ArrayList<>();
+        final ArrayList<Class<?>> expected = new ArrayList<>();
+        expected.add(A.class);
+
+        out.addListener(TaggedTelemetryEvent.class, new BroadcastListener<TaggedTelemetryEvent>() {
+            @Override
+            public void receiveMessage(TaggedTelemetryEvent taggedTelemetryEvent) {
+                res.add(taggedTelemetryEvent.getClass());
+            }
+        });
+
+        in.send(new A(tag2));
+        assertEquals(expected, res);
+        in.send(new A(tag1)); // assumed to same event as previous
+        assertEquals(expected, res);
+
+        expected.add(A.class);
+        in.send(new A(tag1));
+        assertEquals(expected,res);
+    }
+
+    @Test
+    public void bufferedLowerTag() {
+        initBuffered();
+        final ArrayList<Class<?>> res = new ArrayList<>();
+        final ArrayList<Class<?>> expected = new ArrayList<>();
+        expected.add(A.class);
+
+        out.addListener(TaggedTelemetryEvent.class, new BroadcastListener<TaggedTelemetryEvent>() {
+            @Override
+            public void receiveMessage(TaggedTelemetryEvent taggedTelemetryEvent) {
+                res.add(taggedTelemetryEvent.getClass());
+            }
+        });
+
+        in.send(new A(tag3));
+        assertEquals(expected, res);
+
+        in.send(new A(tag1));
+        assertEquals(expected,res);
+
+        in.send(new A(tag2));
+        assertEquals(expected, res);
+
+        expected.add(A.class);
+        in.send(new A(tag1));
     }
 
 
