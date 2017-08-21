@@ -73,6 +73,11 @@ public abstract class FecProfile {
 
             }
 
+            @Override
+            public void onCalibrationStatusReceieved(CalibrationResponse calibrationResponse) {
+
+            }
+
         }.start(node);
     }
 
@@ -165,6 +170,10 @@ public abstract class FecProfile {
                 new CalibrationResponse.CalibrationResponsePayload()
                 .setZeroOffsetSuccess(true)
         );
+    }
+
+    public void requestCalibrationStatus() {
+        requestPageDemandResponse(CalibrationResponse.PAGE_NUMBER, CalibrationResponse.class);
     }
 
 
@@ -352,6 +361,13 @@ public abstract class FecProfile {
             }
         });
 
+        pageDispatcher.addListener(CalibrationResponse.class, new BroadcastListener<CalibrationResponse>() {
+            @Override
+            public void receiveMessage(CalibrationResponse calibrationResponse) {
+                onCalibrationStatusReceieved(calibrationResponse);
+            }
+        });
+
 
         channel = transceiver.getFreeChannel();
         ChannelType type = new SlaveChannelType(false, false);
@@ -463,4 +479,6 @@ public abstract class FecProfile {
     public abstract void onCapabilitiesReceived(Capabilities capabilitiesPage);
     public abstract void onConfigRecieved(Config conf);
     public abstract void onCalibrationUpdate(CalibrationProgress progress);
+    public abstract void onCalibrationStatusReceieved(CalibrationResponse calibrationResponse);
+
 }
