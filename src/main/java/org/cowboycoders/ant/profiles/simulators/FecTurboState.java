@@ -2,6 +2,7 @@ package org.cowboycoders.ant.profiles.simulators;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.cowboycoders.ant.profiles.BitManipulation;
 import org.cowboycoders.ant.profiles.fitnessequipment.*;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines.CommandId;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines.SpeedCondition;
@@ -30,6 +31,7 @@ public class FecTurboState implements TurboStateViewable {
     public static final double HUMAN_EFFICENCY_FUDGE_FACTOR = 1 / 0.3;
     public static final double WATTS_TO_KJ_PER_HOUR = 3.6;
     public static final int MAX_GRADIENT_BASIC_RESISTANCE = 30;
+    public static final int TARGET_SPIN_DOWN_TIME_MS = 10000;
     private Logger logger = LogManager.getLogger();
 
     // 700c http://www.bikecalc.com/wheel_size_math
@@ -131,6 +133,11 @@ public class FecTurboState implements TurboStateViewable {
 
     public void setTrackResistance(TrackResistance trackResistance) {
         onCmdReceieved(CommandId.TRACK_RESISTANCE);
+        doSetTrackResistance(trackResistance);
+    }
+
+    // internal variant
+    private void doSetTrackResistance(TrackResistance trackResistance) {
         this.trackResistance = trackResistance;
     }
 
@@ -148,9 +155,9 @@ public class FecTurboState implements TurboStateViewable {
                 .divide(new BigDecimal(100), 4, RoundingMode.HALF_UP);
         final BigDecimal calculatedGradient = validated.multiply(new BigDecimal(MAX_GRADIENT_BASIC_RESISTANCE));
         logger.trace("setting calculated gradient: {}",calculatedGradient);
-        this.trackResistance = new TrackResistance.TrackResistancePayload()
+        doSetTrackResistance(new TrackResistance.TrackResistancePayload()
                 .setGradient(calculatedGradient)
-                .createTrackResistance();
+                .createTrackResistance());
     }
 
     public void setTargetPower(TargetPower packet) {
@@ -529,7 +536,7 @@ public class FecTurboState implements TurboStateViewable {
         SpinDownCalibrationState getSpinDownState();
     }
 
-    private static final BigDecimal TARGET_SPEED = new BigDecimal(10);
+    private static final BigDecimal TARGET_SPEED = new BigDecimal(3);
     // speed in which it assumed that the bike is stationary; this is necessary since some turbo trainers are unpowered
     // and cannot transmit packets when the speed is below a certain threshold
     private static final BigDecimal ZERO_SPEED_THRESHOLD = new BigDecimal(1.6);
@@ -539,7 +546,7 @@ public class FecTurboState implements TurboStateViewable {
         public AntPacketEncodable getPageEncoder() {
             return new CalibrationResponse.CalibrationResponsePayload()
                     .setSpinDownSuccess(true)
-                    .setSpinDownTime(10000)
+                    .setSpinDownTime(TARGET_SPIN_DOWN_TIME_MS)
                     .setTemp(internalTemp);
         }
     };
@@ -718,16 +725,24 @@ public class FecTurboState implements TurboStateViewable {
         private RotatingView<PageGen> calibrationGen = new RotatingView<>(calibrationPages);
 
         private Long start;
+        private TrackResistance backup = getTrackResistance();
 
         private void reset() {
             start = null;
             state = SpinDownCalibrationState.AWAITING_SPEED_UP;
+            doSetTrackResistance(backup);
         }
 
         @Override
         public OperationMode update() {
             if (start == null) {
                 start = System.nanoTime();
+                backup = getTrackResistance();
+                // slow down quicker
+                doSetTrackResistance(new TrackResistance.TrackResistancePayload()
+                    .setGradient(new BigDecimal(5.0))
+                    .createTrackResistance()
+                );
             }
             switch (state) {
                 case AWAITING_SPEED_UP:
@@ -747,15 +762,29 @@ public class FecTurboState implements TurboStateViewable {
                         final BigDecimal spinDownTimeMillis = new BigDecimal(delta)
                                 .divide(new BigDecimal(Math.pow(10, 6)), 0, RoundingMode.HALF_UP);
                         logger.trace("spindown calibration time (ms): {}", spinDownTimeMillis );
-                        priorityMessages.add(new PageGen() {
-                            @Override
-                            public AntPacketEncodable getPageEncoder() {
-                                return new CalibrationResponse.CalibrationResponsePayload()
-                                        .setSpinDownSuccess(true)
-                                        .setSpinDownTime(spinDownTimeMillis.intValue())
-                                        .setTemp(internalTemp);
-                            }
-                        });
+                        int millis = spinDownTimeMillis.intValue();
+                        // UNSIGNED_INT16_MAX corresponds to null
+                        if (millis < BitManipulation.UNSIGNED_INT16_MAX) {
+                            priorityMessages.add(new PageGen() {
+                                @Override
+                                public AntPacketEncodable getPageEncoder() {
+                                    return new CalibrationResponse.CalibrationResponsePayload()
+                                            .setSpinDownSuccess(true)
+                                            .setSpinDownTime(spinDownTimeMillis.intValue())
+                                            .setTemp(internalTemp);
+                                }
+                            });
+                        } else {
+                            logger.trace("spindown time too long");
+                            priorityMessages.add(new PageGen() {
+                                @Override
+                                public AntPacketEncodable getPageEncoder() {
+                                    return new CalibrationResponse.CalibrationResponsePayload()
+                                            .setSpinDownSuccess(false)
+                                            .setTemp(internalTemp);
+                                }
+                            });
+                        }
                         reset();
                         return normalMode;
                     }
