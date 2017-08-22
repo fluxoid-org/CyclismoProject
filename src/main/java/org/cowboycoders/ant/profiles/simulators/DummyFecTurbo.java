@@ -257,4 +257,9 @@ public class DummyFecTurbo implements TurboControllable {
     public TurboStateViewable getState() {
         return state;
     }
+
+    @Override
+    public void forceStopWheel() {
+        state.forceStopWheel();
+    }
 }

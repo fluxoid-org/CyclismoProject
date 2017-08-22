@@ -250,7 +250,9 @@ public class FecTurboState implements TurboStateViewable {
         lapFlagIsDirty = true;
     }
 
-
+    public void forceStopWheel() {
+       powerModel.reset();
+    }
 
     private PageGen cmdStatusGen = new PageGen() {
         @Override

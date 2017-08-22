@@ -11,4 +11,5 @@ public interface TurboControllable {
     void setHeartrate(int hr);
     void incrementLaps();
     TurboStateViewable getState();
+    void forceStopWheel();
 }
