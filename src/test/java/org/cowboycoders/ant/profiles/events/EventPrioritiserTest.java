@@ -264,7 +264,7 @@ public class EventPrioritiserTest {
     }
 
     @Test
-    public void bufferedHoldsBackFirst() {
+    public void bufferedLowerTagsAssumedSameEvent() {
         initBuffered();
         final ArrayList<Class<?>> res = new ArrayList<>();
         final ArrayList<Class<?>> expected = new ArrayList<>();
@@ -288,7 +288,7 @@ public class EventPrioritiserTest {
     }
 
     @Test
-    public void bufferedLowerTag() {
+    public void bufferedFiltersWhenEventLockedIn() {
         initBuffered();
         final ArrayList<Class<?>> res = new ArrayList<>();
         final ArrayList<Class<?>> expected = new ArrayList<>();
