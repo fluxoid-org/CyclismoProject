@@ -735,15 +735,6 @@ public class FecTurboState implements TurboStateViewable {
 
         @Override
         public OperationMode update() {
-            if (start == null) {
-                start = System.nanoTime();
-                backup = getTrackResistance();
-                // slow down quicker
-                doSetTrackResistance(new TrackResistance.TrackResistancePayload()
-                    .setGradient(new BigDecimal(5.0))
-                    .createTrackResistance()
-                );
-            }
             switch (state) {
                 case AWAITING_SPEED_UP:
                     if (speed.compareTo(TARGET_SPEED) >= 0) {
@@ -751,6 +742,7 @@ public class FecTurboState implements TurboStateViewable {
                     }
                     return this;
                 case AWAITING_SPEED_DOWN:
+                    onAwaitSpinDown();
                     if (speed.compareTo(ZERO_SPEED_THRESHOLD) <= 0) {
                         state = SpinDownCalibrationState.REACHED_SPEED;
                     }
@@ -794,6 +786,18 @@ public class FecTurboState implements TurboStateViewable {
 
             }
             return this;
+        }
+
+        private void onAwaitSpinDown() {
+            if (start == null) {
+                start = System.nanoTime();
+                backup = getTrackResistance();
+                // slow down quicker
+                doSetTrackResistance(new TrackResistance.TrackResistancePayload()
+                        .setGradient(new BigDecimal(5.0))
+                        .createTrackResistance()
+                );
+            }
         }
 
         @Override
