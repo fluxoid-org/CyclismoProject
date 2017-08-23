@@ -8,7 +8,6 @@ import org.cowboycoders.ant.ChannelId;
 import org.cowboycoders.ant.Node;
 import org.cowboycoders.ant.events.BroadcastListener;
 import org.cowboycoders.ant.interfaces.AntTransceiver;
-import org.cowboycoders.ant.messages.ChannelMessage;
 import org.cowboycoders.ant.messages.ChannelType;
 import org.cowboycoders.ant.messages.SlaveChannelType;
 import org.cowboycoders.ant.messages.data.BroadcastDataMessage;
@@ -29,6 +28,7 @@ import org.cowboycoders.ant.profiles.pages.Request;
 import org.cowboycoders.ant.profiles.simulators.NetworkKeys;
 
 import java.math.BigDecimal;
+import java.util.EnumSet;
 
 import static org.cowboycoders.ant.profiles.common.PageDispatcher.getPageNum;
 import static org.cowboycoders.ant.profiles.common.utils.PayloadUtils.getBroadcastDataMessage;
@@ -86,6 +86,11 @@ public abstract class FecProfile {
 
             @Override
             public void onDisconnect() {
+
+            }
+
+            @Override
+            public void onStatusChange(EnumSet<Defines.TrainerStatusFlag> oldStatus, EnumSet<Defines.TrainerStatusFlag> newStatus) {
 
             }
 
@@ -229,6 +234,8 @@ public abstract class FecProfile {
 
     final LapFlagDecoder<CommonPageData> lapDecoder = new LapFlagDecoder<>(dataHub);
 
+    private EnumSet<Defines.TrainerStatusFlag> status = EnumSet.noneOf(Defines.TrainerStatusFlag.class);
+
     private void handleCommon(CommonPageData data) {
         setState(data);
         lapDecoder.update(data);
@@ -241,6 +248,15 @@ public abstract class FecProfile {
             state = newState;
         }
     }
+
+    private void setStatus(EnumSet<Defines.TrainerStatusFlag> newVal) {
+        if (status.equals(newVal)) {
+            return;
+        }
+        onStatusChange(status, newVal);
+        status = newVal;
+    }
+
 
     // initialise with approx wheel diameter, will use value from config when it is determined
     private RotationsToDistanceDecoder<TorqueData> rotToDistDecoder = new RotationsToDistanceDecoder<>(dataHub,
@@ -319,6 +335,7 @@ public abstract class FecProfile {
             @Override
             public void receiveMessage(TrainerData trainerData) {
                 trainerDataDecoder.update(trainerData);
+                setStatus(trainerData.getStatusFlags());
             }
         });
 
@@ -510,5 +527,6 @@ public abstract class FecProfile {
     public abstract void onCalibrationStatusReceieved(CalibrationResponse calibrationResponse);
     public abstract void onConnect();
     public abstract void onDisconnect();
+    public abstract void onStatusChange(EnumSet<Defines.TrainerStatusFlag> oldStatus, EnumSet<Defines.TrainerStatusFlag> newStatus);
 
 }
