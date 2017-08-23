@@ -8,6 +8,7 @@ import org.cowboycoders.ant.ChannelId;
 import org.cowboycoders.ant.Node;
 import org.cowboycoders.ant.events.BroadcastListener;
 import org.cowboycoders.ant.interfaces.AntTransceiver;
+import org.cowboycoders.ant.messages.ChannelMessage;
 import org.cowboycoders.ant.messages.ChannelType;
 import org.cowboycoders.ant.messages.SlaveChannelType;
 import org.cowboycoders.ant.messages.data.BroadcastDataMessage;
@@ -75,6 +76,16 @@ public abstract class FecProfile {
 
             @Override
             public void onCalibrationStatusReceieved(CalibrationResponse calibrationResponse) {
+
+            }
+
+            @Override
+            public void onConnect() {
+
+            }
+
+            @Override
+            public void onDisconnect() {
 
             }
 
@@ -239,6 +250,16 @@ public abstract class FecProfile {
 
     private final RequestBuffer requestBuffer = new RequestBuffer();
 
+    private void listenForInitial() {
+        channel.registerRxListener(new BroadcastListener<BroadcastDataMessage>() {
+            @Override
+            public void receiveMessage(BroadcastDataMessage broadcastDataMessage) {
+                onConnect();
+                channel.removeRxListener(this);
+            }
+        }, BroadcastDataMessage.class);
+    }
+
     public void start(Node transceiver) {
 
         final PageDispatcher pageDispatcher = new PageDispatcher();
@@ -394,6 +415,8 @@ public abstract class FecProfile {
         // request config : we are assuming the wheel diameter is stored in here
         requestConfig();
 
+        listenForInitial();
+
         channel.registerEventHandler(new ChannelEventHandler() {
             @Override
             public void onTransferNextDataBlock() {
@@ -422,7 +445,13 @@ public abstract class FecProfile {
 
             @Override
             public void onRxFailGoToSearch() {
+                doDisconnect();
+            }
 
+            private void doDisconnect() {
+                // may need to reset state here
+                onDisconnect();
+                listenForInitial();
             }
 
             @Override
@@ -455,7 +484,6 @@ public abstract class FecProfile {
 
     }
 
-
     /**
      *
      * @param callback will be called once, setting multiple times will overwrite last
@@ -480,5 +508,7 @@ public abstract class FecProfile {
     public abstract void onConfigRecieved(Config conf);
     public abstract void onCalibrationUpdate(CalibrationProgress progress);
     public abstract void onCalibrationStatusReceieved(CalibrationResponse calibrationResponse);
+    public abstract void onConnect();
+    public abstract void onDisconnect();
 
 }
