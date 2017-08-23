@@ -234,7 +234,11 @@ public abstract class FecProfile {
 
     final LapFlagDecoder<CommonPageData> lapDecoder = new LapFlagDecoder<>(dataHub);
 
-    private EnumSet<Defines.TrainerStatusFlag> status = EnumSet.noneOf(Defines.TrainerStatusFlag.class);
+    private EnumSet<Defines.TrainerStatusFlag> status = getInitialStatus();
+
+    private static EnumSet<Defines.TrainerStatusFlag> getInitialStatus() {
+        return EnumSet.noneOf(Defines.TrainerStatusFlag.class);
+    }
 
     private void handleCommon(CommonPageData data) {
         setState(data);
@@ -403,6 +407,19 @@ public abstract class FecProfile {
             @Override
             public void receiveMessage(CalibrationResponse calibrationResponse) {
                 onCalibrationStatusReceieved(calibrationResponse);
+            }
+        });
+
+        // make sure we notify client of initial trainer status. Without this, if the trainer status flags
+        // are equal to getInitialStatus(), the client doesn't get initial update.
+        pageDispatcher.addListener(TrainerData.class, new BroadcastListener<TrainerData>() {
+            @Override
+            public void receiveMessage(TrainerData trainerData) {
+                if (trainerData.getStatusFlags().equals(getInitialStatus())) {
+                    // force update
+                    onStatusChange(getInitialStatus(), getInitialStatus());
+                }
+                pageDispatcher.removeListener(this);
             }
         });
 
