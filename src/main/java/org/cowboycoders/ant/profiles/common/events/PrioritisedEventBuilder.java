@@ -34,4 +34,8 @@ public class PrioritisedEventBuilder {
     public EventPrioritiser.PrioritisedEvent createPrioritisedEvent() {
         return new EventPrioritiser.PrioritisedEvent(event, timeout, tagPriorities, instancePriorities);
     }
+
+    public EventPrioritiser.PrioritisedEvent createInheritedPrioritisedEvent() {
+        return new EventPrioritiser.InheritedPrioritisedEvent(event, timeout, tagPriorities);
+    }
 }

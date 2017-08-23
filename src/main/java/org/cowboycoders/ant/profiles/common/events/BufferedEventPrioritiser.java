@@ -18,24 +18,27 @@ public class BufferedEventPrioritiser extends EventPrioritiser {
         super(out, priorities);
     }
 
+    private Hooks hooks = new Hooks() {
+        @Override
+        public void onAccepted(TaggedTelemetryEvent event, long timeStamp, PrioritisedEvent prioritisedEvent) {
+            accept(event);
+            prioritisedEvent.setLast(new TimeStampPair(timeStamp, event));
+        }
+
+        @Override
+        public void onFirstUpdate(TaggedTelemetryEvent event, long timeStamp, PrioritisedEvent prioritisedEvent) {
+            accept(event);
+            prioritisedEvent.setLast(new TimeStampPair(timeStamp, event));
+        }
+
+        @Override
+        public void onLowerPriority(TaggedTelemetryEvent event, long timeStamp, PrioritisedEvent prioritisedEvent) {
+            prioritisedEvent.setLast(new TimeStampPair(timeStamp, event));
+        }
+    };
 
     @Override
-    protected void onMatchingPriority(TaggedTelemetryEvent telemetryEvent, Class<? extends TaggedTelemetryEvent> clazz, long timeStamp) {
-        // event locked in
-        EventPrioritiser.TimeStampPair lastPair = getLastUpdates().get(clazz);
-        accept(telemetryEvent);
-        store(telemetryEvent, clazz, timeStamp);
-    }
-
-    @Override
-    protected void onLowerPriority(TaggedTelemetryEvent telemetryEvent, Class<? extends TaggedTelemetryEvent> clazz, long timeStamp) {
-        // we assume we have already received a value for this event and skip til next matching packet
-        store(telemetryEvent, clazz, timeStamp);
-    }
-
-    @Override
-    protected void onFirstUpdate(TaggedTelemetryEvent telemetryEvent, Class<? extends TaggedTelemetryEvent> clazz, long newStamp) {
-        accept(telemetryEvent);
-        store(telemetryEvent, clazz, getTimeStamp());
+    protected Hooks getHooks() {
+        return hooks;
     }
 }

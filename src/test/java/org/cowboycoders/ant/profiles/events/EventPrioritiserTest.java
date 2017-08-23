@@ -100,6 +100,10 @@ public class EventPrioritiserTest {
     }
 
     public void initBuffered() {
+        doConstructBuffered(priorities);
+    }
+
+    private void doConstructBuffered(PrioritisedEvent[] priorities) {
         in = new FilteredBroadcastMessenger<>();
         out = new FilteredBroadcastMessenger<>();
         EventPrioritiser bufferedPrioritiser = new BufferedEventPrioritiser(out, priorities);
@@ -312,6 +316,42 @@ public class EventPrioritiserTest {
 
         expected.add(A.class);
         in.send(new A(tag1));
+    }
+
+    @Test
+    public void bufferedCopesWithInheritence() {
+        PrioritisedEvent[] priorities = new PrioritisedEvent[]{
+                new PrioritisedEventBuilder(Base.class)
+                        .setTagPriorities(Tag1.class, Tag2.class, Tag3.class)
+                        .setTimeout(TIMEOUT_NANOS)
+                        .createInheritedPrioritisedEvent(),
+        };
+
+        doConstructBuffered(priorities);
+
+        final ArrayList<Class<?>> res = new ArrayList<>();
+        final ArrayList<Class<?>> expected = new ArrayList<>();
+        expected.add(A.class);
+
+        out.addListener(TaggedTelemetryEvent.class, new BroadcastListener<TaggedTelemetryEvent>() {
+            @Override
+            public void receiveMessage(TaggedTelemetryEvent taggedTelemetryEvent) {
+                res.add(taggedTelemetryEvent.getClass());
+            }
+        });
+
+        in.send(new A(tag1));
+        assertEquals(expected, res);
+
+        // shouldn't be filtered, but both inherit from Base
+        in.send(new B(tag1));
+        expected.add(B.class);
+        assertEquals(expected,res);
+
+        // filtered with lower tag
+        in.send(new B(tag2));
+        in.send(new A(tag2));
+        assertEquals(expected,res);
     }
 
 

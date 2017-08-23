@@ -3,7 +3,6 @@ package org.cowboycoders.ant.profiles.common.events;
 import org.cowboycoders.ant.events.BroadcastListener;
 import org.cowboycoders.ant.profiles.common.FilteredBroadcastMessenger;
 import org.cowboycoders.ant.profiles.common.events.interfaces.TaggedTelemetryEvent;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -64,60 +63,23 @@ public class EventPrioritiser implements BroadcastListener<TaggedTelemetryEvent>
             out.send(telemetryEvent);
             return;
         }
-        TimeStampPair lastPair = lastUpdates.get(clazz);
-        if (lastPair == null) {
-            // no previous data
-            onFirstUpdate(telemetryEvent, clazz, timeStamp);
-            return;
-        }
-
-        TaggedTelemetryEvent last = lastPair.event;
-
-        // handle timeout
         PrioritisedEvent pri = EventPrioritiser.this.priorities.get(clazz);
-
-        if (timeStamp - lastPair.timeStamp > pri.timeout) {
-            onLowerPriority(telemetryEvent, clazz, timeStamp);
-            return;
-        }
-        if (last.getClass().equals(telemetryEvent.getClass()) && last.getTag().getClass().equals(
-                telemetryEvent.getTag().getClass()
-        )) {
-            onMatchingPriority(telemetryEvent, clazz, timeStamp);
-        } else if (getInstancePriority(telemetryEvent, pri) < getInstancePriority(last, pri)) {
-            onLowerPriority(telemetryEvent, clazz, timeStamp);
-        } else if (getInstancePriority(telemetryEvent, pri).equals(getInstancePriority(last,pri))
-                && getTagPriority(telemetryEvent,pri) < getTagPriority(last, pri)) {
-            onLowerPriority(telemetryEvent, clazz, timeStamp);
-        }
-
-        // filter
+        TimeStampPair lastPair = pri.getLast(telemetryEvent);
+        Hooks classHooks = getHooks();
+        pri.handle(telemetryEvent, timeStamp, classHooks);
     }
 
-    protected void onMatchingPriority(TaggedTelemetryEvent telemetryEvent, Class<? extends TaggedTelemetryEvent> clazz, long timeStamp) {
-        doAccept(telemetryEvent, clazz, timeStamp);
-    }
-
-    protected void onLowerPriority(TaggedTelemetryEvent telemetryEvent, Class<? extends TaggedTelemetryEvent> clazz, long timeStamp) {
-        doAccept(telemetryEvent, clazz, timeStamp);
-    }
 
     protected PrioritisedEvent getPrioritisedEvent(Class<? extends TaggedTelemetryEvent> clazz) {
         return priorities.get(clazz);
     }
 
-    protected void onFirstUpdate(TaggedTelemetryEvent telemetryEvent, Class<? extends TaggedTelemetryEvent> clazz, long newStamp) {
-        doAccept(telemetryEvent, clazz, newStamp);
-    }
 
-    private void doAccept(TaggedTelemetryEvent telemetryEvent, Class<? extends TaggedTelemetryEvent> clazz, long newStamp) {
-        store(telemetryEvent, clazz, newStamp);
+    private void doAccept(TaggedTelemetryEvent telemetryEvent, long newStamp, PrioritisedEvent pri) {
+        pri.setLast(new TimeStampPair(newStamp, telemetryEvent));
         accept(telemetryEvent);
     }
 
-    protected void store(TaggedTelemetryEvent telemetryEvent, Class<? extends TaggedTelemetryEvent> clazz, long newStamp) {
-        lastUpdates.put(clazz, new TimeStampPair(newStamp, telemetryEvent));
-    }
 
     protected void accept(TaggedTelemetryEvent telemetryEvent) {
         out.send(telemetryEvent);
@@ -129,6 +91,11 @@ public class EventPrioritiser implements BroadcastListener<TaggedTelemetryEvent>
         private final HashMap<Class<? extends TaggedTelemetryEvent>, Integer>  instancePriorities = new HashMap<>();
         private final Class<? extends TaggedTelemetryEvent> event;
         private final long timeout;
+        private TimeStampPair last;
+
+        public Class<? extends TaggedTelemetryEvent> getEvent() {
+            return event;
+        }
 
         /**
          *
@@ -151,20 +118,120 @@ public class EventPrioritiser implements BroadcastListener<TaggedTelemetryEvent>
             }
             this.timeout = timeoutNanos;
         }
+
+        public TimeStampPair getLast(TaggedTelemetryEvent newEvent) {
+            return last;
+        }
+
+        public void setLast(TimeStampPair newValue) {
+            this.last = newValue;
+        }
+
+        public void handle(TaggedTelemetryEvent telemetryEvent, long timeStamp,
+                           Hooks hooks) {
+            TimeStampPair lastPair = getLast(telemetryEvent);
+            if (lastPair == null) {
+                // no previous data
+                hooks.onFirstUpdate(telemetryEvent, timeStamp, this);
+                return;
+            }
+
+            TaggedTelemetryEvent last = lastPair.event;
+
+            // handle timeout
+
+            if (timeStamp - lastPair.timeStamp > timeout) {
+                hooks.onLowerPriority(telemetryEvent, timeStamp, this);
+                return;
+            }
+
+            Class<? extends TaggedTelemetryEvent> clazz = event;
+            if (last.getClass().equals(telemetryEvent.getClass()) && last.getTag().getClass().equals(
+                    telemetryEvent.getTag().getClass()
+            )) {
+                hooks.onAccepted(telemetryEvent, timeStamp, this);
+            } else if (getInstancePriority(telemetryEvent) < getInstancePriority(last)) {
+                hooks.onLowerPriority(telemetryEvent, timeStamp, this);
+            } else if (getInstancePriority(telemetryEvent).equals(getInstancePriority(last))
+                    && getTagPriority(telemetryEvent) < getTagPriority(last)) {
+                hooks.onLowerPriority(telemetryEvent, timeStamp, this);
+            }
+
+            // filter
+        }
+
+        protected Integer getTagPriority(TaggedTelemetryEvent telemetryEvent) {
+            Integer result =  tagPriorities.get(telemetryEvent.getTag().getClass());
+            if (result == null) return Integer.MAX_VALUE;
+            return result;
+        }
+
+        protected Integer getInstancePriority(TaggedTelemetryEvent telemetryEvent) {
+            Integer result = instancePriorities.get(telemetryEvent.getClass());
+            if (result == null) return Integer.MAX_VALUE;
+            return result;
+        }
     }
 
-    // prioritised event to last received example
-    private HashMap<Class<? extends TaggedTelemetryEvent>, TimeStampPair> lastUpdates = new HashMap<>();
+    protected interface Hooks {
+        void onAccepted(TaggedTelemetryEvent event, long timeStamp, PrioritisedEvent prioritisedEvent);
+        void onFirstUpdate(TaggedTelemetryEvent event, long timeStamp, PrioritisedEvent prioritisedEvent);
+        void onLowerPriority(TaggedTelemetryEvent event, long timeStamp, PrioritisedEvent prioritisedEvent);
+    }
+
+    private Hooks hooks = new Hooks() {
+
+        @Override
+        public void onAccepted(TaggedTelemetryEvent event, long timeStamp, PrioritisedEvent prioritisedEvent) {
+            doAccept(event, timeStamp, prioritisedEvent);
+        }
+
+        @Override
+        public void onFirstUpdate(TaggedTelemetryEvent event, long timeStamp, PrioritisedEvent prioritisedEvent) {
+            doAccept(event, timeStamp, prioritisedEvent);
+        }
+
+        @Override
+        public void onLowerPriority(TaggedTelemetryEvent event, long timeStamp, PrioritisedEvent prioritisedEvent) {
+            doAccept(event, timeStamp, prioritisedEvent);
+        }
+    };
+
+    protected Hooks getHooks() {
+        return this.hooks;
+    }
+
+    // all sub classes inherit tag priorities
+    public static class InheritedPrioritisedEvent extends PrioritisedEvent {
+
+        private HashMap<Class<? extends TaggedTelemetryEvent>, TimeStampPair> lastUpdates = new HashMap<>();
+
+        @SuppressWarnings("unchecked")
+        public InheritedPrioritisedEvent(Class<? extends TaggedTelemetryEvent> event,
+                                         long timeoutNanos,
+                                         Class<?> [] tagPriorities) {
+            super(event, timeoutNanos, tagPriorities, new Class[0]);
+        }
+
+        @Override
+        public TimeStampPair getLast(TaggedTelemetryEvent event) {
+            return lastUpdates.get(event.getClass());
+        }
+
+        @Override
+        public void setLast(TimeStampPair newValue) {
+            // different classes are distinct events in this subclass
+            lastUpdates.put(newValue.event.getClass(), newValue);
+        }
+
+    }
+
     // prioritised event to priorities
     private HashMap<Class<? extends TaggedTelemetryEvent>, PrioritisedEvent> priorities = new HashMap<>();
     // telemetry event to base class in priorities list
     private HashMap<Class<? extends TaggedTelemetryEvent>, Class<? extends TaggedTelemetryEvent>> mappings = new HashMap<>();
     // all events that we filter
     private ArrayList<Class<? extends TaggedTelemetryEvent>> allPrioritised = new ArrayList<>();
-
-    protected HashMap<Class<? extends TaggedTelemetryEvent>, TimeStampPair> getLastUpdates() {
-        return lastUpdates;
-    }
 
     /**
      *
@@ -181,15 +248,4 @@ public class EventPrioritiser implements BroadcastListener<TaggedTelemetryEvent>
 
     }
 
-    protected Integer getTagPriority(TaggedTelemetryEvent telemetryEvent, PrioritisedEvent pri) {
-        Integer result =  pri.tagPriorities.get(telemetryEvent.getTag().getClass());
-        if (result == null) return Integer.MAX_VALUE;
-        return result;
-    }
-
-    protected Integer getInstancePriority(TaggedTelemetryEvent telemetryEvent, PrioritisedEvent pri) {
-        Integer result = pri.instancePriorities.get(telemetryEvent.getClass());
-        if (result == null) return Integer.MAX_VALUE;
-        return result;
-    }
 }
