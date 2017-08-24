@@ -2,11 +2,11 @@ package org.fluxoid.utils;
 
 public class RunningAverager implements Averager {
 
-  private FixedSizeFifo<Double> values;
+  private FixedSizeLifo<Double> values;
   private Double lastValue;
 
   public RunningAverager(int samplesToAverage) {
-    values = new FixedSizeFifo<Double>(samplesToAverage);
+    values = new FixedSizeLifo<Double>(samplesToAverage);
   }
 
   /* (non-Javadoc)
