@@ -40,8 +40,6 @@ import org.cowboycoders.turbotrainers.Mode;
 import org.cowboycoders.turbotrainers.Parameters.CommonParametersInterface;
 import org.cowboycoders.turbotrainers.TooFewAntChannelsAvailableException;
 import org.cowboycoders.turbotrainers.TurboTrainerDataListener;
-import org.fluxoid.utils.IterationOperator;
-import org.fluxoid.utils.IterationUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -207,14 +205,9 @@ public class BushidoHeadunit extends AntTurboTrainer {
         data.setVirtualSpeed(speed);
       }
       synchronized (dataChangeListeners) {
-        IterationUtils.operateOnAll(dataChangeListeners, new
-            IterationOperator<TurboTrainerDataListener>() {
-          @Override
-          public void performOperation(TurboTrainerDataListener dcl) {
-            dcl.onSpeedChange(speed);
-          }
-
-        });
+        for (TurboTrainerDataListener dcl: dataChangeListeners) {
+          dcl.onSpeedChange(speed);
+        }
       }
 
     }
@@ -225,14 +218,9 @@ public class BushidoHeadunit extends AntTurboTrainer {
         data.setPower(power);
       }
       synchronized (dataChangeListeners) {
-        IterationUtils.operateOnAll(dataChangeListeners, new
-            IterationOperator<TurboTrainerDataListener>() {
-          @Override
-          public void performOperation(TurboTrainerDataListener dcl) {
-            dcl.onPowerChange(power);
-          }
-
-        });
+        for (TurboTrainerDataListener dcl: dataChangeListeners) {
+          dcl.onPowerChange(power);
+        }
       }
 
     }
@@ -243,14 +231,9 @@ public class BushidoHeadunit extends AntTurboTrainer {
         data.setCadence(cadence);
       }
       synchronized (dataChangeListeners) {
-        IterationUtils.operateOnAll(dataChangeListeners, new
-            IterationOperator<TurboTrainerDataListener>() {
-          @Override
-          public void performOperation(TurboTrainerDataListener dcl) {
-            dcl.onCadenceChange(cadence);
-          }
-
-        });
+        for (TurboTrainerDataListener dcl : dataChangeListeners) {
+          dcl.onCadenceChange(cadence);
+        }
       }
     }
 
@@ -264,16 +247,11 @@ public class BushidoHeadunit extends AntTurboTrainer {
         }
       }
       synchronized (dataChangeListeners) {
-        IterationUtils.operateOnAll(dataChangeListeners, new
-            IterationOperator<TurboTrainerDataListener>() {
-          @Override
-          public void performOperation(TurboTrainerDataListener dcl) {
-            synchronized (data) {
-              dcl.onDistanceChange(data.getVirtualDistance());
-            }
+        for (TurboTrainerDataListener dcl : dataChangeListeners) {
+          synchronized (data) {
+            dcl.onDistanceChange(data.getVirtualDistance());
           }
-
-        });
+        }
       }
     }
 
@@ -283,14 +261,9 @@ public class BushidoHeadunit extends AntTurboTrainer {
         data.setHeartRate(heartRate);
       }
       synchronized (dataChangeListeners) {
-        IterationUtils.operateOnAll(dataChangeListeners, new
-            IterationOperator<TurboTrainerDataListener>() {
-          @Override
-          public void performOperation(TurboTrainerDataListener dcl) {
-            dcl.onHeartRateChange(heartRate);
-          }
-
-        });
+        for (TurboTrainerDataListener dcl : dataChangeListeners) {
+          dcl.onHeartRateChange(heartRate);
+        }
       }
     }
 
@@ -312,15 +285,9 @@ public class BushidoHeadunit extends AntTurboTrainer {
     @Override
     public synchronized void onButtonPressFinished(final BushidoButtonPressDescriptor descriptor) {
       synchronized (buttonPressListeners) {
-        IterationUtils.operateOnAll(buttonPressListeners, new
-            IterationOperator<BushidoButtonPressListener>() {
-          @Override
-          public void performOperation(BushidoButtonPressListener bpl) {
-            bpl.onButtonPressFinished(descriptor);
-
-          }
-
-        });
+        for (BushidoButtonPressListener bpl: buttonPressListeners) {
+          bpl.onButtonPressFinished(descriptor);
+        }
       }
 
     }
@@ -329,15 +296,9 @@ public class BushidoHeadunit extends AntTurboTrainer {
     @Override
     public void onButtonPressActive(final BushidoButtonPressDescriptor descriptor) {
       synchronized (buttonPressListeners) {
-        IterationUtils.operateOnAll(buttonPressListeners, new
-            IterationOperator<BushidoButtonPressListener>() {
-          @Override
-          public void performOperation(BushidoButtonPressListener bpl) {
-            bpl.onButtonPressActive(descriptor);
-
-          }
-
-        });
+        for (BushidoButtonPressListener bpl: buttonPressListeners) {
+          bpl.onButtonPressActive(descriptor);
+        }
       }
 
     }

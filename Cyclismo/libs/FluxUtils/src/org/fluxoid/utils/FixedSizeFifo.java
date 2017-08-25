@@ -20,6 +20,18 @@ package org.fluxoid.utils;
 
 import java.util.Iterator;
 
+/*
+ * TODO: remove this class
+ *
+ * This is a peculiarity as (currently) the oldest element is removed
+ * when the fifo reaches its max size. This seems incongruous with its
+ * stated fifo functionality. It acts more like a rolling window, that
+ * returns the first elements in the window.
+ */
+
+/**
+ * @param <V> type of elements in the fifo
+ */
 public class FixedSizeFifo<V> extends AbstractFixedSizeQueue<V> {
 
   public FixedSizeFifo(int maxSize) {

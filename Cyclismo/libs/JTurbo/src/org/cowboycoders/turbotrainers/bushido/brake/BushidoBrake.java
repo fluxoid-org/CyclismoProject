@@ -39,8 +39,6 @@ import org.cowboycoders.turbotrainers.TooFewAntChannelsAvailableException;
 import org.cowboycoders.turbotrainers.TurboTrainerDataListener;
 import org.fluxoid.utils.FixedPeriodUpdater;
 import org.fluxoid.utils.FixedPeriodUpdaterWithReset;
-import org.fluxoid.utils.IterationOperator;
-import org.fluxoid.utils.IterationUtils;
 import org.fluxoid.utils.UpdateCallback;
 
 import java.math.BigInteger;
@@ -138,15 +136,11 @@ public class BushidoBrake extends AntTurboTrainer {
       }
 
       synchronized (dataChangeListeners) {
-        IterationUtils.operateOnAll(dataChangeListeners,
-            new IterationOperator<TurboTrainerDataListener>() {
-              @Override
-              public void performOperation(
-                  TurboTrainerDataListener dcl) {
-                dcl.onSpeedChange(speedToSend);
-              }
 
-            });
+        for (TurboTrainerDataListener dcl: dataChangeListeners) {
+          dcl.onSpeedChange(speedToSend);
+        }
+
       }
 
       // We are integrating for distance. As onDistanceChange() doesn't
@@ -166,16 +160,10 @@ public class BushidoBrake extends AntTurboTrainer {
         model.setPower(power);
       }
       synchronized (dataChangeListeners) {
-        IterationUtils.operateOnAll(dataChangeListeners,
-            new IterationOperator<TurboTrainerDataListener>() {
-              @Override
-              public void performOperation(
-                  TurboTrainerDataListener dcl) {
-                double powerToSend = resistanceController.onPowerChange(power);
-                dcl.onPowerChange(powerToSend);
-              }
-
-            });
+        for (TurboTrainerDataListener dcl: dataChangeListeners) {
+          double powerToSend = resistanceController.onPowerChange(power);
+          dcl.onPowerChange(powerToSend);
+        }
       }
 
     }
@@ -189,16 +177,10 @@ public class BushidoBrake extends AntTurboTrainer {
         model.setCadence(cadence);
       }
       synchronized (dataChangeListeners) {
-        IterationUtils.operateOnAll(dataChangeListeners,
-            new IterationOperator<TurboTrainerDataListener>() {
-              @Override
-              public void performOperation(
-                  TurboTrainerDataListener dcl) {
-                double cadenceToSend = resistanceController.onCadenceChange(cadence);
-                dcl.onCadenceChange(cadenceToSend);
-              }
-
-            });
+        for (TurboTrainerDataListener dcl : dataChangeListeners) {
+          double cadenceToSend = resistanceController.onCadenceChange(cadence);
+          dcl.onCadenceChange(cadenceToSend);
+        }
       }
     }
 
@@ -209,18 +191,13 @@ public class BushidoBrake extends AntTurboTrainer {
     public void onDistanceChange(final double distance) {
       // called from onSpeedChange
       synchronized (dataChangeListeners) {
-        IterationUtils.operateOnAll(dataChangeListeners,
-            new IterationOperator<TurboTrainerDataListener>() {
-              @Override
-              public void performOperation(
-                  TurboTrainerDataListener dcl) {
-                synchronized (model) {
-                  double distanceToSend = resistanceController.onDistanceChange(distance);
-                  dcl.onDistanceChange(distanceToSend);
-                }
-              }
 
-            });
+        for (TurboTrainerDataListener dcl: dataChangeListeners) {
+          synchronized (model) {
+            double distanceToSend = resistanceController.onDistanceChange(distance);
+            dcl.onDistanceChange(distanceToSend);
+          }
+        }
       }
     }
 

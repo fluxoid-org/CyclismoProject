@@ -4,6 +4,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
+ * Similar to @see org.fluxoid.utils.FixedPeriodUpdater, but if timeout triggers
+ * the callback is called with a default argument.
+ *
  * Created by fluxoid on 02/01/16.
  */
 public abstract class FixedPeriodUpdaterWithReset extends FixedPeriodUpdater {
