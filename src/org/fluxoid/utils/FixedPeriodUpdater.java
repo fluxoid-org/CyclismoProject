@@ -7,6 +7,10 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
 
+/**
+ * Fixes the rate at which a callback is updated to specified period. If now new updates
+ * after timeout, the last received value is sent.
+ */
 public class FixedPeriodUpdater {
 
   public final static Logger LOGGER = Logger.getLogger(FixedPeriodUpdater.class.getName());

@@ -24,6 +24,7 @@ public class FixedSizeTest {
     assertEquals(3, (int) fifo.poll());
 
     //oversize
+    // TODO: is this expected behaviour?
     fifo.addAll(Arrays.asList(1,2,3,4));
     assertEquals(2, (int) fifo.poll());
     assertEquals(3, (int) fifo.poll());
