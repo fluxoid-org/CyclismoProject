@@ -7,13 +7,13 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.android.tools.build:gradle:2.3.3'
     }
 }
 
 android {
     compileSdkVersion 16
-    buildToolsVersion "24"
+    buildToolsVersion "25"
 
     defaultConfig {
         minSdkVersion 8
@@ -40,6 +40,13 @@ android {
         }
     }
 }
+
+android {
+    lintOptions {
+        abortOnError false
+    }
+}
+
 
 dependencies {
     compile project(':jformica_core'), fileTree(dir: 'libs', include: '**/*.jar')

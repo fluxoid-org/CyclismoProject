@@ -15,7 +15,7 @@ repositories {
 
 android {
     compileSdkVersion 16
-    buildToolsVersion "24"
+    buildToolsVersion "25"
 
     sourceSets {
         main {
