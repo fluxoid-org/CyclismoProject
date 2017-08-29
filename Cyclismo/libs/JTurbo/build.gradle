@@ -31,7 +31,12 @@ sourceSets {
 }
 
 check.dependsOn -= test
-task test(overwrite: true) << { println "FIXME: Tests disabled until ant usb device is mocked." }
+task test(overwrite: true) {
+    doLast {
+        println "FIXME: Tests disabled until ant usb device is mocked."
+    }
+}
+
 check.dependsOn += test
 
 subprojects { project ->
