@@ -4,7 +4,7 @@ apply plugin: 'checkstyle'
 apply plugin: 'findbugs'
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.2'
+    gradleVersion = '4.1'
 }
 
 buildscript {
