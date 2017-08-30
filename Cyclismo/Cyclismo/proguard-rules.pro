@@ -121,6 +121,10 @@
 -dontwarn android.test.suitebuilder.*
 -dontwarn org.cowboycoders.ant.interfaces.AntTransceiver$UsbReader
 
+-dontwarn org.apache.logging.log4j.**
+-keepattributes Signature
+-keep class org.apache.logging.log4j.** { *; }
+
 # Make our stack traces useful
 # Line numbers will be correct, file names will be replaced by "MT" since the
 # class name is enough to get the file name.

@@ -19,3 +19,6 @@ project(':JTurbo').projectDir = new File('Cyclismo/libs/JTurbo')
 
 include ':google-play-services_lib'
 project(':google-play-services_lib').projectDir = new File('Cyclismo/libs/google-play-services_lib')
+
+include ':FormicaProfiles'
+project(':FormicaProfiles').projectDir = new File('Cyclismo/libs/FormicaProfiles')

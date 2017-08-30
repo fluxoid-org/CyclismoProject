@@ -260,12 +260,14 @@ limitations under the License.
    <!-- TODO: Do we really need two lists?! These arrays should be populated depending on whats available for the turbo, PID etc-->
   </string-array>
     <string-array name="turbotrainer_options">
+    <item>@string/turbotrainer_fec_compatible_option</item>
     <item>@string/turbotrainer_tacx_bushido_headunit_option</item>
     <item>@string/turbotrainer_tacx_bushido_brake_option</item>
     <item>@string/turbotrainer_dummy_option</item>
   </string-array>
 
     <string-array name="turbotrainer_values">
+    <item>@string/turbotrainer_fec_compatible_value</item>
     <item>@string/turbotrainer_tacx_bushido_headunit_value</item>
     <item>@string/turbotrainer_tacx_bushido_brake_value</item>
     <item>@string/turbotrainer_dummy_value</item>
