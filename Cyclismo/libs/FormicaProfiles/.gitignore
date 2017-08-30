@@ -1,0 +1,6 @@
+hacking/**
+build/**
+.idea
+out
+.gradle/**
+*~
