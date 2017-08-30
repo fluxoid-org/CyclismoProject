@@ -46,6 +46,15 @@ android {
         targetSdkVersion 16
     }
 
+    defaultConfig {
+        // Specifies the application ID for the test APK.
+        testApplicationId "org.cowboycoders.cyclismo.tests"
+        // Specifies the fully-qualified class name of the test instrumentation runner.
+        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+    }
+
+
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
