@@ -72,6 +72,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 
+
 import org.cowboycoders.cyclismo.content.MyTracksProviderUtils;
 import org.cowboycoders.cyclismo.content.Track;
 import org.cowboycoders.cyclismo.content.TrackDataHub;
@@ -103,6 +104,7 @@ import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 
 import java.util.EnumSet;
 import java.util.concurrent.atomic.AtomicLong;
+
 
 /**
  * An activity displaying a list of tracks.

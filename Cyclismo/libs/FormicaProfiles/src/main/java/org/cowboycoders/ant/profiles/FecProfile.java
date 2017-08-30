@@ -1,7 +1,5 @@
 package org.cowboycoders.ant.profiles;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.cowboycoders.ant.Channel;
 import org.cowboycoders.ant.ChannelEventHandler;
 import org.cowboycoders.ant.ChannelId;
@@ -29,6 +27,7 @@ import org.cowboycoders.ant.profiles.simulators.NetworkKeys;
 
 import java.math.BigDecimal;
 import java.util.EnumSet;
+import java.util.logging.*;
 
 import static org.cowboycoders.ant.profiles.common.PageDispatcher.getPageNum;
 import static org.cowboycoders.ant.profiles.common.utils.PayloadUtils.getBroadcastDataMessage;
@@ -38,6 +37,8 @@ import static org.fluxoid.utils.Format.bytesToString;
  * Created by fluxoid on 02/07/17.
  */
 public abstract class FecProfile {
+
+    private static final Logger LOGGER = Logger.getLogger(FecProfile.class.getName());
 
     private static final BigDecimal WHEEL_CIRCUMFERENCE = new BigDecimal(2.098);
     private Channel channel;
@@ -96,9 +97,6 @@ public abstract class FecProfile {
 
         }.start(node);
     }
-
-
-    private Logger logger = LogManager.getLogger();
 
 
     public void requestCapabilities() {
@@ -439,9 +437,9 @@ public abstract class FecProfile {
                 pageDispatcher.dispatch(data);
                 Defines.CommandId cmd = Defines.CommandId.getValueFromInt(getPageNum(data));
                 if (cmd != Defines.CommandId.UNRECOGNIZED && cmd != Defines.CommandId.NO_CONTROL_PAGE_RECEIVED) {
-                    logger.trace("receieved cmd: " + cmd);
+                    LOGGER.finest("receieved cmd: " + cmd);
                 }
-                logger.trace(bytesToString(msg.getData()));
+                LOGGER.finest(bytesToString(msg.getData()).toString());
             }
         }, DataMessage.class);
 

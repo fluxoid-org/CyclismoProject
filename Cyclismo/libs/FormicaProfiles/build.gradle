@@ -40,9 +40,6 @@ compileTestJava {
 
 
 dependencies {
-    // log4j 2.8 has issues with android dex (unsupported lang features; API 26+ only)
-    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.7'
-    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.7'
     compileOnly fileTree(dir: 'libs', include: '*.jar')
     testCompile fileTree(dir: 'libs', include: '*.jar')
     testCompile "org.mockito:mockito-core:2.+"

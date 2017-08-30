@@ -20,8 +20,6 @@ repositories {
 }
 
 dependencies {
-    testAnnotationProcessor group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.7'
-    annotationProcessor group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.7'
     implementation fileTree(include: '*.jar', dir: 'libs')
     implementation project(':Cyclismo:CyclismoLib')
     implementation project(':aFileChooser')

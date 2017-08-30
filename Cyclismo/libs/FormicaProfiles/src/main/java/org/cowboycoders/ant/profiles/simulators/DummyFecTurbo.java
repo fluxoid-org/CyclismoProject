@@ -1,7 +1,5 @@
 package org.cowboycoders.ant.profiles.simulators;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.cowboycoders.ant.Channel;
 import org.cowboycoders.ant.ChannelEventHandler;
 import org.cowboycoders.ant.Node;
@@ -19,6 +17,7 @@ import org.fluxoid.utils.Format;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.*;
 
 import static org.cowboycoders.ant.profiles.common.PageDispatcher.getPageNum;
 
@@ -27,7 +26,7 @@ import static org.cowboycoders.ant.profiles.common.PageDispatcher.getPageNum;
  */
 public class DummyFecTurbo implements TurboControllable {
 
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger LOGGER = Logger.getLogger(DummyFecTurbo.class.getName());
 
     private Timer timer = new Timer();
 
@@ -58,31 +57,31 @@ public class DummyFecTurbo implements TurboControllable {
                 final int page = request.getRequestedPageNumber();
                 switch (page) {
                     case CapabilitiesPage.PAGE_NUMBER:
-                        logger.trace("capabilities requested");
+                        LOGGER.fine("capabilities requested");
                         state.setCapabilitesRequested();
                         break;
                     case ConfigPage.PAGE_NUMBER:
-                        logger.trace("config requested");
+                        LOGGER.fine("config requested");
                         state.setConfigRequested();
                         break;
                     case Command.PAGE_NUMBER:
-                        logger.trace("command status requested");
+                        LOGGER.fine("command status requested");
                         state.sendCmdStatus();
                         break;
                     case CalibrationResponse.PAGE_NUMBER:
-                        logger.trace("calibration response requested");
+                        LOGGER.fine("calibration response requested");
                         state.sendCalibrationResponse();
                         break;
                     case PercentageResistance.PAGE_NUMBER:
-                        logger.trace("requested basic resistance");
+                        LOGGER.fine("requested basic resistance");
                         state.sendBasicResistance();
                         break;
                     case TrackResistance.PAGE_NUMBER:
-                        logger.trace("requested track resistance");
+                        LOGGER.fine("requested track resistance");
                         state.sendTrackResistance();
                         break;
                     case WindResistance.PAGE_NUMBER:
-                        logger.trace("requested wind data");
+                        LOGGER.fine("requested wind data");
                         state.sendWindData();
                         break;
                 }
@@ -163,9 +162,9 @@ public class DummyFecTurbo implements TurboControllable {
                 pageDispatcher.dispatch(data);
                 CommandId cmd = CommandId.getValueFromInt(getPageNum(data));
                 if (cmd != CommandId.UNRECOGNIZED && cmd != CommandId.NO_CONTROL_PAGE_RECEIVED) {
-                    logger.trace("receieved cmd: " + cmd);
+                    LOGGER.fine("receieved cmd: " + cmd);
                 }
-                logger.trace(Format.bytesToString(msg.getData()));
+                LOGGER.fine(Format.bytesToString(msg.getData()).toString());
             }
         }, DataMessage.class);
 
@@ -249,7 +248,7 @@ public class DummyFecTurbo implements TurboControllable {
         try {
             state.incrementLaps();
         } catch (IllegalStateException e) {
-            logger.warn("increment laps ignore, polling to fast!");
+            LOGGER.warning("increment laps ignore, polling to fast!");
         }
     }
 

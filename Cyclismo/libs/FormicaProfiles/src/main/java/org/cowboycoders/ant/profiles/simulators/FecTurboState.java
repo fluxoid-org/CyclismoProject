@@ -1,7 +1,5 @@
 package org.cowboycoders.ant.profiles.simulators;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.cowboycoders.ant.profiles.BitManipulation;
 import org.cowboycoders.ant.profiles.fitnessequipment.*;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines.CommandId;
@@ -18,6 +16,7 @@ import org.fluxoid.utils.RotatingView;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
+import java.util.logging.*;
 
 import static java.lang.Math.PI;
 
@@ -26,13 +25,14 @@ import static java.lang.Math.PI;
  */
 public class FecTurboState implements TurboStateViewable {
 
+    private static final Logger LOGGER = Logger.getLogger(FecTurboState.class.getName());
 
     public static final double CALORIES_TO_JOULES = 4.2;
     public static final double HUMAN_EFFICENCY_FUDGE_FACTOR = 1 / 0.3;
     public static final double WATTS_TO_KJ_PER_HOUR = 3.6;
     public static final int MAX_GRADIENT_BASIC_RESISTANCE = 30;
     public static final int TARGET_SPIN_DOWN_TIME_MS = 10000;
-    private Logger logger = LogManager.getLogger();
+
 
     // 700c http://www.bikecalc.com/wheel_size_math
     private BigDecimal wheelDiameter = new BigDecimal(0.700).divide(new BigDecimal(PI),4, RoundingMode.HALF_UP);
@@ -154,7 +154,7 @@ public class FecTurboState implements TurboStateViewable {
         BigDecimal validated = resistance.getResistance().min(new BigDecimal(100.0)).max(new BigDecimal(0))
                 .divide(new BigDecimal(100), 4, RoundingMode.HALF_UP);
         final BigDecimal calculatedGradient = validated.multiply(new BigDecimal(MAX_GRADIENT_BASIC_RESISTANCE));
-        logger.trace("setting calculated gradient: {}",calculatedGradient);
+        LOGGER.finer("setting calculated gradient: " + calculatedGradient);
         doSetTrackResistance(new TrackResistance.TrackResistancePayload()
                 .setGradient(calculatedGradient)
                 .createTrackResistance());
@@ -279,7 +279,7 @@ public class FecTurboState implements TurboStateViewable {
                         .setWindSpeed(windResistance.getWindSpeed());
 
             }
-            logger.warn("unsupported command: {}", lastCmd);
+            LOGGER.warning("unsupported command: " + lastCmd);
             return null;
         }
     };
@@ -495,7 +495,7 @@ public class FecTurboState implements TurboStateViewable {
     private void setCadence(int cadence) {
         //logger.debug("attempting to set cadence to: {}", cadence);
         if (cadence > 255) {
-            logger.error("cadence over limit");
+            LOGGER.severe("cadence over limit");
             cadence = 255;
         }
         this.cadence = cadence;
@@ -609,7 +609,7 @@ public class FecTurboState implements TurboStateViewable {
                 encoder.encode(packet);
                 return packet;
             }
-            logger.debug("null encoder, trying next...");
+            LOGGER.finest("null encoder, trying next...");
             return doEncoding(packet); // skip
         }
 
@@ -649,7 +649,7 @@ public class FecTurboState implements TurboStateViewable {
     }
 
     public void requestOffsetCalibration() {
-        logger.warn("offset calibration requested, but emulating this is not supported yet");
+        LOGGER.warning("offset calibration requested, but emulating this is not supported yet");
     }
 
     public void sendCalibrationResponse() {
@@ -755,7 +755,7 @@ public class FecTurboState implements TurboStateViewable {
                         long delta = System.nanoTime() - start;
                         final BigDecimal spinDownTimeMillis = new BigDecimal(delta)
                                 .divide(new BigDecimal(Math.pow(10, 6)), 0, RoundingMode.HALF_UP);
-                        logger.trace("spindown calibration time (ms): {}", spinDownTimeMillis );
+                        LOGGER.finer("spindown calibration time (ms): " + spinDownTimeMillis );
                         int millis = spinDownTimeMillis.intValue();
                         // UNSIGNED_INT16_MAX corresponds to null
                         if (millis < BitManipulation.UNSIGNED_INT16_MAX) {
@@ -769,7 +769,7 @@ public class FecTurboState implements TurboStateViewable {
                                 }
                             });
                         } else {
-                            logger.trace("spindown time too long");
+                            LOGGER.finer("spindown time too long");
                             priorityMessages.add(new PageGen() {
                                 @Override
                                 public AntPacketEncodable getPageEncoder() {
