@@ -1,4 +1,5 @@
 Subtrees
+--------
 
 - Add the appropriate remote:
 
@@ -6,13 +7,13 @@ Subtrees
 git remote add fluxutils git@github.com:fluxoid-org/FluxUtils.git
 ```
 
-pull:
+- pull:
 
 ```
-git subtree pull -P Cyclismo/libs/FluxUtils fluxutils master
+git subtree pull --squash -P Cyclismo/libs/FluxUtils fluxutils master
 ```
 
-push:
+- push:
 
 ```
 git subtree push -P Cyclismo/libs/FluxUtils fluxutils remote_branch
