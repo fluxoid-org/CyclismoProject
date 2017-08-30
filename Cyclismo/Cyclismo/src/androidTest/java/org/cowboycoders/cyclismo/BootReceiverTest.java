@@ -45,6 +45,7 @@ import android.test.AndroidTestCase;
 import org.cowboycoders.cyclismo.services.TrackRecordingService;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Tests for the BootReceiver.
@@ -58,7 +59,7 @@ public class BootReceiverTest extends AndroidTestCase {
   /**
    * Tests the behavior when receive notification which is the phone boot.
    */
-  public void testOnReceive_startService() {
+  public void testOnReceive_startService() throws InterruptedException {
     // Make sure no TrackRecordingService
     Intent stopIntent = new Intent(getContext(), TrackRecordingService.class);
     getContext().stopService(stopIntent);
@@ -68,14 +69,28 @@ public class BootReceiverTest extends AndroidTestCase {
     Intent intent = new Intent();
     intent.setAction(Intent.ACTION_BOOT_COMPLETED);
     bootReceiver.onReceive(getContext(), intent);
-    // Check if the service is started
-    assertTrue(isServiceExisted(getContext(), SERVICE_NAME));
+    // Check if the service is started. We retry a few times
+    // until a timeout is reached as this is intrinsically
+    // racy.
+    long start = System.nanoTime();
+    long timeout = TimeUnit.SECONDS.toNanos(2);
+    while (true) {
+      long now = System.nanoTime();
+      if (now - start >= timeout) {
+        throw new RuntimeException("timeout");
+      }
+      if (isServiceExisted(getContext(), SERVICE_NAME)) {
+        return;
+      }
+      // don't thrash the cpu
+      Thread.sleep(100);
+    }
   }
 
   /**
    * Tests the behavior when receive notification which is not the phone boot.
    */
-  public void testOnReceive_noStartService() {
+  public void testOnReceive_noStartService() throws InterruptedException {
     // Make sure no TrackRecordingService
     Intent stopIntent = new Intent(getContext(), TrackRecordingService.class);
     getContext().stopService(stopIntent);
@@ -85,6 +100,8 @@ public class BootReceiverTest extends AndroidTestCase {
     Intent intent = new Intent();
     intent.setAction(Intent.ACTION_BUG_REPORT);
     bootReceiver.onReceive(getContext(), intent);
+    // wait one second to give lower probability of false flag
+    Thread.sleep(1000);
     // Check if the service is not started
     assertFalse(isServiceExisted(getContext(), SERVICE_NAME));
   }

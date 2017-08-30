@@ -8,9 +8,10 @@ buildscript {
     repositories {
         mavenCentral()
         jcenter()
+	    google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.android.tools.build:gradle:3.0.0-beta2'
     }
 }
 
@@ -19,20 +20,21 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(include: '*.jar', dir: 'libs')
-    compile project(':Cyclismo:CyclismoLib')
-    compile project(':aFileChooser')
-    compile project(':jformica_android')
-    compile project(':FluxUtils')
-    compile project(':jformica_core')
-    compile project(':JTurbo')
-    androidTestCompile fileTree(include: '*.jar', dir: 'test_libs')
-    androidTestCompile 'org.mockito:mockito-all:1.10.19'
-    compile 'com.android.support:support-v4:23.1.1'
-
+    implementation fileTree(include: '*.jar', dir: 'libs')
+    implementation project(':Cyclismo:CyclismoLib')
+    implementation project(':aFileChooser')
+    implementation project(':jformica_android')
+    implementation project(':FluxUtils')
+    implementation project(':jformica_core')
+    implementation project(':JTurbo')
+    androidTestAnnotationProcessor files('test_libs/AndroidMockGenerator.jar')
+    androidTestImplementation fileTree(include: '*.jar', dir: 'test_libs')
+    androidTestImplementation 'org.mockito:mockito-all:1.10.19'
+    implementation 'com.android.support:support-v4:23.1.1'
     // For MapForge
-    compile 'com.caverock:androidsvg:1.2.1'
-    compile group: 'net.sf.kxml', name: 'kxml2', version:'2.3.0'
+    implementation 'com.caverock:androidsvg:1.2.1'
+    implementation 'net.sf.kxml:kxml2:2.3.0'
+    implementation 'com.google.protobuf:protobuf-java:2.5.0'
 }
 
 android {
@@ -43,6 +45,15 @@ android {
         minSdkVersion 14
         targetSdkVersion 16
     }
+
+    defaultConfig {
+        // Specifies the application ID for the test APK.
+        testApplicationId "org.cowboycoders.cyclismo.tests"
+        // Specifies the fully-qualified class name of the test instrumentation runner.
+        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+    }
+
+
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
