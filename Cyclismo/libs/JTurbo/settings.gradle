@@ -5,3 +5,7 @@ project(':jformica_core').projectDir = new File('../jformica/jformica_core')
 
 include ':FluxUtils'
 project(':FluxUtils').projectDir = new File('../FluxUtils')
+
+include ':FormicaProfiles'
+project(':FormicaProfiles').projectDir = new File('../FormicaProfiles')
+

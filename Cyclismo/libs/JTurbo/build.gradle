@@ -21,6 +21,7 @@ dependencies {
     compile project(':FluxUtils')
     compile project(':jformica_core')
     compile project(':jformica_jsr80')
+    compile project(':FormicaProfiles')
 }
 
 sourceSets {

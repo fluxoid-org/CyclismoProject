@@ -20,6 +20,8 @@ repositories {
 }
 
 dependencies {
+    testAnnotationProcessor group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.7'
+    annotationProcessor group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.7'
     implementation fileTree(include: '*.jar', dir: 'libs')
     implementation project(':Cyclismo:CyclismoLib')
     implementation project(':aFileChooser')
@@ -35,6 +37,7 @@ dependencies {
     implementation 'com.caverock:androidsvg:1.2.1'
     implementation 'net.sf.kxml:kxml2:2.3.0'
     implementation 'com.google.protobuf:protobuf-java:2.5.0'
+
 }
 
 android {
@@ -73,6 +76,9 @@ android {
 
     packagingOptions {
         exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/DEPENDENCIES'
     }
 }
 
