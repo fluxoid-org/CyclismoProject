@@ -1,19 +1,19 @@
 package org.cowboycoders.ant.profiles;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 import org.cowboycoders.ant.events.BroadcastListener;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.*;
 
 public class RequestBuffer implements BroadcastListener<AntPage> {
+    private static final Logger LOGGER = Logger.getLogger(RequestBuffer.class.getName());
 
     private static final long TIMEOUT = TimeUnit.SECONDS.toNanos(1);
     private static final int MAX_RETRIES = 10;
-    private Logger logger = LogManager.getLogger();
 
     private List<RequestFor<? extends AntPage>> buffer = new LinkedList<>();
     private Long sentTimeStamp = null;
@@ -34,7 +34,7 @@ public class RequestBuffer implements BroadcastListener<AntPage> {
         if (sentTimeStamp == null || timeStamp - sentTimeStamp > current.getTimeOut()) {
             if (retries >= current.getMaxRetries()) {
                 doAccept(); // stop the requests
-                logger.warn("max retries exceeded for: " + current.clazz);
+                LOGGER.warning("max retries exceeded for: " + current.clazz);
                 return;
             }
             current.performRequest();

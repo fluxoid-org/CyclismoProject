@@ -1,7 +1,5 @@
 package org.cowboycoders.ant.profiles;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.cowboycoders.ant.*;
 import org.cowboycoders.ant.events.BroadcastListener;
 import org.cowboycoders.ant.interfaces.AntTransceiver;
@@ -36,9 +34,6 @@ public class EliteAntProfile {
         node.reset();
         new EliteAntProfile().start(node);
     }
-
-
-    private Logger logger = LogManager.getLogger();
 
     /**
      *
