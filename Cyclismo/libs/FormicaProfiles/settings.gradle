@@ -1,3 +1,5 @@
 rootProject.name = 'FormicaSim'
 include 'Main'
 
+include ':FluxUtils'
+project(':FluxUtils').projectDir = new File("../FluxUtils")
