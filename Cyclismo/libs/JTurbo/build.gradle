@@ -11,17 +11,17 @@ repositories {
 }
 
 dependencies {
-    compile group: 'junit', name: 'junit', version: '4.12'
+    implementation group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
-    compile fileTree(dir: 'java_lib', include: '*.jar')
+    implementation fileTree(dir: 'java_lib', include: '*.jar')
     testCompile fileTree(dir: 'java_lib', include: '*.jar')
     testRuntime fileTree(dir: 'config', include: '*.properties')
     testRuntime project(':jformica_core')
-    compile project(':FluxUtils')
-    compile project(':jformica_core')
-    compile project(':jformica_jsr80')
-    compile project(':FormicaProfiles')
+    implementation project(':FluxUtils')
+    implementation project(':jformica_core')
+    implementation project(':jformica_jsr80')
+    implementation project(':FormicaProfiles')
 }
 
 sourceSets {
