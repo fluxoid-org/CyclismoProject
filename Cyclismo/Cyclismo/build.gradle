@@ -23,9 +23,9 @@ dependencies {
     implementation fileTree(include: '*.jar', dir: 'libs')
     implementation project(':Cyclismo:CyclismoLib')
     implementation project(':aFileChooser')
-    implementation project(':jformica_android')
+    api group: 'jformica', name: 'jformica_android' ,configuration: "default"
     implementation project(':FluxUtils')
-    implementation project(':jformica_core')
+    implementation 'jformica:jformica_core'
     implementation project(':JTurbo')
     androidTestAnnotationProcessor files('test_libs/AndroidMockGenerator.jar')
     androidTestImplementation fileTree(include: '*.jar', dir: 'test_libs')

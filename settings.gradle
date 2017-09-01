@@ -4,12 +4,7 @@ include ':Cyclismo:CyclismoLib'
 include ':aFileChooser'
 project(':aFileChooser').projectDir = new File('Cyclismo/libs/aFileChooser/aFileChooser')
 
-include ':jformica_jsr80'
-project(':jformica_jsr80').projectDir = new File('Cyclismo/libs/jformica/jformica_jsr80')
-include ':jformica_android'
-project(':jformica_android').projectDir = new File('Cyclismo/libs/jformica/jformica_android')
-include ':jformica_core'
-project(':jformica_core').projectDir = new File('Cyclismo/libs/jformica/jformica_core')
+includeBuild 'Cyclismo/libs/jformica'
 
 include ':FluxUtils'
 project(':FluxUtils').projectDir = new File('Cyclismo/libs/FluxUtils')

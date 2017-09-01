@@ -39,7 +39,7 @@ tasks.withType(FindBugs) {
 
 allprojects {
     version = '0.0.5-SNAPSHOT'
-
+    group = 'jformica'
     repositories {
         mavenCentral()
     }

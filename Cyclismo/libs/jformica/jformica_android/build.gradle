@@ -20,6 +20,12 @@ android {
         minSdkVersion 8
         targetSdkVersion 16
     }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+        }
+    }
 }
 
 android {
@@ -54,6 +60,10 @@ android {
     lintOptions {
         abortOnError false
     }
+
+
+
+
 }
 
 

@@ -1,5 +1,7 @@
 apply plugin: 'java'
 
+group = 'org.fluxoid'
+
 buildscript {
     repositories {
         mavenCentral()
