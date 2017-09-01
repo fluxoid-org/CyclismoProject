@@ -48,13 +48,15 @@ shadowJar {
 
 
 dependencies {
-    compileOnly fileTree(dir: 'libs', include: '*.jar')
+    compileOnly project(':jformica_core')
+    compileOnly project(':jformica_jsr80')
     shadowAdd fileTree(dir: 'libs', include: '*.jar')
+    shadowAdd project(':jformica_core')
+    shadowAdd project(':jformica_jsr80')
     implementation project(':FluxUtils')
-    testCompile fileTree(dir: 'libs', include: '*.jar')
+    testCompile project(':jformica_core')
     testCompile "org.mockito:mockito-core:2.+"
     testCompile group: 'junit', name: 'junit', version: '4.11'
-
 }
 
 jar {
