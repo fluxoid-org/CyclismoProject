@@ -21,7 +21,10 @@ dependencies {
     implementation project(':FluxUtils')
     implementation project(':jformica_core')
     implementation project(':jformica_jsr80')
-    implementation project(':FormicaProfiles')
+    implementation(project(':FormicaProfiles')) {
+    	transitive = false
+
+    }
 }
 
 sourceSets {
