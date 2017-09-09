@@ -20,10 +20,11 @@ dependencies {
     testRuntime project(':jformica_core')
     implementation project(':FluxUtils')
     implementation project(':jformica_core')
-    implementation project(':jformica_jsr80')
+    implementation(project(':jformica_jsr80')) {
+       transitive = false
+    }
     implementation(project(':FormicaProfiles')) {
     	transitive = false
-
     }
 }
 
