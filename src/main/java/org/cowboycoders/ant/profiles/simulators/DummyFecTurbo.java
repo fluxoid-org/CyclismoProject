@@ -4,7 +4,6 @@ import org.cowboycoders.ant.Channel;
 import org.cowboycoders.ant.ChannelEventHandler;
 import org.cowboycoders.ant.Node;
 import org.cowboycoders.ant.events.BroadcastListener;
-import org.cowboycoders.ant.interfaces.AntTransceiver;
 import org.cowboycoders.ant.messages.ChannelType;
 import org.cowboycoders.ant.messages.MasterChannelType;
 import org.cowboycoders.ant.messages.data.BroadcastDataMessage;
@@ -32,15 +31,6 @@ public class DummyFecTurbo implements TurboControllable {
 
     private final FecTurboState state = new FecTurboState();
 
-
-    public static void main(String [] args) {
-        //bytesToString(new Byte[] {-1,2,3});
-        AntTransceiver antchip = new AntTransceiver(0);
-        Node node = new Node(antchip);
-        node.start();
-        node.reset();
-        new DummyFecTurbo().start(node);
-    }
 
     @Override
     public void start(Node transceiver) {

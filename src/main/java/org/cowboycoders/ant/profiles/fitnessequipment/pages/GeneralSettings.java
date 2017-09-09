@@ -2,6 +2,7 @@ package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
 import org.cowboycoders.ant.profiles.pages.AntPage;
+import org.fluxoid.utils.bytes.LittleEndianArray;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -74,23 +75,24 @@ public class GeneralSettings extends CommonPageData implements AntPage {
 
         public void encode(final byte[] packet) {
             super.encode(packet);
-            PutUnsignedNumIn1LeBytes(packet, PAGE_OFFSET, PAGE_NUMBER);
+            LittleEndianArray viewer = new LittleEndianArray(packet);
+            viewer.putUnsigned(PAGE_OFFSET, 1, PAGE_NUMBER);
             if (cycleLength == null) {
-                PutUnsignedNumIn1LeBytes(packet, CYCLE_LENGTH_OFFSET, UNSIGNED_INT8_MAX);
+                viewer.putUnsigned(CYCLE_LENGTH_OFFSET, 1, UNSIGNED_INT8_MAX);
             } else {
                 BigDecimal raw = cycleLength.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP);
-                PutUnsignedNumIn1LeBytes(packet, CYCLE_LENGTH_OFFSET, raw.intValue());
+                viewer.putUnsigned(CYCLE_LENGTH_OFFSET, 1, raw.intValue());
             }
             if (incline == null) {
-                PutUnsignedNumIn2LeBytes(packet, INCLINE_OFFSET, Short.MAX_VALUE);
+                viewer.putUnsigned(INCLINE_OFFSET,2, (int) Short.MAX_VALUE);
             } else {
                 BigDecimal raw = incline.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP);
-                PutSignedNumIn2LeBytes(packet, INCLINE_OFFSET, raw.intValue());
+                viewer.putSigned(INCLINE_OFFSET, 2, raw.intValue());
             }
             if (resistance == null) {
-                PutUnsignedNumIn1LeBytes(packet, RESISTANCE_OFFSET, UNSIGNED_INT8_MAX);
+                viewer.putUnsigned(RESISTANCE_OFFSET, 1, UNSIGNED_INT8_MAX);
             } else {
-                PutUnsignedNumIn1LeBytes(packet, RESISTANCE_OFFSET, resistance);
+                viewer.putUnsigned(RESISTANCE_OFFSET, 1, (int) resistance);
             }
         }
     }
@@ -124,19 +126,20 @@ public class GeneralSettings extends CommonPageData implements AntPage {
 
     public GeneralSettings(byte[] data) {
         super(data);
-        final int cycleLengthRaw = UnsignedNumFrom1LeByte(data[CYCLE_LENGTH_OFFSET]);
+        LittleEndianArray viewer = new LittleEndianArray(data);
+        final int cycleLengthRaw = viewer.unsignedToInt(CYCLE_LENGTH_OFFSET, 1);
         if (cycleLengthRaw != UNSIGNED_INT8_MAX) {
             cycleLength = new BigDecimal(cycleLengthRaw).divide(new BigDecimal(100),2, RoundingMode.HALF_UP);
         } else {
             cycleLength = null;
         }
-        final int inclineRaw = SignedNumFrom2LeBytes(data, INCLINE_OFFSET);
+        final int inclineRaw = viewer.signedToInt(INCLINE_OFFSET, 2);
         if (inclineRaw != Short.MAX_VALUE) {
             incline = new BigDecimal(inclineRaw).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP);
         } else {
             incline = null;
         }
-        final int resistanceRaw = UnsignedNumFrom1LeByte(data[RESISTANCE_OFFSET]);
+        final int resistanceRaw = viewer.unsignedToInt(RESISTANCE_OFFSET, 1);
         if (resistanceRaw != UNSIGNED_INT8_MAX) {
             resistance = resistanceRaw;
         } else {

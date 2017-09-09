@@ -1,12 +1,10 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
-import org.cowboycoders.ant.profiles.BitManipulation;
 import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
+import org.fluxoid.utils.bytes.LittleEndianArray;
 
 import java.math.BigDecimal;
-
-import static org.cowboycoders.ant.profiles.BitManipulation.PutUnsignedNumIn1LeBytes;
 
 /**
  * Page 48
@@ -40,15 +38,17 @@ public class PercentageResistance implements AntPage {
         }
 
         public void encode(final byte [] packet) {
-            PutUnsignedNumIn1LeBytes(packet, PAGE_OFFSET, PAGE_NUMBER);
+            LittleEndianArray viewer = new LittleEndianArray(packet);
+            viewer.putUnsigned(PAGE_OFFSET, 1, PAGE_NUMBER);
             BigDecimal n = resistance.multiply(new BigDecimal(2));
-            PutUnsignedNumIn1LeBytes(packet, RESISTANCE_OFFSET, n.intValue());
+            viewer.putUnsigned(RESISTANCE_OFFSET, 1, n.intValue());
 
         }
     }
 
     public PercentageResistance(byte[] packet) {
-        int raw = BitManipulation.UnsignedNumFrom1LeByte(packet[RESISTANCE_OFFSET]);
+        LittleEndianArray viewer = new LittleEndianArray(packet);
+        int raw = viewer.unsignedToInt(RESISTANCE_OFFSET, 1);
         resistance = new BigDecimal(raw).divide(new BigDecimal(2));
     }
 

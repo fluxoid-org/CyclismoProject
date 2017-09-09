@@ -3,6 +3,7 @@ package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
 import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
+import org.fluxoid.utils.bytes.LittleEndianArray;
 
 import static org.cowboycoders.ant.profiles.BitManipulation.*;
 
@@ -36,13 +37,14 @@ public class BikeData extends CommonPageData implements AntPage {
 
     public BikeData(byte[] data) {
         super(data);
-        final int cadenceRaw = UnsignedNumFrom1LeByte(data[CADENCE_OFFSET]);
+        LittleEndianArray view = new LittleEndianArray(data);
+        final int cadenceRaw = view.unsignedToInt(CADENCE_OFFSET,1);
         if (cadenceRaw != UNSIGNED_INT8_MAX) {
             cadence = cadenceRaw;
         } else {
             cadence = 0;
         }
-        final int powerRaw = UnsignedNumFrom2LeBytes(data, POWER_OFFSET);
+        final int powerRaw = view.unsignedToInt(POWER_OFFSET,2);
         if (powerRaw != UNSIGNED_INT16_MAX) {
             power = powerRaw;
         } else {
@@ -89,11 +91,12 @@ public class BikeData extends CommonPageData implements AntPage {
 
         public void encode(final byte[] packet) {
             super.encode(packet);
+            LittleEndianArray view = new LittleEndianArray(packet);
             packet[0] = PAGE_NUMBER;
             int p = power == null ? UNSIGNED_INT16_MAX : power;
             int c = cadence == null ? UNSIGNED_INT8_MAX: cadence;
-            PutUnsignedNumIn2LeBytes(packet, POWER_OFFSET, p);
-            PutUnsignedNumIn1LeBytes(packet, CADENCE_OFFSET, c);
+            view.putUnsigned(POWER_OFFSET,2, p);
+            view.putUnsigned(CADENCE_OFFSET,1, c);
         }
     }
 }

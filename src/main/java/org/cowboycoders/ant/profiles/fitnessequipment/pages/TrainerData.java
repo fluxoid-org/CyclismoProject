@@ -9,6 +9,7 @@ import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 import org.fluxoid.utils.MathCompat;
 import org.fluxoid.utils.RollOverVal;
+import org.fluxoid.utils.bytes.LittleEndianArray;
 
 import java.util.EnumSet;
 import java.util.concurrent.TimeUnit;
@@ -119,19 +120,20 @@ public class TrainerData extends CommonPageData implements PowerOnlyDecodable, A
 
         public void encode(final byte[] packet) {
             super.encode(packet);
-            PutUnsignedNumIn1LeBytes(packet, PAGE_OFFSET, PAGE_NUMBER);
-            PutUnsignedNumIn2LeBytes(packet, POWER_OFFSET, MathCompat.toIntExact(powerSum.get()));
-            PutUnsignedNumIn1LeBytes(packet, EVENT_OFFSET, MathCompat.toIntExact(events.get()));
-            int old = UnsignedNumFrom2LeBytes(packet, INSTANT_POWER_OFFSET);
+            LittleEndianArray viewer = new LittleEndianArray(packet);
+            viewer.putUnsigned(PAGE_OFFSET, 1, PAGE_NUMBER);
+            viewer.putUnsigned(POWER_OFFSET,2, MathCompat.toIntExact(powerSum.get()));
+            viewer.putUnsigned(EVENT_OFFSET, 1, MathCompat.toIntExact(events.get()));
+            int old = viewer.unsignedToInt(INSTANT_POWER_OFFSET, 2);
             if (isPowerAvailable()) {
-                PutUnsignedNumIn2LeBytes(packet, INSTANT_POWER_OFFSET, old | instantPower );
+                viewer.putUnsigned(INSTANT_POWER_OFFSET,2, old | instantPower);
             } else {
-                PutUnsignedNumIn2LeBytes(packet, INSTANT_POWER_OFFSET, old | UNSIGNED_INT12_MAX );
+                viewer.putUnsigned(INSTANT_POWER_OFFSET,2, old | UNSIGNED_INT12_MAX);
             }
             if (cadence == null) {
-                PutUnsignedNumIn1LeBytes(packet, CADENCE_OFFSET, UNSIGNED_INT8_MAX);
+                viewer.putUnsigned(CADENCE_OFFSET, 1, UNSIGNED_INT8_MAX);
             } else {
-                PutUnsignedNumIn1LeBytes(packet, CADENCE_OFFSET, cadence);
+                viewer.putUnsigned(CADENCE_OFFSET, 1, (int) cadence);
             }
             Defines.TrainerStatusFlag.encode(packet, trainerStatusFlags);
         }
@@ -185,16 +187,17 @@ public class TrainerData extends CommonPageData implements PowerOnlyDecodable, A
 
     public TrainerData(byte [] packet) {
         super(packet);
+        LittleEndianArray viewer = new LittleEndianArray(packet);
         this.timestamp = System.nanoTime();
-        power = UnsignedNumFrom2LeBytes(packet, POWER_OFFSET);
-        events = UnsignedNumFrom1LeByte(packet[EVENT_OFFSET]);
-        instantPower = 0xfff & UnsignedNumFrom2LeBytes(packet, INSTANT_POWER_OFFSET);
+        power = viewer.unsignedToInt(POWER_OFFSET, 2);
+        events = viewer.unsignedToInt(EVENT_OFFSET, 1);
+        instantPower = 0xfff & viewer.unsignedToInt(INSTANT_POWER_OFFSET, 2);
         if (instantPower != UNSIGNED_INT12_MAX) {
             powerAvailable = true;
         } else {
             powerAvailable = false;
         }
-        final int cadenceRaw = UnsignedNumFrom1LeByte(packet[CADENCE_OFFSET]);
+        final int cadenceRaw = viewer.unsignedToInt(CADENCE_OFFSET, 1);
         if (cadenceRaw != UNSIGNED_INT8_MAX) {
             cadence = cadenceRaw;
         } else {

@@ -1,18 +1,15 @@
 package org.cowboycoders.ant.profiles.common;
 
-import org.cowboycoders.ant.events.BroadcastListener;
-import org.cowboycoders.ant.events.BroadcastMessenger;
-import org.cowboycoders.ant.profiles.BitManipulation;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.*;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 import org.cowboycoders.ant.profiles.pages.ManufacturerInfo;
 import org.cowboycoders.ant.profiles.pages.Request;
+import org.fluxoid.utils.bytes.LittleEndianArray;
 
-import java.util.HashMap;
-import java.util.Map;
+
 import java.util.logging.Logger;
 
-import static org.cowboycoders.ant.profiles.BitManipulation.UnsignedNumFrom1LeByte;
+
 import static org.cowboycoders.ant.profiles.pages.AntPage.PAGE_OFFSET;
 
 /**
@@ -21,7 +18,7 @@ import static org.cowboycoders.ant.profiles.pages.AntPage.PAGE_OFFSET;
 public class PageDispatcher extends FilteredBroadcastMessenger<AntPage> {
 
     public AntPage decode(byte[] data) {
-        final int page = BitManipulation.UnsignedNumFrom1LeByte(data[PAGE_OFFSET]);
+        final int page = getPageNum(data);
         switch (page) {
             case 1:
                 return new CalibrationResponse(data);
@@ -63,7 +60,8 @@ public class PageDispatcher extends FilteredBroadcastMessenger<AntPage> {
     }
 
     public static int getPageNum(byte[] data) {
-        return UnsignedNumFrom1LeByte(data[PAGE_OFFSET]);
+        LittleEndianArray array = new LittleEndianArray(data);
+        return array.unsignedToInt(PAGE_OFFSET,1);
     }
 
     public void dispatch(final byte[] data) {

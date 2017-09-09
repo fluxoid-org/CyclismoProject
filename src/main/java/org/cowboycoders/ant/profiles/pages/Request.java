@@ -1,11 +1,8 @@
 package org.cowboycoders.ant.profiles.pages;
 
 import org.cowboycoders.ant.messages.data.BroadcastDataMessage;
-import org.cowboycoders.ant.messages.data.DataMessage;
 import org.cowboycoders.ant.profiles.common.utils.PayloadUtils;
-
-import static org.cowboycoders.ant.profiles.BitManipulation.PutUnsignedNumIn1LeBytes;
-import static org.cowboycoders.ant.profiles.BitManipulation.UnsignedNumFrom1LeByte;
+import org.fluxoid.utils.bytes.LittleEndianArray;
 
 /**
  * p 70
@@ -29,8 +26,9 @@ public class Request implements AntPage {
     }
 
     public Request(final byte[] data) {
-        pageNumber = UnsignedNumFrom1LeByte(data[REQEUSTED_PAGE_OFFSET]);
-        subPage =  UnsignedNumFrom1LeByte(data[SUBPAGE_OFFSET]);
+        LittleEndianArray viewer = new LittleEndianArray(data);
+        pageNumber = viewer.unsignedToInt(REQEUSTED_PAGE_OFFSET, 1);
+        subPage = viewer.unsignedToInt(SUBPAGE_OFFSET, 1);
     }
 
     @Override
@@ -62,14 +60,15 @@ public class Request implements AntPage {
 
         @Override
         public void encode(byte[] packet) {
-            PutUnsignedNumIn1LeBytes(packet, AntPage.PAGE_OFFSET, PAGE_NUMBER);
-            PutUnsignedNumIn1LeBytes(packet, 1,  0xff);
-            PutUnsignedNumIn1LeBytes(packet, 2,  0xff);
-            PutUnsignedNumIn1LeBytes(packet, REQEUSTED_PAGE_OFFSET, pageNumber);
-            PutUnsignedNumIn1LeBytes(packet, 4,  0xff);
-            PutUnsignedNumIn1LeBytes(packet, 5,  1);
-            PutUnsignedNumIn1LeBytes(packet, SUBPAGE_OFFSET, subPage);
-            PutUnsignedNumIn1LeBytes(packet, 7,  1);
+            LittleEndianArray viewer = new LittleEndianArray(packet);
+            viewer.putUnsigned(AntPage.PAGE_OFFSET, 1, PAGE_NUMBER);
+            viewer.putUnsigned(1, 1, 0xff);
+            viewer.putUnsigned(2, 1, 0xff);
+            viewer.putUnsigned(REQEUSTED_PAGE_OFFSET, 1, pageNumber);
+            viewer.putUnsigned(4, 1, 0xff);
+            viewer.putUnsigned(5, 1, 1);
+            viewer.putUnsigned(SUBPAGE_OFFSET, 1, subPage);
+            viewer.putUnsigned(7, 1, 1);
         }
     }
 

@@ -3,6 +3,7 @@ package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
 import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
+import org.fluxoid.utils.bytes.LittleEndianArray;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -152,10 +153,11 @@ public class CalibrationProgress  implements AntPage {
 
         public void encode(final byte [] packet) {
             packet[0] = PAGE_NUMBER;
+            LittleEndianArray littleEndianView = new LittleEndianArray(packet);
             setFlag(offsetPending, packet, FLAG_OFFSET, OFFSET_IN_PROGRESS_MASK);
             setFlag(spinDownPending, packet, FLAG_OFFSET, SPINDOWN_IN_PROGRESS_MASK);
-            PutUnsignedNumInUpper2BitsOfUpperNibble(packet, CONDITION_OFFSET, speedState.getIntValue());
-            PutUnsignedNumInLower2BitsOfUpperNibble(packet, CONDITION_OFFSET, tempState.getIntValue());
+            littleEndianView.putPartialByte(CONDITION_OFFSET, 0b1100_0000, speedState.getIntValue());
+            littleEndianView.putPartialByte(CONDITION_OFFSET, 0b0011_0000, tempState.getIntValue());
             if (temp == null) {
                 packet[TEMP_OFFSET] = (byte) (0xff & UNSIGNED_INT8_MAX);
             } else {
@@ -163,15 +165,15 @@ public class CalibrationProgress  implements AntPage {
                 packet[TEMP_OFFSET] = n.byteValue();
             }
             if (targetSpeed == null) {
-                PutUnsignedNumIn2LeBytes(packet, SPEED_OFFSET, UNSIGNED_INT16_MAX);
+                littleEndianView.putUnsigned(SPEED_OFFSET, 2, UNSIGNED_INT16_MAX);
             } else {
                 BigDecimal n = targetSpeed.multiply(new BigDecimal(1000)).setScale(0, RoundingMode.HALF_UP);
-                PutUnsignedNumIn2LeBytes(packet, SPEED_OFFSET, (int) n.longValue());
+                littleEndianView.putUnsigned(SPEED_OFFSET, 2, n.intValue());
             }
             if (targetSpinDownTime == null) {
-                PutUnsignedNumIn2LeBytes(packet, SPINDOWN_OFFSET, UNSIGNED_INT16_MAX);
+                littleEndianView.putUnsigned(SPINDOWN_OFFSET, 2, UNSIGNED_INT16_MAX);
             } else {
-                PutUnsignedNumIn2LeBytes(packet, SPINDOWN_OFFSET, targetSpinDownTime);
+                littleEndianView.putUnsigned(SPINDOWN_OFFSET, 2, targetSpinDownTime);
             }
         }
 
@@ -180,24 +182,26 @@ public class CalibrationProgress  implements AntPage {
 
 
 
-    public CalibrationProgress(byte[] data) {
+    public CalibrationProgress(final byte[] data) {
+        LittleEndianArray littleEndianView = new LittleEndianArray(data);
         offsetPending = booleanFromU8(data[FLAG_OFFSET], OFFSET_IN_PROGRESS_MASK);
         spinDownPending = booleanFromU8(data[FLAG_OFFSET], SPINDOWN_IN_PROGRESS_MASK);
-        speedState = Defines.SpeedCondition.getValueFromInt(UnsignedNumFromUpper2BitsOfUpperNibble(data[CONDITION_OFFSET]));
-        tempState = Defines.TemperatureCondition.getValueFromInt(UnsignedNumFromLower2BitsOfUpperNibble(data[CONDITION_OFFSET]));
-        final int tempRaw = UnsignedNumFrom1LeByte(data[TEMP_OFFSET]);
+
+        speedState = Defines.SpeedCondition.getValueFromInt(littleEndianView.getPartialByte(CONDITION_OFFSET, 0b1100_0000));
+        tempState = Defines.TemperatureCondition.getValueFromInt(littleEndianView.getPartialByte(CONDITION_OFFSET, 0b0011_0000));
+        final int tempRaw = littleEndianView.unsignedToInt(TEMP_OFFSET, 1);
         if (tempRaw != UNSIGNED_INT8_MAX) {
             temp = new BigDecimal(tempRaw).divide(new BigDecimal(2),1, BigDecimal.ROUND_HALF_UP).subtract(new BigDecimal(25));
         } else {
             temp = null;
         }
-        final int speedRaw = UnsignedNumFrom2LeBytes(data, SPEED_OFFSET);
+        final int speedRaw = littleEndianView.unsignedToInt(SPEED_OFFSET, 2);
         if (speedRaw != UNSIGNED_INT16_MAX) {
             targetSpeed = new BigDecimal(speedRaw).divide(new BigDecimal(1000), 3, RoundingMode.HALF_UP);
         } else {
             targetSpeed = null;
         }
-        final int spinDownRaw = UnsignedNumFrom2LeBytes(data, SPINDOWN_OFFSET);
+        final int spinDownRaw = littleEndianView.unsignedToInt(SPINDOWN_OFFSET, 2);
         if (spinDownRaw != UNSIGNED_INT16_MAX) {
             targetSpinDownTime = spinDownRaw;
         } else {

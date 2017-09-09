@@ -3,6 +3,7 @@ package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 import org.cowboycoders.ant.profiles.BitManipulation;
 import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
+import org.fluxoid.utils.bytes.LittleEndianArray;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -124,6 +125,7 @@ public class CalibrationResponse implements AntPage {
 
         public void encode(final byte[] packet) {
             packet[0] = PAGE_NUMBER;
+            LittleEndianArray viewer = new LittleEndianArray(packet);
             if (zeroOffsetSuccess) {
                 packet[OFFSET_FLAG_OFFSET] |= OFFSET_FLAG__MASK;
             } else {
@@ -143,14 +145,14 @@ public class CalibrationResponse implements AntPage {
                 packet[TEMP_OFFSET] = n.byteValue();
             }
             if (zeroOffset != null) {
-                PutUnsignedNumIn2LeBytes(packet, OFFSET_OFFSET, zeroOffset);
+                viewer.putUnsigned(OFFSET_OFFSET,2, zeroOffset);
             } else {
-                PutUnsignedNumIn2LeBytes(packet, OFFSET_OFFSET, UNSIGNED_INT16_MAX);
+                viewer.putUnsigned(OFFSET_OFFSET,2, UNSIGNED_INT16_MAX);
             }
             if (spinDownTime != null) {
-                PutUnsignedNumIn2LeBytes(packet, SPINDOWN_OFFSET, spinDownTime);
+                viewer.putUnsigned(SPINDOWN_OFFSET,2, spinDownTime);
             } else {
-                PutUnsignedNumIn2LeBytes(packet, SPINDOWN_OFFSET, UNSIGNED_INT16_MAX);
+                viewer.putUnsigned(SPINDOWN_OFFSET,2, UNSIGNED_INT16_MAX);
 
             }
         }
@@ -158,21 +160,22 @@ public class CalibrationResponse implements AntPage {
 
 
     public CalibrationResponse(byte[] packet) {
+        LittleEndianArray viewer = new LittleEndianArray(packet);
         zeroOffsetSuccess = intToBoolean (packet[OFFSET_FLAG_OFFSET] & OFFSET_FLAG__MASK);
         spinDownSuccess = intToBoolean (packet[SPINDOWN_FLAG_OFFSET] & SPINDOWN_FLAG_MASK);
-        final int tempRaw = BitManipulation.UnsignedNumFrom1LeByte(packet[TEMP_OFFSET]);
+        final int tempRaw = viewer.unsignedToInt(TEMP_OFFSET,1);
         if (tempRaw != UNSIGNED_INT8_MAX) { // NULL
             temp = new BigDecimal(tempRaw).divide(new BigDecimal(2), 1, BigDecimal.ROUND_HALF_UP).subtract(new BigDecimal(25));
         } else {
             temp = null;
-        }
-        final int offsetRaw = BitManipulation.UnsignedNumFrom2LeBytes(packet, OFFSET_OFFSET);
+        };
+        final int offsetRaw = viewer.unsignedToInt(OFFSET_OFFSET, 2);
         if (offsetRaw != UNSIGNED_INT16_MAX) {
             zeroOffset = offsetRaw;
         } else {
             zeroOffset = null;
         }
-        final int spinDownRaw = BitManipulation.UnsignedNumFrom2LeBytes(packet, SPINDOWN_OFFSET);
+        final int spinDownRaw = viewer.unsignedToInt(SPINDOWN_OFFSET,2);
         if (spinDownRaw != UNSIGNED_INT16_MAX) {
             spinDownTime = spinDownRaw;
         } else {

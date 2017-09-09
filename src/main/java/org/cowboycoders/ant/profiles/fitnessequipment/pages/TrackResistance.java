@@ -3,6 +3,7 @@ package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 import org.cowboycoders.ant.profiles.BitManipulation;
 import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
+import org.fluxoid.utils.bytes.LittleEndianArray;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -67,22 +68,23 @@ public class TrackResistance implements AntPage {
         }
 
         public void encode(final byte[] packet) {
-            PutUnsignedNumIn1LeBytes(packet, PAGE_OFFSET, PAGE_NUMBER);
+            LittleEndianArray viewer = new LittleEndianArray(packet);
+            viewer.putUnsigned(PAGE_OFFSET, 1, PAGE_NUMBER);
             if (gradient.setScale(2, RoundingMode.HALF_UP).equals(DEFAULT_GRADIENT)) {
-                PutUnsignedNumIn2LeBytes(packet, GRADIENT_OFFSET, UNSIGNED_INT16_MAX);
+                viewer.putUnsigned(GRADIENT_OFFSET,2, UNSIGNED_INT16_MAX);
             } else {
                 BigDecimal raw = gradient.add(new BigDecimal(200))
                         .multiply(new BigDecimal(100))
                         .setScale(0, RoundingMode.HALF_UP);
-                PutUnsignedNumIn2LeBytes(packet, GRADIENT_OFFSET, raw.intValue());
+                viewer.putUnsigned(GRADIENT_OFFSET,2, raw.intValue());
 
             }
             if (coefficientRollingResistance.setScale(3, RoundingMode.HALF_UP).equals(DEFAULT_ROLLING_RESISTANCE)) {
-                PutUnsignedNumIn1LeBytes(packet, ROLLING_OFFSET, UNSIGNED_INT8_MAX);
+                viewer.putUnsigned(ROLLING_OFFSET, 1, UNSIGNED_INT8_MAX);
             } else {
                 BigDecimal raw = coefficientRollingResistance.multiply(new BigDecimal(20000))
                         .setScale(0, RoundingMode.HALF_UP);
-                PutUnsignedNumIn1LeBytes(packet, ROLLING_OFFSET, raw.intValue());
+                viewer.putUnsigned(ROLLING_OFFSET, 1, raw.intValue());
 
             }
 
@@ -97,14 +99,15 @@ public class TrackResistance implements AntPage {
     }
 
     public TrackResistance(byte[] packet) {
-        int gradRaw = BitManipulation.UnsignedNumFrom2LeBytes(packet, GRADIENT_OFFSET);
+        LittleEndianArray viewer = new LittleEndianArray(packet);
+        int gradRaw = viewer.unsignedToInt(GRADIENT_OFFSET, 2);
         if (gradRaw != BitManipulation.UNSIGNED_INT16_MAX) {
             gradient = new BigDecimal(gradRaw).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP)
                     .subtract(new BigDecimal(200));
         } else {
             gradient = DEFAULT_GRADIENT;
         }
-        int rollingRaw = BitManipulation.UnsignedNumFrom1LeByte(packet[ROLLING_OFFSET]);
+        int rollingRaw = viewer.unsignedToInt(ROLLING_OFFSET, 1);
         if (rollingRaw != UNSIGNED_INT8_MAX) {
             coefficientRollingResistance = new BigDecimal(rollingRaw)
                     .divide(new BigDecimal(20000), 5, RoundingMode.HALF_UP);

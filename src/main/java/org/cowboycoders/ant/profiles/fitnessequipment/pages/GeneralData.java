@@ -8,6 +8,7 @@ import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 import org.fluxoid.utils.MathCompat;
 import org.fluxoid.utils.RollOverVal;
+import org.fluxoid.utils.bytes.LittleEndianArray;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -206,28 +207,29 @@ public class GeneralData extends CommonPageData implements AntPage, TimeDecodabl
 
         public void encode(final byte[] packet) {
             super.encode(packet);
+            LittleEndianArray viewer = new LittleEndianArray(packet);
             final boolean distanceAvailable = distanceCovered != null;
-            PutUnsignedNumIn1LeBytes(packet, PAGE_OFFSET, PAGE_NUMBER);
+            viewer.putUnsigned(PAGE_OFFSET, 1, PAGE_NUMBER);
             packet[TYPE_OFFSET] = (byte) (0xff & (type.getIntValue() & TYPE_MASK));
             if (distanceAvailable) {
                 packet[META_OFFSET] |= DISTANCE_MASK;
             } else {
                 packet[META_OFFSET] = clearMaskedBits(packet[META_OFFSET], DISTANCE_MASK);
             }
-            PutUnsignedNumIn1LeBytes(packet, TIME_OFFSET, timeElapsed);
+            viewer.putUnsigned(TIME_OFFSET, 1, timeElapsed);
             if (distanceAvailable) {
-                PutUnsignedNumIn1LeBytes(packet, DISTANCE_OFFSET, MathCompat.toIntExact(distance.get()));
+                viewer.putUnsigned(DISTANCE_OFFSET, 1, MathCompat.toIntExact(distance.get()));
             }
             if (speed == null) {
-                PutUnsignedNumIn2LeBytes(packet, SPEED_OFFSET, UNSIGNED_INT16_MAX);
+                viewer.putUnsigned(SPEED_OFFSET,2, UNSIGNED_INT16_MAX);
             } else {
                 BigDecimal conv = speed.multiply(new BigDecimal(1000)).setScale(0, RoundingMode.HALF_UP);
-                PutUnsignedNumIn2LeBytes(packet, SPEED_OFFSET, conv.intValue());
+                viewer.putUnsigned(SPEED_OFFSET,2, conv.intValue());
             }
             if (heartRate == null) {
-                PutUnsignedNumIn1LeBytes(packet, HR_OFFSET, UNSIGNED_INT8_MAX);
+                viewer.putUnsigned(HR_OFFSET, 1, UNSIGNED_INT8_MAX);
             } else {
-                PutUnsignedNumIn1LeBytes(packet, HR_OFFSET, heartRate);
+                viewer.putUnsigned(HR_OFFSET, 1, (int) heartRate);
             }
             packet[META_OFFSET] |= heartRateSource.getIntValue();
 
@@ -243,25 +245,26 @@ public class GeneralData extends CommonPageData implements AntPage, TimeDecodabl
 
     public GeneralData(byte [] packet) {
         super(packet);
+        LittleEndianArray viewer = new LittleEndianArray(packet);
         distanceAvailable = booleanFromU8(packet[META_OFFSET], DISTANCE_MASK);
 
-        this.timeElapsed = UnsignedNumFrom1LeByte(packet[TIME_OFFSET]);
+        this.timeElapsed = viewer.unsignedToInt(TIME_OFFSET, 1);
 
         if (distanceAvailable) {
-            distanceCovered = UnsignedNumFrom1LeByte(packet[DISTANCE_OFFSET]);
+            distanceCovered = viewer.unsignedToInt(DISTANCE_OFFSET, 1);
         } else {
             // IMO null will lead to fewer hard to detect bugs
             distanceCovered = null;
         }
 
-        final int speedRaw = UnsignedNumFrom2LeBytes(packet, SPEED_OFFSET);
+        final int speedRaw = viewer.unsignedToInt(SPEED_OFFSET, 2);
         if (speedRaw != UNSIGNED_INT16_MAX) {
             speed = new BigDecimal(speedRaw).divide(new BigDecimal(1000), 3, RoundingMode.HALF_UP);
         } else {
             speed = new BigDecimal(0);
         }
-        
-        final int heartRateRaw = UnsignedNumFrom1LeByte(packet[HR_OFFSET]);
+
+        final int heartRateRaw = viewer.unsignedToInt(HR_OFFSET, 1);
         if (heartRateRaw != UNSIGNED_INT8_MAX) {
             heartRate = heartRateRaw;
         } else {
