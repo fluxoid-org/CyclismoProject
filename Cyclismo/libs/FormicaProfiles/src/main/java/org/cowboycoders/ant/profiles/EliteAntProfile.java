@@ -2,7 +2,6 @@ package org.cowboycoders.ant.profiles;
 
 import org.cowboycoders.ant.*;
 import org.cowboycoders.ant.events.BroadcastListener;
-import org.cowboycoders.ant.interfaces.AntTransceiver;
 import org.cowboycoders.ant.messages.ChannelType;
 import org.cowboycoders.ant.messages.SlaveChannelType;
 import org.cowboycoders.ant.messages.data.BroadcastDataMessage;
@@ -26,14 +25,6 @@ public class EliteAntProfile {
     private Channel channel;
     private long totalDistance = -1;
     private long prevDistance;
-
-    public static void main(String [] args) {
-        AntTransceiver antchip = new AntTransceiver(0);
-        Node node = new Node(antchip);
-        node.start();
-        node.reset();
-        new EliteAntProfile().start(node);
-    }
 
     /**
      *

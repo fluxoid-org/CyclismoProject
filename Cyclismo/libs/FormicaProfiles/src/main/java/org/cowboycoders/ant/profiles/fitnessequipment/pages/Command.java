@@ -4,6 +4,7 @@ import org.cowboycoders.ant.profiles.BitManipulation;
 import org.cowboycoders.ant.profiles.fitnessequipment.*;
 import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.CommonCommandPage;
+import org.fluxoid.utils.bytes.LittleEndianArray;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -28,6 +29,7 @@ public class Command extends CommonCommandPage {
         CommandStatusBuilder commonBuilder = new CommandStatusBuilder();
         Defines.CommandId cmd = Defines.CommandId.getValueFromInt(this.getLastCommandPage());
         byte[] responseData = this.getResponseData();
+        LittleEndianArray viewer = new LittleEndianArray(responseData);
         commonBuilder.setLastReceivedCommandId(cmd);
         commonBuilder.setLastReceivedSequenceNumber(this.getLastSequenceNumber());
         commonBuilder.setStatus(Defines.Status.getValueFromInt(this.getStatus().getIntValue()));
@@ -36,7 +38,7 @@ public class Command extends CommonCommandPage {
         switch (cmd) {
             case BASIC_RESISTANCE:
                 ResistanceStatusBuilder rsb = new ResistanceStatusBuilder();
-                BigDecimal resistance = new BigDecimal(BitManipulation.UnsignedNumFrom1LeByte(responseData[3]))
+                BigDecimal resistance = new BigDecimal(viewer.unsignedToInt(3,1))
                         .divide(new BigDecimal(2), 1, RoundingMode.HALF_UP);
                 rsb.setTotalResistance(resistance);
                 rsb.setStatus(commonStatus);
@@ -44,7 +46,7 @@ public class Command extends CommonCommandPage {
                 break;
             case TARGET_POWER:
                 TargetPowerStatusBuilder tpb = new TargetPowerStatusBuilder();
-                BigDecimal targetPower = new BigDecimal(BitManipulation.UnsignedNumFrom2LeBytes(responseData, 2))
+                BigDecimal targetPower = new BigDecimal(viewer.unsignedToInt(2,2))
                         .divide(new BigDecimal(4), 2, RoundingMode.HALF_UP);
                 tpb.setTargetPower(targetPower);
                 tpb.setStatus(commonStatus);
@@ -53,17 +55,17 @@ public class Command extends CommonCommandPage {
             case WIND_RESISTANCE:
                 WindStatusBuilder builder = new WindStatusBuilder();
                 builder.setStatus(commonStatus);
-                int coeff = BitManipulation.UnsignedNumFrom1LeByte(responseData[1]);
+                int coeff = viewer.unsignedToInt(1,1);
                 if (coeff != UNSIGNED_INT8_MAX) {
                     builder.setWindResistanceCoefficient(
                             new BigDecimal(coeff).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP)
                     );
                 }
-                int windSpeed = BitManipulation.UnsignedNumFrom1LeByte(responseData[2]);
+                int windSpeed = viewer.unsignedToInt(2,1);
                 if (windSpeed != UNSIGNED_INT8_MAX) {
                     builder.setWindSpeed(windSpeed - 127);
                 }
-                int draft = BitManipulation.UnsignedNumFrom1LeByte(responseData[3]);
+                int draft = viewer.unsignedToInt(3,1);
                 if (draft != UNSIGNED_INT8_MAX) {
                     builder.setDraftingFactor(
                             new BigDecimal(draft).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_UP)
@@ -74,14 +76,14 @@ public class Command extends CommonCommandPage {
             case TRACK_RESISTANCE:
                 TerrainStatusBuilder tsb = new TerrainStatusBuilder();
                 tsb.setStatus(commonStatus);
-                int gradeRaw = BitManipulation.UnsignedNumFrom2LeBytes(responseData, 1);
+                int gradeRaw = viewer.unsignedToInt(1,2);
                 if (gradeRaw != UNSIGNED_INT16_MAX) {
                     tsb.setGrade(
                       new BigDecimal(gradeRaw).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP)
                               .subtract(new BigDecimal(200))
                     );
                 }
-                int rollCoeff = BitManipulation.UnsignedNumFrom1LeByte(responseData[3]);
+                int rollCoeff = viewer.unsignedToInt(3,1);
                 if (rollCoeff != UNSIGNED_INT8_MAX) {
                     tsb.setRollingResistanceCoefficient(
                             new BigDecimal(rollCoeff).divide(new BigDecimal(20000), 5, RoundingMode.HALF_UP)
@@ -142,13 +144,14 @@ public class Command extends CommonCommandPage {
         public void encode(byte [] packet) {
             CommandStatusBuilder builder = CommandStatusBuilder.from(status);
             byte [] response = CommonCommandPage.createEmptyResponse();
+            LittleEndianArray viewer = new LittleEndianArray(response);
             if (totalResistance == null) {
                throw new IllegalArgumentException("total resistance must be set");
             } else {
                 BigDecimal n = totalResistance.multiply(
                         new BigDecimal(2).setScale(0, RoundingMode.HALF_UP)
                 );
-                PutUnsignedNumIn1LeBytes(response, 3, n.intValue());
+                viewer.putUnsigned(3,1,n.intValue());
             }
 
             builder.setRawResponseData(response);
@@ -202,13 +205,14 @@ public class Command extends CommonCommandPage {
         public void encode(byte [] packet) {
             CommandStatusBuilder builder = CommandStatusBuilder.from(status);
             byte [] response = CommonCommandPage.createEmptyResponse();
+            LittleEndianArray viewer = new LittleEndianArray(response);
             if (targetPower == null) {
                 throw new IllegalArgumentException("targetPower must be set");
             } else {
                 BigDecimal n = targetPower.multiply(
                         new BigDecimal(4).setScale(0, RoundingMode.HALF_UP)
                 );
-                PutUnsignedNumIn2LeBytes(response, 2, n.intValue());
+                viewer.putUnsigned(2,2,n.intValue());
             }
 
             builder.setRawResponseData(response);
@@ -275,21 +279,22 @@ public class Command extends CommonCommandPage {
         public void encode(byte [] packet) {
             CommandStatusBuilder builder = CommandStatusBuilder.from(status);
             byte [] response = CommonCommandPage.createEmptyResponse();
+            LittleEndianArray viewer = new LittleEndianArray(response);
             if (grade == null) {
-                PutUnsignedNumIn2LeBytes(response, 1 , UNSIGNED_INT16_MAX);
+                viewer.putUnsigned(1,2,UNSIGNED_INT16_MAX);
             } else {
                 BigDecimal n = grade.add(new BigDecimal(200)).multiply(
                         new BigDecimal(100).setScale(0, RoundingMode.HALF_UP)
                 );
-                PutUnsignedNumIn2LeBytes(response, 1, n.intValue());
+                viewer.putUnsigned(1,2,n.intValue());
             }
             if (rollingResistanceCoefficient == null) {
-                PutUnsignedNumIn1LeBytes(response, 3 , UNSIGNED_INT8_MAX);
+                viewer.putUnsigned(3,1,UNSIGNED_INT8_MAX);
             } else {
                 BigDecimal n = rollingResistanceCoefficient.multiply(
                         new BigDecimal(20000).setScale(0, RoundingMode.HALF_UP)
                 );
-                PutUnsignedNumIn1LeBytes(response, 3, n.intValue());
+                viewer.putUnsigned(3,1,n.intValue());
             }
 
             builder.setRawResponseData(response);
@@ -368,27 +373,28 @@ public class Command extends CommonCommandPage {
         public void encode(byte [] packet) {
             CommandStatusBuilder builder = CommandStatusBuilder.from(status);
             byte [] response = CommonCommandPage.createEmptyResponse();
+            LittleEndianArray viewer = new LittleEndianArray(response);
             if (windResistanceCoefficient == null) {
-                PutUnsignedNumIn1LeBytes(response, 1 , UNSIGNED_INT8_MAX);
+                viewer.putUnsigned(1,1,UNSIGNED_INT8_MAX);
             } else {
                 BigDecimal n = windResistanceCoefficient.multiply(
                         new BigDecimal(100).setScale(0, RoundingMode.HALF_UP)
                 );
-                PutUnsignedNumIn1LeBytes(response, 1, n.intValue());
+                viewer.putUnsigned(1,1,n.intValue());
             }
             if (windSpeed == null) {
-                PutUnsignedNumIn1LeBytes(response, 2 , UNSIGNED_INT8_MAX);
+                viewer.putUnsigned(2,1,UNSIGNED_INT8_MAX);
             } else {
                 // for -127 to 127 km/h
-                PutUnsignedNumIn1LeBytes(response, 2, windSpeed + 127);
+                viewer.putUnsigned(2,1,windSpeed + 127);
             }
             if (draftingFactor == null || draftingFactor.setScale(2).equals(new BigDecimal(1).setScale(2))) {
                 // if draftingFactor = 1.00 send (byte) 255
-                PutUnsignedNumIn1LeBytes(response, 3 , UNSIGNED_INT8_MAX);
+                viewer.putUnsigned(3,1,UNSIGNED_INT8_MAX);
             } else {
                 BigDecimal n = draftingFactor.multiply(
                         new BigDecimal(100).setScale(0, RoundingMode.HALF_UP));
-                PutUnsignedNumIn1LeBytes(response, 3, n.intValue());
+                viewer.putUnsigned(3,1,n.intValue());
             }
 
             builder.setRawResponseData(response);

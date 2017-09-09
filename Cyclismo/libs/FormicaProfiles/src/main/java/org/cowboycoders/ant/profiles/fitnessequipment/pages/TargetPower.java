@@ -1,14 +1,11 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
-import org.cowboycoders.ant.profiles.BitManipulation;
 import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
+import org.fluxoid.utils.bytes.LittleEndianArray;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-
-import static org.cowboycoders.ant.profiles.BitManipulation.PutUnsignedNumIn1LeBytes;
-import static org.cowboycoders.ant.profiles.BitManipulation.PutUnsignedNumIn2LeBytes;
 
 /**
  * p49
@@ -42,12 +39,13 @@ public class TargetPower implements AntPage {
 
         public void encode(final byte[] packet)
         {
-            PutUnsignedNumIn1LeBytes(packet, PAGE_OFFSET, PAGE_NUMBER);
+            LittleEndianArray viewer = new LittleEndianArray(packet);
+            viewer.putUnsigned(PAGE_OFFSET, 1, PAGE_NUMBER);
             if (targetPower == null) {
                 throw new IllegalArgumentException("must set targetPower");
             }
             BigDecimal n = targetPower.multiply(new BigDecimal(4)).setScale(0, RoundingMode.HALF_UP);
-            PutUnsignedNumIn2LeBytes(packet, POWER_OFFSET, n.intValue());
+            viewer.putUnsigned(POWER_OFFSET,2, n.intValue());
         }
 
 
@@ -55,7 +53,8 @@ public class TargetPower implements AntPage {
     }
 
     public TargetPower(byte[] packet) {
-        int raw = BitManipulation.UnsignedNumFrom2LeBytes(packet, POWER_OFFSET);
+        LittleEndianArray viewer = new LittleEndianArray(packet);
+        int raw = viewer.unsignedToInt(POWER_OFFSET, 2);
         targetPower = new BigDecimal(raw).divide(new BigDecimal(4), 2, RoundingMode.HALF_UP);
     }
 

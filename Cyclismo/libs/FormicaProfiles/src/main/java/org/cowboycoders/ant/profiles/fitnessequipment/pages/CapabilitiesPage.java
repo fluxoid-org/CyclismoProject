@@ -4,6 +4,7 @@ import org.cowboycoders.ant.profiles.fitnessequipment.Capabilities;
 import org.cowboycoders.ant.profiles.fitnessequipment.CapabilitiesBuilder;
 import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
+import org.fluxoid.utils.bytes.LittleEndianArray;
 
 import static org.cowboycoders.ant.profiles.BitManipulation.*;
 
@@ -44,11 +45,13 @@ public class CapabilitiesPage implements AntPage {
         }
 
         public void encode(byte[] packet) {
-            PutUnsignedNumIn1LeBytes(packet, PAGE_OFFSET, PAGE_NUMBER);
+            LittleEndianArray viewer = new LittleEndianArray(packet);
+            viewer.putUnsigned(PAGE_OFFSET, 1, PAGE_NUMBER);
             if (capabilites.getMaximumResistance() != null) {
-                PutUnsignedNumIn2LeBytes(packet, MAX_RESISTANCE_OFFSET, capabilites.getMaximumResistance());
+                viewer.putUnsigned(MAX_RESISTANCE_OFFSET,2,capabilites.getMaximumResistance());
             } else {
-                PutUnsignedNumIn2LeBytes(packet, MAX_RESISTANCE_OFFSET, UNSIGNED_INT16_MAX);
+                viewer.putUnsigned(MAX_RESISTANCE_OFFSET,2,UNSIGNED_INT16_MAX);
+
             }
             byte flags = 0;
             if (capabilites.isBasicResistanceModeSupported()) {
@@ -65,13 +68,15 @@ public class CapabilitiesPage implements AntPage {
     }
 
     public CapabilitiesPage(byte[] packet) {
+        LittleEndianArray viewer = new LittleEndianArray(packet);
         packet[0] = PAGE_NUMBER;
         CapabilitiesBuilder builder = new CapabilitiesBuilder();
-        int maxResitanceRaw = UnsignedNumFrom2LeBytes(packet, MAX_RESISTANCE_OFFSET);
+        int maxResitanceRaw = viewer.unsignedToInt(MAX_RESISTANCE_OFFSET,2);
+
         if (maxResitanceRaw != UNSIGNED_INT16_MAX) {
             builder.setMaximumResistance(maxResitanceRaw);
         }
-        int flags = UnsignedNumFrom1LeByte(packet[FLAGS_OFFSET]);
+        int flags = viewer.unsignedToInt(FLAGS_OFFSET,1);
         builder.setBasicResistanceModeSupport((flags & RESISTANCE_MASK) != 0);
         builder.setTargetPowerModeSupport((flags & POWER_MASK) !=0);
         builder.setSimulationModeSupport((flags & SIM_MASK) != 0);

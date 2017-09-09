@@ -16,4 +16,15 @@ public class Format {
         int end = arr.length == 0 ? 0 : len - 1;
         return formatter.toString().substring(0, end);
     }
+
+    public static CharSequence bytesToString(byte[] arr) {
+        Formatter formatter = new Formatter();
+        final int len = arr.length * 3;
+        for (byte b: arr) {
+            formatter.format("%02x:",b);
+        }
+        // strip last char
+        int end = arr.length == 0 ? 0 : len - 1;
+        return formatter.toString().substring(0, end);
+    }
 }

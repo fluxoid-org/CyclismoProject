@@ -1,7 +1,8 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
-import org.cowboycoders.ant.profiles.BitManipulation;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
+import org.fluxoid.utils.bytes.LittleEndianArray;
+import org.fluxoid.utils.bytes.NonStandardOps;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -53,7 +54,8 @@ public class PayloadGen {
      */
     public static byte[] getSetTargetPower(final BigDecimal targetPower) {
         final byte[] array = { (byte)Defines.CommandId.TARGET_POWER.getIntValue(), NULL_BYTE, NULL_BYTE, NULL_BYTE, NULL_BYTE, NULL_BYTE, 0, 0 };
-        BitManipulation.PutUnsignedNumIn2LeBytes(array, 6, targetPower.multiply(new BigDecimal("4")).setScale(0, RoundingMode.HALF_UP).intValue());
+        LittleEndianArray viewer = new LittleEndianArray(array);
+        viewer.putUnsigned(6,2, targetPower.multiply(new BigDecimal("4")).setScale(0, RoundingMode.HALF_UP).intValue());
         return array;
     }
 
@@ -65,6 +67,7 @@ public class PayloadGen {
      */
     public static byte[] getSetTrackResistance(final BigDecimal gradient, final BigDecimal coeffRollingResistance) {
         final byte[] array = { (byte)Defines.CommandId.TRACK_RESISTANCE.getIntValue(), NULL_BYTE, NULL_BYTE, NULL_BYTE, NULL_BYTE, NULL_BYTE, NULL_BYTE, NULL_BYTE };
+        LittleEndianArray viewer = new LittleEndianArray(array);
         int gradientAsInt;
         if (gradient.intValue() != NULL_GRADIENT) {
             // add 200 to get gradient in positive range
@@ -80,7 +83,7 @@ public class PayloadGen {
         else {
             byteValue = (byte) NULL_COEFF;
         }
-        BitManipulation.PutUnsignedNumIn2LeBytes(array, 5, gradientAsInt);
+        viewer.putUnsigned(5,2, gradientAsInt);
         array[7] = byteValue;
         return array;
     }
@@ -94,6 +97,7 @@ public class PayloadGen {
      */
     public static byte[] getSetUserConfiguration(final BigDecimal userWeight, final BigDecimal bikeWeight, final BigDecimal wheelDiameter, final BigDecimal gearRatio) {
         final byte[] array = { 55, NULL_BYTE, NULL_BYTE, NULL_BYTE, NULL_BYTE, NULL_BYTE, NULL_BYTE, 0 };
+        LittleEndianArray viewer = new LittleEndianArray(array);
         int intValue;
         if (userWeight.intValue() != 65535) {
             intValue = userWeight.multiply(new BigDecimal("100")).setScale(0, RoundingMode.HALF_UP).intValue();
@@ -122,8 +126,8 @@ public class PayloadGen {
         else {
             byteValue2 = 0;
         }
-        BitManipulation.PutUnsignedNumIn2LeBytes(array, 1, intValue);
-        BitManipulation.PutUnsignedNumInUpper1And1HalfLeBytes(array, 4, intValue2);
+        viewer.putUnsigned(1,2, intValue);
+        NonStandardOps.put_F0FF(array, 4, intValue2);
         array[6] = byteValue;
         array[7] = byteValue2;
         return array;

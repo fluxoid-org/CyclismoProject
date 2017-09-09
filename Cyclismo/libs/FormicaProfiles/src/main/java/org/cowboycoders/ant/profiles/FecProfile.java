@@ -5,7 +5,6 @@ import org.cowboycoders.ant.ChannelEventHandler;
 import org.cowboycoders.ant.ChannelId;
 import org.cowboycoders.ant.Node;
 import org.cowboycoders.ant.events.BroadcastListener;
-import org.cowboycoders.ant.interfaces.AntTransceiver;
 import org.cowboycoders.ant.messages.ChannelType;
 import org.cowboycoders.ant.messages.SlaveChannelType;
 import org.cowboycoders.ant.messages.data.BroadcastDataMessage;
@@ -47,57 +46,6 @@ public abstract class FecProfile {
     private Defines.EquipmentType equipType = Defines.EquipmentType.UNRECOGNIZED;
     private BroadcastListener<Defines.EquipmentType> typeCallBack = null;
     private Defines.EquipmentState state = Defines.EquipmentState.UNRECOGNIZED;
-
-
-    public static void main(String [] args) {
-        AntTransceiver antchip = new AntTransceiver(0);
-        Node node = new Node(antchip);
-        node.start();
-        node.reset();
-        new FecProfile() {
-            @Override
-            public void onEquipmentStateChange(Defines.EquipmentState oldState, Defines.EquipmentState newState) {
-
-            }
-
-            @Override
-            public void onCapabilitiesReceived(Capabilities capabilitiesPage) {
-
-            }
-
-            @Override
-            public void onConfigRecieved(Config conf) {
-
-            }
-
-            @Override
-            public void onCalibrationUpdate(CalibrationProgress progress) {
-
-            }
-
-            @Override
-            public void onCalibrationStatusReceieved(CalibrationResponse calibrationResponse) {
-
-            }
-
-            @Override
-            public void onConnect() {
-
-            }
-
-            @Override
-            public void onDisconnect() {
-
-            }
-
-            @Override
-            public void onStatusChange(EnumSet<Defines.TrainerStatusFlag> oldStatus, EnumSet<Defines.TrainerStatusFlag> newStatus) {
-
-            }
-
-        }.start(node);
-    }
-
 
     public void requestCapabilities() {
        requestPageDemandResponse(CapabilitiesPage.PAGE_NUMBER, CapabilitiesPage.class);
