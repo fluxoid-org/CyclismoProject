@@ -1,6 +1,6 @@
 package org.cowboycoders.ant.profiles.pages;
 
-import org.cowboycoders.ant.profiles.BitManipulation;
+import org.fluxoid.utils.bytes.LittleEndianArray;
 
 /**
  * Created by fluxoid on 09/02/17.
@@ -30,9 +30,10 @@ public class PageGen {
         for (int i = 4; i <= 7; ++i) {
             burstData[i] = -1;
         }
-        BitManipulation.PutUnsignedNumIn2LeBytes(burstData, 8, manufacturerId);
-        BitManipulation.PutUnsignedNumIn2LeBytes(burstData, 10, productId);
-        BitManipulation.PutUnsignedNumIn4LeBytes(burstData, 12, serialNumber);
+        LittleEndianArray viewer = new LittleEndianArray(burstData);
+        viewer.putUnsigned(8,2, manufacturerId);
+        viewer.putUnsigned(10,2, productId);
+        viewer.put(12,4, serialNumber);
         System.arraycopy(array, 0, burstData, 16, array.length);
         return burstData;
     }

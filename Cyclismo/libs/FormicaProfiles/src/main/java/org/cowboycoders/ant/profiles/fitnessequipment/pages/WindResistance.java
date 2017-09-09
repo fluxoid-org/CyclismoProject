@@ -3,11 +3,11 @@ package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 import org.cowboycoders.ant.profiles.BitManipulation;
 import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
+import org.fluxoid.utils.bytes.LittleEndianArray;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import static org.cowboycoders.ant.profiles.BitManipulation.PutUnsignedNumIn1LeBytes;
 import static org.cowboycoders.ant.profiles.BitManipulation.UNSIGNED_INT8_MAX;
 
 /**
@@ -78,25 +78,26 @@ public class WindResistance implements AntPage {
 
 
         public void encode(final byte[] packet) {
-            PutUnsignedNumIn1LeBytes(packet, PAGE_OFFSET, PAGE_NUMBER);
+            LittleEndianArray viewer = new LittleEndianArray(packet);
+            viewer.putUnsigned(PAGE_OFFSET, 1, PAGE_NUMBER);
             if (setScale(windResitanceCoeff).equals(setScale(DEFAULT_WIND_COEFF))){
-                PutUnsignedNumIn1LeBytes(packet, WIND_COEFFICIENT_OFFSET, UNSIGNED_INT8_MAX);
+                viewer.putUnsigned(WIND_COEFFICIENT_OFFSET, 1, UNSIGNED_INT8_MAX);
             } else {
                 BigDecimal raw = windResitanceCoeff.multiply(new BigDecimal(100))
                         .setScale(0, RoundingMode.HALF_UP);
-                PutUnsignedNumIn1LeBytes(packet, WIND_COEFFICIENT_OFFSET, raw.intValue());
+                viewer.putUnsigned(WIND_COEFFICIENT_OFFSET, 1, raw.intValue());
             }
             if (windSpeed == 0) {
-                PutUnsignedNumIn1LeBytes(packet, WIND_SPEED_OFFSET, UNSIGNED_INT8_MAX);
+                viewer.putUnsigned(WIND_SPEED_OFFSET, 1, UNSIGNED_INT8_MAX);
             } else {
-                PutUnsignedNumIn1LeBytes(packet, WIND_SPEED_OFFSET, windSpeed + 127);
+                viewer.putUnsigned(WIND_SPEED_OFFSET, 1, windSpeed + 127);
             }
             if (setScale(draftingFactor).equals(setScale(DEFAULT_DRAFTING_FACTOR))) {
-                PutUnsignedNumIn1LeBytes(packet, DRAFTING_OFFSET, UNSIGNED_INT8_MAX);
+                viewer.putUnsigned(DRAFTING_OFFSET, 1, UNSIGNED_INT8_MAX);
             } else {
                 BigDecimal raw = draftingFactor.multiply(new BigDecimal(100))
                         .setScale(0, RoundingMode.HALF_UP);
-                PutUnsignedNumIn1LeBytes(packet, DRAFTING_OFFSET, raw.intValue());
+                viewer.putUnsigned(DRAFTING_OFFSET, 1, raw.intValue());
             }
         }
 
@@ -117,19 +118,20 @@ public class WindResistance implements AntPage {
     }
 
     public WindResistance(byte [] packet) {
-        int rawCoeff = BitManipulation.UnsignedNumFrom1LeByte(packet[WIND_COEFFICIENT_OFFSET]);
+        LittleEndianArray viewer = new LittleEndianArray(packet);
+        int rawCoeff = viewer.unsignedToInt(WIND_COEFFICIENT_OFFSET, 1);
         if (rawCoeff != BitManipulation.UNSIGNED_INT8_MAX) {
             windResitanceCoeff = new BigDecimal(rawCoeff).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP);
         } else {
             windResitanceCoeff = DEFAULT_WIND_COEFF;
         }
-        int windSpeedRaw = BitManipulation.UnsignedNumFrom1LeByte(packet[WIND_SPEED_OFFSET]);
+        int windSpeedRaw = viewer.unsignedToInt(WIND_SPEED_OFFSET, 1);
         if (windSpeedRaw != BitManipulation.UNSIGNED_INT8_MAX) {
             windSpeed = windSpeedRaw - 127;
         } else {
             windSpeed = 0;
         }
-        int draftingRaw = BitManipulation.UnsignedNumFrom1LeByte(packet[DRAFTING_OFFSET]);
+        int draftingRaw = viewer.unsignedToInt(DRAFTING_OFFSET, 1);
         if (draftingRaw != BitManipulation.UNSIGNED_INT8_MAX) {
             draftingFactor = new BigDecimal(draftingRaw).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP);
 

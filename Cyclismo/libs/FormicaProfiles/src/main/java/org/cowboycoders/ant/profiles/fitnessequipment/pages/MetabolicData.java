@@ -7,6 +7,7 @@ import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 import org.fluxoid.utils.MathCompat;
 import org.fluxoid.utils.RollOverVal;
+import org.fluxoid.utils.bytes.LittleEndianArray;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -82,29 +83,30 @@ public class MetabolicData extends CommonPageData implements AntPage, CalorieCou
 
         public void encode(byte[] packet) {
             super.encode(packet);
-            PutUnsignedNumIn1LeBytes(packet, PAGE_OFFSET, PAGE_NUMBER);
+            LittleEndianArray viewer = new LittleEndianArray(packet);
+            viewer.putUnsigned(PAGE_OFFSET, 1, PAGE_NUMBER);
             if (isCaloriesAvailable() && calorieCounter == null) {
                 throw new IllegalArgumentException("must set calorie counter");
             }
             if (isCaloriesAvailable()) {
                 packet[META_OFFSET] |= HAS_CALORIES_MASK;
-                PutUnsignedNumIn1LeBytes(packet, CALORIES_OFFSET, MathCompat.toIntExact(calorieCounter.get()));
+                viewer.putUnsigned(CALORIES_OFFSET, 1, MathCompat.toIntExact(calorieCounter.get()));
             } else {
                 packet[META_OFFSET] = clearMaskedBits(packet[META_OFFSET], HAS_CALORIES_MASK);
             }
             if (instantMetabolicEquivalents == null) {
-                PutUnsignedNumIn2LeBytes(packet, INSTANT_METABOLIC_EQUIVALENTS_OFFSET, UNSIGNED_INT16_MAX);
+                viewer.putUnsigned(INSTANT_METABOLIC_EQUIVALENTS_OFFSET,2, UNSIGNED_INT16_MAX);
             } else {
                 BigDecimal raw = instantMetabolicEquivalents.multiply(new BigDecimal(100))
                         .setScale(0, RoundingMode.HALF_UP);
-                PutUnsignedNumIn2LeBytes(packet, INSTANT_METABOLIC_EQUIVALENTS_OFFSET, raw.intValue());
+                viewer.putUnsigned(INSTANT_METABOLIC_EQUIVALENTS_OFFSET,2, raw.intValue());
             }
             if (instantCalorieBurn == null) {
-                PutUnsignedNumIn2LeBytes(packet, INSTANT_CALORIE_OFFSET, UNSIGNED_INT16_MAX);
+                viewer.putUnsigned(INSTANT_CALORIE_OFFSET,2, UNSIGNED_INT16_MAX);
             } else {
                 BigDecimal raw = instantCalorieBurn.multiply(new BigDecimal(10))
                         .setScale(0, RoundingMode.HALF_UP);
-                PutUnsignedNumIn2LeBytes(packet, INSTANT_CALORIE_OFFSET, raw.intValue());
+                viewer.putUnsigned(INSTANT_CALORIE_OFFSET,2, raw.intValue());
             }
         }
     }
@@ -146,21 +148,22 @@ public class MetabolicData extends CommonPageData implements AntPage, CalorieCou
 
     public MetabolicData(byte[] packet) {
         super(packet);
+        LittleEndianArray viewer = new LittleEndianArray(packet);
         caloriesAvailable = booleanFromU8(packet[META_OFFSET], HAS_CALORIES_MASK);
         if (caloriesAvailable) {
-            calorieCounter = UnsignedNumFrom1LeByte(packet[CALORIES_OFFSET]);
+            calorieCounter = viewer.unsignedToInt(CALORIES_OFFSET, 1);
         } else {
             calorieCounter = null;
         }
 
-        final int instantMetaRaw = UnsignedNumFrom2LeBytes(packet, INSTANT_METABOLIC_EQUIVALENTS_OFFSET);
+        final int instantMetaRaw = viewer.unsignedToInt(INSTANT_METABOLIC_EQUIVALENTS_OFFSET, 2);
         if (instantMetaRaw != UNSIGNED_INT16_MAX) {
             instantMetabolicEquivalents = new BigDecimal(instantMetaRaw).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP);
         } else {
             instantMetabolicEquivalents = null;
         }
 
-        final int instantCalorieRaw = UnsignedNumFrom2LeBytes(packet, INSTANT_CALORIE_OFFSET);
+        final int instantCalorieRaw = viewer.unsignedToInt(INSTANT_CALORIE_OFFSET, 2);
         if (instantCalorieRaw != UNSIGNED_INT16_MAX) {
             instantCalorieBurn = new BigDecimal(instantCalorieRaw).divide(new BigDecimal(10), 1, RoundingMode.HALF_UP);
         } else {

@@ -4,6 +4,8 @@ import org.cowboycoders.ant.profiles.fitnessequipment.Config;
 import org.cowboycoders.ant.profiles.fitnessequipment.ConfigBuilder;
 import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
+import org.fluxoid.utils.bytes.LittleEndianArray;
+import org.fluxoid.utils.bytes.NonStandardOps;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -46,38 +48,39 @@ public class ConfigPage implements AntPage {
         }
 
         public void encode(final byte[] packet) {
-            PutUnsignedNumIn1LeBytes(packet, PAGE_OFFSET, PAGE_NUMBER);
+            LittleEndianArray viewer = new LittleEndianArray(packet);
+            viewer.putUnsigned(PAGE_OFFSET,1,PAGE_NUMBER);
             BigDecimal uw = config.getUserWeight();
             if (uw == null) {
-                PutUnsignedNumIn2LeBytes(packet, USER_WEIGHT_OFFSET, UNSIGNED_INT16_MAX);
+                viewer.putUnsigned(USER_WEIGHT_OFFSET,2,UNSIGNED_INT16_MAX);;
             } else {
-                PutUnsignedNumIn2LeBytes(packet, USER_WEIGHT_OFFSET,
-                        uw.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP)
-                                .intValue());
+                viewer.putUnsigned(USER_WEIGHT_OFFSET,2,
+                        uw.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP).intValue());
+
             }
             BigDecimal bw = config.getBicycleWeight();
             if (bw == null) {
-                PutUnsignedNumInUpper1And1HalfLeBytes(packet, BIKE_WEIGHT_OFFSET, UNSIGNED_INT12_MAX);
+                NonStandardOps.put_F0FF(packet, BIKE_WEIGHT_OFFSET, UNSIGNED_INT12_MAX);
             } else {
-                PutUnsignedNumInUpper1And1HalfLeBytes(packet, BIKE_WEIGHT_OFFSET,
+                NonStandardOps.put_F0FF(packet, BIKE_WEIGHT_OFFSET,
                         bw.multiply(new BigDecimal(20)).setScale(0, RoundingMode.HALF_UP)
                 .intValue());
             }
             BigDecimal dia = config.getBicycleWheelDiameter();
             if (dia == null) {
-                PutUnsignedNumIn1LeBytes(packet, WHEEL_DIAMETER_OFFSET, UNSIGNED_INT8_MAX);
+                viewer.putUnsigned(WHEEL_DIAMETER_OFFSET,1,UNSIGNED_INT8_MAX);
             } else {
-                PutUnsignedNumIn1LeBytes(packet, WHEEL_DIAMETER_OFFSET,
+                viewer.putUnsigned(WHEEL_DIAMETER_OFFSET,1,
                         dia.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP)
                         .intValue());
+
             }
             BigDecimal ratio = config.getGearRatio();
             if (ratio == null){
-                PutUnsignedNumIn1LeBytes(packet, GEAR_RATIO_OFFSET, UNSIGNED_INT8_MAX);
+                viewer.putUnsigned(GEAR_RATIO_OFFSET, 1, UNSIGNED_INT8_MAX);
             } else {
                 BigDecimal raw = ratio.divide(new BigDecimal(0.03), RoundingMode.HALF_UP);
-                PutUnsignedNumIn1LeBytes(packet, GEAR_RATIO_OFFSET,
-                        raw.intValue());
+                viewer.putUnsigned(GEAR_RATIO_OFFSET, 1, raw.intValue());
             }
 
 
@@ -86,25 +89,26 @@ public class ConfigPage implements AntPage {
 
     public ConfigPage(byte[] packet) {
         ConfigBuilder builder = new ConfigBuilder();
-        int uWeight = UnsignedNumFrom2LeBytes(packet, USER_WEIGHT_OFFSET);
+        LittleEndianArray viewer = new LittleEndianArray(packet);
+        int uWeight = viewer.unsignedToInt(USER_WEIGHT_OFFSET, 2);
         if (uWeight != UNSIGNED_INT16_MAX) {
             builder.setUserWeight(
                     new BigDecimal(uWeight).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP)
             );
         }
-        int bWeight = UnsignedNumFromUpper1And1HalfLeBytes(packet, BIKE_WEIGHT_OFFSET);
+        int bWeight = NonStandardOps.get_F0FF(packet, BIKE_WEIGHT_OFFSET);
         if (bWeight != UNSIGNED_INT12_MAX) {
             builder.setBicycleWeight(
                     new BigDecimal(bWeight).divide(new BigDecimal(20), 2, RoundingMode.HALF_UP)
             );
         }
-        int dia = UnsignedNumFrom1LeByte(packet[WHEEL_DIAMETER_OFFSET]);
+        int dia = viewer.unsignedToInt(WHEEL_DIAMETER_OFFSET,1);
         if (dia != UNSIGNED_INT8_MAX) {
             builder.setBicycleWheelDiameter(
                     new BigDecimal(dia).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP)
             );
         }
-        int ratio = UnsignedNumFrom1LeByte(packet[GEAR_RATIO_OFFSET]);
+        int ratio = viewer.unsignedToInt(GEAR_RATIO_OFFSET,1);
         if (ratio != UNSIGNED_INT8_MAX) {
             builder.setGearRatio(
                     new BigDecimal(ratio).multiply(new BigDecimal(0.03))

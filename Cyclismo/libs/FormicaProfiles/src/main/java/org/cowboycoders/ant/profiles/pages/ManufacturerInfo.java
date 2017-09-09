@@ -1,6 +1,6 @@
 package org.cowboycoders.ant.profiles.pages;
 
-import org.cowboycoders.ant.profiles.BitManipulation;
+import org.fluxoid.utils.bytes.LittleEndianArray;
 
 public class ManufacturerInfo implements AntPage {
     public static final int PAGE_NUMBER = 80;
@@ -13,9 +13,10 @@ public class ManufacturerInfo implements AntPage {
 
 
     public ManufacturerInfo(byte[] data) {
-        this.revision = BitManipulation.UnsignedNumFrom1LeByte(data[HARDWARE_REV_OFFSET]);
-        this.id = BitManipulation.UnsignedNumFrom2LeBytes(data, MANUFACTURER_ID_OFFSET);
-        this.model = BitManipulation.UnsignedNumFrom2LeBytes(data, MODEL_NUMBER_OFFSET);
+        LittleEndianArray viewer = new LittleEndianArray(data);
+        this.revision = viewer.unsignedToInt(HARDWARE_REV_OFFSET, 1);
+        this.id = viewer.unsignedToInt(MANUFACTURER_ID_OFFSET, 2);
+        this.model = viewer.unsignedToInt(MODEL_NUMBER_OFFSET, 2);
     }
 
     /**

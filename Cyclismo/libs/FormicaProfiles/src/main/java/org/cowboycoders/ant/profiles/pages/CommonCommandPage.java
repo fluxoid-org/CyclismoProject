@@ -1,7 +1,7 @@
 package org.cowboycoders.ant.profiles.pages;
 
-import org.cowboycoders.ant.profiles.BitManipulation;
 import org.cowboycoders.ant.profiles.common.Defines;
+import org.fluxoid.utils.bytes.LittleEndianArray;
 
 import java.util.Arrays;
 
@@ -40,9 +40,10 @@ public class CommonCommandPage implements AntPage {
     }
 
     public CommonCommandPage(byte [] packet) {
-        this.lastCommandPage = BitManipulation.UnsignedNumFrom1LeByte(packet[COMMAND_OFFSET]);
-        this.lastSequenceNumber = BitManipulation.UnsignedNumFrom1LeByte(packet[SEQUENCE_OFFSET]);
-        status = Defines.GenericCommandStatus.getValueFromInt(BitManipulation.UnsignedNumFrom1LeByte(packet[STATUS_OFFSET]));
+        LittleEndianArray viewer = new LittleEndianArray(packet);
+        this.lastCommandPage = viewer.unsignedToInt(COMMAND_OFFSET, 1);
+        this.lastSequenceNumber = viewer.unsignedToInt(SEQUENCE_OFFSET, 1);
+        status = Defines.GenericCommandStatus.getValueFromInt(viewer.unsignedToInt(STATUS_OFFSET, 1));
         responseData = Arrays.copyOfRange(packet, RESPONSE_OFFSET, RESPONSE_END);
     }
 

@@ -8,6 +8,7 @@ import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 import org.fluxoid.utils.MathCompat;
 import org.fluxoid.utils.RollOverVal;
+import org.fluxoid.utils.bytes.LittleEndianArray;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -116,11 +117,12 @@ public class TorqueData extends CommonPageData implements AntPage, TorqueDecodab
 
         public void encode(final byte[] packet) {
             super.encode(packet);
-            PutUnsignedNumIn1LeBytes(packet, PAGE_OFFSET, PAGE_NUMBER);
-            PutUnsignedNumIn1LeBytes(packet, EVENT_OFFSET, MathCompat.toIntExact(events.get()));
-            PutUnsignedNumIn1LeBytes(packet, ROTATION_OFFSET, MathCompat.toIntExact(rotations.get()));
-            PutUnsignedNumIn2LeBytes(packet, PERIOD_OFFSET, MathCompat.toIntExact(period.get()));
-            PutUnsignedNumIn2LeBytes(packet, TORQUE_OFFSET, MathCompat.toIntExact(torqueSum.get()));
+            LittleEndianArray viewer = new LittleEndianArray(packet);
+            viewer.putUnsigned(PAGE_OFFSET, 1, PAGE_NUMBER);
+            viewer.putUnsigned(EVENT_OFFSET, 1, MathCompat.toIntExact(events.get()));
+            viewer.putUnsigned(ROTATION_OFFSET, 1, MathCompat.toIntExact(rotations.get()));
+            viewer.putUnsigned(PERIOD_OFFSET,2, MathCompat.toIntExact(period.get()));
+            viewer.putUnsigned(TORQUE_OFFSET,2, MathCompat.toIntExact(torqueSum.get()));
 
         }
     }
@@ -128,11 +130,12 @@ public class TorqueData extends CommonPageData implements AntPage, TorqueDecodab
 
     public TorqueData(byte[] packet) {
         super(packet);
+        LittleEndianArray viewer = new LittleEndianArray(packet);
         timestamp = System.nanoTime();
-        events = UnsignedNumFrom1LeByte(packet[EVENT_OFFSET]);
-        rotations = UnsignedNumFrom1LeByte(packet[ROTATION_OFFSET]);
-        period = UnsignedNumFrom2LeBytes(packet, PERIOD_OFFSET);
-        torqueSum = UnsignedNumFrom2LeBytes(packet, TORQUE_OFFSET);
+        events = viewer.unsignedToInt(EVENT_OFFSET, 1);
+        rotations = viewer.unsignedToInt(ROTATION_OFFSET, 1);
+        period = viewer.unsignedToInt(PERIOD_OFFSET, 2);
+        torqueSum = viewer.unsignedToInt(TORQUE_OFFSET, 2);
     }
 
     @Override
