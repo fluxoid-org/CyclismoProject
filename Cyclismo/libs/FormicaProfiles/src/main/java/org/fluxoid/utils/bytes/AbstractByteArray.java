@@ -49,7 +49,7 @@ public abstract class AbstractByteArray {
         final int max = IntUtils.maxUnsigned(len * 8);
         // we would like to use Integer.compareUnsigned, but for android api level purposes:
         if (Integer.numberOfLeadingZeros(val) < Integer.numberOfLeadingZeros(max)) {
-            throw new IllegalArgumentException("max: " + max + ", you gave: " + val);
+            throw new IllegalArgumentException("max: " + (0xffffffffL & max) + ", you gave: " + (0xffffffffL & val));
         }
         put(offset,len,val);
     }
