@@ -1,6 +1,8 @@
 package org.cowboycoders.ant.profiles.common;
 
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.*;
+import org.cowboycoders.ant.profiles.fs.pages.BeaconAdvert;
+import org.cowboycoders.ant.profiles.fs.pages.CommandFactory;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 import org.cowboycoders.ant.profiles.pages.ManufacturerInfo;
 import org.cowboycoders.ant.profiles.pages.Request;
@@ -20,6 +22,7 @@ public class PageDispatcher extends FilteredBroadcastMessenger<AntPage> {
     public AntPage decode(byte[] data) {
         final int page = getPageNum(data);
         switch (page) {
+            // FEC
             case 1:
                 return new CalibrationResponse(data);
             case 2:
@@ -54,6 +57,12 @@ public class PageDispatcher extends FilteredBroadcastMessenger<AntPage> {
                 return new Command(data);
             case ManufacturerInfo.PAGE_NUMBER:
                 return new ManufacturerInfo(data);
+            // ANT-FS
+            case BeaconAdvert.PAGE_NUM:
+                return new BeaconAdvert(data);
+            case CommandFactory.PAGE_NUM:
+                // sub page directory
+                return CommandFactory.decode(data);
 
         }
         return null;
@@ -64,12 +73,14 @@ public class PageDispatcher extends FilteredBroadcastMessenger<AntPage> {
         return array.unsignedToInt(PAGE_OFFSET,1);
     }
 
-    public void dispatch(final byte[] data) {
+    public boolean dispatch(final byte[] data) {
         AntPage page = decode(data);
         if (page != null) {
             send(page);
+            return true;
         } else {
             Logger.getGlobal().warning("no handler for page: " + data[PAGE_OFFSET]);
         }
+        return false;
     }
 }

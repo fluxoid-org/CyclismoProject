@@ -142,4 +142,8 @@ public class IntUtils {
 		return (0b1 << (numBits)) -1;
 	}
 
+	public static int compareUnsigned(int i, int i2) {
+		return Long.compare(0xffffffffL & i, 0xffffffffL & i2);
+	}
+
 }
