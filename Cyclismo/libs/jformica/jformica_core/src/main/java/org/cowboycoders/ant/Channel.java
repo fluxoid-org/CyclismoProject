@@ -60,6 +60,7 @@ import org.cowboycoders.ant.messages.config.FrequencyAgilityMessage;
 import org.cowboycoders.ant.messages.config.ProximitySearchMessage;
 import org.cowboycoders.ant.messages.config.ChannelAssignMessage.ExtendedAssignment;
 import org.cowboycoders.ant.messages.config.ConfigListIdMessage;
+import org.cowboycoders.ant.messages.data.BroadcastDataMessage;
 import org.cowboycoders.ant.messages.data.BurstDataMessage;
 import org.cowboycoders.ant.messages.data.BurstData;
 import org.cowboycoders.ant.messages.nonstandard.CombinedBurst;
@@ -1228,5 +1229,15 @@ public class Channel {
 			ChannelMessage msg = new ChannelOpenRxScanModeMessage();
 			sendAndWaitForResponseNoError(msg);
 		}
+
+	/**
+	 *
+	 * @param data containing bytes to period every channel period
+	 */
+	public synchronized void setBroadcast(byte [] data) {
+		BroadcastDataMessage payload = new BroadcastDataMessage();
+		payload.setData(data);
+		send(payload);
+	}
 		
 }
