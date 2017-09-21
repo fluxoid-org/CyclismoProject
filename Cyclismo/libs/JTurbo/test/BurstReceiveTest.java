@@ -324,12 +324,6 @@ public class BurstReceiveTest {
           System.out.println("transfer completed");
         } catch (TransferException e) {
           System.out.println(e);
-        } catch (InterruptedException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        } catch (TimeoutException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
         }
 
 
