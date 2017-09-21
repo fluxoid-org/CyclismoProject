@@ -12,23 +12,23 @@ public class LittleEndianBitLevelSliceTest extends AbstractSliceTest {
     public void bytesSpannedAligned() {
 
         for (int i = 1; i<= 8; i++) {
-            assertEquals(1, new LittleEndianBitLevelSlice(null,8,i).bytesSpanned);
+            assertEquals(1, new LittleEndianBitLevelSlice(new byte[0],8,i).bytesSpanned);
         }
         for (int i = 9; i<= 16; i++) {
-            assertEquals(2, new LittleEndianBitLevelSlice(null,8,i).bytesSpanned);
+            assertEquals(2, new LittleEndianBitLevelSlice(new byte[0],8,i).bytesSpanned);
         }
 
     }
 
     @Test
     public void bytesSpannedUnaligned() {
-        assertEquals(1, new LittleEndianBitLevelSlice(null,2,6).bytesSpanned);
-        assertEquals(2, new LittleEndianBitLevelSlice(null,2,7).bytesSpanned);
-        assertEquals(3, new LittleEndianBitLevelSlice(null,3,15).bytesSpanned);
-        assertEquals(3, new LittleEndianBitLevelSlice(null,3,21).bytesSpanned);
-        assertEquals(4, new LittleEndianBitLevelSlice(null,3,22).bytesSpanned);
+        assertEquals(1, new LittleEndianBitLevelSlice(new byte[0],2,6).bytesSpanned);
+        assertEquals(2, new LittleEndianBitLevelSlice(new byte[0],2,7).bytesSpanned);
+        assertEquals(3, new LittleEndianBitLevelSlice(new byte[0],3,15).bytesSpanned);
+        assertEquals(3, new LittleEndianBitLevelSlice(new byte[0],3,21).bytesSpanned);
+        assertEquals(4, new LittleEndianBitLevelSlice(new byte[0],3,22).bytesSpanned);
 
-        assertEquals(1, new LittleEndianBitLevelSlice(null,28,4).bytesSpanned);
+        assertEquals(1, new LittleEndianBitLevelSlice(new byte[0],28,4).bytesSpanned);
     }
 
     @Test
@@ -47,19 +47,19 @@ public class LittleEndianBitLevelSliceTest extends AbstractSliceTest {
 
     @Test
     public void genLeftMask() {
-        LittleEndianBitLevelSlice test = new LittleEndianBitLevelSlice(null,4,8);
+        LittleEndianBitLevelSlice test = new LittleEndianBitLevelSlice(new byte[0],4,8);
         assertEquals(0b1111_0000_0000_0000, test.getLeftMask());
     }
 
     @Test
     public void genRightMask() {
-        LittleEndianBitLevelSlice test = new LittleEndianBitLevelSlice(null,4,8);
+        LittleEndianBitLevelSlice test = new LittleEndianBitLevelSlice(new byte[0],4,8);
         assertEquals(0b0000_0000_0000_1111, test.getRightMask());
     }
 
     @Test
     public void genRightMaskAligned() {
-        LittleEndianBitLevelSlice test = new LittleEndianBitLevelSlice(null,4,12);
+        LittleEndianBitLevelSlice test = new LittleEndianBitLevelSlice(new byte[0],4,12);
         assertEquals(0, test.getRightMask() & getMask(12));
     }
 
@@ -69,7 +69,7 @@ public class LittleEndianBitLevelSliceTest extends AbstractSliceTest {
 
     private void testLeftMaskLeftAligned(int len) {
         initData();
-        LittleEndianBitLevelSlice test = new LittleEndianBitLevelSlice(null,8,len);
+        LittleEndianBitLevelSlice test = new LittleEndianBitLevelSlice(new byte[0],8,len);
         // specific to right aligned case
         int bitsAfterSlice = test.bytesSpanned * 8 -len;
 

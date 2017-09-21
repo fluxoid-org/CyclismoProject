@@ -2,6 +2,8 @@ package org.fluxoid.utils.bytes;
 
 import org.cowboycoders.ant.utils.IntUtils;
 
+import java.nio.ByteBuffer;
+
 public class LittleEndianArray extends AbstractByteArray {
 
     public static final byte SIGN_BYTE_MASK = (byte) 0b1000_0000;
@@ -10,13 +12,17 @@ public class LittleEndianArray extends AbstractByteArray {
         super(data);
     }
 
+    public LittleEndianArray(ByteBuffer slice) {
+        super(slice);
+    }
+
     @Override
     public int unsignedToInt(int offset, int len) {
         assert len <= IntUtils.BYTES;
         int res = 0;
         for (int n = 0; n < len; n++) {
             int shift = 8 * n; // bytes to bits
-            res += (data[offset + n] & 0xff) << shift;
+            res += (data.get(offset + n) & 0xff) << shift;
         }
 
         return res;
@@ -27,7 +33,7 @@ public class LittleEndianArray extends AbstractByteArray {
         int res = 0;
         for (int n = 0; n < len; n++) {
             int shift = 8 * n; // bytes to bits
-            res += (data[offset + n] & 0xFFL) << shift;
+            res += (data.get(offset + n) & 0xFFL) << shift;
         }
 
         return res;
@@ -36,7 +42,7 @@ public class LittleEndianArray extends AbstractByteArray {
 
     public int signedToInt(int offset, int len) {
         assert len > 0;
-        boolean isNegative = (byte) (data[offset + len -1] & SIGN_BYTE_MASK) == SIGN_BYTE_MASK;
+        boolean isNegative = (byte) (data.get(offset + len -1) & SIGN_BYTE_MASK) == SIGN_BYTE_MASK;
         int ret = unsignedToInt(offset, len);
         if (isNegative) {
             int signExtension = ~(IntUtils.maxSigned(8 * len));
@@ -49,7 +55,7 @@ public class LittleEndianArray extends AbstractByteArray {
     public void put(int offset, int len, int val) {
         for (int n = 0; n < len; n++) {
             int shift = 8 * n; // bytes to bits
-            data[offset + n] = (byte) ((val >>> shift) & 0xff);
+            data.put(offset + n, (byte) ((val >>> shift) & 0xff));
         }
 
     }
@@ -58,7 +64,7 @@ public class LittleEndianArray extends AbstractByteArray {
     public void put(int offset, int len, long val) {
         for (int n = 0; n < len; n++) {
             int shift = 8 * n; // bytes to bits
-            data[offset + n] = (byte) ((val >>> shift) & 0xffL);
+            data.put(offset + n,(byte) ((val >>> shift) & 0xffL));
         }
 
     }

@@ -50,13 +50,13 @@ public class AbstractArrayTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void badMask() {
-        AbstractByteArray test = new Generic(null);
+        AbstractByteArray test = new Generic(new byte[0]);
         test.putPartialByte(0,0x1ff, 1);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void putUnsignedOverRange() {
-        AbstractByteArray test = new LittleEndianArray(null);
+        AbstractByteArray test = new LittleEndianArray(new byte[0]);
         test.putUnsigned(0,2,65535 + 1);
     }
 

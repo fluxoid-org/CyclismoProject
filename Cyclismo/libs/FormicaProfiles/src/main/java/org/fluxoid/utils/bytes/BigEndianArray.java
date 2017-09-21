@@ -12,7 +12,7 @@ public class BigEndianArray extends AbstractByteArray {
         int res = 0;
         for (int n = 0; n < len; n++) {
             int shift = 8 * n; // bytes to bits
-            res += (data[offset - n + len -1] & 0xff) << shift;
+            res += (data.get(offset - n + len -1) & 0xff) << shift;
         }
 
         return res;
@@ -22,7 +22,7 @@ public class BigEndianArray extends AbstractByteArray {
     public void put(int offset, int len, int val) {
         for (int n = 0; n < len; n++) {
             int shift = 8 * n; // bytes to bits
-            data[offset + len -1 - n] = (byte) ((val >>> shift) & 0xff);
+            data.put(offset + len -1 - n, (byte) ((val >>> shift) & 0xff));
         }
 
     }

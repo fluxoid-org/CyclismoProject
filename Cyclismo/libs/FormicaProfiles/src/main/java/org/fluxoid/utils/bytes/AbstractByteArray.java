@@ -2,15 +2,21 @@ package org.fluxoid.utils.bytes;
 
 import org.cowboycoders.ant.utils.IntUtils;
 
+import java.nio.ByteBuffer;
+
 public abstract class AbstractByteArray {
-    protected final byte[] data;
+
+    protected final ByteBuffer data;
 
     public AbstractByteArray(byte[] data) {
-        this.data = data;
+        this(ByteBuffer.wrap(data));
     }
 
-    public byte[] getData() {
-        return data;
+    public AbstractByteArray(ByteBuffer slice) {
+        if (slice == null) {
+            throw new IllegalArgumentException("slice cannot be null");
+        }
+        this.data = slice;
     }
 
     public abstract int unsignedToInt(int offset, int len);
@@ -25,12 +31,12 @@ public abstract class AbstractByteArray {
         if (val > max) {
             throw new IllegalArgumentException("value cannot be more than " + max + ", you gave: " + val);
         }
-        int newVal = IntUtils.setMaskedBits(0xff & data[offset],mask, val);
-        data[offset] = (byte) newVal;
+        int newVal = IntUtils.setMaskedBits(0xff & data.get(offset),mask, val);
+        data.put(offset, (byte) newVal);
     }
 
     public int getPartialByte(int offset, int mask) {
-        return IntUtils.getFromMask(data[offset] & 0xff, mask);
+        return IntUtils.getFromMask(data.get(offset) & 0xff, mask);
     }
 
     public void putSigned(int offset, int len, int val) {
