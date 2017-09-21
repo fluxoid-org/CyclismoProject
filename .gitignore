@@ -2,7 +2,8 @@
 *.dex
 hg/*
 *~
-
+**.hprof
+nohup.out
 #eclispe
 
 .metadata
