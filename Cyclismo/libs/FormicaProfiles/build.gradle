@@ -13,8 +13,8 @@ apply plugin: 'java'
 apply plugin: 'java-library'
 apply plugin: 'com.github.johnrengelman.shadow'
 
-sourceCompatibility = JavaVersion.VERSION_1_7
-targetCompatibility = JavaVersion.VERSION_1_7
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     mavenCentral()
@@ -64,6 +64,7 @@ shadowJar {
 
 
 dependencies {
+    implementation 'net.sourceforge.streamsupport:android-retrostreams:1.5.6'
     implementation project(':jformica_core')
     exampleCompile fileTree(dir: 'libs', include: '*.jar')
     exampleCompile project(':jformica_jsr80')
