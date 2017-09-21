@@ -789,15 +789,11 @@ public class Channel {
 	 *            timeout for complete burst
 	 * @param timeoutUnit
 	 *            unit for timeout
-	 * @throws InterruptedException
-	 *             if thread interrupted whilst waiting for completion
-	 * @throws TimeoutException
-	 *             if timeout expires
 	 * @throws TransferException
 	 *             on transfer error
 	 */
 	public void sendBurst(byte[] data, Long timeout, TimeUnit timeoutUnit)
-			throws InterruptedException, TimeoutException, TransferException {
+			throws TransferException {
 		final List<byte[]> list = ByteUtils.splitByteArray(data,
 				AntDefine.ANT_STANDARD_DATA_PAYLOAD_SIZE);
 		final BurstMessageSequenceGenerator generator = new BurstMessageSequenceGenerator();
@@ -893,6 +889,8 @@ public class Channel {
 				} else {
 					throw e;
 				}
+			} catch (InterruptedException | TimeoutException e) {
+				throw new AntError("error sending burst", e);
 			}
 
 		} finally {
