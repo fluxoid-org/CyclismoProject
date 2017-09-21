@@ -2,7 +2,9 @@ package org.cowboycoders.ant.profiles.fs.defines;
 
 public enum Command {
     CHANGE_FREQUENCY(2),
-    REQUEST_RESPONSE(4),
+    REQUEST_AUTH(4),
+    REQUEST_PING(5),
+    REQUEST_DOWNLOAD(9),
     UNKNOWN(Integer.MAX_VALUE)
 
     ;

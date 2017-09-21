@@ -8,6 +8,8 @@ public class LinkCommand implements AntPage {
 
     private final byte requestedFrequency;
     private final int serialNumber;
+
+    // choose random from this table
     private static byte [] freqTable  = new byte[] { 3, 7, 15, 20, 25, 29, 34, 40, 45, 49, 54, 60, 65, 70, 75, 80 };
 
     public static final int PAGE_NUM = 68;

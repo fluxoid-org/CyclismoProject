@@ -10,12 +10,16 @@ import org.cowboycoders.ant.messages.data.DataMessage;
 import org.cowboycoders.ant.profiles.common.PageDispatcher;
 import org.cowboycoders.ant.profiles.fs.pages.BeaconAdvert;
 import org.cowboycoders.ant.profiles.fs.pages.BeaconAuth;
+import org.cowboycoders.ant.profiles.fs.pages.BeaconTransport;
 import org.cowboycoders.ant.profiles.fs.pages.CommonBeacon;
 import org.cowboycoders.ant.profiles.fs.pages.cmd.AuthCommand;
+import org.cowboycoders.ant.profiles.fs.pages.cmd.DownloadCommand;
 import org.cowboycoders.ant.profiles.fs.pages.cmd.LinkCommand;
 import org.cowboycoders.ant.profiles.simulators.NetworkKeys;
 import org.fluxoid.utils.Format;
+import org.fluxoid.utils.bytes.LittleEndianArray;
 
+import java.sql.Time;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -43,7 +47,7 @@ public class FormicaFs {
 
 
     public static void main(String [] args) {
-        AntTransceiver antchip = new AntTransceiver(0);
+        AntTransceiver antchip = new AntTransceiver(1);
         Node node = new Node(antchip);
         node.start();
         node.reset();
@@ -139,6 +143,34 @@ public class FormicaFs {
 
                 }
 
+            }
+        });
+
+
+        dispatcher.addListener(DownloadCommand.class, new BroadcastListener<DownloadCommand>() {
+            @Override
+            public void receiveMessage(DownloadCommand message) {
+                channelExecutor.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        byte [] data = new byte[88];
+                        LittleEndianArray view = new LittleEndianArray(data);
+                        data[0] = 67;
+                        data[2] = 3; // guess
+                        data[8] = 68;
+                        data[9] = (byte) 0x89; // download response codetS
+                        view.put(12,4,64); // length of data
+                        view.put(16,4,0); // offset of data
+                        view.put(20,4,64); // file size;
+                        channel.sendBurst(data,10L, TimeUnit.SECONDS);
+                        System.out.println("sent file info");
+
+                        //byte [] beacon = new byte[8];
+                        //new BeaconTransport.BeaconTransportPayload()
+                        ///       .encode(beacon);
+                        //channel.setBroadcast(beacon);
+                    }
+                });
             }
         });
 
