@@ -31,7 +31,7 @@ dependencies {
     androidTestAnnotationProcessor files('test_libs/AndroidMockGenerator.jar')
     androidTestImplementation fileTree(include: '*.jar', dir: 'test_libs')
     androidTestImplementation 'org.mockito:mockito-all:1.10.19'
-    implementation 'com.android.support:support-v4:26.1.0'
+    implementation 'com.android.support:support-v4:23.1.1'
     // For MapForge
     implementation 'com.caverock:androidsvg:1.2.1'
     implementation 'net.sf.kxml:kxml2:2.3.0'
@@ -40,9 +40,8 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 19
     buildToolsVersion "26.0.1"
-    useLibrary 'org.apache.http.legacy'
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 19
