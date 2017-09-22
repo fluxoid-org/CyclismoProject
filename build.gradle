@@ -11,7 +11,7 @@ buildscript {
     repositories {
         mavenCentral()
         jcenter()
-	google()
+	    google()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.0-beta2'
@@ -53,13 +53,4 @@ subprojects { project ->
 
 }
 
-subprojects {
-    afterEvaluate { project ->
-        // should really check if java / android plugin applied
-	// println "${project.getProperty('plugins')}"
-        if (project.hasProperty('sourceCompatibility')) {
-            project.setProperty('sourceCompatibility', '1.7')
-        }
-    }
-}
 

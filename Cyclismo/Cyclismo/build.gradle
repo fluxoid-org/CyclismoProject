@@ -11,11 +11,12 @@ buildscript {
 	    google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0-beta2'
+        classpath 'com.android.tools.build:gradle:3.0.0-beta6'
     }
 }
 
 repositories {
+    google()
     mavenCentral()
 }
 
@@ -30,7 +31,7 @@ dependencies {
     androidTestAnnotationProcessor files('test_libs/AndroidMockGenerator.jar')
     androidTestImplementation fileTree(include: '*.jar', dir: 'test_libs')
     androidTestImplementation 'org.mockito:mockito-all:1.10.19'
-    implementation 'com.android.support:support-v4:23.1.1'
+    implementation 'com.android.support:support-v4:26.1.0'
     // For MapForge
     implementation 'com.caverock:androidsvg:1.2.1'
     implementation 'net.sf.kxml:kxml2:2.3.0'
@@ -39,12 +40,12 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion "25"
-
+    compileSdkVersion 26
+    buildToolsVersion "26.0.1"
+    useLibrary 'org.apache.http.legacy'
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 16
+        targetSdkVersion 19
     }
 
     defaultConfig {
@@ -57,8 +58,8 @@ android {
 
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     buildTypes {

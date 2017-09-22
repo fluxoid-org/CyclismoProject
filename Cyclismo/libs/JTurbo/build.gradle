@@ -24,7 +24,7 @@ dependencies {
        transitive = false
     }
     implementation(project(':FormicaProfiles')) {
-    	transitive = false
+
     }
 }
 

@@ -122,7 +122,6 @@
 -dontwarn org.cowboycoders.ant.interfaces.AntTransceiver$UsbReader
 
 -dontwarn org.apache.logging.log4j.**
--keepattributes Signature
 -keep class org.apache.logging.log4j.** { *; }
 
 # Make our stack traces useful
@@ -133,8 +132,6 @@
 
 # Keep services needed by ANT+ protocol
 -keep public class com.dsi.ant.IAnt_6
--keep public class com.dsi.ant.IAnt
--keep public class com.dsi.ant.IServiceSettings
 
 -keep public class org.cowboycoders.turbotrainers.**
 
@@ -143,3 +140,8 @@
 -dontwarn com.caverock.androidsvg.SVGImageView
 
 -dontwarn org.xmlpull.v1.**
+
+-keep class java9.** { *; }
+-dontwarn java9.**
+-keep class java.util.Random { *; }
+-dontwarn com.google.android.common.ParentalControl
