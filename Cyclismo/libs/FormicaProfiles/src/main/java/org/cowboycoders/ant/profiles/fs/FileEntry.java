@@ -1,5 +1,6 @@
 package org.cowboycoders.ant.profiles.fs;
 
+import java9.util.function.Consumer;
 import org.cowboycoders.ant.profiles.fs.defines.FSConstants;
 import org.cowboycoders.ant.profiles.fs.defines.FileAttribute;
 import org.fluxoid.utils.bytes.LittleEndianArray;
@@ -10,7 +11,9 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.logging.Logger;
 
-public class FileEntry {
+public class FileEntry implements Consumer<ByteBuffer> {
+
+    public static final int ENTRY_LENGTH = 16; // antfs version dependent
 
     private static Logger logger = Logger.getLogger(FileEntry.class.getSimpleName());
 
@@ -25,8 +28,6 @@ public class FileEntry {
     private final int length;
 
 
-    private final boolean timeStampValid;
-
     public FileEntry(DirectoryHeader header, ByteBuffer buf) {
         if (buf.remaining() != header.getEntryLength()) {
             throw new IllegalArgumentException("expecting " + header.getEntryLength() + " bytes");
@@ -39,14 +40,19 @@ public class FileEntry {
         attr = FileAttribute.from(buf.get(7));
         length = view.unsignedToInt(8,4);
         timeStamp = view.unsignedToInt(12,4);
-        if (timeStamp > FSConstants.TIMESTAMP_MAX) {
-            timeStampValid = false;
-        } else {
-            timeStampValid = true;
-        }
 
 
         buf.position(buf.position() + header.getEntryLength());
+    }
+
+    private FileEntry(int id, int dataType, int index, int customFlags, EnumSet<FileAttribute> attr, int timeStamp, int length) {
+        this.id = id;
+        this.dataType = dataType;
+        this.index = index;
+        this.customFlags = customFlags;
+        this.attr = attr;
+        this.timeStamp = timeStamp;
+        this.length = length;
     }
 
     public int getId() {
@@ -78,10 +84,30 @@ public class FileEntry {
     }
 
     public boolean isTimeStampValid() {
-        return timeStampValid;
+        return timeStamp > FSConstants.TIMESTAMP_MAX;
+    }
+
+
+
+    @Override
+    public void accept(ByteBuffer buf) {
+        if (buf.remaining() < ENTRY_LENGTH) {
+            throw new IllegalArgumentException("expecting " + 16 + " bytes");
+        }
+        LittleEndianArray view = new LittleEndianArray(buf);
+        view.put(0,2, index);
+        view.put(2,1, dataType);
+        view.put(3,3,id);
+        view.put(6,1, customFlags);
+        view.put(7,1, FileAttribute.encode(attr));
+        view.put(8, 4, length);
+        view.put(12, 4, timeStamp);
+        buf.position(buf.position() + 16);
     }
 
     public static class FileEntryBuilder {
+
+
         private int id;
         private int dataType; // e.g fit file which is 128
         private int index; // index in directory
@@ -89,6 +115,7 @@ public class FileEntry {
         private EnumSet<FileAttribute> attributes = EnumSet.noneOf(FileAttribute.class);
         private int timeStamp = (int) FSConstants.TIMESTAMP_MAX;
         private int length;
+
 
         public int getId() {
             return id;
@@ -106,6 +133,10 @@ public class FileEntry {
         public FileEntryBuilder setDataType(int dataType) {
             this.dataType = dataType;
             return this;
+        }
+
+        public FileEntry create() {
+            return new FileEntry(id,dataType,index,customFlags,attributes,timeStamp,length);
         }
 
         public int getIndex() {
@@ -158,5 +189,8 @@ public class FileEntry {
             this.length = length;
             return this;
         }
+
+
+
     }
 }
