@@ -24,8 +24,10 @@ import org.fluxoid.utils.Format;
 import org.fluxoid.utils.bytes.LittleEndianArray;
 import org.fluxoid.utils.crc.Crc16Utils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.sql.Time;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.concurrent.ExecutorService;
@@ -188,6 +190,39 @@ public class FormicaFs {
             }
         };
 
+        Runnable fileBehaviour = new Runnable() {
+
+            @Override
+            public void run() {
+                byte [] header = new byte[24]; // pad to multiple of 8 bytes
+                byte [] fitFile = getFit();
+                System.out.println(fitFile.length);
+                LittleEndianArray view = new LittleEndianArray(header);
+                header[0] = 67;
+                header[2] = 3; // guess
+                header[8] = 68;
+                header[9] = (byte) 0x89; // download response codetS
+                header[10] = 0; // response code - zero = no error?
+                view.put(12,4,fitFile.length); // remaining data
+                view.put(16,4,0); // offset of data
+                view.put(20,4,fitFile.length); // file size;
+
+                System.out.println("pre copy");
+                byte [] data = new byte[header.length + fitFile.length + 2];
+                System.arraycopy(header, 0, data, 0, header.length);
+                System.arraycopy(fitFile,0,data, header.length, fitFile.length);
+
+                System.out.println("pre crc");
+                int crc = Crc16Utils.computeCrc(Crc16Utils.ANSI_CRC16_TABLE, 0, fitFile);
+                view = new LittleEndianArray(data);
+                view.put(data.length - 2,2, crc);
+
+                System.out.println("pre send fit file");
+                channel.sendBurst(data,60L, TimeUnit.SECONDS);
+                System.out.println("sent fit file");
+            }
+        };
+
 
         //TODO: we need to listen to burst rather than these individual messages
         dispatcher.addListener(DownloadCommand.class, new BroadcastListener<DownloadCommand>() {
@@ -196,6 +231,7 @@ public class FormicaFs {
                 switch (message.getIndex()) {
                     default: {
                         System.out.println("index: " + message.getIndex() + ", requested");
+                        channelExecutor.submit(fileBehaviour);
                         break;
                     }
                     case 0: {
@@ -253,4 +289,21 @@ public class FormicaFs {
                 .create();
         return dir;
     }
+
+    public static byte[] getFit() {
+        byte [] data = new byte[0];
+        try (InputStream resource = ClassLoader.getSystemResourceAsStream("test.fit");
+             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            int avail;
+            while ((avail = resource.available()) > 0) {
+                out.write(resource.read());
+            }
+            data = out.toByteArray();
+
+        } catch (IOException e) {
+            // return zero length array
+        }
+        return data;
+    }
+
 }
