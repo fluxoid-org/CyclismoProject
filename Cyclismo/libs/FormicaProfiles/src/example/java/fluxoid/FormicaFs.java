@@ -29,11 +29,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
-import java.util.GregorianCalendar;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class FormicaFs {
 
@@ -224,6 +222,10 @@ public class FormicaFs {
         };
 
 
+        MultiPart multiPart = new MultiPart(getFit(),channel);
+
+
+
         //TODO: we need to listen to burst rather than these individual messages
         dispatcher.addListener(DownloadCommand.class, new BroadcastListener<DownloadCommand>() {
             @Override
@@ -231,7 +233,9 @@ public class FormicaFs {
                 switch (message.getIndex()) {
                     default: {
                         System.out.println("index: " + message.getIndex() + ", requested");
-                        channelExecutor.submit(fileBehaviour);
+                        System.out.println("offset: " + message.getOffset() + ", requested");
+                        multiPart.setOffset(message.getOffset());
+                        channelExecutor.submit(multiPart);
                         break;
                     }
                     case 0: {
@@ -291,6 +295,7 @@ public class FormicaFs {
     }
 
     public static byte[] getFit() {
+        // should probably use a stream rather than loading into memory
         byte [] data = new byte[0];
         try (InputStream resource = ClassLoader.getSystemResourceAsStream("test.fit");
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
@@ -305,5 +310,63 @@ public class FormicaFs {
         }
         return data;
     }
+
+    private static class MultiPart implements Runnable {
+
+        private final Channel channel;
+
+        private MultiPart(byte [] fullFile, Channel channel) {
+            this.offset = offset;
+            this.full = fullFile;
+            this.channel = channel;
+        }
+
+        public void setOffset(int offset) {
+            this.offset = offset;
+        }
+
+        private final byte [] full;
+        private static final int CHUNK_SIZE = 128;
+        private int offset = 0;
+        private int crc = 0;
+
+        @Override
+        public void run() {
+            if (full.length <= offset) {
+                System.out.println("offset out of bounds");
+                return;
+            }
+            byte [] header = new byte[24]; // pad to multiple of 8 bytes
+            int end = Math.min(offset + CHUNK_SIZE, full.length);
+            byte [] half = Arrays.copyOfRange(full,offset, end);
+
+            //byte [] half2 = Arrays.copyOfRange(fitFile, fitFile.length /2, fitFile.length);
+            LittleEndianArray view = new LittleEndianArray(header);
+            header[0] = 67;
+            header[2] = 3; // guess
+            header[8] = 68;
+            header[9] = (byte) 0x89; // download response codetS
+            header[10] = 0; // response code - zero = no error?
+            view.put(12,4,half.length); // remaining data
+            view.put(16,4,offset); // offset of data
+            view.put(20,4,full.length); // file size;
+
+            System.out.println("pre copy");
+            int minLen = header.length + half.length + 2;
+            minLen = minLen + (8 - minLen % 8) % 8; // pad to multiple of 8 bytes
+            byte [] data = new byte[minLen];
+            System.arraycopy(header, 0, data, 0, header.length);
+            System.arraycopy(half,0,data, header.length, half.length);
+            crc = Crc16Utils.computeCrc(Crc16Utils.ANSI_CRC16_TABLE, crc, half);
+            System.out.println("crc : " + crc);
+            view = new LittleEndianArray(data);
+            view.put(data.length - 2,2, crc);
+
+            System.out.println("pre send half");
+            channel.sendBurst(data,60L, TimeUnit.SECONDS);
+            System.out.println("sent fit file");
+
+        }
+    };
 
 }
