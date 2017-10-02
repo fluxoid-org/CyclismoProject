@@ -56,8 +56,8 @@ public abstract class DataMessage extends ChannelMessage {
   }
 
   /**
-   * {TODO : fix this - see setData(Byte[])}
-   * @param data TODO: document this
+   * @see DataMessage#setData(Byte[])
+   * @param data payload
    */
   public void setData(byte[] data) {
     Byte [] boxed = new Byte[data.length];
@@ -90,7 +90,7 @@ public abstract class DataMessage extends ChannelMessage {
 
 
   /**
-   * {TODO : fix this see getData()}
+   * @see DataMessage#getData()
    * @return the primitive data
    */
   public byte [] getPrimitiveData() {

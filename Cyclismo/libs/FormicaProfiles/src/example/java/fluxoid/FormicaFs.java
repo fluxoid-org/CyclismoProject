@@ -4,9 +4,11 @@ import org.cowboycoders.ant.Channel;
 import org.cowboycoders.ant.Node;
 import org.cowboycoders.ant.events.BroadcastListener;
 import org.cowboycoders.ant.interfaces.AntTransceiver;
+import org.cowboycoders.ant.messages.ChannelMessage;
 import org.cowboycoders.ant.messages.ChannelType;
 import org.cowboycoders.ant.messages.MasterChannelType;
-import org.cowboycoders.ant.messages.data.DataMessage;
+import org.cowboycoders.ant.messages.data.*;
+import org.cowboycoders.ant.messages.nonstandard.CombinedBurst;
 import org.cowboycoders.ant.profiles.common.PageDispatcher;
 import org.cowboycoders.ant.profiles.fs.Directory;
 import org.cowboycoders.ant.profiles.fs.DirectoryHeader;
@@ -20,6 +22,7 @@ import org.cowboycoders.ant.profiles.fs.pages.cmd.AuthCommand;
 import org.cowboycoders.ant.profiles.fs.pages.cmd.DownloadCommand;
 import org.cowboycoders.ant.profiles.fs.pages.cmd.LinkCommand;
 import org.cowboycoders.ant.profiles.simulators.NetworkKeys;
+import org.cowboycoders.ant.utils.ByteUtils;
 import org.fluxoid.utils.Format;
 import org.fluxoid.utils.bytes.LittleEndianArray;
 import org.fluxoid.utils.crc.Crc16Utils;
@@ -80,17 +83,25 @@ public class FormicaFs {
 
         channel.setBroadcast(data);
         channel.setSearchTimeout(Channel.SEARCH_TIMEOUT_NEVER);
-        channel.registerRxListener(new BroadcastListener<DataMessage>() {
-            @Override
-            public void receiveMessage(DataMessage msg) {
-                byte [] data = msg.getPrimitiveData();
-                if (!dispatcher.dispatch(data)) {
 
-                }
-                System.out.println(Format.bytesToString(data));
+
+
+        channel.registerRxListener((BroadcastListener<CompleteDataMessage>) msg -> {
+
+            byte [] data1 = msg.getPrimitiveData();
+            if (!dispatcher.dispatch(data1)) {
 
             }
-        }, DataMessage.class);
+            System.out.println(Format.bytesToString(data1));
+
+        }, CompleteDataMessage.class);
+
+        channel.registerBurstListener(new BroadcastListener<CombinedBurst>() {
+            @Override
+            public void receiveMessage(CombinedBurst message) {
+                dispatcher.dispatch(ByteUtils.unboxArray(message.getData()));
+            }
+        });
 
         dispatcher.addListener(LinkCommand.class, new BroadcastListener<LinkCommand>() {
             @Override

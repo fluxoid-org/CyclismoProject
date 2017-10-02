@@ -29,7 +29,7 @@ import org.cowboycoders.ant.messages.MessageId;
  * @author will
  *
  */
-public class BroadcastDataMessage extends DataMessage {
+public class BroadcastDataMessage extends CompleteDataMessage {
   
   public BroadcastDataMessage() {
     this(0);

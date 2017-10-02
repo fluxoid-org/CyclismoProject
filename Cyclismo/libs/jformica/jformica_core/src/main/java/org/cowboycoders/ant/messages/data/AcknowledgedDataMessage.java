@@ -29,7 +29,7 @@ import org.cowboycoders.ant.messages.MessageId;
  * @author will
  *
  */
-public class AcknowledgedDataMessage extends DataMessage {
+public class AcknowledgedDataMessage extends CompleteDataMessage {
   
   public AcknowledgedDataMessage() {
     this(0);
