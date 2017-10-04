@@ -1,6 +1,7 @@
 package org.cowboycoders.ant.profiles.fs.pages;
 
 import org.cowboycoders.ant.profiles.fs.defines.Command;
+import org.cowboycoders.ant.profiles.fs.pages.cmd.DisconnectCommand;
 import org.cowboycoders.ant.profiles.fs.pages.cmd.DownloadCommand;
 import org.cowboycoders.ant.profiles.fs.pages.cmd.LinkCommand;
 import org.cowboycoders.ant.profiles.fs.pages.cmd.AuthCommand;
@@ -18,6 +19,8 @@ public class CommandFactory {
                 return new AuthCommand(data);
             case REQUEST_DOWNLOAD:
                 return new DownloadCommand(data);
+            case DISCONNECT:
+                return new DisconnectCommand();
         }
         return null;
     }

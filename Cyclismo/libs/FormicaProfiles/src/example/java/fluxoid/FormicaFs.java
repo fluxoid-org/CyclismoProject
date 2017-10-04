@@ -16,6 +16,7 @@ import org.cowboycoders.ant.profiles.fs.pages.BeaconAuth;
 import org.cowboycoders.ant.profiles.fs.pages.BeaconTransport;
 import org.cowboycoders.ant.profiles.fs.pages.CommonBeacon;
 import org.cowboycoders.ant.profiles.fs.pages.cmd.AuthCommand;
+import org.cowboycoders.ant.profiles.fs.pages.cmd.DisconnectCommand;
 import org.cowboycoders.ant.profiles.fs.pages.cmd.DownloadCommand;
 import org.cowboycoders.ant.profiles.fs.pages.cmd.LinkCommand;
 import org.cowboycoders.ant.profiles.simulators.NetworkKeys;
@@ -221,18 +222,18 @@ public class FormicaFs {
                     // transition back to transport
                     byte [] beacon = new byte[8];
                     new BeaconTransport.BeaconTransportPayload()
-                            //.setSerialNumber(0xa56bde7b) // android app
                             .setDataAvailable(true)
                             .setState(CommonBeacon.State.TRANSPORT)
                             .encode(beacon);
                     channel.setBroadcast(beacon);
 
-                    //byte [] beacon = new byte[8];
-                    //new BeaconTransport.BeaconTransportPayload()
-                    ///       .encode(beacon);
-                    //channel.setBroadcast(beacon);
                 }
             });
+        });
+
+
+        dispatcher.addListener(DisconnectCommand.class, (msg) -> {
+            logger.info("Received disconnect command");
         });
 
 
@@ -312,7 +313,7 @@ public class FormicaFs {
         public void run() {
             try {
                 if (full.length <= offset) {
-                    System.out.println("offset out of bounds");
+                    logger.severe("offset out of bounds");
                     return;
                 }
                 byte[] header = new byte[24]; // pad to multiple of 8 bytes
