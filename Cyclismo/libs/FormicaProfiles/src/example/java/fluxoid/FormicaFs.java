@@ -2,13 +2,10 @@ package fluxoid;
 
 import org.cowboycoders.ant.Channel;
 import org.cowboycoders.ant.Node;
-import org.cowboycoders.ant.events.BroadcastListener;
 import org.cowboycoders.ant.interfaces.AntTransceiver;
-import org.cowboycoders.ant.messages.ChannelMessage;
 import org.cowboycoders.ant.messages.ChannelType;
 import org.cowboycoders.ant.messages.MasterChannelType;
 import org.cowboycoders.ant.messages.data.*;
-import org.cowboycoders.ant.messages.nonstandard.CombinedBurst;
 import org.cowboycoders.ant.profiles.common.PageDispatcher;
 import org.cowboycoders.ant.profiles.fs.Directory;
 import org.cowboycoders.ant.profiles.fs.DirectoryHeader;
@@ -86,7 +83,7 @@ public class FormicaFs {
 
 
 
-        channel.registerRxListener((BroadcastListener<CompleteDataMessage>) msg -> {
+        channel.registerRxListener(msg -> {
 
             byte [] data1 = msg.getPrimitiveData();
             if (!dispatcher.dispatch(data1)) {
@@ -96,52 +93,42 @@ public class FormicaFs {
 
         }, CompleteDataMessage.class);
 
-        channel.registerBurstListener(new BroadcastListener<CombinedBurst>() {
-            @Override
-            public void receiveMessage(CombinedBurst message) {
-                dispatcher.dispatch(ByteUtils.unboxArray(message.getData()));
-            }
-        });
+        channel.registerBurstListener(message -> dispatcher.dispatch(ByteUtils.unboxArray(message.getData())));
 
-        dispatcher.addListener(LinkCommand.class, new BroadcastListener<LinkCommand>() {
-            @Override
-            public void receiveMessage(final LinkCommand message) {
-                        // possibly check serial number?
-                        channelExecutor.submit(new Runnable() {
-                            @Override
-                            public void run() {
-                                byte [] data = new byte[8];
-                                new BeaconAuth.BeaconAuthPayload()
-                                        .setDataAvailable(true)
-                                        .setSerialNumber(message.getSerialNumber())
-                                        .encode(data);
-                                data[3] = (byte) AuthCommand.AuthMode.PASSTHROUGH.ordinal();
-                                System.out.printf("serial: %x\n", message.getSerialNumber());
-                                channel.setBroadcast(data);
-                                channel.setPeriod(4096);
-                                channel.setFrequency(message.getRequestedFrequency());
-                                System.out.println("made transisiton");
-                            }
-                        });
+        dispatcher.addListener(LinkCommand.class, message -> {
+                    // possibly check serial number?
+                    channelExecutor.submit(new Runnable() {
+                        @Override
+                        public void run() {
+                            byte [] data12 = new byte[8];
+                            new BeaconAuth.BeaconAuthPayload()
+                                    .setDataAvailable(true)
+                                    .setSerialNumber(message.getSerialNumber())
+                                    .encode(data12);
+                            data12[3] = (byte) AuthCommand.AuthMode.PASSTHROUGH.ordinal();
+                            System.out.printf("serial: %x\n", message.getSerialNumber());
+                            channel.setBroadcast(data12);
+                            channel.setPeriod(4096);
+                            channel.setFrequency(message.getRequestedFrequency());
+                            System.out.println("made transisiton");
+                        }
+                    });
 
-                }
-        });
+            });
 
-        dispatcher.addListener(AuthCommand.class, new BroadcastListener<AuthCommand>() {
-            @Override
-            public void receiveMessage(final AuthCommand message) {
-                System.out.println(message.getMode());
-                switch (message.getMode()) {
-                    case PASSTHROUGH:
-                        // burst might not necessary
-                        final byte [] data = new byte[16];
-                        data[0] = 67; // beacon advert
-                        data[8] = 68;
-                        data[9] = (byte) 0x84;
-                        data[10] = 1; // accept auth
-                        channelExecutor.submit(new Runnable() {
-                            @Override
-                            public void run() {
+        dispatcher.addListener(AuthCommand.class, message -> {
+            System.out.println(message.getMode());
+            switch (message.getMode()) {
+                case PASSTHROUGH:
+                    // burst might not necessary
+                    final byte [] data13 = new byte[16];
+                    data13[0] = 67; // beacon advert
+                    data13[8] = 68;
+                    data13[9] = (byte) 0x84;
+                    data13[10] = 1; // accept auth
+                    channelExecutor.submit(new Runnable() {
+                        @Override
+                        public void run() {
 //                                try {
 //                                    channel.sendBurst(data,2L, TimeUnit.SECONDS);
 //                                } catch (InterruptedException e) {
@@ -150,19 +137,18 @@ public class FormicaFs {
 //                                    e.printStackTrace();
 //                                }
 //                                System.out.println("sent burst");
-                                byte [] data = new byte[8];
-                                new BeaconTransport.BeaconTransportPayload()
-                                        //.setSerialNumber(0xa56bde7b) // android app
-                                        .setDataAvailable(true)
-                                        .setState(CommonBeacon.State.TRANSPORT)
-                                        .encode(data);
-                                channel.setBroadcast(data);
-                            }
-                        });
-
-                }
+                            byte [] data13 = new byte[8];
+                            new BeaconTransport.BeaconTransportPayload()
+                                    //.setSerialNumber(0xa56bde7b) // android app
+                                    .setDataAvailable(true)
+                                    .setState(CommonBeacon.State.TRANSPORT)
+                                    .encode(data13);
+                            channel.setBroadcast(data13);
+                        }
+                    });
 
             }
+
         });
 
 
@@ -238,44 +224,41 @@ public class FormicaFs {
 
 
         //TODO: we need to listen to burst rather than these individual messages
-        dispatcher.addListener(DownloadCommand.class, new BroadcastListener<DownloadCommand>() {
-            @Override
-            public void receiveMessage(DownloadCommand message) {
-                switch (message.getIndex()) {
-                    default: {
-                        System.out.println("index: " + message.getIndex() + ", requested");
-                        System.out.println("offset: " + message.getOffset() + ", requested");
-                        multiPart.setOffset(message.getOffset());
-                        channelExecutor.submit(multiPart);
-                        break;
-                    }
-                    case 0: {
-                        channelExecutor.submit(downloadIndexBehaviour);
-                        break;
-                    }
-
-
+        dispatcher.addListener(DownloadCommand.class, message -> {
+            switch (message.getIndex()) {
+                default: {
+                    System.out.println("index: " + message.getIndex() + ", requested");
+                    System.out.println("offset: " + message.getOffset() + ", requested");
+                    multiPart.setOffset(message.getOffset());
+                    channelExecutor.submit(multiPart);
+                    break;
                 }
-                channelExecutor.submit(new Runnable() {
-                    @Override
-                    public void run() {
+                case 0: {
+                    channelExecutor.submit(downloadIndexBehaviour);
+                    break;
+                }
 
-                        // transition back to transport
-                        byte [] beacon = new byte[8];
-                        new BeaconTransport.BeaconTransportPayload()
-                                //.setSerialNumber(0xa56bde7b) // android app
-                                .setDataAvailable(true)
-                                .setState(CommonBeacon.State.TRANSPORT)
-                                .encode(beacon);
-                        channel.setBroadcast(beacon);
 
-                        //byte [] beacon = new byte[8];
-                        //new BeaconTransport.BeaconTransportPayload()
-                        ///       .encode(beacon);
-                        //channel.setBroadcast(beacon);
-                    }
-                });
             }
+            channelExecutor.submit(new Runnable() {
+                @Override
+                public void run() {
+
+                    // transition back to transport
+                    byte [] beacon = new byte[8];
+                    new BeaconTransport.BeaconTransportPayload()
+                            //.setSerialNumber(0xa56bde7b) // android app
+                            .setDataAvailable(true)
+                            .setState(CommonBeacon.State.TRANSPORT)
+                            .encode(beacon);
+                    channel.setBroadcast(beacon);
+
+                    //byte [] beacon = new byte[8];
+                    //new BeaconTransport.BeaconTransportPayload()
+                    ///       .encode(beacon);
+                    //channel.setBroadcast(beacon);
+                }
+            });
         });
 
 
@@ -325,9 +308,14 @@ public class FormicaFs {
     private static class MultiPart implements Runnable {
 
         private final Channel channel;
+        private final int chunkSize;
 
         private MultiPart(byte [] fullFile, Channel channel) {
-            this.offset = offset;
+            this(fullFile, DEFAULT_CHUNK_SIZE, channel);
+        }
+
+        private MultiPart(byte [] fullFile, int chunkSize, Channel channel) {
+            this.chunkSize = chunkSize;
             this.full = fullFile;
             this.channel = channel;
         }
@@ -337,19 +325,20 @@ public class FormicaFs {
         }
 
         private final byte [] full;
-        private static final int CHUNK_SIZE = 128;
+        private static final int DEFAULT_CHUNK_SIZE = 512;
         private int offset = 0;
         private int crc = 0;
 
         @Override
         public void run() {
+
             if (full.length <= offset) {
                 System.out.println("offset out of bounds");
                 return;
             }
             byte [] header = new byte[24]; // pad to multiple of 8 bytes
-            int end = Math.min(offset + CHUNK_SIZE, full.length);
-            byte [] half = Arrays.copyOfRange(full,offset, end);
+            int end = Math.min(offset + chunkSize, full.length);
+            byte [] chunk = Arrays.copyOfRange(full,offset, end);
 
             //byte [] half2 = Arrays.copyOfRange(fitFile, fitFile.length /2, fitFile.length);
             LittleEndianArray view = new LittleEndianArray(header);
@@ -358,17 +347,17 @@ public class FormicaFs {
             header[8] = 68;
             header[9] = (byte) 0x89; // download response codetS
             header[10] = 0; // response code - zero = no error?
-            view.put(12,4,half.length); // remaining data
+            view.put(12,4,chunk.length); // remaining data
             view.put(16,4,offset); // offset of data
             view.put(20,4,full.length); // file size;
 
             System.out.println("pre copy");
-            int minLen = header.length + half.length + 2;
+            int minLen = header.length + chunk.length + 2;
             minLen = minLen + (8 - minLen % 8) % 8; // pad to multiple of 8 bytes
             byte [] data = new byte[minLen];
             System.arraycopy(header, 0, data, 0, header.length);
-            System.arraycopy(half,0,data, header.length, half.length);
-            crc = Crc16Utils.computeCrc(Crc16Utils.ANSI_CRC16_TABLE, crc, half);
+            System.arraycopy(chunk,0,data, header.length, chunk.length);
+            crc = Crc16Utils.computeCrc(Crc16Utils.ANSI_CRC16_TABLE, crc, chunk);
             System.out.println("crc : " + crc);
             view = new LittleEndianArray(data);
             view.put(data.length - 2,2, crc);
