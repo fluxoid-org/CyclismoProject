@@ -27,4 +27,11 @@ public class Format {
         int end = arr.length == 0 ? 0 : len - 1;
         return formatter.toString().substring(0, end);
     }
+
+    public static String format(String fmt, Object ... args) {
+        try (Formatter formatter = new Formatter()){
+            formatter.format(fmt, args);
+            return formatter.out().toString();
+        }
+    }
 }

@@ -5,7 +5,7 @@ import org.cowboycoders.ant.Node;
 import org.cowboycoders.ant.interfaces.AntTransceiver;
 import org.cowboycoders.ant.messages.ChannelType;
 import org.cowboycoders.ant.messages.MasterChannelType;
-import org.cowboycoders.ant.messages.data.*;
+import org.cowboycoders.ant.messages.data.CompleteDataMessage;
 import org.cowboycoders.ant.profiles.common.PageDispatcher;
 import org.cowboycoders.ant.profiles.fs.Directory;
 import org.cowboycoders.ant.profiles.fs.DirectoryHeader;
@@ -32,6 +32,9 @@ import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class FormicaFs {
 
@@ -39,13 +42,15 @@ public class FormicaFs {
     private static final int GARMIN = 1;
     private static final int HEALTH_AND_LIFE = 257;
     public static final int GARMIN_FR70_DEV_ID = 1436;
+    private static final Logger logger = Logger.getLogger(FormicaFs.class.getName());
 
-    private Runnable runMe = new Runnable() {
-        @Override
-        public void run() {
-
-        }
-    };
+    static {
+        logger.setLevel(Level.FINEST);
+        ConsoleHandler handler = new ConsoleHandler();
+        handler.setLevel(Level.FINEST);
+        logger.addHandler(handler);
+        logger.setUseParentHandlers(false);
+    }
 
     enum State {
         LINK,
@@ -89,7 +94,7 @@ public class FormicaFs {
             if (!dispatcher.dispatch(data1)) {
 
             }
-            System.out.println(Format.bytesToString(data1));
+            logger.fine(Format.bytesToString(data1).toString());
 
         }, CompleteDataMessage.class);
 
@@ -106,18 +111,18 @@ public class FormicaFs {
                                     .setSerialNumber(message.getSerialNumber())
                                     .encode(data12);
                             data12[3] = (byte) AuthCommand.AuthMode.PASSTHROUGH.ordinal();
-                            System.out.printf("serial: %x\n", message.getSerialNumber());
+                            logger.info(Format.format("serial: %x\n", message.getSerialNumber()));
                             channel.setBroadcast(data12);
                             channel.setPeriod(4096);
                             channel.setFrequency(message.getRequestedFrequency());
-                            System.out.println("made transisiton");
+                            logger.fine("made transisiton");
                         }
                     });
 
             });
 
         dispatcher.addListener(AuthCommand.class, message -> {
-            System.out.println(message.getMode());
+            logger.log(Level.INFO, "authentication request: {0}", message.getMode());
             switch (message.getMode()) {
                 case PASSTHROUGH:
                     // burst might not necessary
@@ -174,62 +179,31 @@ public class FormicaFs {
 
                 mkDir().accept(buf);
 
-                System.out.println("before crc");
+                logger.finest("before crc");
                 byte [] cp = Arrays.copyOfRange(data, 24, 56);
                 int crc = Crc16Utils.computeCrc(Crc16Utils.ANSI_CRC16_TABLE, 0, cp);
-                System.out.println("crc: " + crc);
+                logger.finest("crc: " + crc);
                 view.put(data.length - 2,2, crc);
 
                 channel.sendBurst(data,10L, TimeUnit.SECONDS);
-                System.out.println("sent file info");
+                logger.finest("sent file info");
             }
         };
-
-        Runnable fileBehaviour = new Runnable() {
-
-            @Override
-            public void run() {
-                byte [] header = new byte[24]; // pad to multiple of 8 bytes
-                byte [] fitFile = getFit();
-                System.out.println(fitFile.length);
-                LittleEndianArray view = new LittleEndianArray(header);
-                header[0] = 67;
-                header[2] = 3; // guess
-                header[8] = 68;
-                header[9] = (byte) 0x89; // download response codetS
-                header[10] = 0; // response code - zero = no error?
-                view.put(12,4,fitFile.length); // remaining data
-                view.put(16,4,0); // offset of data
-                view.put(20,4,fitFile.length); // file size;
-
-                System.out.println("pre copy");
-                byte [] data = new byte[header.length + fitFile.length + 2];
-                System.arraycopy(header, 0, data, 0, header.length);
-                System.arraycopy(fitFile,0,data, header.length, fitFile.length);
-
-                System.out.println("pre crc");
-                int crc = Crc16Utils.computeCrc(Crc16Utils.ANSI_CRC16_TABLE, 0, fitFile);
-                view = new LittleEndianArray(data);
-                view.put(data.length - 2,2, crc);
-
-                System.out.println("pre send fit file");
-                channel.sendBurst(data,60L, TimeUnit.SECONDS);
-                System.out.println("sent fit file");
-            }
-        };
-
 
         MultiPart multiPart = new MultiPart(getFit(),channel);
-
 
 
         //TODO: we need to listen to burst rather than these individual messages
         dispatcher.addListener(DownloadCommand.class, message -> {
             switch (message.getIndex()) {
                 default: {
-                    System.out.println("index: " + message.getIndex() + ", requested");
-                    System.out.println("offset: " + message.getOffset() + ", requested");
+                    logger.info("index: " + message.getIndex() + ", requested");
+                    logger.info("offset: " + message.getOffset() + ", requested");
+                    logger.info("firstReq: " + message.isFirstRequest());
                     multiPart.setOffset(message.getOffset());
+                    if (multiPart.hasFailed()) { // sending file failed
+                        //TODO: transition to previous state
+                    }
                     channelExecutor.submit(multiPart);
                     break;
                 }
@@ -309,6 +283,11 @@ public class FormicaFs {
 
         private final Channel channel;
         private final int chunkSize;
+        private boolean failed;
+
+        public boolean hasFailed() {
+            return failed;
+        }
 
         private MultiPart(byte [] fullFile, Channel channel) {
             this(fullFile, DEFAULT_CHUNK_SIZE, channel);
@@ -331,40 +310,44 @@ public class FormicaFs {
 
         @Override
         public void run() {
+            try {
+                if (full.length <= offset) {
+                    System.out.println("offset out of bounds");
+                    return;
+                }
+                byte[] header = new byte[24]; // pad to multiple of 8 bytes
+                int end = Math.min(offset + chunkSize, full.length);
+                byte[] chunk = Arrays.copyOfRange(full, offset, end);
 
-            if (full.length <= offset) {
-                System.out.println("offset out of bounds");
-                return;
+                //byte [] half2 = Arrays.copyOfRange(fitFile, fitFile.length /2, fitFile.length);
+                LittleEndianArray view = new LittleEndianArray(header);
+                header[0] = 67;
+                header[2] = 3; // guess
+                header[8] = 68;
+                header[9] = (byte) 0x89; // download response codetS
+                header[10] = 0; // response code - zero = no error?
+                view.put(12, 4, chunk.length); // remaining data
+                view.put(16, 4, offset); // offset of data
+                view.put(20, 4, full.length); // file size;
+
+                logger.finest("pre copy");
+                int minLen = header.length + chunk.length + 2;
+                minLen = minLen + (8 - minLen % 8) % 8; // pad to multiple of 8 bytes
+                byte[] data = new byte[minLen];
+                System.arraycopy(header, 0, data, 0, header.length);
+                System.arraycopy(chunk, 0, data, header.length, chunk.length);
+                crc = Crc16Utils.computeCrc(Crc16Utils.ANSI_CRC16_TABLE, crc, chunk);
+                logger.finest("crc : " + crc);
+                view = new LittleEndianArray(data);
+                view.put(data.length - 2, 2, crc);
+
+                logger.finest("pre send half");
+                channel.sendBurst(data, 60L, TimeUnit.SECONDS);
+                logger.finest("sent fit file");
+            } catch (Exception e) {
+                e.printStackTrace();
+                failed = true;
             }
-            byte [] header = new byte[24]; // pad to multiple of 8 bytes
-            int end = Math.min(offset + chunkSize, full.length);
-            byte [] chunk = Arrays.copyOfRange(full,offset, end);
-
-            //byte [] half2 = Arrays.copyOfRange(fitFile, fitFile.length /2, fitFile.length);
-            LittleEndianArray view = new LittleEndianArray(header);
-            header[0] = 67;
-            header[2] = 3; // guess
-            header[8] = 68;
-            header[9] = (byte) 0x89; // download response codetS
-            header[10] = 0; // response code - zero = no error?
-            view.put(12,4,chunk.length); // remaining data
-            view.put(16,4,offset); // offset of data
-            view.put(20,4,full.length); // file size;
-
-            System.out.println("pre copy");
-            int minLen = header.length + chunk.length + 2;
-            minLen = minLen + (8 - minLen % 8) % 8; // pad to multiple of 8 bytes
-            byte [] data = new byte[minLen];
-            System.arraycopy(header, 0, data, 0, header.length);
-            System.arraycopy(chunk,0,data, header.length, chunk.length);
-            crc = Crc16Utils.computeCrc(Crc16Utils.ANSI_CRC16_TABLE, crc, chunk);
-            System.out.println("crc : " + crc);
-            view = new LittleEndianArray(data);
-            view.put(data.length - 2,2, crc);
-
-            System.out.println("pre send half");
-            channel.sendBurst(data,60L, TimeUnit.SECONDS);
-            System.out.println("sent fit file");
 
         }
     };

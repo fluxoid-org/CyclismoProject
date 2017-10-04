@@ -8,6 +8,11 @@ public class DownloadCommand implements AntPage {
 
     private final int index;
     private final int offset; // requested offset
+    private final boolean firstRequest;
+
+    public boolean isFirstRequest() {
+        return firstRequest;
+    }
 
     // TODO: at index 9 of the burst containing this message is a flag indicating whether or not this was the original
     // request
@@ -29,6 +34,8 @@ public class DownloadCommand implements AntPage {
         LittleEndianArray view  = new LittleEndianArray(data);
         index = view.unsignedToInt(2,2);
         offset = view.unsignedToInt(4,4);
+        firstRequest = view.unsignedToInt(9,1) != 0;
+
     }
 
     public int getOffset() {
