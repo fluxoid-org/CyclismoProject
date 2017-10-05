@@ -11,6 +11,7 @@ import org.cowboycoders.ant.profiles.common.PageDispatcher;
 import org.cowboycoders.ant.profiles.fs.Directory;
 import org.cowboycoders.ant.profiles.fs.DirectoryHeader;
 import org.cowboycoders.ant.profiles.fs.FileEntry;
+import org.cowboycoders.ant.profiles.fs.defines.ResponseCode;
 import org.cowboycoders.ant.profiles.fs.defines.FileAttribute;
 import org.cowboycoders.ant.profiles.fs.pages.BeaconAdvert;
 import org.cowboycoders.ant.profiles.fs.pages.BeaconAuth;
@@ -113,7 +114,7 @@ public class FormicaFs {
         }
     }
 
-    // advertise as garmin fr70
+    // advertise as garmin fr70 (there is a whitelist of devices)
     private AdvertState advertState = new AdvertState(1, GARMIN_FR70_DEV_ID);
     private WrappedState<AuthState> authState = new DisconnectDecorator<>(new AuthState());
     private WrappedState<TransportState>  transportState = new DisconnectDecorator<>(new TransportState());
@@ -185,7 +186,7 @@ public class FormicaFs {
             AuthCommand authCommand = (AuthCommand) page;
             logger.log(Level.INFO, "authentication request: {0}", authCommand.getMode());
             if (((AuthCommand) page).getMode() != ctx.getAdvertState().getAuthMode()) {
-                logger.log(Level.INFO, "trying to authenticate with different mode than advertised");
+                logger.log(Level.SEVERE, "trying to authenticate with different mode than advertised");
                 ctx.setState(ctx.getAdvertState());
                 return;
             }
@@ -210,7 +211,7 @@ public class FormicaFs {
             byte[] data = new byte[64]; // pad to multiple of 8 bytes
             LittleEndianArray view = new LittleEndianArray(data);
             data[0] = 67;
-            data[2] = 3; // guess
+            data[2] = 2; // guess
             data[8] = 68;
             data[9] = (byte) 0x89; // download response codetS
             data[10] = 0; // response code - zero = no error?
@@ -260,9 +261,14 @@ public class FormicaFs {
                     logger.info("index: " + message.getIndex() + ", requested");
                     logger.info("offset: " + message.getOffset() + ", requested");
                     logger.info("firstReq: " + message.isFirstRequest());
+                    if (!message.isFirstRequest()) {
+                        // TODO: check crc they provide matches what we have so far
+                        logger.info("initial value for crc:" + message.getCrc());
+                    }
                     multiPart.setOffset(message.getOffset());
                     if (multiPart.hasFailed()) { // sending file failed
-                        //TODO: transition to previous state
+                        // TODO: try with smaller chunks ?
+                        ctx.setState(ctx.getAdvertState());
                     }
                     multiPart.accept(channel);
                     break;
@@ -284,6 +290,44 @@ public class FormicaFs {
     private StateMutator stateMutator;
     private FsState state = advertState;
 
+    private class StateMutatorImpl implements StateMutator {
+
+        private final Channel channel;
+
+        public StateMutatorImpl(Channel channel) {
+            this.channel = channel;
+        }
+
+        @Override
+        public void setStateNow(FsState newState) {
+            if (state != newState) {
+                newState.onTransition(this);
+            }
+            state = newState;
+        }
+
+
+        @Override
+        public Channel getChannel() {
+            return channel;
+        }
+
+        @Override
+        public AuthState getAuthState() {
+            return authState.getBase();
+        }
+
+        @Override
+        public TransportState getTransportState() {
+            return transportState.getBase();
+        }
+
+        @Override
+        public AdvertState getAdvertState() {
+            return advertState;
+        }
+    }
+
 
     public void start(Node node) {
         node.start();
@@ -291,41 +335,12 @@ public class FormicaFs {
 
         final Channel channel = node.getFreeChannel();
 
-         stateMutator = new StateMutator() {
-
-            @Override
-            public void setStateNow(FsState newState) {
-                if (state != newState) {
-                    newState.onTransition(this);
-                }
-                state = newState;
-            }
-
-
-            @Override
-            public Channel getChannel() {
-                return channel;
-            }
-
-             @Override
-             public AuthState getAuthState() {
-                 return authState.getBase();
-             }
-
-             @Override
-             public TransportState getTransportState() {
-                 return transportState.getBase();
-             }
-
-             @Override
-             public AdvertState getAdvertState() {
-                 return advertState;
-             }
-         };
+         stateMutator = new StateMutatorImpl(channel);
 
         ChannelType type = new MasterChannelType(false, false);
         channel.assign(NetworkKeys.ANT_FS, type);
-        channel.setId(GARMIN_FR70_DEV_ID, GARMIN, 0, false);
+        // deviceNumber can be set to anything (not whitelisted)
+        channel.setId(1234, GARMIN, 0, false);
 
         final PageDispatcher dispatcher = new PageDispatcher();
 
@@ -439,9 +454,11 @@ public class FormicaFs {
                 LittleEndianArray view = new LittleEndianArray(header);
                 header[0] = 67;
                 header[2] = 3; // guess
-                header[8] = 68;
-                header[9] = (byte) 0x89; // download response codetS
-                header[10] = 0; // response code - zero = no error?
+                header[8] = 68; // code for response to cmd
+                header[9] = (byte) 0x89; // download response id (cmd we are responding to)
+
+                header[10] = ResponseCode.NO_ERROR.encode();
+
                 view.put(12, 4, chunk.length); // remaining data
                 view.put(16, 4, offset); // offset of data
                 view.put(20, 4, full.length); // file size;

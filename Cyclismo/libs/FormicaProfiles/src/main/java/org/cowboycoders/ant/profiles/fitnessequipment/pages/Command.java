@@ -1,8 +1,7 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
-import org.cowboycoders.ant.profiles.BitManipulation;
 import org.cowboycoders.ant.profiles.fitnessequipment.*;
-import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
+import org.cowboycoders.ant.profiles.pages.SinglePacketEncodable;
 import org.cowboycoders.ant.profiles.pages.CommonCommandPage;
 import org.fluxoid.utils.bytes.LittleEndianArray;
 
@@ -120,7 +119,7 @@ public class Command extends CommonCommandPage {
     /**
      * Created by fluxoid on 26/01/17.
      */
-    public static class ResistanceStatusBuilder implements AntPacketEncodable {
+    public static class ResistanceStatusBuilder implements SinglePacketEncodable {
 
         private CommandStatus status = new CommandStatusBuilder().createCommandStatus();
         private BigDecimal totalResistance = null;
@@ -181,7 +180,7 @@ public class Command extends CommonCommandPage {
     /**
      * Created by fluxoid on 26/01/17.
      */
-    public static class TargetPowerStatusBuilder implements AntPacketEncodable {
+    public static class TargetPowerStatusBuilder implements SinglePacketEncodable {
 
         private BigDecimal targetPower = null;
         private CommandStatus status = new CommandStatusBuilder().createCommandStatus();
@@ -250,7 +249,7 @@ public class Command extends CommonCommandPage {
     /**
      * Created by fluxoid on 26/01/17.
      */
-    public static class TerrainStatusBuilder implements AntPacketEncodable {
+    public static class TerrainStatusBuilder implements SinglePacketEncodable {
         private BigDecimal grade = new BigDecimal("0.00");
         private BigDecimal rollingResistanceCoefficient = new BigDecimal("0.004");
         private CommandStatus status = new CommandStatusBuilder().createCommandStatus();
@@ -338,7 +337,7 @@ public class Command extends CommonCommandPage {
     /**
      * Created by fluxoid on 26/01/17.
      */
-    public static class WindStatusBuilder implements AntPacketEncodable {
+    public static class WindStatusBuilder implements SinglePacketEncodable {
         private BigDecimal draftingFactor = new BigDecimal("1.00");
         private BigDecimal windResistanceCoefficient = new BigDecimal("0.51");
         private Integer windSpeed = 0;

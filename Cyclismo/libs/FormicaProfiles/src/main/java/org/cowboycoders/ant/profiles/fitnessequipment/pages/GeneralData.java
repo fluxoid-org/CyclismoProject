@@ -4,7 +4,7 @@ import org.cowboycoders.ant.profiles.common.decode.interfaces.DistanceDecodable;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.TimeDecodable;
 import org.cowboycoders.ant.profiles.common.utils.CounterUtils;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
-import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
+import org.cowboycoders.ant.profiles.pages.SinglePacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 import org.fluxoid.utils.MathCompat;
 import org.fluxoid.utils.RollOverVal;
@@ -100,7 +100,7 @@ public class GeneralData extends CommonPageData implements AntPage, TimeDecodabl
         return new BigDecimal(delta). divide(new BigDecimal(4), 2, RoundingMode.HALF_UP);
     }
 
-    public static class GeneralDataPayload extends CommonPagePayload implements AntPacketEncodable {
+    public static class GeneralDataPayload extends CommonPagePayload implements SinglePacketEncodable {
 
 
         private int timeElapsed = 0;

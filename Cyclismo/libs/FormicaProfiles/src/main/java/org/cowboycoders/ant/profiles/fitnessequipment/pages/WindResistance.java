@@ -1,7 +1,7 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
 import org.cowboycoders.ant.profiles.BitManipulation;
-import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
+import org.cowboycoders.ant.profiles.pages.SinglePacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 import org.fluxoid.utils.bytes.LittleEndianArray;
 
@@ -31,7 +31,7 @@ public class WindResistance implements AntPage {
     private final int windSpeed;
     private final BigDecimal draftingFactor;
 
-    public static class WindResistancePayload implements AntPacketEncodable {
+    public static class WindResistancePayload implements SinglePacketEncodable {
         private BigDecimal windResitanceCoeff = DEFAULT_WIND_COEFF;
         private int windSpeed;
         private BigDecimal draftingFactor = DEFAULT_DRAFTING_FACTOR;

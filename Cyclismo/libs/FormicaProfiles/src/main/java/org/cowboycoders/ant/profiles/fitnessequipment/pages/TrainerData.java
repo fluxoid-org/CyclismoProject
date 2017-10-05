@@ -5,7 +5,7 @@ import org.cowboycoders.ant.profiles.common.utils.CounterUtils;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.CounterBasedDecodable;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.PowerOnlyDecodable;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
-import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
+import org.cowboycoders.ant.profiles.pages.SinglePacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 import org.fluxoid.utils.MathCompat;
 import org.fluxoid.utils.RollOverVal;
@@ -45,7 +45,7 @@ public class TrainerData extends CommonPageData implements PowerOnlyDecodable, A
     private final int events;
     private final long timestamp;
 
-    public static class TrainerDataPayload extends CommonPagePayload implements AntPacketEncodable {
+    public static class TrainerDataPayload extends CommonPagePayload implements SinglePacketEncodable {
         private RollOverVal powerSum = new RollOverVal(UNSIGNED_INT16_MAX);
         private int instantPower = -1;
         private RollOverVal events = new RollOverVal(UNSIGNED_INT8_MAX);

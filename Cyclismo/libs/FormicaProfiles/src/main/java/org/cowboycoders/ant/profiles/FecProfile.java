@@ -19,7 +19,7 @@ import org.cowboycoders.ant.profiles.fitnessequipment.Capabilities;
 import org.cowboycoders.ant.profiles.fitnessequipment.Config;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.*;
-import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
+import org.cowboycoders.ant.profiles.pages.SinglePacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 import org.cowboycoders.ant.profiles.pages.Request;
 import org.cowboycoders.ant.profiles.simulators.NetworkKeys;
@@ -139,7 +139,7 @@ public abstract class FecProfile {
     }
 
 
-    private void sendEncodable(AntPacketEncodable encodable) {
+    private void sendEncodable(SinglePacketEncodable encodable) {
         BroadcastDataMessage payload = getBroadcastDataMessage(encodable);
         channel.send(payload);
     }

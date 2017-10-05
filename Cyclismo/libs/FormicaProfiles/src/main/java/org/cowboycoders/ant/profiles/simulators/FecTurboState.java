@@ -6,7 +6,7 @@ import org.cowboycoders.ant.profiles.fitnessequipment.Defines.CommandId;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines.SpeedCondition;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.*;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.GeneralData.GeneralDataPayload;
-import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
+import org.cowboycoders.ant.profiles.pages.SinglePacketEncodable;
 import org.cowboycoders.ant.profiles.pages.CommonCommandPage;
 import org.cowboycoders.turbotrainers.PowerModel;
 import org.fluxoid.utils.MathCompat;
@@ -256,7 +256,7 @@ public class FecTurboState implements TurboStateViewable {
 
     private PageGen cmdStatusGen = new PageGen() {
         @Override
-        public AntPacketEncodable getPageEncoder() {
+        public SinglePacketEncodable getPageEncoder() {
             CommonCommandPage.CommandStatus status = new CommonCommandPage.CommandStatusBuilder()
                     .setLastReceivedSequenceNumber(MathCompat.toIntExact(seqNum.get()))
                     .setStatus(Defines.Status.PASS) // we can instantly set resistance
@@ -287,7 +287,7 @@ public class FecTurboState implements TurboStateViewable {
     private PageGen generalDataGen = new PageGen() {
 
         @Override
-        public AntPacketEncodable getPageEncoder() {
+        public SinglePacketEncodable getPageEncoder() {
             long now =  System.nanoTime();
             BigDecimal elapsed = new BigDecimal((now - start) / Math.pow(10,9));
             return setCommon(
@@ -307,7 +307,7 @@ public class FecTurboState implements TurboStateViewable {
     private PageGen bikeDataGen = new PageGen() {
 
         @Override
-        public AntPacketEncodable getPageEncoder() {
+        public SinglePacketEncodable getPageEncoder() {
             return setCommon(
                     new BikeData.BikeDataPayload()
                             .setPower(power)
@@ -331,7 +331,7 @@ public class FecTurboState implements TurboStateViewable {
     private PageGen trainerDataGen = new PageGen() {
 
         @Override
-        public AntPacketEncodable getPageEncoder() {
+        public SinglePacketEncodable getPageEncoder() {
             if (power > 0) {
                 // non- incrementing events -> coast event
                 powerEvents += 1;
@@ -358,7 +358,7 @@ public class FecTurboState implements TurboStateViewable {
         private Long torqueTimeStamp = null;
 
         @Override
-        public AntPacketEncodable getPageEncoder() {
+        public SinglePacketEncodable getPageEncoder() {
             if (power > 0) {
                 // non-incrementing event count signals a coast event
                 torqueEvents += 1;
@@ -414,7 +414,7 @@ public class FecTurboState implements TurboStateViewable {
     private PageGen metabolicGen = new PageGen() {
 
         @Override
-        public AntPacketEncodable getPageEncoder() {
+        public SinglePacketEncodable getPageEncoder() {
             long timeNanos = System.nanoTime() - start;
             double timeHrs = timeNanos / Math.pow(10, 9) / (60 * 60);
             BigDecimal instantCalorieBurn = getInstantCalorieBurn();
@@ -432,7 +432,7 @@ public class FecTurboState implements TurboStateViewable {
     private PageGen configGen = new PageGen() {
 
         @Override
-        public AntPacketEncodable getPageEncoder() {
+        public SinglePacketEncodable getPageEncoder() {
             return new ConfigPage.ConfigPayload()
                     .setConfig(getConfig());
 
@@ -442,7 +442,7 @@ public class FecTurboState implements TurboStateViewable {
     private PageGen capabilitiesGen = new PageGen() {
 
         @Override
-        public AntPacketEncodable getPageEncoder() {
+        public SinglePacketEncodable getPageEncoder() {
             return new CapabilitiesPage.CapabilitiesPayload()
                     .setCapabilites(capabilities);
 
@@ -457,7 +457,7 @@ public class FecTurboState implements TurboStateViewable {
     private PageGen basicResistanceGen = new PageGen() {
 
         @Override
-        public AntPacketEncodable getPageEncoder() {
+        public SinglePacketEncodable getPageEncoder() {
             return new PercentageResistance.PercentageResistancePayload()
                     .setResistance(resistance);
         }
@@ -469,7 +469,7 @@ public class FecTurboState implements TurboStateViewable {
 
     private PageGen trackDataGen = new PageGen() {
         @Override
-        public AntPacketEncodable getPageEncoder() {
+        public SinglePacketEncodable getPageEncoder() {
             return TrackResistance.TrackResistancePayload.
                     from(trackResistance);
         }
@@ -482,7 +482,7 @@ public class FecTurboState implements TurboStateViewable {
     private PageGen windGen = new PageGen() {
 
         @Override
-        public AntPacketEncodable getPageEncoder() {
+        public SinglePacketEncodable getPageEncoder() {
             return new WindResistance.WindResistancePayload()
                     .from(windResistance);
         }
@@ -545,7 +545,7 @@ public class FecTurboState implements TurboStateViewable {
 
     private PageGen calibrationResponseGen = new PageGen() {
         @Override
-        public AntPacketEncodable getPageEncoder() {
+        public SinglePacketEncodable getPageEncoder() {
             return new CalibrationResponse.CalibrationResponsePayload()
                     .setSpinDownSuccess(true)
                     .setSpinDownTime(TARGET_SPIN_DOWN_TIME_MS)
@@ -604,7 +604,7 @@ public class FecTurboState implements TurboStateViewable {
         if (priorityMessages.isEmpty()) {
             mode.getPacketGenerators().rotate().getPageEncoder().encode(packet);
         } else {
-            AntPacketEncodable encoder = priorityMessages.remove(0).getPageEncoder();
+            SinglePacketEncodable encoder = priorityMessages.remove(0).getPageEncoder();
             if (encoder != null) {
                 encoder.encode(packet);
                 return packet;
@@ -693,7 +693,7 @@ public class FecTurboState implements TurboStateViewable {
 
         private final PageGen calibrationStatusGen = new PageGen() {
             @Override
-            public AntPacketEncodable getPageEncoder() {
+            public SinglePacketEncodable getPageEncoder() {
                 return new CalibrationProgress.CalibrationProgressPayload()
                         .setTemp(internalTemp)
                         .setTempState(Defines.TemperatureCondition.CURRENT_TEMPERATURE_OK)
@@ -761,7 +761,7 @@ public class FecTurboState implements TurboStateViewable {
                         if (millis < BitManipulation.UNSIGNED_INT16_MAX) {
                             priorityMessages.add(new PageGen() {
                                 @Override
-                                public AntPacketEncodable getPageEncoder() {
+                                public SinglePacketEncodable getPageEncoder() {
                                     return new CalibrationResponse.CalibrationResponsePayload()
                                             .setSpinDownSuccess(true)
                                             .setSpinDownTime(spinDownTimeMillis.intValue())
@@ -772,7 +772,7 @@ public class FecTurboState implements TurboStateViewable {
                             LOGGER.finer("spindown time too long");
                             priorityMessages.add(new PageGen() {
                                 @Override
-                                public AntPacketEncodable getPageEncoder() {
+                                public SinglePacketEncodable getPageEncoder() {
                                     return new CalibrationResponse.CalibrationResponsePayload()
                                             .setSpinDownSuccess(false)
                                             .setTemp(internalTemp);

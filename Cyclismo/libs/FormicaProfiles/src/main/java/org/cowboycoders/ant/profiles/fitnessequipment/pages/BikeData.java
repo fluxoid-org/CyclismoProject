@@ -1,7 +1,7 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
-import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
+import org.cowboycoders.ant.profiles.pages.SinglePacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 import org.fluxoid.utils.bytes.LittleEndianArray;
 
@@ -57,7 +57,7 @@ public class BikeData extends CommonPageData implements AntPage {
         return PAGE_NUMBER;
     }
 
-    public static class BikeDataPayload  extends CommonPagePayload implements AntPacketEncodable {
+    public static class BikeDataPayload  extends CommonPagePayload implements SinglePacketEncodable {
         private Integer power;
         private Integer cadence;
 

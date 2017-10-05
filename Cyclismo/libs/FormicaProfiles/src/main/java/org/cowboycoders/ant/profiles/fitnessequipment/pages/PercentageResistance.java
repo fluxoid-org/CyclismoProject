@@ -1,6 +1,6 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
-import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
+import org.cowboycoders.ant.profiles.pages.SinglePacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 import org.fluxoid.utils.bytes.LittleEndianArray;
 
@@ -22,7 +22,7 @@ public class PercentageResistance implements AntPage {
     private static final int RESISTANCE_OFFSET = 7;
     private final BigDecimal resistance;
 
-    public static class PercentageResistancePayload implements AntPacketEncodable {
+    public static class PercentageResistancePayload implements SinglePacketEncodable {
         private BigDecimal resistance = new BigDecimal(0);
 
         public BigDecimal getResistance() {

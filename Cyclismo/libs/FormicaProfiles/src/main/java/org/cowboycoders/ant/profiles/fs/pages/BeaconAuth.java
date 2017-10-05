@@ -1,6 +1,5 @@
 package org.cowboycoders.ant.profiles.fs.pages;
 
-import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
 import org.fluxoid.utils.bytes.LittleEndianArray;
 
 public class BeaconAuth extends CommonBeacon {

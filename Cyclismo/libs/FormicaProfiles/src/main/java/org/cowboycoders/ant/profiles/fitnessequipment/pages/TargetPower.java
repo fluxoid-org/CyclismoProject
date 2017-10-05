@@ -1,6 +1,6 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
-import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
+import org.cowboycoders.ant.profiles.pages.SinglePacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 import org.fluxoid.utils.bytes.LittleEndianArray;
 
@@ -23,7 +23,7 @@ public class TargetPower implements AntPage {
     private static final int POWER_OFFSET = 6;
     private final BigDecimal targetPower;
 
-    public static class TargetPowerPayload implements AntPacketEncodable {
+    public static class TargetPowerPayload implements SinglePacketEncodable {
 
         private BigDecimal targetPower;
 

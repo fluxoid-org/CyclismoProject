@@ -1,7 +1,7 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
-import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
+import org.cowboycoders.ant.profiles.pages.SinglePacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 import org.fluxoid.utils.bytes.LittleEndianArray;
 
@@ -79,7 +79,7 @@ public class CalibrationProgress  implements AntPage {
     private final BigDecimal targetSpeed;
     private final BigDecimal temp;
 
-    public static class CalibrationProgressPayload implements AntPacketEncodable {
+    public static class CalibrationProgressPayload implements SinglePacketEncodable {
         private Defines.SpeedCondition speedState = Defines.SpeedCondition.UNRECOGNIZED;
         private Defines.TemperatureCondition tempState = Defines.TemperatureCondition.UNRECOGNIZED;
         private boolean offsetPending = false;

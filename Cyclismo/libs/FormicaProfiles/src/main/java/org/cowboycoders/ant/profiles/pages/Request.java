@@ -36,7 +36,7 @@ public class Request implements AntPage {
         return PAGE_NUMBER;
     }
 
-    public static class RequestPayload implements AntPacketEncodable {
+    public static class RequestPayload implements SinglePacketEncodable {
         private int pageNumber;
         private int subPage = 0xff;
 

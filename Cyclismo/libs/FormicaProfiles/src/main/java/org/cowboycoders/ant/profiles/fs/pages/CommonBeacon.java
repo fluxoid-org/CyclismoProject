@@ -1,9 +1,13 @@
 package org.cowboycoders.ant.profiles.fs.pages;
 
 import org.cowboycoders.ant.profiles.BitManipulation;
-import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
+import org.cowboycoders.ant.profiles.pages.BurstEncodable;
+import org.cowboycoders.ant.profiles.pages.SinglePacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 import org.fluxoid.utils.bytes.LittleEndianArray;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 public abstract class CommonBeacon implements AntPage {
     public static final int PAGE_NUM = 67; // guess
@@ -26,10 +30,11 @@ public abstract class CommonBeacon implements AntPage {
         LINK,
         AUTH,
         TRANSPORT,
+        BUSY,
         UNKNOWN,
     }
 
-    public abstract static class CommonBeaconPayload implements AntPacketEncodable {
+    public abstract static class CommonBeaconPayload implements SinglePacketEncodable, BurstEncodable {
         protected boolean isDataAvailable = false;
         protected State state = State.LINK;
 
@@ -52,6 +57,12 @@ public abstract class CommonBeacon implements AntPage {
             return this;
         }
 
+        @Override
+        public void encode(ByteArrayOutputStream os) {
+            byte [] packet = new byte[8];
+            encode(packet);
+            os.write(packet, 0, packet.length);
+        }
 
         @Override
         public void encode(byte[] packet) {

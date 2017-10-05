@@ -2,7 +2,7 @@ package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
 import org.cowboycoders.ant.profiles.fitnessequipment.Config;
 import org.cowboycoders.ant.profiles.fitnessequipment.ConfigBuilder;
-import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
+import org.cowboycoders.ant.profiles.pages.SinglePacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 import org.fluxoid.utils.bytes.LittleEndianArray;
 import org.fluxoid.utils.bytes.NonStandardOps;
@@ -35,7 +35,7 @@ public class ConfigPage implements AntPage {
         return config;
     }
 
-    public static class ConfigPayload implements AntPacketEncodable {
+    public static class ConfigPayload implements SinglePacketEncodable {
         private Config config;
 
         public Config getConfig() {

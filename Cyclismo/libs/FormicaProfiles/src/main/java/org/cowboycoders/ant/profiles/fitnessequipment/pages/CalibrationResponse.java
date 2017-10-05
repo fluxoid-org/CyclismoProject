@@ -1,7 +1,6 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
-import org.cowboycoders.ant.profiles.BitManipulation;
-import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
+import org.cowboycoders.ant.profiles.pages.SinglePacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 import org.fluxoid.utils.bytes.LittleEndianArray;
 
@@ -71,7 +70,7 @@ public class CalibrationResponse implements AntPage {
     private final Integer spinDownTime;
     private final BigDecimal temp;
 
-    public static class CalibrationResponsePayload implements AntPacketEncodable {
+    public static class CalibrationResponsePayload implements SinglePacketEncodable {
         private Integer zeroOffset = null;
         private Integer spinDownTime = null;
         private BigDecimal temp = null;

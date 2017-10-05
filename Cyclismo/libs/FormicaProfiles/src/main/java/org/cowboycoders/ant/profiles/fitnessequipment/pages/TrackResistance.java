@@ -1,7 +1,7 @@
 package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
 import org.cowboycoders.ant.profiles.BitManipulation;
-import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
+import org.cowboycoders.ant.profiles.pages.SinglePacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 import org.fluxoid.utils.bytes.LittleEndianArray;
 
@@ -32,7 +32,7 @@ public class TrackResistance implements AntPage {
     private final BigDecimal gradient;
     private final BigDecimal coefficientRollingResistance;
 
-    public static class TrackResistancePayload implements AntPacketEncodable {
+    public static class TrackResistancePayload implements SinglePacketEncodable {
         private BigDecimal gradient = DEFAULT_GRADIENT;
         private BigDecimal coefficientRollingResistance = DEFAULT_ROLLING_RESISTANCE;
 

@@ -4,7 +4,7 @@ import org.cowboycoders.ant.profiles.TimeOutDeltaValidator;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.*;
 import org.cowboycoders.ant.profiles.common.utils.CounterUtils;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
-import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
+import org.cowboycoders.ant.profiles.pages.SinglePacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 import org.fluxoid.utils.MathCompat;
 import org.fluxoid.utils.RollOverVal;
@@ -44,7 +44,7 @@ public class TorqueData extends CommonPageData implements AntPage, TorqueDecodab
     private final long timestamp;
     private final TimeOutDeltaValidator timeOutDeltaValidator = new TimeOutDeltaValidator(TIMEOUT_DELTA);
 
-    public static class TorqueDataPayload extends CommonPagePayload  implements AntPacketEncodable {
+    public static class TorqueDataPayload extends CommonPagePayload  implements SinglePacketEncodable {
         RollOverVal events = new RollOverVal(UNSIGNED_INT8_MAX);
         RollOverVal torqueSum = new RollOverVal(UNSIGNED_INT16_MAX);
 

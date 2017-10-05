@@ -2,7 +2,7 @@ package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 
 import org.cowboycoders.ant.profiles.fitnessequipment.Capabilities;
 import org.cowboycoders.ant.profiles.fitnessequipment.CapabilitiesBuilder;
-import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
+import org.cowboycoders.ant.profiles.pages.SinglePacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 import org.fluxoid.utils.bytes.LittleEndianArray;
 
@@ -32,7 +32,7 @@ public class CapabilitiesPage implements AntPage {
         return capabilites;
     }
 
-    public static class CapabilitiesPayload implements AntPacketEncodable {
+    public static class CapabilitiesPayload implements SinglePacketEncodable {
         private Capabilities capabilites = new CapabilitiesBuilder().createCapabilities();
 
         public Capabilities getCapabilites() {

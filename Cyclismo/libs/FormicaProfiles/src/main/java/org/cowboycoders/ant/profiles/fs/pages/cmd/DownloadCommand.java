@@ -9,7 +9,13 @@ public class DownloadCommand implements AntPage {
     private final int index;
     private final int offset; // requested offset
     private final boolean firstRequest;
+    private final int crc;
 
+    /**
+     * If returns false, crc field will be set
+     *
+     * @return whether or not this is the initial download command
+     */
     public boolean isFirstRequest() {
         return firstRequest;
     }
@@ -19,6 +25,7 @@ public class DownloadCommand implements AntPage {
 
     /**
      * File index 0 is directory listing
+     *
      * @return file index
      */
     public int getIndex() {
@@ -30,15 +37,27 @@ public class DownloadCommand implements AntPage {
         return CommandFactory.PAGE_NUM;
     }
 
-    public DownloadCommand(byte [] data) {
-        LittleEndianArray view  = new LittleEndianArray(data);
-        index = view.unsignedToInt(2,2);
-        offset = view.unsignedToInt(4,4);
-        firstRequest = view.unsignedToInt(9,1) != 0;
-
+    public DownloadCommand(byte[] data) {
+        LittleEndianArray view = new LittleEndianArray(data);
+        index = view.unsignedToInt(2, 2);
+        offset = view.unsignedToInt(4, 4);
+        firstRequest = view.unsignedToInt(9, 1) != 0;
+        crc = view.unsignedToInt(10, 2);
     }
 
+    /**
+     * offset of data to send (or, from another perspective:  length of data received so far)
+     *
+     * @return offset into payload
+     */
     public int getOffset() {
         return offset;
+    }
+
+    /**
+     * @return initial value for crc
+     */
+    public int getCrc() {
+        return crc;
     }
 }

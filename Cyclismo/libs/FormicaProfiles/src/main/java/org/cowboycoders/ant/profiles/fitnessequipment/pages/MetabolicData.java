@@ -3,7 +3,7 @@ package org.cowboycoders.ant.profiles.fitnessequipment.pages;
 import org.cowboycoders.ant.profiles.common.decode.interfaces.CalorieCountDecodable;
 import org.cowboycoders.ant.profiles.common.utils.CounterUtils;
 import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
-import org.cowboycoders.ant.profiles.pages.AntPacketEncodable;
+import org.cowboycoders.ant.profiles.pages.SinglePacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 import org.fluxoid.utils.MathCompat;
 import org.fluxoid.utils.RollOverVal;
@@ -35,7 +35,7 @@ public class MetabolicData extends CommonPageData implements AntPage, CalorieCou
     private final boolean caloriesAvailable;
     private final Integer calorieCounter;
 
-    public static class MetabolicDataPayload extends CommonPagePayload implements AntPacketEncodable {
+    public static class MetabolicDataPayload extends CommonPagePayload implements SinglePacketEncodable {
         private RollOverVal calorieCounter = new RollOverVal(UNSIGNED_INT8_MAX);
         private BigDecimal instantMetabolicEquivalents;
         private BigDecimal instantCalorieBurn;
