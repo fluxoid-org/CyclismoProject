@@ -71,9 +71,9 @@ public class FormicaFs {
 
         Channel getChannel();
 
-        FsState getAuthState();
-        FsState getTransportState();
-        FsState getAdvertState();
+        AuthState getAuthState();
+        TransportState getTransportState();
+        AdvertState getAdvertState();
     }
 
     private interface FsState {
@@ -81,11 +81,19 @@ public class FormicaFs {
         void handleMessage(StateMutator mutator, AntPage page);
     }
 
-    public static class DisconnectDecorator implements FsState {
+    private interface WrappedState<T extends FsState> {
+        public T getBase();
+    }
 
-        private final FsState base;
+    private static class DisconnectDecorator<T extends FsState> implements FsState, WrappedState<T> {
 
-        public DisconnectDecorator(FsState base) {
+        private final T base;
+
+        public T getBase() {
+            return base;
+        }
+
+        public DisconnectDecorator(T base) {
             this.base = base;
         }
 
@@ -106,9 +114,9 @@ public class FormicaFs {
     }
 
     // advertise as garmin fr70
-    private FsState advertState = new AdvertState(1, GARMIN_FR70_DEV_ID);
-    private FsState authState = new DisconnectDecorator(new AuthState());
-    private FsState transportState = new DisconnectDecorator(new TransportState());
+    private AdvertState advertState = new AdvertState(1, GARMIN_FR70_DEV_ID);
+    private WrappedState<AuthState> authState = new DisconnectDecorator<>(new AuthState());
+    private WrappedState<TransportState>  transportState = new DisconnectDecorator<>(new TransportState());
 
     private static class AdvertState implements FsState {
 
@@ -292,17 +300,17 @@ public class FormicaFs {
             }
 
              @Override
-             public FsState getAuthState() {
-                 return authState;
+             public AuthState getAuthState() {
+                 return authState.getBase();
              }
 
              @Override
-             public FsState getTransportState() {
-                 return transportState;
+             public TransportState getTransportState() {
+                 return transportState.getBase();
              }
 
              @Override
-             public FsState getAdvertState() {
+             public AdvertState getAdvertState() {
                  return advertState;
              }
          };
