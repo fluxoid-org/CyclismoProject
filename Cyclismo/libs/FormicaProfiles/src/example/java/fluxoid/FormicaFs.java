@@ -143,6 +143,9 @@ public class FormicaFs {
 
             channel.setBroadcast(data);
         }
+        public AuthCommand.AuthMode getAuthMode() {
+            return AuthCommand.AuthMode.PASSTHROUGH;
+        }
 
         @Override
         public void handleMessage(StateMutator ctx, AntPage page) {
@@ -181,6 +184,11 @@ public class FormicaFs {
             }
             AuthCommand authCommand = (AuthCommand) page;
             logger.log(Level.INFO, "authentication request: {0}", authCommand.getMode());
+            if (((AuthCommand) page).getMode() != ctx.getAdvertState().getAuthMode()) {
+                logger.log(Level.INFO, "trying to authenticate with different mode than advertised");
+                ctx.setState(ctx.getAdvertState());
+                return;
+            }
             switch (authCommand.getMode()) {
                 case PASSTHROUGH:
                         ctx.setState(ctx.getTransportState());
