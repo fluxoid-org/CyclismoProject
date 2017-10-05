@@ -43,6 +43,7 @@ public class DownloadCommand implements AntPage {
         offset = view.unsignedToInt(4, 4);
         firstRequest = view.unsignedToInt(9, 1) != 0;
         crc = view.unsignedToInt(10, 2);
+
     }
 
     /**

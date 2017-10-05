@@ -1,5 +1,6 @@
 package fluxoid;
 
+import java9.util.Optional;
 import java9.util.function.Consumer;
 import org.cowboycoders.ant.Channel;
 import org.cowboycoders.ant.Node;
@@ -21,12 +22,14 @@ import org.cowboycoders.ant.profiles.fs.pages.cmd.AuthCommand;
 import org.cowboycoders.ant.profiles.fs.pages.cmd.DisconnectCommand;
 import org.cowboycoders.ant.profiles.fs.pages.cmd.DownloadCommand;
 import org.cowboycoders.ant.profiles.fs.pages.cmd.LinkCommand;
+import org.cowboycoders.ant.profiles.fs.pages.responses.DownloadResponse;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 import org.cowboycoders.ant.profiles.simulators.NetworkKeys;
 import org.cowboycoders.ant.utils.ByteUtils;
 import org.fluxoid.utils.Format;
 import org.fluxoid.utils.bytes.LittleEndianArray;
 import org.fluxoid.utils.crc.Crc16Utils;
+import org.omg.CORBA.NO_IMPLEMENT;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -264,13 +267,16 @@ public class FormicaFs {
                     if (!message.isFirstRequest()) {
                         // TODO: check crc they provide matches what we have so far
                         logger.info("initial value for crc:" + message.getCrc());
+                        multiPart.setExpectedCrc(message.getCrc());
                     }
                     multiPart.setOffset(message.getOffset());
-                    if (multiPart.hasFailed()) { // sending file failed
-                        // TODO: try with smaller chunks ?
-                        ctx.setState(ctx.getAdvertState());
-                    }
                     multiPart.accept(channel);
+                    if (multiPart.hasFailed()) { // sending file failed
+                        // possible reasons for failure : crc mismatch, burst failed
+                        // TODO: try with smaller chunks for burst failure?
+                        ctx.setState(ctx.getTransportState());
+                        logger.warning("failed with reason: " + multiPart.getFailure().get());
+                    }
                     break;
                 }
                 case 0: {
@@ -413,13 +419,41 @@ public class FormicaFs {
         return data;
     }
 
+
+    public interface FailureReason {}
+
+    public static class TransferException implements FailureReason {
+        private final Exception exception;
+
+        TransferException(Exception e) {
+            this.exception = e;
+        }
+
+        public Exception getException() {
+            return exception;
+        }
+    }
+
+    public static class ErrorResponse implements FailureReason {
+        private final ResponseCode responseCode;
+
+        ErrorResponse(ResponseCode responseCode) {
+            this.responseCode = responseCode;
+        }
+    }
+
     private static class MultiPart implements Consumer<Channel> {
 
         private final int chunkSize;
-        private boolean failed;
+        private Optional<FailureReason> failure = Optional.empty();
+        private int expectedCrc;
 
         public boolean hasFailed() {
-            return failed;
+            return failure.isPresent();
+        }
+
+        public Optional<FailureReason> getFailure() {
+            return failure;
         }
 
         private MultiPart(byte[] fullFile) {
@@ -433,6 +467,10 @@ public class FormicaFs {
 
         public void setOffset(int offset) {
             this.offset = offset;
+            if (offset == 0) {
+                crc = 0;
+                expectedCrc = 0;
+            }
         }
 
         private final byte[] full;
@@ -446,42 +484,33 @@ public class FormicaFs {
                     logger.severe("offset out of bounds");
                     return;
                 }
-                byte[] header = new byte[24]; // pad to multiple of 8 bytes
-                int end = Math.min(offset + chunkSize, full.length);
-                byte[] chunk = Arrays.copyOfRange(full, offset, end);
+                ResponseCode responseCode = ResponseCode.NO_ERROR;
+                if (expectedCrc != crc) {
+                    responseCode = ResponseCode.CRC_MISMATCH;
+                }
+                DownloadResponse response = new DownloadResponse(responseCode, full, chunkSize, offset, crc);
+                crc = response.getPayloadCrc();
 
-                //byte [] half2 = Arrays.copyOfRange(fitFile, fitFile.length /2, fitFile.length);
-                LittleEndianArray view = new LittleEndianArray(header);
-                header[0] = 67;
-                header[2] = 3; // guess
-                header[8] = 68; // code for response to cmd
-                header[9] = (byte) 0x89; // download response id (cmd we are responding to)
+                ByteArrayOutputStream os = new ByteArrayOutputStream(response.getLength());
+                response.encode(os);
 
-                header[10] = ResponseCode.NO_ERROR.encode();
-
-                view.put(12, 4, chunk.length); // remaining data
-                view.put(16, 4, offset); // offset of data
-                view.put(20, 4, full.length); // file size;
-
-                logger.finest("pre copy");
-                int minLen = header.length + chunk.length + 2;
-                minLen = minLen + (8 - minLen % 8) % 8; // pad to multiple of 8 bytes
-                byte[] data = new byte[minLen];
-                System.arraycopy(header, 0, data, 0, header.length);
-                System.arraycopy(chunk, 0, data, header.length, chunk.length);
-                crc = Crc16Utils.computeCrc(Crc16Utils.ANSI_CRC16_TABLE, crc, chunk);
-                logger.finest("crc : " + crc);
-                view = new LittleEndianArray(data);
-                view.put(data.length - 2, 2, crc);
-
-                logger.finest("pre send half");
+                byte [] data = os.toByteArray();
                 channel.sendBurst(data, 60L, TimeUnit.SECONDS);
                 logger.finest("sent fit file");
+
+                if (responseCode != ResponseCode.NO_ERROR) {
+                    failure = Optional.of(new ErrorResponse(responseCode));
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
-                failed = true;
+                failure = Optional.of(new TransferException(e));
             }
 
+        }
+
+        public void setExpectedCrc(int expectedCrc) {
+            this.expectedCrc = expectedCrc;
         }
     }
 
