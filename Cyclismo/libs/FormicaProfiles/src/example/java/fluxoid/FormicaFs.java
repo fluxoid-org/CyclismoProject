@@ -20,6 +20,7 @@ import org.cowboycoders.ant.profiles.fs.pages.cmd.AuthCommand;
 import org.cowboycoders.ant.profiles.fs.pages.cmd.DisconnectCommand;
 import org.cowboycoders.ant.profiles.fs.pages.cmd.DownloadCommand;
 import org.cowboycoders.ant.profiles.fs.pages.cmd.LinkCommand;
+import org.cowboycoders.ant.profiles.pages.AntPage;
 import org.cowboycoders.ant.profiles.simulators.NetworkKeys;
 import org.cowboycoders.ant.utils.ByteUtils;
 import org.fluxoid.utils.Format;
@@ -54,10 +55,60 @@ public class FormicaFs {
         logger.setUseParentHandlers(false);
     }
 
-    private interface FsState {
-        void onTransistion(Channel channel);
+    private interface StateMutator {
+
+        ExecutorService channelExecutor = Executors.newFixedThreadPool(1);
+
+        default void performOffThread(Runnable runnable) {
+            channelExecutor.submit(runnable);
+        }
+
+        void setStateNow(FsState newState);
+
+        default void setState(FsState newState) {
+            performOffThread(() -> setStateNow(newState));
+        }
+
+        Channel getChannel();
+
+        FsState getAuthState();
+        FsState getTransportState();
+        FsState getAdvertState();
     }
 
+    private interface FsState {
+        void onTransition(StateMutator mutator);
+        void handleMessage(StateMutator mutator, AntPage page);
+    }
+
+    public static class DisconnectDecorator implements FsState {
+
+        private final FsState base;
+
+        public DisconnectDecorator(FsState base) {
+            this.base = base;
+        }
+
+        @Override
+        public void onTransition(StateMutator mutator) {
+            base.onTransition(mutator);
+        }
+
+        @Override
+        public void handleMessage(StateMutator ctx, AntPage page) {
+            if (page instanceof DisconnectCommand) {
+                logger.info("Received disconnect command");
+                ctx.setState(ctx.getAdvertState());
+                return;
+            }
+            base.handleMessage(ctx, page);
+        }
+    }
+
+    // advertise as garmin fr70
+    private FsState advertState = new AdvertState(1, GARMIN_FR70_DEV_ID);
+    private FsState authState = new DisconnectDecorator(new AuthState());
+    private FsState transportState = new DisconnectDecorator(new TransportState());
 
     private static class AdvertState implements FsState {
 
@@ -70,7 +121,8 @@ public class FormicaFs {
         }
 
         @Override
-        public void onTransistion(Channel channel) {
+        public void onTransition(StateMutator mutator) {
+            Channel channel = mutator.getChannel();
             channel.setPeriod(8192);
             channel.setFrequency(50);
             byte[] data = new byte[8];
@@ -83,21 +135,14 @@ public class FormicaFs {
 
             channel.setBroadcast(data);
         }
-    }
-
-    // advertise as garmin fr70
-    private FsState advertState = new AdvertState(1, GARMIN_FR70_DEV_ID);
-
-    private static class LinkState implements FsState {
-
-        private final LinkCommand linkCommand;
-
-        public LinkState(LinkCommand cmd) {
-            this.linkCommand = cmd;
-        }
 
         @Override
-        public void onTransistion(Channel channel) {
+        public void handleMessage(StateMutator ctx, AntPage page) {
+            if (!(page instanceof LinkCommand)) {
+                return;
+            }
+            LinkCommand linkCommand = (LinkCommand) page;
+            Channel channel = ctx.getChannel();
             byte[] beaconData = new byte[8];
             new BeaconAuth.BeaconAuthPayload()
                     .setDataAvailable(true)
@@ -109,41 +154,41 @@ public class FormicaFs {
             channel.setPeriod(4096);
             channel.setFrequency(linkCommand.getRequestedFrequency());
             logger.fine("made link transition");
+            ctx.setState(ctx.getAuthState());
         }
     }
 
+
     private static class AuthState implements FsState {
 
-        private final AuthCommand authCommand;
+        @Override
+        public void onTransition(StateMutator ctx) {
 
-        public AuthState(AuthCommand authCommand) {
-            this.authCommand = authCommand;
         }
 
         @Override
-        public void onTransistion(Channel channel) {
+        public void handleMessage(StateMutator ctx, AntPage page) {
+            if (!(page instanceof AuthCommand)) {
+                return;
+            }
+            AuthCommand authCommand = (AuthCommand) page;
+            logger.log(Level.INFO, "authentication request: {0}", authCommand.getMode());
             switch (authCommand.getMode()) {
                 case PASSTHROUGH:
-                    byte[] data13 = new byte[8];
-                    new BeaconTransport.BeaconTransportPayload()
-                            .setDataAvailable(true)
-                            .setState(CommonBeacon.State.TRANSPORT)
-                            .encode(data13);
-                    channel.setBroadcast(data13);
+                        ctx.setState(ctx.getTransportState());
                     break;
                 default:
-                    logger.severe("should handle over auth states");
+                    logger.severe("should handle other auth states");
 
 
             }
         }
 
-
     }
 
-    private static class Transport implements FsState {
+    private static class TransportState implements FsState {
 
-        private final MultiPart multiPart;
+        private final MultiPart multiPart = new MultiPart(getFit());;
 
         Consumer<Channel> downloadIndexBehaviour = (channel) -> {
             byte[] data = new byte[64]; // pad to multiple of 8 bytes
@@ -173,15 +218,27 @@ public class FormicaFs {
             logger.finest("sent file info");
         };
 
-        private final DownloadCommand message;
 
-        public Transport(DownloadCommand message, MultiPart multiPart) {
-            this.message = message;
-            this.multiPart = multiPart;
+        @Override
+        public void onTransition(StateMutator ctx) {
+            Channel channel = ctx.getChannel();
+            // transition back to transport
+            byte[] beacon = new byte[8];
+            new BeaconTransport.BeaconTransportPayload()
+                    .setDataAvailable(true)
+                    .setState(CommonBeacon.State.TRANSPORT)
+                    .encode(beacon);
+            channel.setBroadcast(beacon);
+
         }
 
         @Override
-        public void onTransistion(Channel channel) {
+        public void handleMessage(StateMutator ctx, AntPage page) {
+            if (!(page instanceof DownloadCommand)) {
+                return;
+            }
+            DownloadCommand message = (DownloadCommand) page;
+            Channel channel = ctx.getChannel();
             switch (message.getIndex()) {
                 default: {
                     logger.info("index: " + message.getIndex() + ", requested");
@@ -201,35 +258,55 @@ public class FormicaFs {
 
 
             }
-            // transition back to transport
-            byte[] beacon = new byte[8];
-            new BeaconTransport.BeaconTransportPayload()
-                    .setDataAvailable(true)
-                    .setState(CommonBeacon.State.TRANSPORT)
-                    .encode(beacon);
-            channel.setBroadcast(beacon);
-
+            onTransition(ctx);
         }
 
 
     }
 
-    final ExecutorService channelExecutor = Executors.newFixedThreadPool(1);
-    Channel channel;
 
-    public void backgroundTransition(FsState state) {
-        channelExecutor.submit(() -> {
-            state.onTransistion(channel);
-        });
-    }
+    private StateMutator stateMutator;
+    private FsState state = advertState;
 
-    MultiPart multiPart = new MultiPart(getFit());
 
     public void start(Node node) {
         node.start();
         node.reset();
 
-        channel = node.getFreeChannel();
+        final Channel channel = node.getFreeChannel();
+
+         stateMutator = new StateMutator() {
+
+            @Override
+            public void setStateNow(FsState newState) {
+                if (state != newState) {
+                    newState.onTransition(this);
+                }
+                state = newState;
+            }
+
+
+            @Override
+            public Channel getChannel() {
+                return channel;
+            }
+
+             @Override
+             public FsState getAuthState() {
+                 return authState;
+             }
+
+             @Override
+             public FsState getTransportState() {
+                 return transportState;
+             }
+
+             @Override
+             public FsState getAdvertState() {
+                 return advertState;
+             }
+         };
+
         ChannelType type = new MasterChannelType(false, false);
         channel.assign(NetworkKeys.ANT_FS, type);
         channel.setId(GARMIN_FR70_DEV_ID, GARMIN, 0, false);
@@ -238,7 +315,7 @@ public class FormicaFs {
 
         channel.setSearchTimeout(Channel.SEARCH_TIMEOUT_NEVER);
 
-        advertState.onTransistion(channel);
+        advertState.onTransition(stateMutator);
 
         channel.registerRxListener(msg -> {
 
@@ -252,28 +329,10 @@ public class FormicaFs {
 
         channel.registerBurstListener(message -> dispatcher.dispatch(ByteUtils.unboxArray(message.getData())));
 
-        dispatcher.addListener(LinkCommand.class, message -> {
-            backgroundTransition(new LinkState(message));
+        dispatcher.addListener(AntPage.class, (msg) -> {
+            // need to perform this out of dispatcher thread as this is shared for replies to channel messages
+            stateMutator.performOffThread(() -> state.handleMessage(stateMutator, msg));
         });
-
-        dispatcher.addListener(AuthCommand.class, message -> {
-            logger.log(Level.INFO, "authentication request: {0}", message.getMode());
-            backgroundTransition(new AuthState(message));
-
-        });
-
-
-        //TODO: we need to listen to burst rather than these individual messages
-        dispatcher.addListener(DownloadCommand.class, message -> {
-            backgroundTransition(new Transport(message, multiPart));
-        });
-
-
-        dispatcher.addListener(DisconnectCommand.class, (msg) -> {
-            logger.info("Received disconnect command");
-            backgroundTransition(advertState);
-        });
-
 
         channel.open();
     }
