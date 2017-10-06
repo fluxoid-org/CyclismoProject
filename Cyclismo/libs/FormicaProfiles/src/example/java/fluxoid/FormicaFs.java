@@ -12,8 +12,8 @@ import org.cowboycoders.ant.profiles.common.PageDispatcher;
 import org.cowboycoders.ant.profiles.fs.Directory;
 import org.cowboycoders.ant.profiles.fs.DirectoryHeader;
 import org.cowboycoders.ant.profiles.fs.FileEntry;
-import org.cowboycoders.ant.profiles.fs.defines.ResponseCode;
 import org.cowboycoders.ant.profiles.fs.defines.FileAttribute;
+import org.cowboycoders.ant.profiles.fs.defines.ResponseCode;
 import org.cowboycoders.ant.profiles.fs.pages.BeaconAdvert;
 import org.cowboycoders.ant.profiles.fs.pages.BeaconAuth;
 import org.cowboycoders.ant.profiles.fs.pages.BeaconTransport;
@@ -27,15 +27,10 @@ import org.cowboycoders.ant.profiles.pages.AntPage;
 import org.cowboycoders.ant.profiles.simulators.NetworkKeys;
 import org.cowboycoders.ant.utils.ByteUtils;
 import org.fluxoid.utils.Format;
-import org.fluxoid.utils.bytes.LittleEndianArray;
-import org.fluxoid.utils.crc.Crc16Utils;
-import org.omg.CORBA.NO_IMPLEMENT;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -57,6 +52,11 @@ public class FormicaFs {
         handler.setLevel(Level.FINEST);
         logger.addHandler(handler);
         logger.setUseParentHandlers(false);
+    }
+
+    private class CurrentFile {
+        int index; // index in dir
+        MultiPart multiPart;
     }
 
     private interface StateMutator {
@@ -206,38 +206,17 @@ public class FormicaFs {
 
     }
 
+    private static byte[] getDirBytes(Directory directory) {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        directory.encode(os);
+        return os.toByteArray();
+    }
+
     private static class TransportState implements FsState {
 
         private final MultiPart multiPart = new MultiPart(getFit());;
 
-        Consumer<Channel> downloadIndexBehaviour = (channel) -> {
-            byte[] data = new byte[64]; // pad to multiple of 8 bytes
-            LittleEndianArray view = new LittleEndianArray(data);
-            data[0] = 67;
-            data[2] = 2; // guess
-            data[8] = 68;
-            data[9] = (byte) 0x89; // download response codetS
-            data[10] = 0; // response code - zero = no error?
-            view.put(12, 4, 32); // remaining data
-            view.put(16, 4, 0); // offset of data
-            view.put(20, 4, 32); // file size;
-            ByteBuffer buf = ByteBuffer.wrap(data);
-            buf.position(24);
-            buf = buf.slice();
-
-
-            mkDir().accept(buf);
-
-            logger.finest("before crc");
-            byte[] cp = Arrays.copyOfRange(data, 24, 56);
-            int crc = Crc16Utils.computeCrc(Crc16Utils.ANSI_CRC16_TABLE, 0, cp);
-            logger.finest("crc: " + crc);
-            view.put(data.length - 2, 2, crc);
-
-            channel.sendBurst(data, 10L, TimeUnit.SECONDS);
-            logger.finest("sent file info");
-        };
-
+        private final MultiPart index = new MultiPart(getDirBytes(mkDir()));
 
         @Override
         public void onTransition(StateMutator ctx) {
@@ -280,7 +259,7 @@ public class FormicaFs {
                     break;
                 }
                 case 0: {
-                    downloadIndexBehaviour.accept(channel);
+                    index.accept(channel);
                     break;
                 }
 

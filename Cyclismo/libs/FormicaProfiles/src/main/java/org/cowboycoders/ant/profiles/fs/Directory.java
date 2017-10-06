@@ -1,13 +1,16 @@
 package org.cowboycoders.ant.profiles.fs;
 
 
+import org.cowboycoders.ant.profiles.pages.BurstEncodable;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class Directory implements Consumer<ByteBuffer>
+public class Directory implements BurstEncodable
 {
     private final List<FileEntry> files;
     private final DirectoryHeader header;
@@ -35,16 +38,10 @@ public class Directory implements Consumer<ByteBuffer>
     }
 
     @Override
-    public void accept(ByteBuffer byteBuffer) {
-        // at the moment we only support v0.1. We would need additional logical for other versions
-        if (byteBuffer.remaining() < header.getEntryLength() * files.size() + DirectoryHeader.HEADER_LENGTH) {
-            throw new IllegalArgumentException("insufficient space in buffer");
-        }
-        header.accept(byteBuffer);
-
+    public void encode(ByteArrayOutputStream os) {
+        header.encode(os);
         for (FileEntry entry : files) {
-            byteBuffer = byteBuffer.slice();
-            entry.accept(byteBuffer);
+            entry.encode(os);
         }
     }
 

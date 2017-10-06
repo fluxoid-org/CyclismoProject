@@ -3,15 +3,17 @@ package org.cowboycoders.ant.profiles.fs;
 import java9.util.function.Consumer;
 import org.cowboycoders.ant.profiles.fs.defines.FSConstants;
 import org.cowboycoders.ant.profiles.fs.defines.FileAttribute;
+import org.cowboycoders.ant.profiles.pages.BurstEncodable;
 import org.fluxoid.utils.bytes.LittleEndianArray;
 
+import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.logging.Logger;
 
-public class FileEntry implements Consumer<ByteBuffer> {
+public class FileEntry implements BurstEncodable {
 
     public static final int ENTRY_LENGTH = 16; // antfs version dependent
 
@@ -88,13 +90,9 @@ public class FileEntry implements Consumer<ByteBuffer> {
     }
 
 
-
-    @Override
-    public void accept(ByteBuffer buf) {
-        if (buf.remaining() < ENTRY_LENGTH) {
-            throw new IllegalArgumentException("expecting " + 16 + " bytes");
-        }
-        LittleEndianArray view = new LittleEndianArray(buf);
+    public void encode(ByteArrayOutputStream os) {
+        byte [] data = new byte[ENTRY_LENGTH];
+        LittleEndianArray view = new LittleEndianArray(data);
         view.put(0,2, index);
         view.put(2,1, dataType);
         view.put(3,3,id);
@@ -102,7 +100,7 @@ public class FileEntry implements Consumer<ByteBuffer> {
         view.put(7,1, FileAttribute.encode(attr));
         view.put(8, 4, length);
         view.put(12, 4, timeStamp);
-        buf.position(buf.position() + 16);
+        os.write(data,0, data.length);
     }
 
     public static class FileEntryBuilder {

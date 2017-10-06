@@ -3,12 +3,14 @@ package org.cowboycoders.ant.profiles.fs;
 import java9.util.function.Consumer;
 import org.cowboycoders.ant.profiles.fs.defines.FSConstants;
 import org.cowboycoders.ant.profiles.fs.defines.TimeFormat;
+import org.cowboycoders.ant.profiles.pages.BurstEncodable;
 import org.fluxoid.utils.bytes.LittleEndianArray;
 
+import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.GregorianCalendar;
 
-public class DirectoryHeader implements Consumer<ByteBuffer> {
+public class DirectoryHeader implements BurstEncodable {
 
     public static final int HEADER_LENGTH = 16;
     private final int systemTimestamp;
@@ -83,15 +85,16 @@ public class DirectoryHeader implements Consumer<ByteBuffer> {
         return timeFormat;
     }
 
-    public void accept(ByteBuffer buf) {
-        LittleEndianArray view = new LittleEndianArray(buf);
+    public void encode(ByteArrayOutputStream os) {
+        byte [] header = new byte[HEADER_LENGTH];
+        LittleEndianArray view = new LittleEndianArray(header);
         view.putPartialByte(0,0b1111_0000, majorVersion);
         view.putPartialByte(0,0b0000_1111, minorVersion);
         view.putUnsigned(1,1,entryLength);
         view.putUnsigned(2,1, timeFormat.ordinal());
         view.putUnsigned(8,4, systemTimestamp);
         view.putUnsigned(12,4, modifiedTimestamp);
-        buf.position(buf.position() + HEADER_LENGTH);
+        os.write(header, 0, header.length);
     }
 
     public static class DirectoryHeaderBuilder  {
