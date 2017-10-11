@@ -9,6 +9,8 @@ import org.cowboycoders.ant.interfaces.AntTransceiver;
 import org.cowboycoders.ant.messages.ChannelType;
 import org.cowboycoders.ant.messages.MasterChannelType;
 import org.cowboycoders.ant.messages.data.CompleteDataMessage;
+import org.cowboycoders.ant.profiles.common.DeviceIds;
+import org.cowboycoders.ant.profiles.common.DeviceDescriptor;
 import org.cowboycoders.ant.profiles.common.PageDispatcher;
 import org.cowboycoders.ant.profiles.fs.Directory;
 import org.cowboycoders.ant.profiles.fs.DirectoryHeader;
@@ -45,10 +47,6 @@ import java.util.logging.Logger;
 
 public class FormicaFs {
 
-    // these represent manufacturers of watches
-    private static final int GARMIN = 1;
-    private static final int HEALTH_AND_LIFE = 257;
-    public static final int GARMIN_FR70_DEV_ID = 1436;
     private static final Logger logger = Logger.getLogger(FormicaFs.class.getName());
 
     static {
@@ -162,7 +160,7 @@ public class FormicaFs {
     }
 
     // advertise as garmin fr70 (there is a whitelist of devices)
-    private AdvertState advertState = new AdvertState(1, GARMIN_FR70_DEV_ID);
+    private AdvertState advertState = new AdvertState(DeviceIds.Garmin.FR70);
     private WrappedState<AuthState> authState = new DisconnectDecorator<>(new AuthState());
     private WrappedState<TransportState>  transportState = new DisconnectDecorator<>(new TransportState(dirListing));
 
@@ -171,9 +169,9 @@ public class FormicaFs {
         private final int manufacturerId;
         private final int deviceType;
 
-        public AdvertState(int manufacturerId, int deviceType) {
-            this.manufacturerId = manufacturerId;
-            this.deviceType = deviceType;
+        public AdvertState(DeviceDescriptor deviceIdProvider) {
+            this.manufacturerId = deviceIdProvider.getManufacturerId();
+            this.deviceType = deviceIdProvider.getDeviceId();
         }
 
         @Override
@@ -388,7 +386,7 @@ public class FormicaFs {
         ChannelType type = new MasterChannelType(false, false);
         channel.assign(NetworkKeys.ANT_FS, type);
         // deviceNumber can be set to anything (not whitelisted)
-        channel.setId(1234, GARMIN, 0, false);
+        channel.setId(1234, DeviceIds.Garmin.manufacturerId(), 0, false);
 
         final PageDispatcher dispatcher = new PageDispatcher();
 

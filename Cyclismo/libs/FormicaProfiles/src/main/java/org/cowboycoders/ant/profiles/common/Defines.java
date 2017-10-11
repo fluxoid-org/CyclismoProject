@@ -32,4 +32,5 @@ public class Defines {
             return this.intValue;
         }
     }
+
 }
