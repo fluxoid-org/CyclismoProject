@@ -18,10 +18,7 @@ import org.cowboycoders.ant.profiles.fs.FileEntry;
 import org.cowboycoders.ant.profiles.fs.defines.DataType;
 import org.cowboycoders.ant.profiles.fs.defines.FileAttribute;
 import org.cowboycoders.ant.profiles.fs.defines.ResponseCode;
-import org.cowboycoders.ant.profiles.fs.pages.BeaconAdvert;
-import org.cowboycoders.ant.profiles.fs.pages.BeaconAuth;
-import org.cowboycoders.ant.profiles.fs.pages.BeaconTransport;
-import org.cowboycoders.ant.profiles.fs.pages.CommonBeacon;
+import org.cowboycoders.ant.profiles.fs.pages.*;
 import org.cowboycoders.ant.profiles.fs.pages.cmd.AuthCommand;
 import org.cowboycoders.ant.profiles.fs.pages.cmd.DisconnectCommand;
 import org.cowboycoders.ant.profiles.fs.pages.cmd.DownloadCommand;
@@ -189,8 +186,8 @@ public class FormicaFs {
 
             channel.setBroadcast(data);
         }
-        public AuthCommand.AuthMode getAuthMode() {
-            return AuthCommand.AuthMode.PASSTHROUGH;
+        public AuthMode getAuthMode() {
+            return AuthMode.PASSTHROUGH;
         }
 
         @Override
@@ -204,8 +201,8 @@ public class FormicaFs {
             new BeaconAuth.BeaconAuthPayload()
                     .setDataAvailable(true)
                     .setSerialNumber(linkCommand.getSerialNumber())
+                    .setAuthMode(getAuthMode())
                     .encode(beaconData);
-            beaconData[3] = (byte) AuthCommand.AuthMode.PASSTHROUGH.ordinal();
             logger.info(Format.format("serial: %x\n", linkCommand.getSerialNumber()));
             channel.setBroadcast(beaconData);
             channel.setPeriod(4096);
