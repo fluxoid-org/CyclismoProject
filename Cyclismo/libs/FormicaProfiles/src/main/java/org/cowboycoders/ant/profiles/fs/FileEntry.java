@@ -1,8 +1,8 @@
 package org.cowboycoders.ant.profiles.fs;
 
-import java9.util.function.Consumer;
 import org.cowboycoders.ant.profiles.fs.defines.FSConstants;
 import org.cowboycoders.ant.profiles.fs.defines.FileAttribute;
+import org.cowboycoders.ant.profiles.fs.defines.HasDataTypeId;
 import org.cowboycoders.ant.profiles.pages.BurstEncodable;
 import org.fluxoid.utils.bytes.LittleEndianArray;
 
@@ -200,6 +200,9 @@ public class FileEntry implements BurstEncodable {
         }
 
 
-
+        public FileEntryBuilder setDataType(HasDataTypeId idGen) {
+            this.setDataType(idGen.getDataTypeId());
+            return this;
+        }
     }
 }

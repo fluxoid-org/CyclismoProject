@@ -1,5 +1,6 @@
 package fluxoid;
 
+import fluxoid.fit.FileType;
 import java9.util.Optional;
 import java9.util.function.Consumer;
 import org.cowboycoders.ant.Channel;
@@ -12,6 +13,7 @@ import org.cowboycoders.ant.profiles.common.PageDispatcher;
 import org.cowboycoders.ant.profiles.fs.Directory;
 import org.cowboycoders.ant.profiles.fs.DirectoryHeader;
 import org.cowboycoders.ant.profiles.fs.FileEntry;
+import org.cowboycoders.ant.profiles.fs.defines.DataType;
 import org.cowboycoders.ant.profiles.fs.defines.FileAttribute;
 import org.cowboycoders.ant.profiles.fs.defines.ResponseCode;
 import org.cowboycoders.ant.profiles.fs.pages.BeaconAdvert;
@@ -83,8 +85,8 @@ public class FormicaFs {
                     if (file.canWrite()) {
                         builder.addAttributes(FileAttribute.WRITE, FileAttribute.APPEND, FileAttribute.ERASE);
                     }
-                    builder.setDataType(128); // fit file;
-                    builder.setId(4);
+                    builder.setDataType(DataType.FIT_FILE);
+                    builder.setId(FileType.ACTIVITY.getId());
                     return builder;
 
                 }
