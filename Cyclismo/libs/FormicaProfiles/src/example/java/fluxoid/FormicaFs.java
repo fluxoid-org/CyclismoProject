@@ -114,8 +114,8 @@ public class FormicaFs {
 
         Channel getChannel();
 
-        AuthState getAuthState();
-        TransportState getTransportState();
+        WrappedState<AuthState> getAuthState();
+        WrappedState<TransportState> getTransportState();
         AdvertState getAdvertState();
     }
 
@@ -124,11 +124,17 @@ public class FormicaFs {
         void handleMessage(StateMutator mutator, AntPage page);
     }
 
-    private interface WrappedState<T extends FsState> {
+    private interface WrappedState<T extends FsState> extends FsState {
         public T getBase();
+
+        @Override
+        void onTransition(StateMutator mutator);
+
+        @Override
+        void handleMessage(StateMutator mutator, AntPage page);
     }
 
-    private static class DisconnectDecorator<T extends FsState> implements FsState, WrappedState<T> {
+    private static class DisconnectDecorator<T extends FsState> implements WrappedState<T> {
 
         private final T base;
 
@@ -187,7 +193,7 @@ public class FormicaFs {
             channel.setBroadcast(data);
         }
         public AuthMode getAuthMode() {
-            return AuthMode.PASSTHROUGH;
+            return AuthMode.PAIRING;
         }
 
         @Override
@@ -356,13 +362,13 @@ public class FormicaFs {
         }
 
         @Override
-        public AuthState getAuthState() {
-            return authState.getBase();
+        public WrappedState<AuthState> getAuthState() {
+            return authState;
         }
 
         @Override
-        public TransportState getTransportState() {
-            return transportState.getBase();
+        public WrappedState<TransportState> getTransportState() {
+            return transportState;
         }
 
         @Override
