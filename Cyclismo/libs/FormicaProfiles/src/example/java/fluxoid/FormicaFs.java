@@ -29,8 +29,11 @@ import org.cowboycoders.ant.utils.ByteUtils;
 import org.fluxoid.utils.Format;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.util.GregorianCalendar;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -54,9 +57,48 @@ public class FormicaFs {
         logger.setUseParentHandlers(false);
     }
 
-    private class CurrentFile {
+
+    public interface FileDescriptor {
+        byte [] getBytes();
+        FileEntry.FileEntryBuilder getFileEntry();
+    }
+
+    private final FileDescriptor [] dirListing = new FileDescriptor[] {
+            new FileDescriptor() {
+                @Override
+                public byte[] getBytes() {
+                    return getFit();
+                }
+
+                @Override
+                public FileEntry.FileEntryBuilder getFileEntry() {
+                    URL url = ClassLoader.getSystemResource("test.fit");
+                    File file = new File(url.getFile());
+                    FileEntry.FileEntryBuilder builder = new FileEntry.FileEntryBuilder();
+                    if (file.canRead()) {
+                        builder.addAttributes(FileAttribute.READ);
+                        builder.setTimeStamp(file.lastModified());
+                        builder.setLength((int)file.length());
+                    }
+                    if (file.canWrite()) {
+                        builder.addAttributes(FileAttribute.WRITE, FileAttribute.APPEND, FileAttribute.ERASE);
+                    }
+                    builder.setDataType(128); // fit file;
+                    builder.setId(4);
+                    return builder;
+
+                }
+            }
+    };
+
+    private static class CurrentFile {
         int index; // index in dir
         MultiPart multiPart;
+
+        public CurrentFile(int index, MultiPart multiPart) {
+            this.index = index;
+            this.multiPart = multiPart;
+        }
     }
 
     private interface StateMutator {
@@ -120,7 +162,7 @@ public class FormicaFs {
     // advertise as garmin fr70 (there is a whitelist of devices)
     private AdvertState advertState = new AdvertState(1, GARMIN_FR70_DEV_ID);
     private WrappedState<AuthState> authState = new DisconnectDecorator<>(new AuthState());
-    private WrappedState<TransportState>  transportState = new DisconnectDecorator<>(new TransportState());
+    private WrappedState<TransportState>  transportState = new DisconnectDecorator<>(new TransportState(dirListing));
 
     private static class AdvertState implements FsState {
 
@@ -214,9 +256,16 @@ public class FormicaFs {
 
     private static class TransportState implements FsState {
 
-        private final MultiPart multiPart = new MultiPart(getFit());;
+        private final FileDescriptor[] dirListing;
 
-        private final MultiPart index = new MultiPart(getDirBytes(mkDir()));
+        public TransportState(FileDescriptor [] dirListing) {
+            this.dirListing = dirListing;
+            index = new MultiPart(getDirBytes(mkDir(dirListing)));
+        }
+
+        private CurrentFile currentFile;
+
+        private final MultiPart index;
 
         @Override
         public void onTransition(StateMutator ctx) {
@@ -240,6 +289,18 @@ public class FormicaFs {
             Channel channel = ctx.getChannel();
             switch (message.getIndex()) {
                 default: {
+                    MultiPart multiPart;
+                    if (currentFile != null && currentFile.index == message.getIndex()) {
+                        // do nothing
+                    } else {
+                        int fileIndex = message.getIndex() -1;
+                        if (fileIndex < 0) {
+                            logger.severe("ignoring negative index: " +  fileIndex);
+                            return;
+                        }
+                        currentFile = new CurrentFile(message.getIndex(), new MultiPart(dirListing[fileIndex].getBytes()));
+                    }
+                    multiPart = currentFile.multiPart;
                     logger.info("index: " + message.getIndex() + ", requested");
                     logger.info("offset: " + message.getOffset() + ", requested");
                     logger.info("firstReq: " + message.isFirstRequest());
@@ -360,25 +421,28 @@ public class FormicaFs {
 
     }
 
-    public static Directory mkDir() {
+    public static Directory mkDir(FileDescriptor[] dirListing) {
+        int modStamp = -1;
         DirectoryHeader.DirectoryHeaderBuilder header = new DirectoryHeader.DirectoryHeaderBuilder()
-                .setModifiedTimestamp(100)
-                .setSystemTimestamp(200);
+                .setSystemTimestamp(new GregorianCalendar());
 
-        FileEntry soleEntry = new FileEntry.FileEntryBuilder()
-                .addAttributes(FileAttribute.READ)
-                .setIndex(1) // don't set to zero
-                .setLength(8)
-                .setId(4) // for watch file type id
-                .setTimeStamp(150)
-                .setDataType(128) // fit file
-                .create();
+        Directory.DirectoryBuilder dir = new Directory.DirectoryBuilder()
+                .setHeader(header);
 
-        Directory dir = new Directory.DirectoryBuilder()
-                .setHeader(header)
-                .addFile(soleEntry)
-                .create();
-        return dir;
+        int index = 1;
+        for (FileDescriptor desc: dirListing) {
+            FileEntry.FileEntryBuilder entry = desc.getFileEntry();
+            dir.addFile(entry.setIndex(index++).create());
+            if (entry.getTimeStamp() > modStamp) {
+                modStamp = entry.getTimeStamp();
+            }
+        }
+
+        header.setModifiedTimestamp(modStamp);
+        dir.setHeader(header);
+
+
+        return dir.create();
     }
 
     public static byte[] getFit() {
@@ -418,6 +482,10 @@ public class FormicaFs {
 
         ErrorResponse(ResponseCode responseCode) {
             this.responseCode = responseCode;
+        }
+
+        public ResponseCode getResponseCode() {
+            return responseCode;
         }
     }
 

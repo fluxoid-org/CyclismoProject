@@ -11,6 +11,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.GregorianCalendar;
 import java.util.logging.Logger;
 
 public class FileEntry implements BurstEncodable {
@@ -176,6 +177,16 @@ public class FileEntry implements BurstEncodable {
 
         public FileEntryBuilder setTimeStamp(int timeStamp) {
             this.timeStamp = timeStamp;
+            return this;
+        }
+
+        public FileEntryBuilder setTimeStamp(long timeStamp) {
+            this.timeStamp = (int) ((timeStamp - FSConstants.TIME_OFFSET) / 1000);
+            return this;
+        }
+
+        public FileEntryBuilder setTimeStamp(GregorianCalendar cal) {
+            this.timeStamp = (int) ((cal.getTimeInMillis() - FSConstants.TIME_OFFSET) / 1000);
             return this;
         }
 
