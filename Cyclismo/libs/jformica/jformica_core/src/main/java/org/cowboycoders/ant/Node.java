@@ -247,13 +247,13 @@ public class Node {
 
 	public synchronized void start() throws AntError {
 		if (running)
-			return;// throw new AntError("already started");
+			return;
 		evm.start();
 		antChipInterface.start();
 		antChipInterface.registerStatusMessenger(mStatusMessenger);
 		evm.registerRxListener(new MessageListener());
 		init();
-
+		reset();
 		running = true;
 	}
 
