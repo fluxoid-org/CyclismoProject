@@ -1,8 +1,7 @@
 package org.cowboycoders.ant.profiles.fs.pages.responses;
 
-import org.cowboycoders.ant.profiles.fs.defines.ResponseCode;
+import org.cowboycoders.ant.profiles.fs.defines.DownloadResponseCode;
 import org.cowboycoders.ant.profiles.pages.BurstEncodable;
-import org.cowboycoders.ant.profiles.pages.SinglePacketEncodable;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 
 import java.io.ByteArrayOutputStream;
@@ -10,23 +9,15 @@ import java.io.ByteArrayOutputStream;
 public class GenericResponse implements AntPage, BurstEncodable {
 
     private final ResponseTo what;
-    private final ResponseCode code;
 
-    public GenericResponse(ResponseTo what, ResponseCode code) {
+    public GenericResponse(ResponseTo what) {
         this.what = what;
-        this.code = code;
-    }
-
-    public ResponseCode getResponseCode() {
-        return code;
     }
 
     @Override
     public void encode(ByteArrayOutputStream os) {
         os.write(getPageNumber());
         os.write(what.encode());
-        os.write(code.encode());
-        os.write(0); // padding (but this maybe download specific)
     }
 
     /**
@@ -39,6 +30,7 @@ public class GenericResponse implements AntPage, BurstEncodable {
 
     public enum ResponseTo {
         DOWNLOAD(0x89),
+        AUTH(0x84),
         UNKNOWN(0xff);
 
         private final byte val;

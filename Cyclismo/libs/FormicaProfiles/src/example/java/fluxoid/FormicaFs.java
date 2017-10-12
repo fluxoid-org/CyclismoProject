@@ -15,14 +15,17 @@ import org.cowboycoders.ant.profiles.common.PageDispatcher;
 import org.cowboycoders.ant.profiles.fs.Directory;
 import org.cowboycoders.ant.profiles.fs.DirectoryHeader;
 import org.cowboycoders.ant.profiles.fs.FileEntry;
+import org.cowboycoders.ant.profiles.fs.defines.AuthResponseCode;
 import org.cowboycoders.ant.profiles.fs.defines.DataType;
 import org.cowboycoders.ant.profiles.fs.defines.FileAttribute;
-import org.cowboycoders.ant.profiles.fs.defines.ResponseCode;
+import org.cowboycoders.ant.profiles.fs.defines.DownloadResponseCode;
 import org.cowboycoders.ant.profiles.fs.pages.*;
+import org.cowboycoders.ant.profiles.fs.pages.behaviours.*;
 import org.cowboycoders.ant.profiles.fs.pages.cmd.AuthCommand;
 import org.cowboycoders.ant.profiles.fs.pages.cmd.DisconnectCommand;
 import org.cowboycoders.ant.profiles.fs.pages.cmd.DownloadCommand;
 import org.cowboycoders.ant.profiles.fs.pages.cmd.LinkCommand;
+import org.cowboycoders.ant.profiles.fs.pages.responses.AuthResponse;
 import org.cowboycoders.ant.profiles.fs.pages.responses.DownloadResponse;
 import org.cowboycoders.ant.profiles.pages.AntPage;
 import org.cowboycoders.ant.profiles.simulators.NetworkKeys;
@@ -35,9 +38,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.GregorianCalendar;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -60,7 +66,7 @@ public class FormicaFs {
         FileEntry.FileEntryBuilder getFileEntry();
     }
 
-    private final FileDescriptor [] dirListing = new FileDescriptor[] {
+    private static final FileDescriptor [] dirListing = new FileDescriptor[] {
             new FileDescriptor() {
                 @Override
                 public byte[] getBytes() {
@@ -98,7 +104,7 @@ public class FormicaFs {
         }
     }
 
-    private interface StateMutator {
+    private interface StateMachineContext {
 
         ExecutorService channelExecutor = Executors.newFixedThreadPool(1);
 
@@ -112,26 +118,40 @@ public class FormicaFs {
             performOffThread(() -> setStateNow(newState));
         }
 
+        DeviceDescriptor getDeviceDescriptor();
+
         Channel getChannel();
 
-        WrappedState<AuthState> getAuthState();
-        WrappedState<TransportState> getTransportState();
-        AdvertState getAdvertState();
+        FsState getAuthState();
+        FsState getTransportState();
+        FsState getAdvertState();
+
+        public void setSerial(int serialNum);
+
+        public int getSerial();
+
+        int getOurSerial();
+
+        AuthBehaviour getPairingBehaviour();
+
+        BeaconAdvert.BeaconPayload getAdvertPayload();
+
+        FsState getState();
     }
 
     private interface FsState {
-        void onTransition(StateMutator mutator);
-        void handleMessage(StateMutator mutator, AntPage page);
+        void onTransition(StateMachineContext mutator);
+        void handleMessage(StateMachineContext mutator, AntPage page);
     }
 
     private interface WrappedState<T extends FsState> extends FsState {
         public T getBase();
 
         @Override
-        void onTransition(StateMutator mutator);
+        void onTransition(StateMachineContext mutator);
 
         @Override
-        void handleMessage(StateMutator mutator, AntPage page);
+        void handleMessage(StateMachineContext mutator, AntPage page);
     }
 
     private static class DisconnectDecorator<T extends FsState> implements WrappedState<T> {
@@ -147,12 +167,12 @@ public class FormicaFs {
         }
 
         @Override
-        public void onTransition(StateMutator mutator) {
+        public void onTransition(StateMachineContext mutator) {
             base.onTransition(mutator);
         }
 
         @Override
-        public void handleMessage(StateMutator ctx, AntPage page) {
+        public void handleMessage(StateMachineContext ctx, AntPage page) {
             if (page instanceof DisconnectCommand) {
                 logger.info("Received disconnect command");
                 ctx.setState(ctx.getAdvertState());
@@ -162,54 +182,44 @@ public class FormicaFs {
         }
     }
 
-    // advertise as garmin fr70 (there is a whitelist of devices)
-    private AdvertState advertState = new AdvertState(DeviceIds.Garmin.FR70);
-    private WrappedState<AuthState> authState = new DisconnectDecorator<>(new AuthState());
-    private WrappedState<TransportState>  transportState = new DisconnectDecorator<>(new TransportState(dirListing));
 
     private static class AdvertState implements FsState {
 
-        private final int manufacturerId;
-        private final int deviceType;
-
-        public AdvertState(DeviceDescriptor deviceIdProvider) {
-            this.manufacturerId = deviceIdProvider.getManufacturerId();
-            this.deviceType = deviceIdProvider.getDeviceId();
-        }
-
         @Override
-        public void onTransition(StateMutator mutator) {
-            Channel channel = mutator.getChannel();
-            channel.setPeriod(8192);
-            channel.setFrequency(50);
+        public void onTransition(StateMachineContext ctx) {
             byte[] data = new byte[8];
 
-            new BeaconAdvert.BeaconPayload()
-                    .setFsDeviceType(deviceType)
-                    .setManufacturerID(manufacturerId)
-                    .setDataAvailable(true)
-                    .encode(data);
+            Channel channel = ctx.getChannel();
+
+            //FIXME: this won't work as it doesn't ensure data is broadcast before being overwritten, but should we
+            //       broadcast we are dropping to link
+//            ctx.getAdvertPayload().encode(data);
+//            channel.setBroadcast(data);
+//            data = new byte[8];
+
+
+            channel.setPeriod(8192);
+            channel.setFrequency(50);
+
+            ctx.getAdvertPayload().encode(data);
 
             channel.setBroadcast(data);
         }
-        public AuthMode getAuthMode() {
-            return AuthMode.PAIRING;
-        }
 
         @Override
-        public void handleMessage(StateMutator ctx, AntPage page) {
+        public void handleMessage(StateMachineContext ctx, AntPage page) {
             if (!(page instanceof LinkCommand)) {
                 return;
             }
             LinkCommand linkCommand = (LinkCommand) page;
             Channel channel = ctx.getChannel();
             byte[] beaconData = new byte[8];
-            new BeaconAuth.BeaconAuthPayload()
+            ctx.getPairingBehaviour().onLink(new BeaconAuth.BeaconAuthPayload()
                     .setDataAvailable(true)
                     .setSerialNumber(linkCommand.getSerialNumber())
-                    .setAuthMode(getAuthMode())
-                    .encode(beaconData);
+            ).encode(beaconData);
             logger.info(Format.format("serial: %x\n", linkCommand.getSerialNumber()));
+            ctx.setSerial(linkCommand.getSerialNumber());
             channel.setBroadcast(beaconData);
             channel.setPeriod(4096);
             channel.setFrequency(linkCommand.getRequestedFrequency());
@@ -222,31 +232,80 @@ public class FormicaFs {
     private static class AuthState implements FsState {
 
         @Override
-        public void onTransition(StateMutator ctx) {
+        public void onTransition(StateMachineContext ctx) {
 
         }
 
+        // whitelist some requests
+        private static boolean isAllowableCmd(StateMachineContext ctx, AuthCommand cmd) {
+            return (cmd.getMode() == AuthMode.SERIAL && ctx.getPairingBehaviour().getAuthMode() == AuthMode.PASSKEY);
+        }
+
         @Override
-        public void handleMessage(StateMutator ctx, AntPage page) {
+        public void handleMessage(StateMachineContext ctx, AntPage page) {
             if (!(page instanceof AuthCommand)) {
                 return;
             }
             AuthCommand authCommand = (AuthCommand) page;
             logger.log(Level.INFO, "authentication request: {0}", authCommand.getMode());
-            if (((AuthCommand) page).getMode() != ctx.getAdvertState().getAuthMode()) {
+            if (authCommand.getMode() != ctx.getPairingBehaviour().getAuthMode() && !isAllowableCmd(ctx, authCommand)) {
                 logger.log(Level.SEVERE, "trying to authenticate with different mode than advertised");
                 ctx.setState(ctx.getAdvertState());
                 return;
             }
-            switch (authCommand.getMode()) {
-                case PASSTHROUGH:
-                        ctx.setState(ctx.getTransportState());
-                    break;
-                default:
-                    logger.severe("should handle other auth states");
-
-
+            if (authCommand.getSerialNumber() != ctx.getSerial()) {
+                logger.log(Level.SEVERE, "Serial number mismatch");
+                ctx.setState(ctx.getAdvertState());
+                return;
             }
+
+            logger.log(Level.INFO, "authentication accepted");
+
+            AuthCallback callback = new AuthCallback() {
+                @Override
+                public void onAccept() {
+                    sendResponse(ctx, AuthResponseCode.ACCEPT, () -> {
+                        ctx.setState(ctx.getTransportState());
+                    });
+
+
+                }
+
+                @Override
+                public void onReject() {
+                    logger.severe("authentication rejected");
+                    sendResponse(ctx, AuthResponseCode.REJECT, () -> {
+                        //ctx.setState(ctx.getAdvertState());
+                    });
+
+                }
+            };
+
+            ctx.getPairingBehaviour().onReceieveAuthCmd(authCommand, callback);
+        }
+
+
+        private void sendResponse(StateMachineContext ctx, AuthResponseCode responseCode, Runnable next) {
+            ctx.performOffThread(() -> {
+                Channel channel = ctx.getChannel();
+                try {
+                    ByteArrayOutputStream os = new ByteArrayOutputStream();
+                    ctx.getAdvertPayload().encode(os);
+                    AuthResponse response = ctx.getPairingBehaviour().onAcceptAuth();
+                    response.encode(os);
+
+                    channel.sendBurst(os.toByteArray(),60L, TimeUnit.SECONDS);
+                } catch (Exception ex) {
+                    if (ex instanceof TimeoutException) {
+                        ctx.setState(ctx.getAdvertState());
+                        return;
+                    }
+                    throw ex;
+                }
+
+                next.run();
+
+            });
         }
 
     }
@@ -271,7 +330,7 @@ public class FormicaFs {
         private final MultiPart index;
 
         @Override
-        public void onTransition(StateMutator ctx) {
+        public void onTransition(StateMachineContext ctx) {
             Channel channel = ctx.getChannel();
             // transition back to transport
             byte[] beacon = new byte[8];
@@ -284,7 +343,7 @@ public class FormicaFs {
         }
 
         @Override
-        public void handleMessage(StateMutator ctx, AntPage page) {
+        public void handleMessage(StateMachineContext ctx, AntPage page) {
             if (!(page instanceof DownloadCommand)) {
                 return;
             }
@@ -336,15 +395,26 @@ public class FormicaFs {
     }
 
 
-    private StateMutator stateMutator;
-    private FsState state = advertState;
+    private static class StateMachineContextImpl implements StateMachineContext {
 
-    private class StateMutatorImpl implements StateMutator {
+        private final int ourSerial;
+        private Channel channel;
+        private final AuthBehaviour pairingBehaviour;
+        private final DeviceDescriptor deviceDescriptor;
+        private final Node node;
 
-        private final Channel channel;
+        private AdvertState advertState = new AdvertState();
+        private WrappedState<AuthState> authState = new DisconnectDecorator<>(new AuthState());
+        private final WrappedState<TransportState> transportState;
 
-        public StateMutatorImpl(Channel channel) {
-            this.channel = channel;
+        private FsState state = getAdvertState();
+
+        public StateMachineContextImpl(Node node, AuthBehaviour pairingBehaviour, DeviceDescriptor deviceDescriptor, int ourSerial, FileDescriptor[] dirListing) {
+            this.pairingBehaviour = pairingBehaviour;
+            this.ourSerial = ourSerial;
+            this.node = node;
+            this.deviceDescriptor = deviceDescriptor;
+            transportState = new DisconnectDecorator<>(new TransportState(dirListing));
         }
 
         @Override
@@ -355,47 +425,93 @@ public class FormicaFs {
             state = newState;
         }
 
+        @Override
+        public DeviceDescriptor getDeviceDescriptor() {
+            return deviceDescriptor;
+        }
 
         @Override
         public Channel getChannel() {
+            if (channel == null) {
+                node.start();
+                channel = node.getFreeChannel();
+            }
             return channel;
         }
 
         @Override
-        public WrappedState<AuthState> getAuthState() {
+        public FsState getAuthState() {
             return authState;
         }
 
         @Override
-        public WrappedState<TransportState> getTransportState() {
+        public FsState getTransportState() {
             return transportState;
         }
 
         @Override
-        public AdvertState getAdvertState() {
+        public FsState getAdvertState() {
             return advertState;
+        }
+
+        private boolean serialSet = false;
+        private Integer serial = null;
+
+        @Override
+        public void setSerial(int serialNum) {
+            if(serialSet) {
+                // serial should be locked in for rest of transaction
+                return;
+            }
+            serial = serialNum;
+            serialSet = true;
+        }
+
+        @Override
+        public int getSerial() {
+            return serial;
+        }
+
+        @Override
+        public int getOurSerial() {
+            return ourSerial;
+        }
+
+        @Override
+        public AuthBehaviour getPairingBehaviour() {
+            return pairingBehaviour;
+        }
+
+        @Override
+        public BeaconAdvert.BeaconPayload getAdvertPayload() {
+            return new BeaconAdvert.BeaconPayload()
+                    .setFsDeviceType(deviceDescriptor.getDeviceId())
+                    .setManufacturerID(deviceDescriptor.getManufacturerId())
+                    .setDataAvailable(true);
+        }
+
+        @Override
+        public FsState getState() {
+            return state;
         }
     }
 
 
-    public void start(Node node) {
-        node.start();
-        node.reset();
+    public void start(StateMachineContext ctx) {
 
-        final Channel channel = node.getFreeChannel();
+        final Channel channel = ctx.getChannel();
 
-         stateMutator = new StateMutatorImpl(channel);
 
         ChannelType type = new MasterChannelType(false, false);
         channel.assign(NetworkKeys.ANT_FS, type);
         // deviceNumber can be set to anything (not whitelisted)
-        channel.setId(1234, DeviceIds.Garmin.manufacturerId(), 0, false);
+        channel.setId(1235, DeviceIds.Garmin.manufacturerId(), 0, false);
 
         final PageDispatcher dispatcher = new PageDispatcher();
 
         channel.setSearchTimeout(Channel.SEARCH_TIMEOUT_NEVER);
 
-        advertState.onTransition(stateMutator);
+        ctx.getAdvertState().onTransition(ctx);
 
         channel.registerRxListener(msg -> {
 
@@ -411,7 +527,7 @@ public class FormicaFs {
 
         dispatcher.addListener(AntPage.class, (msg) -> {
             // need to perform this out of dispatcher thread as this is shared for replies to channel messages
-            stateMutator.performOffThread(() -> state.handleMessage(stateMutator, msg));
+            ctx.performOffThread(() -> ctx.getState().handleMessage(ctx, msg));
         });
 
         channel.open();
@@ -420,7 +536,61 @@ public class FormicaFs {
     public static void main(String[] args) {
         AntTransceiver antchip = new AntTransceiver(0);
         Node node = new Node(antchip);
-        new FormicaFs().start(node);
+
+        final int ourSerial = 0xdeadbeed;
+        final byte [] passkey = new byte [] {(byte) 0xde, (byte) 0xad, (byte) 0xbe, (byte) 0xef};
+
+        AuthBehaviour behaviour = new PairingBehaviour() {
+            @Override
+            public int getSerial() {
+                return ourSerial;
+            }
+
+            @Override
+            public byte[] getPasskey() {
+                return passkey;
+            }
+
+            @Override
+            public void onReceieveAuthCmd(AuthCommand cmd, AuthCallback callback) {
+                System.out.print("pairing request from " );
+                System.out.printf("%x\n", cmd.getSerialNumber());
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        System.out.println("simulating user accept");
+                        callback.onAccept();
+                    }
+                },500);
+            }
+
+
+        };
+
+        behaviour = new PasskeyBehaviour() {
+
+            @Override
+            public void onReceieveAuthCmd(AuthCommand cmd, AuthCallback callback) {
+                System.out.println("got auth");
+            }
+
+            @Override
+            public int getSerial() {
+                return ourSerial;
+            }
+
+            @Override
+            public byte[] getPasskey() {
+                return passkey;
+            }
+        };
+
+        StateMachineContext ctx = new StateMachineContextImpl(node, new PassThroughBehaviour(), DeviceIds.Garmin.FR70, ourSerial, dirListing);
+
+
+        //DeviceIds.Garmin.FR70
+
+        new FormicaFs().start(ctx);
 
     }
 
@@ -481,14 +651,14 @@ public class FormicaFs {
     }
 
     public static class ErrorResponse implements FailureReason {
-        private final ResponseCode responseCode;
+        private final DownloadResponseCode downloadResponseCode;
 
-        ErrorResponse(ResponseCode responseCode) {
-            this.responseCode = responseCode;
+        ErrorResponse(DownloadResponseCode downloadResponseCode) {
+            this.downloadResponseCode = downloadResponseCode;
         }
 
-        public ResponseCode getResponseCode() {
-            return responseCode;
+        public DownloadResponseCode getDownloadResponseCode() {
+            return downloadResponseCode;
         }
     }
 
@@ -534,11 +704,11 @@ public class FormicaFs {
                     logger.severe("offset out of bounds");
                     return;
                 }
-                ResponseCode responseCode = ResponseCode.NO_ERROR;
+                DownloadResponseCode downloadResponseCode = DownloadResponseCode.NO_ERROR;
                 if (expectedCrc != crc) {
-                    responseCode = ResponseCode.CRC_MISMATCH;
+                    downloadResponseCode = DownloadResponseCode.CRC_MISMATCH;
                 }
-                DownloadResponse response = new DownloadResponse(responseCode, full, chunkSize, offset, crc);
+                DownloadResponse response = new DownloadResponse(downloadResponseCode, full, chunkSize, offset, crc);
                 crc = response.getPayloadCrc();
 
                 ByteArrayOutputStream os = new ByteArrayOutputStream(response.getLength());
@@ -548,8 +718,8 @@ public class FormicaFs {
                 channel.sendBurst(data, 60L, TimeUnit.SECONDS);
                 logger.finest("sent fit file");
 
-                if (responseCode != ResponseCode.NO_ERROR) {
-                    failure = Optional.of(new ErrorResponse(responseCode));
+                if (downloadResponseCode != DownloadResponseCode.NO_ERROR) {
+                    failure = Optional.of(new ErrorResponse(downloadResponseCode));
                 }
 
             } catch (Exception e) {

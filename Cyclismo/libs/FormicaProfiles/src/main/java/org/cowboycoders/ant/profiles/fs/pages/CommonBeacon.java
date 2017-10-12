@@ -36,6 +36,7 @@ public abstract class CommonBeacon implements AntPage {
 
     public abstract static class CommonBeaconPayload implements SinglePacketEncodable, BurstEncodable {
         protected boolean isDataAvailable = false;
+
         protected State state = State.LINK;
 
         public boolean isDataAvailable() {
@@ -69,7 +70,11 @@ public abstract class CommonBeacon implements AntPage {
             LittleEndianArray view = new LittleEndianArray(packet);
             view.put(PAGE_OFFSET,1, PAGE_NUM);
             view.put(2,1,state.ordinal());
-            packet[1] = isDataAvailable ? (byte) 0x20 : 0;
+            int flags = 0;
+            if (isDataAvailable) {
+                flags |= 0x20;
+            }
+            packet[1] = (byte) flags;
         }
     }
 }

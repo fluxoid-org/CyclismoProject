@@ -1,8 +1,7 @@
 package org.cowboycoders.ant.profiles.fs.pages.responses;
 
-import org.cowboycoders.ant.profiles.fs.defines.ResponseCode;
+import org.cowboycoders.ant.profiles.fs.defines.DownloadResponseCode;
 import org.cowboycoders.ant.profiles.fs.pages.BeaconTransport;
-import org.fluxoid.utils.Format;
 import org.fluxoid.utils.bytes.LittleEndianArray;
 import org.fluxoid.utils.crc.Crc16Utils;
 
@@ -19,9 +18,11 @@ public class DownloadResponse extends GenericResponse {
     private final byte[] file;
     private final byte[] payload;
     private final int crc;
+    private final DownloadResponseCode code;
 
-    public DownloadResponse(ResponseCode code, byte [] file, int chunkSize, int offset, int initalCrc) {
-        super(ResponseTo.DOWNLOAD, code);
+    public DownloadResponse(DownloadResponseCode code, byte [] file, int chunkSize, int offset, int initalCrc) {
+        super(ResponseTo.DOWNLOAD);
+        this.code = code;
         int end = Math.min(offset + chunkSize, file.length);
         payload = Arrays.copyOfRange(file, offset, end);
         this.offset = offset;
@@ -69,6 +70,8 @@ public class DownloadResponse extends GenericResponse {
         new BeaconTransport.BeaconTransportPayload().encode(os);
 
         super.encode(os);
+        os.write(code.encode());
+        os.write(0); // padding (but this maybe download specific)
 
         switch (getResponseCode()) {
             case NO_ERROR:
@@ -85,4 +88,7 @@ public class DownloadResponse extends GenericResponse {
         return (8 - (payload.length + CRC_LEN) % 8) % 8;
     }
 
+    public DownloadResponseCode getResponseCode() {
+        return code;
+    }
 }

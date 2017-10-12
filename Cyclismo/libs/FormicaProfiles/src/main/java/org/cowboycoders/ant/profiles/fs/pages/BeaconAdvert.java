@@ -86,6 +86,7 @@ public class BeaconAdvert extends CommonBeacon {
         public BeaconPayload setDataAvailable(boolean dataAvailable) {
             return (BeaconPayload) super.setDataAvailable(dataAvailable);
         }
+
     }
 
 }
