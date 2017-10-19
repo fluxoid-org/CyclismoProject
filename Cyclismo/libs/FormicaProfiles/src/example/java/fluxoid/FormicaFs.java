@@ -3,6 +3,7 @@ package fluxoid;
 import fluxoid.fit.FileType;
 import java9.util.Optional;
 import java9.util.function.Consumer;
+import org.cowboycoders.ant.AntError;
 import org.cowboycoders.ant.Channel;
 import org.cowboycoders.ant.Node;
 import org.cowboycoders.ant.interfaces.AntTransceiver;
@@ -183,8 +184,26 @@ public class FormicaFs {
     }
 
 
-    private static class AdvertState implements FsState {
+    private abstract static class AbstractAdvertState implements FsState {
 
+
+        @Override
+        public void handleMessage(StateMachineContext ctx, AntPage page) {
+            if (!(page instanceof LinkCommand)) {
+                return;
+            }
+            LinkCommand linkCommand = (LinkCommand) page;
+            ctx.setSerial(linkCommand.getSerialNumber());
+
+            Channel channel = ctx.getChannel();
+            channel.setPeriod(4096);
+            channel.setFrequency(linkCommand.getRequestedFrequency());
+
+            ctx.setState(ctx.getAuthState());
+        }
+    }
+
+    private static class InitialAdvertState extends AbstractAdvertState {
         @Override
         public void onTransition(StateMachineContext ctx) {
             byte[] data = new byte[8];
@@ -205,26 +224,19 @@ public class FormicaFs {
 
             channel.setBroadcast(data);
         }
+    }
 
+
+    private static class AdvertState extends AbstractAdvertState {
         @Override
-        public void handleMessage(StateMachineContext ctx, AntPage page) {
-            if (!(page instanceof LinkCommand)) {
-                return;
-            }
-            LinkCommand linkCommand = (LinkCommand) page;
+        public void onTransition(StateMachineContext ctx) {
+            byte[] data = new byte[8];
+
             Channel channel = ctx.getChannel();
-            byte[] beaconData = new byte[8];
-            ctx.getPairingBehaviour().onLink(new BeaconAuth.BeaconAuthPayload()
-                    .setDataAvailable(true)
-                    .setSerialNumber(linkCommand.getSerialNumber())
-            ).encode(beaconData);
-            logger.info(Format.format("serial: %x\n", linkCommand.getSerialNumber()));
-            ctx.setSerial(linkCommand.getSerialNumber());
-            channel.setBroadcast(beaconData);
-            channel.setPeriod(4096);
-            channel.setFrequency(linkCommand.getRequestedFrequency());
-            logger.fine("made link transition");
-            ctx.setState(ctx.getAuthState());
+
+            ctx.getAdvertPayload().encode(data);
+
+            channel.setBroadcast(data);
         }
     }
 
@@ -233,13 +245,16 @@ public class FormicaFs {
 
         @Override
         public void onTransition(StateMachineContext ctx) {
-
+            Channel channel = ctx.getChannel();
+            byte[] beaconData = new byte[8];
+            ctx.getPairingBehaviour().onLink(new BeaconAuth.BeaconAuthPayload()
+                    .setDataAvailable(true)
+                    .setSerialNumber(ctx.getSerial())
+            ).encode(beaconData);
+            channel.setBroadcast(beaconData);
         }
 
-        // whitelist some requests
-        private static boolean isAllowableCmd(StateMachineContext ctx, AuthCommand cmd) {
-            return (cmd.getMode() == AuthMode.SERIAL && ctx.getPairingBehaviour().getAuthMode() == AuthMode.PASSKEY);
-        }
+
 
         @Override
         public void handleMessage(StateMachineContext ctx, AntPage page) {
@@ -248,7 +263,7 @@ public class FormicaFs {
             }
             AuthCommand authCommand = (AuthCommand) page;
             logger.log(Level.INFO, "authentication request: {0}", authCommand.getMode());
-            if (authCommand.getMode() != ctx.getPairingBehaviour().getAuthMode() && !isAllowableCmd(ctx, authCommand)) {
+            if (!ctx.getPairingBehaviour().isCmdAcceptable(authCommand)) {
                 logger.log(Level.SEVERE, "trying to authenticate with different mode than advertised");
                 ctx.setState(ctx.getAdvertState());
                 return;
@@ -264,39 +279,54 @@ public class FormicaFs {
             AuthCallback callback = new AuthCallback() {
                 @Override
                 public void onAccept() {
-                    sendResponse(ctx, AuthResponseCode.ACCEPT, () -> {
+                    sendResponse(ctx, ctx.getPairingBehaviour().onAcceptAuth(), () -> {
+                        System.out.println("onAccept");
                         ctx.setState(ctx.getTransportState());
                     });
 
 
                 }
 
+
                 @Override
                 public void onReject() {
                     logger.severe("authentication rejected");
-                    sendResponse(ctx, AuthResponseCode.REJECT, () -> {
-                        //ctx.setState(ctx.getAdvertState());
+                    sendResponse(ctx, reject(), () -> {
+                        ctx.setState(ctx.getAdvertState());
                     });
 
                 }
             };
 
-            ctx.getPairingBehaviour().onReceieveAuthCmd(authCommand, callback);
+            Optional<AuthResponse> response =  ctx.getPairingBehaviour().onReceieveAuthCmd(authCommand, callback);
+            response.stream().forEach((resp) -> {
+                sendResponse(ctx, resp, () -> {
+                    System.out.println("sent serial");
+                    this.onTransition(ctx);
+                });
+            });
+        }
+
+        private AuthResponse reject() {
+            return new AuthResponse(AuthResponseCode.REJECT,0, new byte[0]);
+        }
+
+        private AuthResponse accept() {
+            return new AuthResponse(AuthResponseCode.ACCEPT,0, new byte[0]);
         }
 
 
-        private void sendResponse(StateMachineContext ctx, AuthResponseCode responseCode, Runnable next) {
+        private void sendResponse(StateMachineContext ctx, AuthResponse response, Runnable next) {
             ctx.performOffThread(() -> {
                 Channel channel = ctx.getChannel();
                 try {
                     ByteArrayOutputStream os = new ByteArrayOutputStream();
                     ctx.getAdvertPayload().encode(os);
-                    AuthResponse response = ctx.getPairingBehaviour().onAcceptAuth();
                     response.encode(os);
 
                     channel.sendBurst(os.toByteArray(),60L, TimeUnit.SECONDS);
                 } catch (Exception ex) {
-                    if (ex instanceof TimeoutException) {
+                    if (ex instanceof AntError) {
                         ctx.setState(ctx.getAdvertState());
                         return;
                     }
@@ -353,7 +383,7 @@ public class FormicaFs {
                 default: {
                     MultiPart multiPart;
                     if (currentFile != null && currentFile.index == message.getIndex()) {
-                        // do nothing
+
                     } else {
                         int fileIndex = message.getIndex() -1;
                         if (fileIndex < 0) {
@@ -366,12 +396,14 @@ public class FormicaFs {
                     logger.info("index: " + message.getIndex() + ", requested");
                     logger.info("offset: " + message.getOffset() + ", requested");
                     logger.info("firstReq: " + message.isFirstRequest());
+
+                    multiPart.setOffset(message.getOffset());
+
                     if (!message.isFirstRequest()) {
                         // TODO: check crc they provide matches what we have so far
                         logger.info("initial value for crc:" + message.getCrc());
                         multiPart.setExpectedCrc(message.getCrc());
                     }
-                    multiPart.setOffset(message.getOffset());
                     multiPart.accept(channel);
                     if (multiPart.hasFailed()) { // sending file failed
                         // possible reasons for failure : crc mismatch, burst failed
@@ -382,6 +414,7 @@ public class FormicaFs {
                     break;
                 }
                 case 0: {
+                    index.setOffset(message.getOffset());
                     index.accept(channel);
                     break;
                 }
@@ -403,7 +436,7 @@ public class FormicaFs {
         private final DeviceDescriptor deviceDescriptor;
         private final Node node;
 
-        private AdvertState advertState = new AdvertState();
+        private InitialAdvertState advertState = new InitialAdvertState();
         private WrappedState<AuthState> authState = new DisconnectDecorator<>(new AuthState());
         private final WrappedState<TransportState> transportState;
 
@@ -538,21 +571,23 @@ public class FormicaFs {
         Node node = new Node(antchip);
 
         final int ourSerial = 0xdeadbeed;
-        final byte [] passkey = new byte [] {(byte) 0xde, (byte) 0xad, (byte) 0xbe, (byte) 0xef};
+        final byte [] passkey = new byte [] {(byte) 0xde, (byte) 0xad, (byte) 0xbe, (byte) 0xef, 1,2,3,4};
 
-        AuthBehaviour behaviour = new PairingBehaviour() {
-            @Override
+
+        AuthInfo info = new AuthInfo() {
             public int getSerial() {
                 return ourSerial;
             }
 
-            @Override
             public byte[] getPasskey() {
                 return passkey;
             }
+        };
+
+        PairingBehaviour pair = new PairingBehaviour(info) {
 
             @Override
-            public void onReceieveAuthCmd(AuthCommand cmd, AuthCallback callback) {
+            public Optional<AuthResponse> onReceieveAuthCmd(AuthCommand cmd, AuthCallback callback) {
                 System.out.print("pairing request from " );
                 System.out.printf("%x\n", cmd.getSerialNumber());
                 new Timer().schedule(new TimerTask() {
@@ -562,30 +597,16 @@ public class FormicaFs {
                         callback.onAccept();
                     }
                 },500);
+                return Optional.empty();
             }
-
 
         };
 
-        behaviour = new PasskeyBehaviour() {
+        PasskeyBehaviour passBehaviour = new PasskeyBehaviour(info);
 
-            @Override
-            public void onReceieveAuthCmd(AuthCommand cmd, AuthCallback callback) {
-                System.out.println("got auth");
-            }
+        AuthBehaviour behaviour = new CombinedPasskeyBehaviour(pair, passBehaviour, info);
 
-            @Override
-            public int getSerial() {
-                return ourSerial;
-            }
-
-            @Override
-            public byte[] getPasskey() {
-                return passkey;
-            }
-        };
-
-        StateMachineContext ctx = new StateMachineContextImpl(node, new PassThroughBehaviour(), DeviceIds.Garmin.FR70, ourSerial, dirListing);
+        StateMachineContext ctx = new StateMachineContextImpl(node, behaviour, DeviceIds.Garmin.FR70, ourSerial, dirListing);
 
 
         //DeviceIds.Garmin.FR70
@@ -666,7 +687,7 @@ public class FormicaFs {
 
         private final int chunkSize;
         private Optional<FailureReason> failure = Optional.empty();
-        private int expectedCrc;
+        private int expectedCrc = 0;
 
         public boolean hasFailed() {
             return failure.isPresent();
@@ -688,8 +709,8 @@ public class FormicaFs {
         public void setOffset(int offset) {
             this.offset = offset;
             if (offset == 0) {
-                crc = 0;
                 expectedCrc = 0;
+                crc = 0;
             }
         }
 
@@ -705,10 +726,14 @@ public class FormicaFs {
                     return;
                 }
                 DownloadResponseCode downloadResponseCode = DownloadResponseCode.NO_ERROR;
+
                 if (expectedCrc != crc) {
+                    logger.finer("offset: " + offset);
+                    logger.warning("expected crc: " + expectedCrc + ", our: " + crc);
                     downloadResponseCode = DownloadResponseCode.CRC_MISMATCH;
                 }
-                DownloadResponse response = new DownloadResponse(downloadResponseCode, full, chunkSize, offset, crc);
+
+                DownloadResponse response = new DownloadResponse(downloadResponseCode, full, chunkSize, offset, expectedCrc);
                 crc = response.getPayloadCrc();
 
                 ByteArrayOutputStream os = new ByteArrayOutputStream(response.getLength());

@@ -36,7 +36,6 @@ public class AuthResponse extends GenericResponse {
         if (padding.length > 0) {
             os.write(padding,0, padding.length);
         }
-        System.out.println(Format.bytesToString(os.toByteArray()));
     }
 
     private int getPaddingLen() {

@@ -10,6 +10,7 @@ public class AuthCommand implements AntPage {
 
     private final AuthMode mode;
     private final int serialNumber;
+    private final byte [] passkey;
 
     public AuthMode getMode() {
         return mode;
@@ -20,11 +21,19 @@ public class AuthCommand implements AntPage {
         LittleEndianArray view = new LittleEndianArray(data);
         this.mode = AuthMode.decode(data[2]);
         this.serialNumber = view.unsignedToInt(4,4);
-
+        int passkeyLen = view.unsignedToInt(3,1);
+        passkey = new byte[passkeyLen];
+        for (int i = 0; i < passkeyLen; i++) {
+            passkey[i] = data[i + 8];
+        }
     }
 
     public int getSerialNumber() {
         return serialNumber;
+    }
+
+    public byte [] getPasskey() {
+        return passkey;
     }
 
     @Override
