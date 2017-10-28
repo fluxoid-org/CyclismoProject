@@ -172,7 +172,7 @@ public class FecTurbo extends AntTurboTrainer {
       }
 
       @Override
-      public void onConfigRecieved(Config config) {
+      public void onConfigReceived(Config config) {
         //TODO
       }
 
