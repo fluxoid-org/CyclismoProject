@@ -300,7 +300,7 @@ public class BikeEditActivity extends AbstractMyTracksActivity {
     if (validName) {
       name.setError(null);
     } else {
-      name.setError(getString(R.string.user_edit_name_error));
+      name.setError(getString(R.string.bike_edit_name_error));
     }
   }
   
@@ -312,7 +312,7 @@ public class BikeEditActivity extends AbstractMyTracksActivity {
     if (validWeight) {
       weight.setError(null);
     } else {
-      weight.setError(getString(R.string.user_edit_weight_error));
+      weight.setError(getString(R.string.bike_edit_weight_error));
     }
     
     return validWeight;
