@@ -261,7 +261,7 @@ public abstract class FecProfile {
         pageDispatcher.addListener(ConfigPage.class, new BroadcastListener<ConfigPage>() {
             @Override
             public void receiveMessage(ConfigPage configPage) {
-                FecProfile.this.onConfigRecieved(configPage.getConfig());
+                FecProfile.this.onConfigReceived(configPage.getConfig());
                 updateDecoders(configPage.getConfig());
 
             }
@@ -485,7 +485,7 @@ public abstract class FecProfile {
 
     public abstract void onEquipmentStateChange(Defines.EquipmentState oldState, Defines.EquipmentState newState);
     public abstract void onCapabilitiesReceived(Capabilities capabilitiesPage);
-    public abstract void onConfigRecieved(Config conf);
+    public abstract void onConfigReceived(Config conf);
     public abstract void onCalibrationUpdate(CalibrationProgress progress);
     public abstract void onCalibrationStatusReceieved(CalibrationResponse calibrationResponse);
     public abstract void onConnect();

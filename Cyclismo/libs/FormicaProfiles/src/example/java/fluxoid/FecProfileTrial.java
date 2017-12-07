@@ -29,7 +29,7 @@ public class FecProfileTrial {
             }
 
             @Override
-            public void onConfigRecieved(Config conf) {
+            public void onConfigReceived(Config conf) {
 
             }
 

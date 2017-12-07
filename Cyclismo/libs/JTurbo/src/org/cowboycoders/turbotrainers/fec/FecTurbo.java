@@ -39,11 +39,12 @@ import org.cowboycoders.ant.profiles.fitnessequipment.Defines;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.CalibrationProgress;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.CalibrationResponse;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.GeneralData;
-import org.cowboycoders.ant.profiles.fitnessequipment.pages.TargetPower;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.TorqueData;
 import org.cowboycoders.ant.profiles.fitnessequipment.pages.TrainerData;
 import org.cowboycoders.turbotrainers.AntTurboTrainer;
 import org.cowboycoders.turbotrainers.Mode;
+import org.cowboycoders.turbotrainers.Parameters.TargetPower;
+import org.cowboycoders.turbotrainers.Parameters.TargetSlope;
 import org.cowboycoders.turbotrainers.Parameters.CommonParametersInterface;
 import org.cowboycoders.turbotrainers.TurboTrainerDataListener;
 import org.fluxoid.utils.FixedPeriodUpdater;
@@ -57,7 +58,7 @@ import java.util.logging.Logger;
 public class FecTurbo extends AntTurboTrainer {
 
   public static final Mode[] SUPPORTED_MODES = new Mode[]{
-      Mode.TARGET_POWER,
+      Mode.TARGET_POWER, Mode.TARGET_SLOPE,
   };
   public final static Logger LOGGER = Logger.getLogger(FecTurbo.class
       .getName());
@@ -171,7 +172,7 @@ public class FecTurbo extends AntTurboTrainer {
       }
 
       @Override
-      public void onConfigRecieved(Config config) {
+      public void onConfigReceived(Config config) {
         //TODO
       }
 
@@ -293,9 +294,13 @@ public class FecTurbo extends AntTurboTrainer {
       throws IllegalArgumentException {
     if (parameters instanceof TargetPower) {
       TargetPower cast = (TargetPower) parameters;
-      fecProfile.setTargetPower(cast.getTargetPower().doubleValue());
+      fecProfile.setTargetPower(cast.getPower());
+    } else if (parameters instanceof TargetSlope) {
+      TargetSlope cast = (TargetSlope) parameters;
+      // Set gradient in percent - it seems not all FEC turbos behave this way?
+      fecProfile.setBasicResistance(cast.getSlope());
     }
-    // TODO: Implement slope, speed. For now we support only target power.
+    // TODO: Implement target speed. See TurboService.
     // The FEC turbo should automatically switch modes according to the quantity set in the profile.
     // Later we plan to support Cyclismo models, rather than relying on a FEC blackbox.
   }
