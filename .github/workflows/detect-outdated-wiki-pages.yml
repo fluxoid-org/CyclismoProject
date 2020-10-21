@@ -1,0 +1,52 @@
+name: Detect outdated wiki pages
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ github.repository }}
+          path: repo
+          fetch-depth: 0
+
+      - name: Checkout wiki
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ github.repository }}.wiki
+          path: wiki
+      
+      - name: Checkout script
+        uses: actions/checkout@v2
+        with:
+          repository: wesleytanws/detect-outdated-wiki-pages
+          path: script
+
+      - name: Run script & output result
+        if: github.event_name != 'pull_request'
+        run: bash script/entrypoint.sh
+
+      - name: Run script & store result
+        id: script
+        if: github.event_name == 'pull_request'
+        run: |
+          output="$(bash script/entrypoint.sh)"
+          output="${output//$'\n'/'%0A'}"
+          echo "::set-output name=output::$output"
+
+      - name: Comment on pull request
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v3
+        env:
+          output: ${{ steps.script.outputs.output }}
+        with:
+          script: |
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: process.env.output
+            });

@@ -1,7 +1,0 @@
-language: java
-
-before_install:
-  - pushd "$TRAVIS_BUILD_DIR/.."
-  - git clone --depth 1 https://github.com/jovial/JFormica.git jformica
-  - git clone --depth 1 https://github.com/fluxoid-org/FluxUtils
-  - popd

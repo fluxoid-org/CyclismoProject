@@ -1,9 +1,0 @@
-rootProject.name = 'FormicaSim'
-include 'Main'
-
-include ':FluxUtils'
-project(':FluxUtils').projectDir = new File("../FluxUtils")
-include 'jformica_core'
-project(':jformica_core').projectDir = new File("../jformica/jformica_core")
-include 'jformica_jsr80'
-project(':jformica_jsr80').projectDir = new File("../jformica/jformica_jsr80")
